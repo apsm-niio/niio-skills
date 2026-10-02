@@ -1,27 +1,50 @@
 #!/usr/bin/env python3
-"""產生 niio 繁中技能；轉換顯示文字與可辨識註解，保留執行語法。"""
+"""產生 niio 繁中技能，涵蓋 Markdown、JSON 與程式顯示文字，檢查後才發布。"""
 import argparse
-import io
 import json
+import os
 import re
 import shutil
 import tempfile
-import tokenize
 import unicodedata
 from pathlib import Path
 from urllib.parse import unquote
 
 import yaml
+import opencc
 from markdown_it import MarkdownIt
 from opencc import OpenCC
+from tree_sitter import Language, Parser
+import tree_sitter_bash
+import tree_sitter_javascript
+import tree_sitter_python
 
 MD = MarkdownIt("commonmark")
 CC = OpenCC("s2twp")
+HAN = re.compile(r"[\u3400-\u9fff]")
+PARSERS = {
+    "javascript": Parser(Language(tree_sitter_javascript.language())),
+    "bash": Parser(Language(tree_sitter_bash.language())),
+    "python": Parser(Language(tree_sitter_python.language())),
+}
+AUDIT = {"changedFiles": [], "preservedTechnicalText": [], "issues": []}
+CURRENT_FILE = ""
+
+# 排除「台、后、里」等繁簡共用字，以免把正確的台灣文字當成簡體。
+character_pairs = [line.split('\t', 1) for line in
+                   (Path(opencc.__file__).parent / 'dictionary' / 'STCharacters.txt')
+                   .read_text(encoding='utf-8').splitlines() if '\t' in line]
+traditional_characters = set(''.join(value.replace(' ', '') for _, value in character_pairs))
+SIMPLIFIED_ONLY = {key for key, _ in character_pairs
+                   if len(key) == 1 and key not in traditional_characters and CC.convert(key) != key}
 CODE = re.compile(r"(?<!`)(`+)(?!`)[\s\S]*?(?<!`)\1(?!`)")
 TECH = re.compile(
-    r"https?://[^\s<>]+|<[^>\n]+>|"
-    r"(?<![\w-])[A-Za-z][\w]*(?:[-_./][\w]+)+|"
-    r"[\w./-]+\.(?:md|json|js|py|sh|template|png|jpg|svg)\b"
+    r"https?://[^\s<>\"']+|"
+    r"</?[A-Za-z][A-Za-z0-9:-]*(?:\s+[A-Za-z_:][A-Za-z0-9_:.-]*\s*=\s*(?:\"[^\"]*\"|'[^']*'|[^\s>]+))*/?>|"
+    r"(?:\./|\.\./)[^\s<>\"'`,，；;|)]+|"
+    r"(?<![\w])/[A-Za-z0-9_.-]+(?:/[^\s<>\"'`,，；;|)]+)+|"
+    r"(?<![A-Za-z0-9_-])[A-Za-z][A-Za-z0-9_]*(?:[-_./][A-Za-z0-9_]+)+|"
+    r"(?<![A-Za-z0-9_-])[A-Za-z0-9_-]+\.(?:md|json|js|py|sh|template|png|jpg|svg)\b"
 )
 DISPLAY_LABELS = {"hap-cli": "niio CLI"}
 PUBLIC_POLICY = (
@@ -77,7 +100,7 @@ def inline(text, convert, references=(), link=lambda value: value):
         saved.append(value)
         return f"\ue000{len(saved) - 1}\ue001"
 
-    text = CODE.sub(lambda m: keep(m.group()), text)
+    text = CODE.sub(lambda m: keep(localized_inline_code(m, convert)), text)
 
     # 連結目的地可能包含括號；逐字尋找配對，不翻譯路徑。
     chunks, start, pos = [], 0, 0
@@ -143,6 +166,27 @@ def inline(text, convert, references=(), link=lambda value: value):
     return text
 
 
+def localized_inline_code(match, convert):
+    raw, marker = match.group(), match[1]
+    content = raw[len(marker):-len(marker)]
+    if not HAN.search(content):
+        return raw
+    try:
+        translated = json_text(content, convert, localize_keys=True)
+    except json.JSONDecodeError:
+        # 行內的中文範例名稱／說明要轉換，ASCII 命令與識別字保持原樣。
+        kept = []
+        def save(m):
+            kept.append(m.group())
+            return f"\ue010{len(kept)-1}\ue011"
+        translated = TECH.sub(save, content)
+        translated = re.sub(r'[A-Za-z_][A-Za-z0-9_-]*', save, translated)
+        translated = convert(translated)
+        for index in reversed(range(len(kept))):
+            translated = translated.replace(f"\ue010{index}\ue011", kept[index])
+    return marker + translated + marker
+
+
 def frontmatter(text):
     match = re.match(
         r"\A---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)",
@@ -158,102 +202,6 @@ def frontmatter(text):
     return data, text[match.end():]
 
 
-def comment_spans(text, language):
-    """只定位能確定是註解的文字；語法不明時保留整個區塊。"""
-    if language in {"python", "py"}:
-        lines = text.splitlines(keepends=True)
-        offsets, total = [], 0
-        for line in lines:
-            offsets.append(total)
-            total += len(line)
-        spans = []
-        try:
-            for token in tokenize.generate_tokens(io.StringIO(text).readline):
-                if token.type == tokenize.COMMENT:
-                    start = offsets[token.start[0] - 1] + token.start[1]
-                    end = offsets[token.end[0] - 1] + token.end[1]
-                    spans.append((start + 1, end))
-        except (tokenize.TokenError, IndentationError, SyntaxError):
-            return []
-        return spans
-
-    shell = language in {"bash", "sh", "shell", "zsh"}
-    javascript = language in {"javascript", "js", "typescript", "ts", "jsonc"}
-    if not (shell or javascript):
-        return []
-    if shell and any(marker in text for marker in ("<<", "$(", "`")):
-        return []
-
-    spans, index, word_start = [], 0, True
-    while index < len(text):
-        char = text[index]
-        if char in {"'", '"'}:
-            quote = char
-            index += 1
-            while index < len(text):
-                if text[index] == "\\" and (javascript or quote == '"'):
-                    index += 2
-                elif text[index] == quote:
-                    index += 1
-                    break
-                else:
-                    index += 1
-            else:
-                return []
-            word_start = False
-            continue
-        if char == "\\":
-            if index + 1 < len(text) and text[index + 1] != "\n":
-                word_start = False
-            index += 2
-            continue
-        if javascript and char == "`":
-            return []
-        if shell and char == "#" and word_start:
-            end = text.find("\n", index)
-            end = len(text) if end < 0 else end
-            spans.append((index + 1, end))
-            index = end
-            word_start = True
-            continue
-        if javascript and text.startswith("//", index):
-            end = text.find("\n", index)
-            end = len(text) if end < 0 else end
-            spans.append((index + 2, end))
-            index = end
-            continue
-        if javascript and text.startswith("/*", index):
-            end = text.find("*/", index + 2)
-            if end < 0:
-                return []
-            spans.append((index + 2, end))
-            index = end + 2
-            continue
-        if javascript and char == "/":
-            # 不猜測除法與正規表示式的語法。
-            return []
-        word_start = char.isspace() or char in ";|&()<>"
-        index += 1
-    return spans
-
-
-def translate_comments(text, language, convert):
-    for start, end in reversed(comment_spans(text, language)):
-        comment = text[start:end]
-        # 保留 shebang、工具指示與被註解掉的命令範例。
-        if re.match(
-            r"\s*(?:[!@]|(?:hap|pip|pip3|python|python3|npm|node|curl|git)\b)",
-            comment
-        ):
-            continue
-        replacement = "".join(
-            inline(line, convert)
-            for line in comment.splitlines(keepends=True)
-        )
-        text = text[:start] + replacement + text[end:]
-    return text
-
-
 def is_text_example(content, language):
     if language in {"text", "plaintext"}:
         return True
@@ -264,6 +212,283 @@ def is_text_example(content, language):
         re.match(r"[\u3400-\u9fff]", beginning)
         or re.search(r"[┌┐└┘├┤│─]", content)
     )
+
+
+def record_issue(kind, text, line=1):
+    AUDIT['issues'].append({'file': CURRENT_FILE, 'line': line,
+                            'reason': kind, 'text': text[:180]})
+
+
+def human(text, convert):
+    """轉換顯示文字；網址、實際路徑與技術識別字保留。"""
+    return inline(text, convert)
+
+
+def json_text(text, convert, localize_keys=False):
+    # 僅替換 JSON 字串值，保留原排版、所有鍵值名稱及資料型別。
+    json.loads(text)
+    token = re.compile(r'"(?:[^"\\]|\\.)*"')
+    def replace(match):
+        tail = text[match.end():].lstrip()
+        value = json.loads(match.group())
+        if tail.startswith(':') and not localize_keys:
+            if HAN.search(value) and CC.convert(value) != value:
+                AUDIT['preservedTechnicalText'].append({
+                    'file': CURRENT_FILE, 'reason': 'JSON key', 'text': value})
+            return match.group()
+        if not HAN.search(value):
+            return match.group()
+        translated = human(value, convert)
+        return json.dumps(translated, ensure_ascii=False) if translated != value else match.group()
+    result = token.sub(replace, text)
+    json.loads(result)
+    return result
+
+
+def ancestors(node):
+    while node.parent:
+        node = node.parent
+        yield node
+
+
+def technical_string(node, language):
+    # API 物件鍵、索引、比較常數、正規表示式都屬於程式語意。
+    for parent in ancestors(node):
+        if parent.type in {'comment', 'string', 'template_string', 'concatenated_string'}:
+            continue
+        if parent.type in {'pair', 'pair_pattern'}:
+            key = parent.child_by_field_name('key')
+            if key and key.start_byte <= node.start_byte < key.end_byte:
+                return True
+        if parent.type in {'subscript', 'subscript_expression'}:
+            key = parent.child_by_field_name('index') or parent.child_by_field_name('subscript')
+            if key and key.start_byte <= node.start_byte < key.end_byte:
+                return True
+        if parent.type in {'regex', 'comparison_operator'}:
+            return True
+        if parent.type == 'binary_expression':
+            operator = parent.child_by_field_name('operator')
+            if operator and operator.text.decode('utf-8') in {'==','===','!=','!==','<','>','<=','>='}:
+                return True
+        break
+    return False
+
+
+def code_text(text, language, convert, strict=False):
+    aliases = {'js':'javascript', 'jsonc':'javascript', 'typescript':'javascript',
+               'ts':'javascript', 'sh':'bash', 'shell':'bash', 'zsh':'bash',
+               'py':'python'}
+    language = aliases.get(language, language)
+    parser = PARSERS.get(language)
+    if not parser:
+        if HAN.search(text):
+            record_issue('尚未支援的程式語言：' + language, text)
+        return text
+    data = text.encode('utf-8')
+    placeholders = [(len(text[:m.start()].encode('utf-8')), len(text[:m.end()].encode('utf-8')))
+                    for m in re.finditer(r'<[^>\n]*[\u3400-\u9fff][^>\n]*>', text)]
+    root = parser.parse(data).root_node
+    if strict and root.has_error:
+        record_issue('來源程式無法完整解析，停止自動修改', text)
+        return text
+    edits = []
+    normalized = set()
+
+    def visit(node):
+        kind = node.type
+        raw = data[node.start_byte:node.end_byte].decode('utf-8')
+        comment = kind == 'comment'
+        candidate = comment or kind in {'string_fragment', 'string_content', 'raw_string', 'jsx_text', 'heredoc_body'}
+        if not strict and kind in {'identifier', 'property_identifier', 'word'}:
+            if any(start <= node.start_byte < end for start, end in placeholders):
+                candidate = True
+            if language == 'javascript' and root.has_error:
+                before = data[:node.start_byte].decode('utf-8')
+                after = data[node.end_byte:].decode('utf-8')
+                opening, closing = before.rfind('>'), after.find('<')
+                if opening >= 0 and closing >= 0 and before.rfind('<') < opening:
+                    region = before[opening + 1:] + raw + after[:closing]
+                    if not any(marker in region for marker in '{}'):
+                        candidate = True
+        diagnostic = (language == 'bash' and not strict and kind == 'ERROR'
+                      and raw.startswith("'\n")
+                      and all(not line.strip() or line.lstrip().startswith('#')
+                              or not HAN.search(line)
+                              for line in raw.splitlines()[1:]))
+        if diagnostic:
+            candidate = True
+        # Bash 沒有加引號的中文顯示參數。
+        if language == 'bash' and kind == 'word' and HAN.search(raw):
+            parent = node.parent
+            if parent and parent.type == 'command' and parent.child_by_field_name('name'):
+                command = parent.child_by_field_name('name').text.decode('utf-8')
+                candidate = command in {'echo', 'printf'} or not strict
+            if not strict and parent and parent.type != 'command_name':
+                candidate = True
+        if candidate:
+            if strict and technical_string(node, language) and not comment:
+                if HAN.search(raw):
+                    AUDIT['preservedTechnicalText'].append({
+                        'file': CURRENT_FILE, 'reason': '程式鍵值／索引／比較常數',
+                        'text': raw[:180]})
+                return
+            if not (HAN.search(raw) or comment):
+                return
+            # 保留套件工具指示、被註解掉的完整命令。
+            prefix = re.sub(r'^(?:#|//|/\*)', '', raw).lstrip()
+            if comment and re.match(r'(?:[!@]|(?:hap|pip|pip3|python|python3|npm|node|curl|git)\b)', prefix):
+                return
+            translated = human(raw, convert)
+            if diagnostic:
+                translated = ''.join(human(line, convert) if line.lstrip().startswith('#') else line
+                                     for line in raw.splitlines(keepends=True))
+            # Shell 的單引號 JSON 命令參數也使用相同鍵值保護規則。
+            if kind == 'heredoc_body':
+                try:
+                    translated = json_text(raw, convert, localize_keys=not strict)
+                except json.JSONDecodeError:
+                    record_issue('無法辨識的 heredoc 中文內容', raw, node.start_point.row + 1)
+                    return
+            if kind == 'raw_string' and raw[1:-1].lstrip().startswith(('{', '[')):
+                try:
+                    translated = raw[0] + json_text(raw[1:-1], convert, localize_keys=not strict) + raw[-1]
+                except json.JSONDecodeError:
+                    if '...' not in raw:
+                        record_issue('單引號內的 JSON 不完整', raw, node.start_point.row + 1)
+                        return
+            if translated != raw:
+                edits.append((node.start_byte, node.end_byte, translated.encode('utf-8')))
+                normalized.add((node.start_byte, node.end_byte, node.type))
+            return
+        if not node.children and HAN.search(raw):
+            # 機器識別字不翻譯；不明語法必須報錯。
+            if kind in {'identifier', 'property_identifier', 'variable_name', 'regex_pattern', 'word'}:
+                AUDIT['preservedTechnicalText'].append({
+                    'file': CURRENT_FILE, 'reason': kind, 'text': raw[:180]})
+            else:
+                record_issue('中文出現在無法安全辨識的程式區段：' + kind,
+                             raw, node.start_point.row + 1)
+        for child in node.children:
+            visit(child)
+    visit(root)
+    for start, end, replacement in reversed(edits):
+        data = data[:start] + replacement + data[end:]
+    new_root = parser.parse(data).root_node
+
+    # 除明確選取的註解／文字節點外，整棵語法樹必須完全相同。
+    old_nodes = []
+    def signature(node, original, target):
+        if original and (node.start_byte, node.end_byte, node.type) in normalized:
+            target.append((node.type, '<localized>'))
+            return
+        if not original and node.type in {'comment', 'string_fragment', 'string_content', 'raw_string', 'word', 'jsx_text', 'heredoc_body', 'ERROR', 'identifier', 'property_identifier'}:
+            old = old_nodes[len(target)] if len(target) < len(old_nodes) else None
+            if old == (node.type, '<localized>'):
+                target.append(old)
+                return
+        target.append((node.type, None if node.children else node.text))
+        for child in node.children:
+            signature(child, original, target)
+    signature(root, True, old_nodes)
+    new_nodes = []
+    signature(new_root, False, new_nodes)
+    if old_nodes != new_nodes:
+        record_issue('轉換造成程式語法或非文字內容變動', text)
+        return text
+    if strict and new_root.has_error:
+        record_issue('轉換後程式語法錯誤', text)
+        return text
+    return data.decode('utf-8')
+
+
+def example_text(text, language, convert):
+    if language in {'javascript', 'js'}:
+        visible = [line.strip() for line in text.splitlines()
+                   if line.strip() and not line.lstrip().startswith(('//', '/*', '*'))]
+        if visible and all(re.match(r'(?:[\u3400-\u9fff]|Top\s+\d|\d+[.、]|\.{3})', line)
+                           for line in visible):
+            return ''.join(human(line, convert) for line in text.splitlines(keepends=True))
+    if language == 'json':
+        try:
+            return json_text(text, convert, localize_keys=True)
+        except json.JSONDecodeError:
+            return code_text(text, 'jsonc', convert)
+    if language in {'javascript','js','jsonc','typescript','ts','bash','sh','shell','zsh','python','py'}:
+        return code_text(text, language, convert)
+    if language == 'cmd':
+        return ''.join(human(line, convert) if line.lstrip().startswith('#') else line
+                       for line in text.splitlines(keepends=True))
+    if language == 'mermaid':
+        return re.sub(r'"[^"\n]*"', lambda m: human(m.group(), convert), text)
+    if not language:
+        # 無標記的流程、目錄示意仍沿用 Markdown 顯示文字轉換。
+        return ''.join(human(line, convert) for line in text.splitlines(keepends=True))
+    if HAN.search(text):
+        record_issue('尚未支援的範例類型：' + language, text)
+    return text
+
+
+def resource_text(path, text, convert):
+    name = path.name.lower()
+    if path.suffix == '.json':
+        return json_text(text, convert)
+    if name.endswith(('.js', '.jsx', '.js.template', '.jsx.template')):
+        return code_text(text, 'javascript', convert, strict=True)
+    if path.suffix == '.py':
+        return code_text(text, 'python', convert, strict=True)
+    if path.suffix == '.sh':
+        return code_text(text, 'bash', convert, strict=True)
+    if HAN.search(text):
+        record_issue('新文字檔格式尚未納入轉換', text)
+    return text
+
+
+def write_audit(output, file_count):
+    AUDIT['checkedFiles'] = file_count
+    AUDIT['changedFiles'] = sorted(set(AUDIT['changedFiles']))
+    # 路徑、識別字等例外可查閱，不要求人工逐檔審核。
+    for key in ('preservedTechnicalText', 'issues'):
+        unique = {json.dumps(item, sort_keys=True, ensure_ascii=False): item for item in AUDIT[key]}
+        AUDIT[key] = [unique[key] for key in sorted(unique)]
+    directory = output / 'localization'
+    directory.mkdir(exist_ok=True)
+    (directory / 'localization-report.json').write_text(
+        json.dumps(AUDIT, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    message = (f"檢查 {file_count} 個檔案；轉換 {len(AUDIT['changedFiles'])} 個檔案；"
+               f"未處理問題 {len(AUDIT['issues'])} 項。")
+    print(message)
+    if os.environ.get('GITHUB_STEP_SUMMARY'):
+        with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as stream:
+            stream.write(message + '\n')
+    for item in AUDIT['issues']:
+        print(f"{item['file']}:{item['line']}: {item['reason']}：{item['text']}")
+    if AUDIT['issues']:
+        raise ValueError('自動檢查未通過，保留上一版 skills，不發布不完整的結果。')
+
+
+def audit_locale(stage):
+    global CURRENT_FILE
+    for path in sorted(stage.rglob('*')):
+        if not path.is_file() or path.stem.upper() in {'LICENSE','LICENCE','COPYING','NOTICE'}:
+            continue
+        CURRENT_FILE = 'skills/' + path.relative_to(stage).as_posix()
+        try:
+            text = path.read_bytes().decode('utf-8')
+        except UnicodeDecodeError:
+            continue
+        technical = [item['text'] for item in AUDIT['preservedTechnicalText']
+                     if item['file'] == CURRENT_FILE]
+        for number, line in enumerate(text.splitlines(), 1):
+            rest = line
+            for value in technical:
+                rest = rest.replace(value, '')
+            # 包含失效的來源錨點在內，連結目的地屬於技術路徑。
+            rest = re.sub(r'(?<=\]\()[^)\n]+', '', rest)
+            rest = TECH.sub('', rest)
+            rest = re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m[1], 16)), rest)
+            remaining = set(rest) & SIMPLIFIED_ONLY
+            if remaining:
+                record_issue('殘留簡體字：' + ''.join(sorted(remaining)), line, number)
 
 
 def map_body(body, convert, link=lambda value: value):
@@ -303,14 +528,14 @@ def map_body(body, convert, link=lambda value: value):
                         translated = map_body(content, convert, link)
                     elif is_text_example(content, language):
                         translated = "".join(
-                            line if re.match(
+                            code_text(line, 'bash', convert) if re.match(
                                 r"\s*(?:hap|pip|pip3|python|python3|npm|node|curl|git)\b",
                                 line
                             ) else inline(line, convert, (), link)
                             for line in content.splitlines(keepends=True)
                         )
                     else:
-                        translated = translate_comments(content, language, convert)
+                        translated = example_text(content, language, convert)
                     replacements[start] = (
                         end,
                         lines[start]
@@ -461,6 +686,10 @@ def rewrite_links(text, current, anchors):
 
 
 def build(source, output, config):
+    global CURRENT_FILE
+    for key in AUDIT:
+        if isinstance(AUDIT[key], list):
+            AUDIT[key].clear()
     source, output = source.resolve(), output.resolve()
 
     if source == output or not (source / "skills").is_dir():
@@ -505,6 +734,7 @@ def build(source, output, config):
         documents, anchors = {}, {}
 
         for path in sorted(stage.rglob("*.md")):
+            CURRENT_FILE = "skills/" + path.relative_to(stage).as_posix()
             if path.stem.upper() in {
                 "LICENSE", "LICENCE", "COPYING", "NOTICE"
             }:
@@ -541,13 +771,33 @@ def build(source, output, config):
             anchors[path.resolve()] = mapping
 
         for path, text in documents.items():
-            path.write_bytes(
-                rewrite_links(
+            CURRENT_FILE = "skills/" + path.relative_to(stage).as_posix()
+            final = rewrite_links(
                     text,
                     path.resolve(),
                     anchors
-                ).encode("utf-8")
             )
+            if final != path.read_text(encoding="utf-8"):
+                AUDIT['changedFiles'].append(CURRENT_FILE)
+            path.write_bytes(final.encode("utf-8"))
+
+        for path in sorted(stage.rglob("*")):
+            if not path.is_file() or path in documents:
+                continue
+            CURRENT_FILE = "skills/" + path.relative_to(stage).as_posix()
+            if path.stem.upper() in {"LICENSE", "LICENCE", "COPYING", "NOTICE"}:
+                continue
+            try:
+                old = path.read_bytes().decode("utf-8")
+            except UnicodeDecodeError:
+                continue
+            new = resource_text(path, old, convert)
+            if new != old:
+                AUDIT['changedFiles'].append(CURRENT_FILE)
+                path.write_bytes(new.encode("utf-8"))
+
+        audit_locale(stage)
+        write_audit(output, sum(path.is_file() for path in stage.rglob("*")))
 
         license_stage = Path(tmp) / "THIRD_PARTY_LICENSE.txt"
         shutil.copy2(source / "LICENSE", license_stage)
@@ -568,7 +818,7 @@ def build(source, output, config):
 
     print(
         f"完成：{len(documents)} 份 Markdown 文件；"
-        "授權及其他檔案已保留。"
+        "JSON 資源、程式顯示文字與註解已一併處理。"
     )
 
 
