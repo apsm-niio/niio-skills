@@ -1,12 +1,12 @@
 # 工作流（workflow）— 流程與節點基礎操作
 
 操作物件分兩層：**流程**（process，一條工作流本身）與**節點**（node，流程內的步驟）。
-節點的逐型別深度配置見 [nodes.md](nodes.md)；本篇只覆蓋流程級命令、節點增刪改名、觸發器配置。
+節點的逐型別深度設定見 [nodes.md](nodes.md)；本篇只覆蓋流程級命令、節點增刪改名、觸發器設定。
 
 **術語：PBP = 封裝業務流程（Packaged Business Process）。** 使用者說「封裝業務流程」「PBP」時，
 一律對應 `workflow create --type pbp` + `batch-add --trigger-pbp`。
 
-**全域性規則**：改節點配置前先 `hap --json workflow node get <process_id> <node_id>` 匯出現狀，在真實結構上改，再寫回。
+**全域規則**：改節點設定前先 `hap --json workflow node get <process_id> <node_id>` 匯出現狀，在真實結構上改，再寫回。
 
 ## 呼叫正規化
 
@@ -63,13 +63,13 @@ hap workflow move <process_id> ...         # 移到别的应用，参数以 --he
 
 坑位提示：
 
-- `hap workflow list <app_id>` 的應用 ID 既能當位置引數也能用 `-a`。新建的工作表觸發流程在觸發器
-  繫結工作表之前**不會出現在該列表裡**——拿好 `create` 返回的 `id`，別靠列表反查。
-  `--kind` / `-k` / `--enabled|--disabled` 都是**取回列表後在本地篩**的，不影響分頁。
+- `hap workflow list <app_id>` 的應用 ID 既能當位置參數也能用 `-a`。新建的工作表觸發流程在觸發器
+  繫結工作表之前**不會出現在該清單裡**——拿好 `create` 回傳的 `id`，別靠清單反查。
+  `--kind` / `-k` / `--enabled|--disabled` 都是**取回清單後在本地篩**的，不影響分頁。
 - **建完不等於建好，只有釋出會告訴你哪裡還差。** 節點一個個加都會成功，觸發器沒綁、填寫節點沒有
   可填欄位這類問題只在釋出時才暴露。加完節點順手 `publish` 一次。
 - `publish` 只在流程真的啟用了才報成功，被拒時以非零狀態退出並指出是哪個節點不完整。最常見兩因：
-  觸發器沒綁（見下文「觸發器配置」）、`fill_in` 節點一個可編輯欄位都沒有（`config.formProperties`
+  觸發器沒綁（見下文「觸發器設定」）、`fill_in` 節點一個可編輯欄位都沒有（`config.formProperties`
   全是 `readonly`/`hidden`）。收件人寫錯則是當場報錯，見 [nodes.md](nodes.md) 的 accounts 一節。
 - **三處和字面意思不同**：`copy --name` 是追加在原名後的**字尾**；`copy --sub-process` 是把副本
   **變成**子流程（不是連同子流程一起復制）；`rollback` 不帶 `--version-id` 是**丟棄當前草稿**，
@@ -79,7 +79,7 @@ hap workflow move <process_id> ...         # 移到别的应用，参数以 --he
   能不能看到這條流程記錄），不是檢視 ID。有幾處聯動不用自己管：關掉撤回時「哪些節點之後不允許撤回」
   會一併清掉；把「只能觸發指定工作流」改成別的模式時那份白名單也會一併清掉。
 
-### 節點基礎（增 / 刪 / 改名 / 讀配置）
+### 節點基礎（增 / 刪 / 改名 / 讀設定）
 
 ```bash
 # 列出全部节点（拿 nodeId、typeId、连接关系）
@@ -104,10 +104,10 @@ hap workflow node types         # 连同数据节点的动作号一起列
 坑位提示：
 
 - **資料類節點（type 6 / 7 / 13）的目標工作表 `--app-id` 必須在 `node add` 時給定**；建好後再用 `node save` 補傳會被靜默丟棄，節點只能刪了重建。
-- `node get` 建議總是帶 `--type <typeId>`（從 `node list` 讀），不同型別返回的結構差異很大。
-- 單獨改一個已存在節點的配置：`node get` 讀出 → 改你要改的鍵 → `node save` 整段寫回（節點 ID、連線、位置都保留）。具體每類節點的鍵表見 [nodes.md](nodes.md)。
+- `node get` 建議總是帶 `--type <typeId>`（從 `node list` 讀），不同型別回傳的結構差異很大。
+- 單獨改一個已存在節點的設定：`node get` 讀出 → 改你要改的鍵 → `node save` 整段寫回（節點 ID、連線、位置都保留）。具體每類節點的鍵表見 [nodes.md](nodes.md)。
 
-### 批次建節點 + 觸發器配置（batch-add）
+### 批次建節點 + 觸發器設定（batch-add）
 
 `node batch-add` 一次完成「綁觸發器 + 按順序建多個節點並配好」。節點間用別名互相引用，物理 ID 自動解析：
 
@@ -131,7 +131,7 @@ hap workflow node batch-add <process_id> --nodes '[]' \
 - `--trigger-schedule '{repeat,interval,week_days,start_time,end_time,config}'`（定時型）。
 - `--trigger-date '{worksheet,date_field_id,offset_type,offset_number,offset_unit,time,repeat}'`（按日期欄位型）。
 - `--trigger-webhook '{"sample":{...}}'`（Webhook 型：用樣例請求體推匯入參結構）。
-- `--trigger-pbp '{"inputs":[{name,type,required,alias,desc,default,options,children}]}'`（PBP/封装业务流程型：定義輸入引數。type 取 text/number/date/radio/checkbox/member/department/org_role/attachment/object/array/object_array，預設 text；radio 的 options 傳字串陣列；object_array 用 children 嵌一層子引數）。
+- `--trigger-pbp '{"inputs":[{name,type,required,alias,desc,default,options,children}]}'`（PBP/封装业务流程型：定義輸入參數。type 取 text/number/date/radio/checkbox/member/department/org_role/attachment/object/array/object_array，預設 text；radio 的 options 傳字串陣列；object_array 用 children 嵌一層子參數）。
 
 ```bash
 # PBP：定义两个输入参数（建流程时 --type pbp）
@@ -145,17 +145,17 @@ hap workflow node batch-add <process_id> --nodes '[]' \
 坑位提示：
 
 - 新建的工作表觸發流程，**觸發器未繫結前無法釋出**——建完流程第一件事就是綁觸發器。
-- 修「建到一半」的流程時不要重建：流程已存在就在原 process_id 上補——缺節點用 `node add` / `batch-add` 補，節點配置錯用 `node get` + `node save` 原位修，最後 `workflow publish`。需要精確控制分支內部拓撲的複雜重排不在此範圍。
+- 修「建到一半」的流程時不要重建：流程已存在就在原 process_id 上補——缺節點用 `node add` / `batch-add` 補，節點設定錯用 `node get` + `node save` 原位修，最後 `workflow publish`。需要精確控制分支內部拓撲的複雜重排不在此範圍。
 
 ## 資料字典
 
-字典生成於 2026-06-10；未覆蓋的鍵以 `hap workflow node get` 返回的實際結構為準。
+字典生成於 2026-06-10；未覆蓋的鍵以 `hap workflow node get` 回傳的實際結構為準。
 
 ### 觸發型別（`workflow create --type`）
 
 `--type` 接受名稱或數字碼，優先用名稱：
 
-| 值 | 含義 | 觸發器配置方式 |
+| 值 | 含義 | 觸發器設定方式 |
 |---|---|---|
 | `worksheet`（1） | 工作表事件觸發 | `batch-add --trigger-worksheet/--trigger-event/--trigger-fields/--trigger-filter` |
 | `scheduled`（5） | 定時（週期）觸發 | `batch-add --trigger-schedule` |
@@ -178,15 +178,15 @@ hap workflow trigger-pbp <process_id> -a <app_id> --controls '[
 ]'
 ```
 
-每一項用 `controlId`、引數別名（`alias`）或引數名認定一個入參。**引數名寫錯會當場報錯**並列出這條
-流程實際接受哪些引數——不會靜默地帶著一串空引數把流程跑一遍。取值直接寫自然 JSON（陣列、數字、
+每一項用 `controlId`、參數別名（`alias`）或參數名認定一個入參。**參數名寫錯會當場報錯**並列出這條
+流程實際接受哪些參數——不會靜默地帶著一串空參數把流程跑一遍。取值直接寫自然 JSON（陣列、數字、
 布林都行），需要轉成文字時 CLI 會代勞。
 
 ### 釋出 / 啟用語義
 
 | 鍵 / 操作 | 含義 | 值形態 |
 |---|---|---|
-| `enabled` | 流程是否已啟用（`workflow list` / `get` 返回） | bool；`publish` 置 true，`publish --disable` 置 false |
+| `enabled` | 流程是否已啟用（`workflow list` / `get` 回傳） | bool；`publish` 置 true，`publish --disable` 置 false |
 | `publish` 結果 | 啟用成功與否 + 校驗診斷 | 失敗時輸出告警明細並非零退出；阻斷級告警必須修復後重發 |
 | `workflow history` | 檢視釋出歷史 | `hap workflow history <pid>`，每行的 id 就是版本 id |
 | `workflow rollback` | 回到某個版本 / 丟棄草稿 | 帶 `--version-id` 回到該版本；**不帶就是丟棄未釋出的草稿** |
@@ -210,9 +210,9 @@ hap workflow trigger-pbp <process_id> -a <app_id> --controls '[
 | 10 | MESSAGE | 簡訊 |
 | 11 | EMAIL | 傳送郵件 → nodes.md |
 | 12 | DELAY | 延時 → nodes.md |
-| 13 | GET_MORE_RECORD | 獲取多條記錄 / 批次操作（`save-get-more` 配置） |
+| 13 | GET_MORE_RECORD | 取得多條記錄 / 批次操作（`save-get-more` 設定） |
 | 14 | CODE | 程式碼塊 |
-| 15 | LINK | 獲取連結 |
+| 15 | LINK | 取得連結 |
 | 16 | SUB_PROCESS | 子流程 |
 | 17 | PUSH | 介面推送 |
 | 18 | FILE | 生成檔案 |
@@ -220,14 +220,14 @@ hap workflow trigger-pbp <process_id> -a <app_id> --controls '[
 | 20 | PBP | 呼叫封裝業務流程（在流程裡調一個已釋出的 PBP） |
 | 21 | JSON_PARSE | JSON 解析 |
 | 22 | AUTHENTICATION | API 身分驗證與授權 |
-| 23 | PARAMETER | 引數 |
+| 23 | PARAMETER | 參數 |
 | 24 | API_PACKAGE | API 包 |
 | 25 | API | 呼叫已整合 API |
 | 26 | APPROVAL_PROCESS | 發起審批流程 |
 | 27 | NOTICE | 站內通知 |
 | 28 | SNAPSHOT | 記錄快照 |
 | 29 | LOOP | 迴圈 |
-| 30 | RETURN | 返回 |
+| 30 | RETURN | 回傳 |
 | 31 | AIGC | AI 生成 |
 | 32 | PLUGIN | 外掛 |
 | 33 | AGENT | AI Agent |

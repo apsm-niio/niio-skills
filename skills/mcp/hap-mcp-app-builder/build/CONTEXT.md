@@ -50,7 +50,7 @@
 ## 寫入規則
 
 - **每個步驟只寫入自己負責的欄位**，不修改其他步驟的欄位
-- **只存 ID 對映**，不存 MCP 原始返回的完整物件
+- **只存 ID 對映**，不存 MCP 原始回傳的完整物件
 - `progress` 欄位由每步完成時更新，值域見 `PROGRESS.md`
 - 欄位結構（fields）儲存在獨立檔案 `worksheetContext.json`，不寫入 `hap-context.json`，避免上下文膨脹
 
@@ -59,5 +59,5 @@
 `worksheetContext.json` 由 Step 3 寫入，**Step 4~10 只讀**。
 
 - Step 4~10 中需要的欄位 ID、選項 key 等，**必須且只能從 `worksheetContext.json` 查詢，嚴禁重複呼叫 `get_worksheet_structure`**
-- 檢視 ID 從 `viewIdByName`（儲存在 `hap-context.json`）中獲取
+- 檢視 ID 從 `viewIdByName`（儲存在 `hap-context.json`）中取得
 - 該檔案在 Step 3 寫入後**不再修改**

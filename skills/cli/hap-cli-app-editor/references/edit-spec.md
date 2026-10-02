@@ -1,6 +1,6 @@
 # edit-spec 總覽
 
-一個 edit-spec 是一個 JSON 檔案，描述對**一個已存在應用**的一組「讀改寫」式區域性修改。它只覆蓋三類編輯——**欄位、頁面元件、動作按鈕**——因為這三類的安全寫法是「讀出整體 → 改一處 → 整體寫回」，由 `hap app-editor` 替你完成。其它元素（工作表、檢視、角色、工作流、節點、應用與分組）直接用對應的 `hap` 命令，見各模組文件。
+一個 edit-spec 是一個 JSON 檔案，描述對**一個已存在應用**的一組「讀改寫」式區域性修改。它只覆蓋三類編輯——**欄位、頁面元件、動作按鈕**——因為這三類的安全寫法是「讀出整體 → 改一處 → 整體寫回」，由 `hap app-editor` 替你完成。其他元素（工作表、檢視、角色、工作流、節點、應用與分組）直接用對應的 `hap` 命令，見各模組文件。
 
 ## 信封
 
@@ -63,7 +63,7 @@ hap app-editor apply    <edit-spec.json> [--app <id>] [--continue]  # 执行
 hap app-editor inspect  <appId|名称> [--org-id <org>]    # 打印实时 名→id 结构
 ```
 
-`inspect` 返回 `app_id` / `org_id` / `name` / `sections` / `worksheets` / `pages_and_chatbots` /
+`inspect` 回傳 `app_id` / `org_id` / `name` / `sections` / `worksheets` / `pages_and_chatbots` /
 `roles` / `workflows`；每張工作表帶著它所屬的 `section`，**含二級分組裡的表**。
 
 `--app` 覆蓋 spec 裡寫的目標應用；`--continue` 讓某個 op 失敗後繼續跑剩下的（預設停）。
@@ -171,7 +171,7 @@ hap app-editor inspect  <appId|名称> [--org-id <org>]    # 打印实时 名→
 - **子欄位用與頂層 field 完全相同的 clean 形**——`name` / `type` / `required` / `unique` /
   `options`，而且**子欄位裡還能再寫 `relation` / `lookup` / `rollup` / `formula` 塊**，名字解析
   照樣生效（上例裡子欄位的 `relation.worksheet: "客户"` 會被解析成客戶表的 id）。不必學第二套詞彙。
-- **`showFields` 只能用在掛載模式**：內聯模式下那些列還不存在，內聯列表顯示的就是你正在建的這些列。
+- **`showFields` 只能用在掛載模式**：內聯模式下那些列還不存在，內聯清單顯示的就是你正在建的這些列。
   寫在內聯模式裡會被明確拒絕。掛載模式下 `showFields` 寫子表上那些列的名字或 id，不給就是全部可見列。
 - `subtable.worksheet` 同樣接名字或 id。
 
@@ -195,7 +195,7 @@ hap app-editor inspect  <appId|名称> [--org-id <org>]    # 打印实时 名→
 
 ## 這個引擎繼承哪些修復
 
-`app-editor` 直接呼叫 CLI 的核心層，**不經過命令層**。所以命令層的行為（選項翻譯、引數推導、
+`app-editor` 直接呼叫 CLI 的核心層，**不經過命令層**。所以命令層的行為（選項翻譯、參數推導、
 確認提示）與它無關：命令列上加的新選項，不會自動出現在 edit-spec 裡。反過來，核心層的寫入規則
 （整表寫回保反向控制元件、選項值校驗、按鈕填寫模式推導）它都拿得到。
 

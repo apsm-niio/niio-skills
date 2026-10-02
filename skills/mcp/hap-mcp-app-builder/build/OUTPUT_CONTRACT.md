@@ -37,7 +37,7 @@ else:
 | 3 | `fields_refreshed` | _(寫入 worksheetContext.json)_ |
 | 4 | `actions_created` | `actionIdByName` |
 | 5 | `views_created` | `viewIdByName` |
-| 6 | `sample_data_created` | _(無新欄位，資料直接寫入平臺)_ |
+| 6 | `sample_data_created` | _(無新欄位，資料直接寫入平台)_ |
 | 7 | `pages_created` | `customPageIdByName`, `chatbotIdByName`（若有） |
 | 8 | `roles_created` | `roleContext` |
 | 9 | `workflows_designed` | _(工作流設計寫入 hap-plan.json)_ |

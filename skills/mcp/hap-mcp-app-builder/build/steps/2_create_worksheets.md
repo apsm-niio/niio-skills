@@ -1,22 +1,22 @@
 # Step 2：建立工作表
 
-你是 niio 工作表搭建專家，負責將方案中的所有工作表建立完畢。
+你是 niio 工作表建置專家，負責將方案中的所有工作表建立完畢。
 
 ## 輸入資料
 
 - `appId`：應用 ID
 - `worksheetToSectionId`：工作表名 → sectionId 的對映（從 `hap-context.json` 的 `sectionIdByName` 推導）
-- `worksheets`：所有工作表的規劃列表（來自 `hap-plan.json`）
+- `worksheets`：所有工作表的規劃清單（來自 `hap-plan.json`）
 
 ## 執行流程
 
 按依賴順序逐張建立工作表：
 
 1. 先建被引用表（無關聯依賴的主資料表），再建引用方（含 Relation 欄位的業務表）
-2. 每張表呼叫 `create_worksheet`，傳入對應的 `sectionId`、`icon`、`color`，以及 `remark`、`desc`、`importantNote` 等引數（引數規則見下方）
+2. 每張表呼叫 `create_worksheet`，傳入對應的 `sectionId`、`icon`、`color`，以及 `remark`、`desc`、`importantNote` 等參數（參數規則見下方）
    - **`icon` 和 `color` 必須原樣使用 plan 中該工作表的值，嚴禁自行替換或編造**
 3. 固定設定 `createDefaultView: false`（預設檢視在後續步驟單獨建立）
-4. 記錄返回的 `worksheetId`，存入 `worksheetIdByName[表名]`
+4. 記錄回傳的 `worksheetId`，存入 `worksheetIdByName[表名]`
 5. 更新 `hap-context.json`：寫入 `worksheetIdByName`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`worksheetIdByName` 條目數 = plan 中工作表數量，每個值均為 24 位物理 ID。
@@ -36,7 +36,7 @@
 | `max` | Rating | 最大評分值（1-10）|
 
 
-## 工作表引數規則
+## 工作表參數規則
 
 ### remark（必填）
 
@@ -62,14 +62,14 @@
 
 ### createDefaultView（固定 false）
 
-固定設定為 `false`，禁止自動建立預設檢視。檢視在後續步驟（Step 5）中單獨建立和配置。
+固定設定為 `false`，禁止自動建立預設檢視。檢視在後續步驟（Step 5）中單獨建立和設定。
 
 ---
 
 ## 欄位設計規範
 
 > [!CAUTION]
-> **Plan 欄位屬性不可變原則**：plan 中已明確定義的欄位屬性——**名稱、型別、選項值、關聯目標表**——是不可修改的，執行器必須原樣使用。執行器只能在此基礎上**補充** plan 未定義的配置（Divider 分段、layout 佈局、alias、placeholder、remark、defaultValue、config 等），以及**追加** plan 中遺漏的欄位。嚴禁篡改已有欄位的名稱、型別或選項值。
+> **Plan 欄位屬性不可變原則**：plan 中已明確定義的欄位屬性——**名稱、型別、選項值、關聯目標表**——是不可修改的，執行器必須原樣使用。執行器只能在此基礎上**補充** plan 未定義的設定（Divider 分段、layout 佈局、alias、placeholder、remark、defaultValue、config 等），以及**追加** plan 中遺漏的欄位。嚴禁篡改已有欄位的名稱、型別或選項值。
 
 ### 一、建表前的業務思考
 
@@ -125,7 +125,7 @@ Date / DateTime / Time 欄位必須顯式傳 `config.format`，採用 Moment.js 
 ### alias 生成規則
 
 每個欄位必須設定 `alias`，命名約定：
-- 全域性唯一字首 `biz_`
+- 全域唯一字首 `biz_`
 - 字尾由欄位語義對應的英文短片語成（snake_case），如 `biz_visitor_name` / `biz_visit_time` / `biz_status`
 - 不要重複，同表內 alias 必須唯一
 
@@ -240,7 +240,7 @@ span:6 示例（語義成對）：
 
 ### 七、Relation 欄位規範
 
-#### 引數設定
+#### 參數設定
 每個 Relation 欄位必須同時包含 `dataSource`、`config.bidirectional`、`config.displayMode` 三個屬性。`displayMode` 非 `dropdown` 時，`config.showFields` 不得為空。
 
 - **`dataSource`**（欄位頂層屬性，非 config 內）
@@ -267,7 +267,7 @@ span:6 示例（語義成對）：
   - `displayMode` 為 `inlineTable` / `tabTable` → **必須 5-10 個**
   - `displayMode` 為 `dropdown` → 不需要
 
-取值：目標表中最具業務識別度的欄位 alias（從 plan 中目標表的欄位列表挑選，轉為 `biz_` 開頭的 alias）
+取值：目標表中最具業務識別度的欄位 alias（從 plan 中目標表的欄位清單挑選，轉為 `biz_` 開頭的 alias）
 
 - **`config.coverField`**（條件必填）
   - 僅 `displayMode=card` 時有效
@@ -281,7 +281,7 @@ span:6 示例（語義成對）：
   - 若目標表尚未建好 → **跳過整個 Relation 欄位**
   - 目標表建表時會設定 `bidirectional: true`，API 自動在本表建立反向關聯欄位
 
-#### Relation dataSource 獲取流程
+#### Relation dataSource 取得流程
 
 ```
 plan 字段有 targetWorksheet（目标表名）

@@ -1,13 +1,13 @@
 # Step 5b：建立自訂頁面空殼與 AI 助手
 
-你負責為所有自訂頁面建立空白導航項，並建立所有 AI 助手。本步驟只建立物件、獲取 ID，**不配置頁面元件內容**（元件配置由 Step 7 完成）。
+你負責為所有自訂頁面建立空白導航項，並建立所有 AI 助手。本步驟只建立物件、取得 ID，**不設定頁面元件內容**（元件設定由 Step 7 完成）。
 
 ## 輸入資料
 
 - `appId`：應用 ID
 - `sectionIdByName`：導航分組名稱 → sectionId 對映（來自 `hap-context.json`）
-- `customPages`：頁面規劃列表（來自 `hap-plan.json`）
-- `aiAssistants`：AI 助手規劃列表（來自 `hap-plan.json`，可能為空陣列）
+- `customPages`：頁面規劃清單（來自 `hap-plan.json`）
+- `aiAssistants`：AI 助手規劃清單（來自 `hap-plan.json`，可能為空陣列）
 
 ## 執行流程
 
@@ -25,7 +25,7 @@
 1. 讀取 `hap-plan.json` 中的 `aiAssistants` 陣列
    - 若為空陣列或不存在 → 跳過此階段
 2. 對每個 AI 助手，呼叫 `create_chatbot` 建立：
-   - 必填引數：`appId`、`name`、`prompt`、`welcomeMessage`、`presetQuestions`
+   - 必填參數：`appId`、`name`、`prompt`、`welcomeMessage`、`presetQuestions`
    - `prompt`：基於助手描述生成簡練的系統提示詞
    - `presetQuestions`：根據業務場景生成高頻預設問題，**必須少於 5 個**
    - `icon`：固定使用 `17_6_reddit`

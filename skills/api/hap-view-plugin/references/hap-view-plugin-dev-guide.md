@@ -59,7 +59,7 @@ mdye --version
 
 ### niio 提供的官方模板
 
-niio 提供多種外掛模板，透過 `--template` 引數選擇：
+niio 提供多種外掛模板，透過 `--template` 參數選擇：
 
 | 模板名稱 | 適用場景 | 技術棧 |
 |---------|---------|-------|
@@ -94,7 +94,7 @@ echo "view-plugin" | mdye init view --id <用户提供的ID> --template Vue
 - 📊 **資料看板、BI 駕駛艙** → `React` 或 `React-Tailwind`
 - 📅 **日曆、甘特圖** → `React`
 - 🗺️ **地圖檢視** → `React`
-- 📝 **簡單列表、卡片展示** → `JavaScript` 或 `React-Tailwind`
+- 📝 **簡單清單、卡片展示** → `JavaScript` 或 `React-Tailwind`
 
 **執行後會:**
 - 建立名為 `view-plugin` 的專案目錄
@@ -156,7 +156,7 @@ npm install dayjs
 niio 官方模板已經包含了必要的基礎結構，你**不需要從零編寫**。你可以：
 - ✅ 在模板基礎上修改和擴充套件
 - ✅ 完全重寫以滿足特定需求
-- ✅ 保留模板的資料獲取邏輯，只修改展示部分
+- ✅ 保留模板的資料取得邏輯，只修改展示部分
 
 **React 模板的典型基礎結構：**
 
@@ -355,12 +355,12 @@ return (
 );
 ```
 
-**場景C: 列表檢視**
+**場景C: 清單檢視**
 
-使用者說: "建立客戶列表" / "顯示所有記錄"
+使用者說: "建立客戶清單" / "顯示所有記錄"
 
 你需要生成:
-- 表格或卡片列表
+- 表格或卡片清單
 - 顯示關鍵欄位
 - 支援點選檢視詳情
 
@@ -384,7 +384,7 @@ mdye start
 **伺服器啟動後:**
 - 監聽 http://localhost:3000/bundle.js (或 3001 等埠)
 - 自動熱更新程式碼變化
-- **使用者在niio後臺已經配置了這個地址,無需你告知**
+- **使用者在niio後臺已經設定了這個地址,無需你告知**
 
 **❌ 嚴禁輸出的內容:**
 - ❌ 除錯地址 (如 http://localhost:3000/bundle.js)
@@ -438,7 +438,7 @@ new_string: "font-size: 24px;"
 
 ---
 
-## 第7步: 構建併發布
+## 第7步: 建置併發布
 
 ### 使用者會說:
 
@@ -483,7 +483,7 @@ mdye push -m "订单看板视图首次发布
 
 **❌ 不要說:**
 - "🎉 檢視外掛已釋出成功!"
-- "已釋出到niio平臺,現在可以在所有應用中使用這個檢視了"
+- "已釋出到niio平台,現在可以在所有應用中使用這個檢視了"
 - "檢視地址: xxx"
 - "如需修改,隨時告訴我"
 - 任何多餘的說明和引導
@@ -500,7 +500,7 @@ mdye push -m "订单看板视图首次发布
 1. 安裝依賴: `npm install styled-components`
 2. 生成程式碼: 按狀態分組的卡片佈局
 3. 關鍵點:
-   - 解析單選欄位獲取狀態文字
+   - 解析單選欄位取得狀態文字
    - 使用 `utils.openRecordInfo` 開啟詳情
    - 響應式網格佈局
 
@@ -516,13 +516,13 @@ mdye push -m "订单看板视图首次发布
    - 使用 recharts 渲染柱狀圖/餅圖
    - 按業務維度分組統計
 
-### 場景3: 客戶列表
+### 場景3: 客戶清單
 
-**使用者需求:** "建立客戶列表檢視"
+**使用者需求:** "建立客戶清單檢視"
 
 **你的執行流程:**
 1. 安裝依賴: `npm install styled-components`
-2. 生成程式碼: 卡片或表格列表
+2. 生成程式碼: 卡片或表格清單
 3. 關鍵點:
    - 顯示關鍵欄位(名稱、電話、負責人)
    - 點選開啟詳情
@@ -534,14 +534,14 @@ mdye push -m "订单看板视图首次发布
 
 ### 必須記住:
 
-| 欄位型別 | type | 返回值格式 | 處理方法 |
+| 欄位型別 | type | 回傳值格式 | 處理方法 |
 |---------|------|-----------|---------|
 | 文字 | 2 | 字串 | 直接使用 |
 | 數值 | 6 | 字串/數字 | parseFloat() |
 | **單選** | **9** ⚠️ | JSON字串陣列 | 解析 JSON + 從 options 匹配文字 |
-| 多選 | 10 | JSON字串陣列 | 同單選,但返回陣列 |
+| 多選 | 10 | JSON字串陣列 | 同單選,但回傳陣列 |
 | 日期 | 15 | 時間戳字串 | new Date() 或 dayjs() |
-| 成員 | 26 | JSON字串陣列 | 解析 JSON 獲取 accountId/fullname |
+| 成員 | 26 | JSON字串陣列 | 解析 JSON 取得 accountId/fullname |
 | **關聯記錄** | **29** ⚠️ | 數字(多條) / JSON(單條) | 數字需呼叫 getRowRelationRows API |
 
 ### 最容易出錯的兩個:
@@ -625,7 +625,7 @@ if (typeof record.relationField === 'number') {
 - ❌ 告訴使用者"您需要執行..."
 - ❌ 說"接下來請執行..."
 - ❌ 主動關閉開發伺服器
-- ❌ 等使用者要求才構建釋出
+- ❌ 等使用者要求才建置釋出
 - ❌ 展示技術細節和命令輸出
 - ❌ **告訴使用者除錯地址 (如 http://localhost:3000/bundle.js)**
 - ❌ **告訴使用者"複製到niio..."之類的操作指引**
@@ -653,15 +653,15 @@ if (typeof record.relationField === 'number') {
 
 ---
 
-**記住: 使用者只想要結果,不關心過程。你的目標是讓整個流程對使用者來說完全透明且自動化。使用者已經知道怎麼在niio後臺檢視和配置,不需要你教他!** 🚀
+**記住: 使用者只想要結果,不關心過程。你的目標是讓整個流程對使用者來說完全透明且自動化。使用者已經知道怎麼在niio後臺檢視和設定,不需要你教他!** 🚀
 
 ---
 
 ## API 使用指南
 
-### 1. 環境變數及配置獲取
+### 1. 環境變數及設定取得
 
-#### 1.1 獲取 env 環境變數
+#### 1.1 取得 env 環境變數
 
 ```javascript
 // 使用辅助函数安全获取env中的配置项
@@ -684,7 +684,7 @@ const titleFieldId = getEnvValue(env, 'title');
 const maxRecords = getEnvValue(env, 'maxRecords', '50');
 ```
 
-#### 1.2 獲取 config 配置
+#### 1.2 取得 config 設定
 
 ```javascript
 import { config } from "mdye";
@@ -696,9 +696,9 @@ const { appId, worksheetId, viewId, controls } = config;
 const fieldControl = _.find(controls, { controlId: fieldId });
 ```
 
-### 2. 資料獲取 API
+### 2. 資料取得 API
 
-#### 2.1 獲取工作表資料 (getFilterRows)
+#### 2.1 取得工作表資料 (getFilterRows)
 
 ```javascript
 import { api } from "mdye";
@@ -721,7 +721,7 @@ async function loadRecords() {
 }
 ```
 
-#### 2.2 獲取記錄詳情 (getRowDetail)
+#### 2.2 取得記錄詳情 (getRowDetail)
 
 ```javascript
 async function getRecordDetail(rowId) {
@@ -736,7 +736,7 @@ async function getRecordDetail(rowId) {
 }
 ```
 
-#### 2.3 獲取關聯記錄 (getRowRelationRows)
+#### 2.3 取得關聯記錄 (getRowRelationRows)
 
 ```javascript
 async function loadRelationRows({ controlId, rowId }) {
@@ -815,9 +815,9 @@ async function deleteRecord(rowId) {
 優勢:
 - ✅ 原生體驗,與niio介面一致
 - ✅ 功能完整:支援編輯、刪除、討論、日誌、附件等所有功能
-- ✅ 自動處理許可權驗證
+- ✅ 自動處理權限驗證
 - ✅ 無需自己開發彈窗 UI
-- ✅ 返回操作結果,方便進行資料同步
+- ✅ 回傳操作結果,方便進行資料同步
 
 **基礎用法:**
 
@@ -947,7 +947,7 @@ useEffect(() => {
 
 ### 完整欄位型別對照表
 
-| 型別編號 | 列舉名稱 | 欄位型別 | API 建立 | API 返回 |
+| 型別編號 | 列舉名稱 | 欄位型別 | API 建立 | API 回傳 |
 |---------|---------|---------|---------|---------|
 | 2 | Text | 文字框 | ✅ | ✅ |
 | 3 | PhoneNumber | 手機 | ❌ | ✅ |
@@ -1041,12 +1041,12 @@ function parseMultiSelect(value, control) {
 關聯欄位根據 `enumDefault` 或 `subType` 屬性分為兩種型別:
 
 1. **單條關聯** (enumDefault=1 或 subType=1)
-   - 返回格式: JSON 陣列字串
+   - 回傳格式: JSON 陣列字串
    - 處理方式: 直接解析 JSON 字串即可
 
 2. **多條關聯** (enumDefault=2 或 subType=2)
-   - 返回格式: 數字(表示關聯記錄的數量)
-   - 處理方式: **必須呼叫 `getRowRelationRows` API** 才能獲取實際資料
+   - 回傳格式: 數字(表示關聯記錄的數量)
+   - 處理方式: **必須呼叫 `getRowRelationRows` API** 才能取得實際資料
 
 ```javascript
 // 判断是否为多条关联
@@ -1125,7 +1125,7 @@ function parseMembers(value) {
 }
 ```
 
-### 自動獲取欄位值的工具函式
+### 自動取得欄位值的工具函式
 
 ```javascript
 function getFieldValue(fieldId, record, controls) {
@@ -1218,7 +1218,7 @@ niio niio 檢視外掛支援兩種資料操作方式:
 
 **特點:**
 - ✅ 已封裝好身分驗證與授權,開箱即用
-- ✅ 自動處理許可權和上下文
+- ✅ 自動處理權限和上下文
 - ✅ 提供完整的 TypeScript 型別定義
 - ✅ 與niio原生 UI 元件整合
 - ⚠️ 僅限當前工作表和檢視的資料操作
@@ -1243,7 +1243,7 @@ config.controls; // 字段列表
 **適用場景:**
 - ✅ 需要呼叫 mdye 未封裝的介面
 - ✅ 跨工作表、跨應用的資料操作
-- ✅ 構建複雜的業務邏輯頁面
+- ✅ 建置複雜的業務邏輯頁面
 - ✅ 使用高階功能（選項集、角色、工作流等）
 - ✅ 批次資料匯入匯出
 - ✅ 自訂資料聚合統計
@@ -1253,10 +1253,10 @@ config.controls; // 字段列表
 - ✅ 支援所有niio功能
 - ✅ 可在任何環境使用(外掛/獨立頁面)
 - ✅ 靈活的資料篩選和排序
-- ⚠️ 需要手動配置身分驗證與授權(Appkey & Sign)
+- ⚠️ 需要手動設定身分驗證與授權(Appkey & Sign)
 - ⚠️ 需要處理跨域問題（外掛內無此問題）
 
-### 在檢視外掛中使用 V3 介面構建複雜頁面
+### 在檢視外掛中使用 V3 介面建置複雜頁面
 
 #### 方案1: 使用 mdye 封裝的 api（推薦用於當前表操作）
 
@@ -1285,12 +1285,12 @@ const result = await api.getFilterRows({
 2. **跨應用資料整合** - 從多個應用匯總資料
 3. **高階資料統計** - 使用透視表API進行復雜聚合
 4. **選項集管理** - 動態載入和使用應用選項集
-5. **角色許可權控制** - 根據使用者角色顯示不同內容
+5. **角色權限控制** - 根據使用者角色顯示不同內容
 6. **批次資料操作** - 批次建立、更新記錄
 
-**配置步驟:**
+**設定步驟:**
 
-**第1步：配置身分驗證與授權資訊**
+**第1步：設定身分驗證與授權資訊**
 
 ```javascript
 // 在项目根目录创建 config/api.config.js
@@ -1612,17 +1612,17 @@ function getImageUrl(attachments) {
 export default MultiTableDashboard;
 ```
 
-### 常用 V3 介面完整列表
+### 常用 V3 介面完整清單
 
 #### 應用管理
-- `GET /v3/app` - 獲取應用資訊
-- `POST /v3/app/worksheets/list` - 獲取工作表列表
-- `GET /v3/app/worksheets/{worksheet_id}` - 獲取工作表詳情
-- `GET /v3/app/worksheets/{worksheet_id}/structure` - 獲取工作表結構
+- `GET /v3/app` - 取得應用資訊
+- `POST /v3/app/worksheets/list` - 取得工作表清單
+- `GET /v3/app/worksheets/{worksheet_id}` - 取得工作表詳情
+- `GET /v3/app/worksheets/{worksheet_id}/structure` - 取得工作表結構
 
 #### 資料查詢
-- `POST /v3/app/worksheets/{worksheet_id}/rows/list` - 獲取記錄列表（⭐最常用）
-- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}` - 獲取單條記錄
+- `POST /v3/app/worksheets/{worksheet_id}/rows/list` - 取得記錄清單（⭐最常用）
+- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}` - 取得單條記錄
 - `POST /v3/app/worksheets/{worksheet_id}/rows/pivot` - 透視表統計（⭐推薦用於資料分析）
 
 #### 資料操作
@@ -1633,13 +1633,13 @@ export default MultiTableDashboard;
 - `PUT /v3/app/worksheets/{worksheet_id}/rows/batch` - 批次更新
 
 #### 選項集和角色
-- `GET /v3/app/optionsets` - 獲取選項集列表（⭐推薦用於統一狀態管理）
-- `GET /v3/app/optionsets/{optionset_id}` - 獲取選項集詳情
-- `GET /v3/app/roles` - 獲取角色列表
-- `GET /v3/app/roles/{role_id}/members` - 獲取角色成員
+- `GET /v3/app/optionsets` - 取得選項集清單（⭐推薦用於統一狀態管理）
+- `GET /v3/app/optionsets/{optionset_id}` - 取得選項集詳情
+- `GET /v3/app/roles` - 取得角色清單
+- `GET /v3/app/roles/{role_id}/members` - 取得角色成員
 
 #### 工作流
-- `GET /v3/app/workflows` - 獲取工作流列表
+- `GET /v3/app/workflows` - 取得工作流清單
 - `POST /v3/app/workflows/{workflow_id}/trigger` - 觸發工作流
 
 ### 最佳實踐
@@ -1702,20 +1702,20 @@ const products = await getCachedData(
 
 ---
 
-## 構建和釋出
+## 建置和釋出
 
 ### ⚠️ 重要：完整開發流程
 
-**外掛開發完成後，必須執行構建和釋出步驟！**
+**外掛開發完成後，必須執行建置和釋出步驟！**
 
 完整的開發流程包括：
 1. 本地開發（mdye start）
-2. **構建專案（mdye build）** ⭐
+2. **建置專案（mdye build）** ⭐
 3. **提交發布（mdye push）** ⭐
 
 ### 外掛釋出流程
 
-#### 第1步：構建專案
+#### 第1步：建置專案
 
 執行以下命令將本地專案打包：
 
@@ -1724,7 +1724,7 @@ cd your_plugin_project
 mdye build
 ```
 
-**構建輸出示例：**
+**建置輸出示例：**
 ```
 [21:20:33] 开始构建代码
 ℹ Compiling Webpack
@@ -1790,7 +1790,7 @@ mdye push -m "订单状态视图插件首次发布
 #### 釋出後的狀態
 
 ✅ **外掛已釋出** - 可以在組織內所有應用中使用
-✅ **檢視地址** - 可以透過返回的 URL 直接訪問外掛
+✅ **檢視地址** - 可以透過回傳的 URL 直接訪問外掛
 ✅ **組織共享** - 組織內其他成員可以使用該外掛
 
 ---
@@ -1799,12 +1799,12 @@ mdye push -m "订单状态视图插件首次发布
 
 ### 什麼是 BI 駕駛艙？
 
-BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**設計的資料視覺化介面，而不是簡單的資料列表展示。
+BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**設計的資料視覺化介面，而不是簡單的資料清單展示。
 
 ### BI 駕駛艙 vs 普通檢視的區別
 
 **❌ 錯誤的駕駛艙設計（普通檢視思維）：**
-- 只顯示當前工作表的記錄列表
+- 只顯示當前工作表的記錄清單
 - 簡單統計總數、今日新增
 - 沒有業務邏輯，只是資料展示
 
@@ -1844,7 +1844,7 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 設計 BI 駕駛艙的核心是：**從業務分析師的視角思考**，而不是從技術視角簡單展示資料。
 
 - ✅ 展示業務指標，而不是原始資料
-- ✅ 提供業務洞察，而不是資料列表
+- ✅ 提供業務洞察，而不是資料清單
 - ✅ 關注業務流程，而不是單表統計
 - ✅ 支援決策分析，而不是查詢檢索
 
@@ -2185,7 +2185,7 @@ function ChartCard({ title, description, timeRange, data }) {
 
 ### 問題：使用者無法預覽外掛
 
-當使用者反饋"返回外掛預覽不了"或"看不到效果"時，按以下步驟排查：
+當使用者反饋"回傳外掛預覽不了"或"看不到效果"時，按以下步驟排查：
 
 #### 1. 檢查開發伺服器是否啟動
 
@@ -2308,11 +2308,11 @@ npm install recharts
 | `Cannot read property of undefined` | 資料未正確載入 | 檢查 API 呼叫和資料處理 |
 | `Mixed Content: blocked` | HTTP/HTTPS 混合內容 | 確保開發伺服器使用 HTTPS |
 
-#### 6. 檢查niio後臺配置
+#### 6. 檢查niio後臺設定
 
-**確認以下配置正確：**
+**確認以下設定正確：**
 
-1. **外掛除錯地址配置：**
+1. **外掛除錯地址設定：**
    - 開啟niio → 應用 → 檢視外掛管理
    - 檢查除錯地址是否為：`http://localhost:3000/bundle.js`
    - 注意：埠號必須與開發伺服器一致
@@ -2331,11 +2331,11 @@ npm install recharts
 
 - [ ] `mdye start` 命令執行成功
 - [ ] 控制檯顯示 `Compiled successfully`
-- [ ] 訪問 `http://localhost:3000/bundle.js` 返回正常內容（不是 404）
+- [ ] 訪問 `http://localhost:3000/bundle.js` 回傳正常內容（不是 404）
 - [ ] 瀏覽器控制檯無報錯
 - [ ] 3000 埠未被其他程序佔用
 - [ ] 防火牆已允許 Node.js 連線（如果適用）
-- [ ] niio後臺除錯地址配置正確
+- [ ] niio後臺除錯地址設定正確
 
 ### 快速診斷命令
 
@@ -2481,7 +2481,7 @@ chmod +x diagnose.sh
 **問題描述:** 單選或多選欄位顯示的是 UUID 格式的 key,而不是選項的顯示文字。
 
 **原因分析:**
-1. niio選項欄位返回的原始值是 JSON 格式的 key 陣列
+1. niio選項欄位回傳的原始值是 JSON 格式的 key 陣列
 2. 需要從 `config.controls` 中找到對應欄位的 `options`,然後根據 key 匹配出 value
 
 **解決方案:**
@@ -2514,7 +2514,7 @@ function parseSingleSelect(value, control) {
 
 ### 問題 2：找不到單選欄位
 
-**問題描述:** 使用 `controls.find()` 查詢單選欄位時,返回 `undefined`。
+**問題描述:** 使用 `controls.find()` 查詢單選欄位時,回傳 `undefined`。
 
 **原因分析:**
 - 單選欄位的 type 是 **9** 而不是 11
@@ -2541,9 +2541,9 @@ const selectField = controls?.find(ctrl =>
 **問題描述:** 關聯欄位顯示的是數字(如 `2`、`3`),而不是實際的關聯記錄資訊。
 
 **原因分析:**
-1. 多條關聯欄位 (enumDefault=2 或 subType=2) 返回的原始值是數字,表示關聯記錄的數量
-2. 與單條關聯不同,多條關聯不會直接返回 JSON 陣列字串
-3. 必須呼叫 `getRowRelationRows` API 才能獲取實際的關聯記錄資料
+1. 多條關聯欄位 (enumDefault=2 或 subType=2) 回傳的原始值是數字,表示關聯記錄的數量
+2. 與單條關聯不同,多條關聯不會直接回傳 JSON 陣列字串
+3. 必須呼叫 `getRowRelationRows` API 才能取得實際的關聯記錄資料
 
 **解決方案:**
 
@@ -2640,7 +2640,7 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
 
 ### 4. 安全注意事項
 - 避免硬編碼敏感資訊
-- 使用環境變數管理配置
+- 使用環境變數管理設定
 - 驗證使用者輸入
 - 防止 XSS 攻擊
 
@@ -2664,7 +2664,7 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
 
 ---
 
-**注意：** 此文件是 niio 檢視外掛開發 Agent 的完整技能包，包含了從專案建立到釋出的全流程指導。實際開發中請根據具體需求調整配置和程式碼。
+**注意：** 此文件是 niio 檢視外掛開發 Agent 的完整技能包，包含了從專案建立到釋出的全流程指導。實際開發中請根據具體需求調整設定和程式碼。
 
 **版權資訊：**
 - 文件基於niio niio V3 API

@@ -5,7 +5,7 @@ description: 用 hap 命令列查詢/篩選/統計 niio 工作表裡的業務資
 
 # niio 資料查詢助手（篩選 · 透視 · 統計）
 
-幫使用者用 `hap` 命令列從 niio 工作表裡**把想要的資料查出來**。難點不在命令本身，而在**引數 JSON 怎麼寫對**——篩選條件的寫法、各處支援哪些比較方式、透視的維度與聚合。本 skill 把這些易錯點講清楚，並給可直接套用的模板。
+幫使用者用 `hap` 命令列從 niio 工作表裡**把想要的資料查出來**。難點不在命令本身，而在**參數 JSON 怎麼寫對**——篩選條件的寫法、各處支援哪些比較方式、透視的維度與聚合。本 skill 把這些易錯點講清楚，並給可直接套用的模板。
 
 > 本 skill 只管"查/篩/統計"（只讀）。定位到目標行後要**寫回資料**（改備註、改狀態等）用
 > `hap worksheet record update`——**寫記錄不依賴預設應用**，有 `WORKSHEET_ID` 就能定位，
@@ -86,7 +86,7 @@ empty not_empty
 - 寫錯名字、寫了這裡沒有的比較方式、寫了不存在的列，`hap` 都會在發出去之前點名拒絕並告訴你可用取值。
 - `node` 鍵和物件形態的 `value` 只屬於工作流條件，寫在記錄查詢裡會被拒絕。
 
-> 🚨 **服務端對不認識的比較方式不報錯——它把整個條件丟掉，返回全表，並且報成功。**
+> 🚨 **伺服器端對不認識的比較方式不報錯——它把整個條件丟掉，回傳全表，並且報成功。**
 > 用一個它不認的名字去查十二條逾期訂單，拿回來的是全部訂單，沒有任何跡象說明篩選沒生效。
 > 你能看到報錯，靠的是 `hap` 在發出去之前的本地攔截。所以**只要不是用 `hap` 發的篩選請求
 > （自己拼 HTTP、別的客戶端），看結果要看條數，別隻看 `success`。**
@@ -102,7 +102,7 @@ empty not_empty
 
 ### 關聯欄位篩選：先拿到關聯記錄的 rowid
 
-關聯欄位（如「任務」表裡的「版本」「專案」「客戶」）在**返回資料里長這樣**——一個陣列，每項帶 `sid`（關聯記錄的 rowid）和 `name`（顯示標題）：
+關聯欄位（如「任務」表裡的「版本」「專案」「客戶」）在**回傳資料里長這樣**——一個陣列，每項帶 `sid`（關聯記錄的 rowid）和 `name`（顯示標題）：
 
 ```json
 "版本字段": [ { "sid": "ITERATION_ROW_ID", "name": "迭代A" } ]
@@ -196,9 +196,9 @@ hap worksheet record list WORKSHEET_ID \
 - `--search` 關鍵字模糊搜尋（跨欄位），可與 filter 疊加。
 - `--view-id` 套用某檢視的內建篩選/排序。
 - 不傳 `--filter-json` 就是查全部（按分頁）。
-- **返回資料預設用欄位別名作 key**（如 `mingcheng`、`fuzeren`、`ssdd`），不是 controlId。所以解析結果時按別名取值，或加 `--use-field-id-as-key` 讓 key 變成 controlId。別名可在 `worksheet fields` 裡看到。
+- **回傳資料預設用欄位別名作 key**（如 `mingcheng`、`fuzeren`、`ssdd`），不是 controlId。所以解析結果時按別名取值，或加 `--use-field-id-as-key` 讓 key 變成 controlId。別名可在 `worksheet fields` 裡看到。
 - `--fields` 傳欄位 ID 或別名都行；只想要某幾列時用它省 token。
-- 成員欄位返回的是物件陣列 `[{accountId, fullname, avatar, status}]`，取 `fullname` 顯示人名。
+- 成員欄位回傳的是物件陣列 `[{accountId, fullname, avatar, status}]`，取 `fullname` 顯示人名。
 
 ---
 
@@ -219,7 +219,7 @@ hap worksheet record pivot WORKSHEET_ID \
   --include-summary                                            # 要总计行加
 ```
 
-返回結構是 `data.pivot`（一個陣列），每項形如：
+回傳結構是 `data.pivot`（一個陣列），每項形如：
 
 ```json
 { "rows":    { "<行维度字段ID>": "进行中" },
@@ -243,7 +243,7 @@ hap worksheet record pivot WORKSHEET_ID \
 | `all_contains` | 只在**文字**上行 |
 | `starts_with` / `ends_with` 及其否定式 | 只在**文字**上行 |
 
-除 `contains` 外，其餘按型別的限制 `hap` 攔不住（它不知道欄位型別），由服務端拒絕並把你這次發的
+除 `contains` 外，其餘按型別的限制 `hap` 攔不住（它不知道欄位型別），由伺服器端拒絕並把你這次發的
 條件補回錯誤資訊裡，形如「A pivot accepts fewer comparisons than `record list` does…」。
 
 **pivot 還挑 `value` 的形態**（`record list` 不挑，兩種寫法都收）：
@@ -291,10 +291,10 @@ hap worksheet record pivot WORKSHEET_ID \
 
 ## bottom-stats 與 chart（次要）
 
-- **`record bottom-stats`**：只返回檢視底部那一行彙總（不是多維透視）。它走的是**另一套老格式**：`--column-rpts '[{"controlId":"amount","rptType":1}]'`（rptType 是整數，按 `--help` 確認對應關係），`--filter-controls` 用主站 wire 結構而非 filter-json。另有 `-k/--keywords` 按關鍵字篩，以及 `--report-id`——給了它就讀**某個圖表檢視**的彙總而不是普通表格的彙總（圖表 id 來自 `hap worksheet chart list`）。需要真正的分組統計時優先用 `record pivot`。
+- **`record bottom-stats`**：只回傳檢視底部那一行彙總（不是多維透視）。它走的是**另一套老格式**：`--column-rpts '[{"controlId":"amount","rptType":1}]'`（rptType 是整數，按 `--help` 確認對應關係），`--filter-controls` 用主站 wire 結構而非 filter-json。另有 `-k/--keywords` 按關鍵字篩，以及 `--report-id`——給了它就讀**某個圖表檢視**的彙總而不是普通表格的彙總（圖表 id 來自 `hap worksheet chart list`）。需要真正的分組統計時優先用 `record pivot`。
 - **`record logs`**：某條記錄的變更日誌，回答"這個值是誰什麼時候改的"。定位到可疑記錄後用它，比翻應用級 `hap app logs` 精準。
 - **`worksheet chart`**：**是一個命令組**（`create` / `get` / `update` / `delete` / `list`），
-  在工作表上建/改圖表配置，不是即時取數。建圖用 `hap worksheet chart create`，
+  在工作表上建/改圖表設定，不是即時取數。建圖用 `hap worksheet chart create`，
   `--report-type`（整數圖表型別）+ `-j/--spec-json`（含 xaxes/yaxisList/filter 等）都在**子命令**上，
   `hap worksheet chart --help` 只會列出子命令。圖表規格怎麼寫見 `hap guide chart`。
   建圖表多數時候屬於"改應用"，可交給 hap-cli-app-editor；純取數分析用 `record pivot` 更直接。
@@ -313,6 +313,6 @@ hap worksheet record pivot WORKSHEET_ID \
 - **必填項**：只有 `record pivot` 的 `--values-json` 是必填。分頁 `-p`/`-n` 都有預設值
   （`record list` 每頁 20、`pivot` 每頁 100，頁碼都從 1 起），`--view-id` 兩個命令都是可選的。
   要一次取更多就顯式給 `-n`。
-- **結果解析**：返回預設用欄位別名作 key，要用 controlId 作 key 就加 `--use-field-id-as-key`；成員/關聯欄位是物件陣列，取其中的 `fullname` / `name`。
+- **結果解析**：回傳預設用欄位別名作 key，要用 controlId 作 key 就加 `--use-field-id-as-key`；成員/關聯欄位是物件陣列，取其中的 `fullname` / `name`。
 - **Shell 轉義**：用單引號包整個 JSON、內部用雙引號；篩選複雜時寫進檔案再 `--filter-json "$(cat f.json)"`。
 - **核對實際請求**：`hap config log on` 後再跑命令，可在日誌裡看到真正發出的請求體。

@@ -2,16 +2,16 @@
 
 > 本文件總結了niio V3 API的核心使用規範、最佳實踐和常見陷阱,基於實際測試驗證
 
-## 📚 如何獲取最新的 API V3 文件
+## 📚 如何取得最新的 API V3 文件
 
-在開始使用 niio API V3 之前,建議先透過以下方式獲取最新的 API 文件:
+在開始使用 niio API V3 之前,建議先透過以下方式取得最新的 API 文件:
 
 ### 方式一: 使用應用 API MCP 伺服器 (推薦)
 
-透過 MCP 伺服器直接訪問最新的 API V3 文件結構。當你看到以下 JSON 代表是 官方API文件的 MCP配置
+透過 MCP 伺服器直接訪問最新的 API V3 文件結構。當你看到以下 JSON 代表是 官方API文件的 MCP設定
 
 
-**配置方法**:
+**設定方法**:
 
 ```json
 {
@@ -28,7 +28,7 @@
 }
 ```
 
-**💡 關於其他 MCP 配置**: 如需配置 niio 應用 MCP (用於操作 niio 資料),請參考 niio MCP 使用指南
+**💡 關於其他 MCP 設定**: 如需設定 niio 應用 MCP (用於操作 niio 資料),請參考 niio MCP 使用指南
 
 ---
 
@@ -42,13 +42,13 @@
 - [篩選器使用指南](https://apifox.mingdao.com/7271713m0.md)
 - [錯誤碼說明](https://apifox.mingdao.com/7271715m0.md)
 
-**API 端點文件**: 完整的 API 端點列表見文件後面的"線上文件資源"章節。
+**API 端點文件**: 完整的 API 端點清單見文件後面的"線上文件資源"章節。
 
 ---
 
 ## 線上文件資源
 
-優先使用 MCP 伺服器訪問最新的 API 文件結構。如果 MCP 不可用,可以透過以下官方線上文件獲取。
+優先使用 MCP 伺服器訪問最新的 API 文件結構。如果 MCP 不可用,可以透過以下官方線上文件取得。
 
 ### 應用 API V3 文件
 
@@ -59,40 +59,40 @@
 - [V3-beta (AI 友好) 錯誤碼](https://apifox.mingdao.com/7271715m0.md) - API 錯誤碼說明
 
 #### 應用 API 端點文件
-- **應用**: [獲取應用資訊](https://apifox.mingdao.com/339496583e0.md)
+- **應用**: [取得應用資訊](https://apifox.mingdao.com/339496583e0.md)
 - **工作表**:
-  - [獲取工作表列表](https://apifox.mingdao.com/359328827e0.md)
-  - [獲取工作表結構資訊](https://apifox.mingdao.com/339496584e0.md)
+  - [取得工作表清單](https://apifox.mingdao.com/359328827e0.md)
+  - [取得工作表結構資訊](https://apifox.mingdao.com/339496584e0.md)
   - [編輯工作表](https://apifox.mingdao.com/339496585e0.md)
   - [刪除工作表](https://apifox.mingdao.com/339496586e0.md)
   - [新建工作表](https://apifox.mingdao.com/339496587e0.md)
 - **工作表行記錄**:
-  - [獲取行記錄列表](https://apifox.mingdao.com/339496588e0.md)
-  - [獲取行記錄詳情](https://apifox.mingdao.com/339496589e0.md)
+  - [取得行記錄清單](https://apifox.mingdao.com/339496588e0.md)
+  - [取得行記錄詳情](https://apifox.mingdao.com/339496589e0.md)
   - [新建行記錄](https://apifox.mingdao.com/339496593e0.md)
   - [更新行記錄](https://apifox.mingdao.com/339496590e0.md)
   - [刪除行記錄](https://apifox.mingdao.com/339496591e0.md)
   - [批次新增行記錄](https://apifox.mingdao.com/339496594e0.md)
   - [批次更新行記錄](https://apifox.mingdao.com/339496595e0.md)
   - [批次刪除行記錄](https://apifox.mingdao.com/339496596e0.md)
-  - [獲取關聯記錄](https://apifox.mingdao.com/339496592e0.md)
-  - [獲取行記錄透視資料](https://apifox.mingdao.com/339496597e0.md)
-  - [獲取記錄分享連結](https://apifox.mingdao.com/339496598e0.md)
-  - [獲取行記錄日誌](https://apifox.mingdao.com/339496599e0.md)
-  - [獲取行記錄討論](https://apifox.mingdao.com/339496600e0.md)
+  - [取得關聯記錄](https://apifox.mingdao.com/339496592e0.md)
+  - [取得行記錄透視資料](https://apifox.mingdao.com/339496597e0.md)
+  - [取得記錄分享連結](https://apifox.mingdao.com/339496598e0.md)
+  - [取得行記錄日誌](https://apifox.mingdao.com/339496599e0.md)
+  - [取得行記錄討論](https://apifox.mingdao.com/339496600e0.md)
 - **選項集**:
-  - [獲取選項集列表](https://apifox.mingdao.com/339496601e0.md)
+  - [取得選項集清單](https://apifox.mingdao.com/339496601e0.md)
   - [建立選項集](https://apifox.mingdao.com/339496602e0.md)
   - [編輯選項集](https://apifox.mingdao.com/339496603e0.md)
   - [停用選項集](https://apifox.mingdao.com/339496604e0.md)
 - **工作流**:
-  - [獲取流程列表](https://apifox.mingdao.com/339496605e0.md)
-  - [獲取流程詳情](https://apifox.mingdao.com/339496606e0.md)
+  - [取得流程清單](https://apifox.mingdao.com/339496605e0.md)
+  - [取得流程詳情](https://apifox.mingdao.com/339496606e0.md)
   - [觸發流程](https://apifox.mingdao.com/339496607e0.md)
 - **角色**:
-  - [獲取角色列表](https://apifox.mingdao.com/339496608e0.md)
+  - [取得角色清單](https://apifox.mingdao.com/339496608e0.md)
   - [建立角色](https://apifox.mingdao.com/339496609e0.md)
-  - [獲取角色詳情](https://apifox.mingdao.com/339496610e0.md)
+  - [取得角色詳情](https://apifox.mingdao.com/339496610e0.md)
   - [刪除角色](https://apifox.mingdao.com/339496611e0.md)
   - [新增角色成員](https://apifox.mingdao.com/339496612e0.md)
   - [移除角色成員](https://apifox.mingdao.com/339496613e0.md)
@@ -100,11 +100,11 @@
 - **公共查詢**:
   - [查詢成員](https://apifox.mingdao.com/339496615e0.md)
   - [查詢部門](https://apifox.mingdao.com/339496616e0.md)
-  - [獲取地區資訊](https://apifox.mingdao.com/339496617e0.md)
+  - [取得地區資訊](https://apifox.mingdao.com/339496617e0.md)
 
 ### 使用建議
 
-1. **優先使用 MCP**: 透過配置好的 MCP 伺服器可以直接在 Claude Code 中訪問最新的 API 結構,無需手動查閱文件
+1. **優先使用 MCP**: 透過設定好的 MCP 伺服器可以直接在 Claude Code 中訪問最新的 API 結構,無需手動查閱文件
 2. **線上文件作為補充**: 當需要詳細說明或示例時,可以訪問上述線上文件
 3. **關注欄位型別**: 欄位型別對照表和篩選器使用指南是最常用的參考文件
 4. **錯誤排查**: 遇到 API 呼叫問題時,先檢視錯誤碼文件
@@ -115,7 +115,7 @@
 
 0. [快速開始 - API 使用流程](#零快速開始---api-使用流程)
 1. [建立工作表規範](#一建立工作表規範)
-2. [欄位型別引數詳解](#二欄位型別引數詳解)
+2. [欄位型別參數詳解](#二欄位型別參數詳解)
 3. [建立/更新記錄規範](#三建立更新記錄規範)
 4. [查詢篩選規範](#四查詢篩選規範)
 5. [資料透視分析規範](#五資料透視分析規範)
@@ -142,29 +142,29 @@
 
 ---
 
-### 0.2 從零搭建應用的完整流程
+### 0.2 從零建置應用的完整流程
 
 #### **階段一: 準備工作**
 
-**Step 1: 獲取 API 憑證**
+**Step 1: 取得 API 憑證**
 
 身分驗證與授權憑證統一放在請求 **Header** 中，每個請求都必須攜帶。V3 支援三種身分驗證與授權方式：
 
-| 方式 | Header 引數 | 建立者 | 操作身份 | 有效期 | 適用場景 |
+| 方式 | Header 參數 | 建立者 | 操作身份 | 有效期 | 適用場景 |
 | --- | --- | --- | --- | --- | --- |
-| **AppKey + Sign** | `HAP-Appkey`、`HAP-Sign` | 管理員 | 應用管理員 | 長期 | 服務端整合 |
+| **AppKey + Sign** | `HAP-Appkey`、`HAP-Sign` | 管理員 | 應用管理員 | 長期 | 伺服器端整合 |
 | **PAT** | `Authorization: Bearer {access_token}`、`HAP-Appid`（部分介面必填） | 個人 | 個人 | 可設定 | 個人指令碼 / 工具 |
 | **OAuth 2.0** | `Authorization: Bearer {access_token}`、`HAP-Appid`（部分介面必填） | 整合開發者 | 被授權使用者 | 短期，自動重新整理 | 第三方應用整合 |
 
-- **AppKey + Sign**：應用金鑰身分驗證與授權，由管理員在「應用 → 設定 → API 金鑰」建立，以應用管理員身份訪問資料。需要獲取 **AppKey**、**Sign**、**應用 ID (app_id)**。
-- **PAT**：個人訪問憑證（Personal Access Token），自行建立，以個人身份操作，可設定有效期和許可權範圍。
+- **AppKey + Sign**：應用金鑰身分驗證與授權，由管理員在「應用 → 設定 → API 金鑰」建立，以應用管理員身份訪問資料。需要取得 **AppKey**、**Sign**、**應用 ID (app_id)**。
+- **PAT**：個人訪問憑證（Personal Access Token），自行建立，以個人身份操作，可設定有效期和權限範圍。
 - **OAuth 2.0**：使用者透過 OAuth 整合完成授權，短期有效、支援自動重新整理。
 
-**PAT / OAuth 2.0 的附加引數：**
+**PAT / OAuth 2.0 的附加參數：**
 - `HAP-Appid`（Header）：標識來源應用，值為應用 ID，**應用級介面必填**。
-- `orgId`（Query）：標識來源組織，值為組織 ID，**組織級介面必填**（如獲取應用列表、建立應用）。
+- `orgId`（Query）：標識來源組織，值為組織 ID，**組織級介面必填**（如取得應用清單、建立應用）。
 
-**Step 2: 配置 API 請求頭**
+**Step 2: 設定 API 請求頭**
 
 方式一 · AppKey + Sign（最常用）：
 
@@ -190,7 +190,7 @@ const headers = {
 
 #### **階段二: 建立應用結構**
 
-**Step 3: 獲取應用資訊(可選)**
+**Step 3: 取得應用資訊(可選)**
 
 檢視應用現有結構:
 
@@ -198,7 +198,7 @@ const headers = {
 GET /v3/app/info
 ```
 
-返回應用的分組、工作表、自訂頁面等資訊。
+回傳應用的分組、工作表、自訂頁面等資訊。
 
 ---
 
@@ -279,7 +279,7 @@ POST /v3/app/worksheets/{worksheet_id}
 
 **Step 6: 準備選項欄位對映**
 
-對於單選/多選欄位,需要先獲取選項的 key:
+對於單選/多選欄位,需要先取得選項的 key:
 
 ```javascript
 // 方法1: 查询工作表结构
@@ -336,7 +336,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows
 **關鍵點**:
 - ⚠️ 選項欄位必須用 key,不能用顯示文字
 - ⚠️ 選項欄位即使單選也要用陣列格式
-- ✅ 數值欄位寫入時傳數字,讀取時返回字串
+- ✅ 數值欄位寫入時傳數字,讀取時回傳字串
 
 ---
 
@@ -369,7 +369,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/batch
 
 #### **階段四: 查詢和分析資料**
 
-**Step 9: 查詢記錄列表**
+**Step 9: 查詢記錄清單**
 
 ```javascript
 POST /v3/app/worksheets/{worksheet_id}/rows/list
@@ -532,7 +532,7 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ### 0.4 常見場景快速參考
 
-| 場景 | API 端點 | 關鍵引數 |
+| 場景 | API 端點 | 關鍵參數 |
 |-----|---------|---------|
 | 建立工作表 | `POST /v3/app/worksheets` | fields |
 | 新增欄位 | `POST /v3/app/worksheets/{id}` | addFields |
@@ -565,7 +565,7 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 - 部門(Department): `in` / `eq` / `notin` 等（詳見 2.1.1 對照表；V3 API 無 belongsto）
 - 空值: `isempty`, `isnotempty`
 
-**subType 引數**:
+**subType 參數**:
 - Collaborator: `0`=單選, `1`=多選
 - Relation: `1`=單條, `2`=多條
 - Time: `1`=時:分, `6`=時:分:秒
@@ -647,16 +647,16 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 #### 1.2.2 關聯欄位 (Relation) ⭐重點
 
-**關聯欄位配置項**:
+**關聯欄位設定項**:
 
-| 引數 | 型別 | 必填 | 說明 |
+| 參數 | 型別 | 必填 | 說明 |
 |-----|------|------|------|
 | `type` | string | ✅ | 必須為 "Relation" |
 | `dataSource` | string | ✅ | 關聯的目標工作表ID |
 | `subType` | string | ✅ | "1"=單條記錄, "2"=多條記錄 |
-| `relation` | object | ❌ | 關聯配置詳情 |
+| `relation` | object | ❌ | 關聯設定詳情 |
 | `relation.bidirectional` | boolean | ❌ | 是否雙向關聯 |
-| `relation.showFields` | array | ❌ | 關聯卡片顯示的欄位ID列表 |
+| `relation.showFields` | array | ❌ | 關聯卡片顯示的欄位ID清單 |
 
 **示例 - 建立單條關聯欄位**:
 ```json
@@ -783,7 +783,7 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 }
 ```
 
-**說明**: 附件欄位建立時無需額外引數
+**說明**: 附件欄位建立時無需額外參數
 
 ---
 
@@ -860,11 +860,11 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ---
 
-## 二、欄位型別引數詳解
+## 二、欄位型別參數詳解
 
 ### 2.1 欄位型別對照表
 
-| 欄位型別 | type值 | 必需引數 | 可選引數 | 說明 |
+| 欄位型別 | type值 | 必需參數 | 可選參數 | 說明 |
 |---------|--------|---------|---------|------|
 | 文字 | Text | name | alias, required, isTitle, isUnique, isReadOnly, isHidden, isHiddenOnCreate | 基礎文字欄位 |
 | 數值 | Number | name | precision (0-14), alias, required | 支援小數 |
@@ -941,7 +941,7 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ---
 
-### 2.2 subType引數詳解
+### 2.2 subType參數詳解
 
 **Collaborator (成員欄位)**:
 - `"0"` - 單選成員
@@ -965,9 +965,9 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ---
 
-### 2.3 欄位約束引數
+### 2.3 欄位約束參數
 
-| 引數 | 型別 | 說明 | 適用欄位 |
+| 參數 | 型別 | 說明 | 適用欄位 |
 |-----|------|------|---------|
 | `required` | boolean | 是否必填 | 所有欄位 |
 | `isTitle` | boolean | 是否為標題欄位 | Text |
@@ -996,9 +996,9 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ---
 
-### 3.2 triggerWorkflow 引數詳解 ⭐重要
+### 3.2 triggerWorkflow 參數詳解 ⭐重要
 
-`triggerWorkflow` 引數控制是否在資料操作時觸發工作表相關的工作流。
+`triggerWorkflow` 參數控制是否在資料操作時觸發工作表相關的工作流。
 
 **適用範圍**:
 - ✅ 建立記錄: `POST /v3/app/worksheets/{worksheet_id}/rows`
@@ -1008,16 +1008,16 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 - ✅ 刪除記錄: `DELETE /v3/app/worksheets/{worksheet_id}/rows/{row_id}`
 - ✅ 批次刪除: `DELETE /v3/app/worksheets/{worksheet_id}/rows/batch`
 
-**引數說明**:
+**參數說明**:
 
-| 引數值 | 說明 | 預設值 | 使用場景 |
+| 參數值 | 說明 | 預設值 | 使用場景 |
 |-------|------|--------|----------|
 | `true` | 觸發工作流 | ✅ 是 | 正常業務操作,需要執行自動化流程 |
 | `false` | 不觸發工作流 | ❌ 否 | 資料遷移、批次初始化、測試資料 |
 
 **工作流觸發時機**:
 
-工作流根據觸發條件配置決定是否執行:
+工作流根據觸發條件設定決定是否執行:
 - **新增記錄時**: 觸發"當記錄被新增時"型別的工作流
 - **更新記錄時**: 觸發"當記錄被更新時"型別的工作流
 - **刪除記錄時**: 觸發"當記錄被刪除時"型別的工作流
@@ -1154,12 +1154,12 @@ async function createRecordWithWorkflow(fields) {
 **⚠️ 重要提示**:
 
 1. **記錄操作與工作流執行是非同步的**
-   - API 返回成功只表示記錄操作成功
+   - API 回傳成功只表示記錄操作成功
    - 工作流在後臺非同步執行
    - 工作流執行失敗不會影響記錄操作
 
 2. **工作流觸發條件**
-   - 即使設定 `triggerWorkflow: true`,工作流也需要滿足自身配置的觸發條件
+   - 即使設定 `triggerWorkflow: true`,工作流也需要滿足自身設定的觸發條件
    - 例如:設定了"僅當狀態=已完成"的工作流,建立草稿記錄不會觸發
 
 3. **工作流執行限制**
@@ -1222,7 +1222,7 @@ await smartCreateRecord(fields);                          // 正常操作,触发
 }
 ```
 
-**讀取**: 返回字串
+**讀取**: 回傳字串
 ```json
 {
   "annual_budget": "1000000.50"
@@ -1243,7 +1243,7 @@ await smartCreateRecord(fields);                          // 正常操作,触发
 }
 ```
 
-**讀取**: 返回包含key和value的物件陣列
+**讀取**: 回傳包含key和value的物件陣列
 ```json
 {
   "customer_type": [
@@ -1258,9 +1258,9 @@ await smartCreateRecord(fields);                          // 正常操作,触发
 **⚠️ 關鍵點**:
 1. 即使是單選,也要用陣列 `["key"]`
 2. 不能傳顯示文字 `["成交客户"]`,必須用key
-3. 新增選項時可設定 `type` 引數
+3. 新增選項時可設定 `type` 參數
 
-**支援的type引數**:
+**支援的type參數**:
 ```json
 {
   "id": "customer_type",
@@ -1285,7 +1285,7 @@ await smartCreateRecord(fields);                          // 正常操作,触发
 }
 ```
 
-**讀取**: 返回物件陣列
+**讀取**: 回傳物件陣列
 ```json
 {
   "customer_tags": [
@@ -1316,7 +1316,7 @@ await smartCreateRecord(fields);                          // 正常操作,触发
 }
 ```
 
-**讀取**: 返回字串
+**讀取**: 回傳字串
 ```json
 {
   "founded_date": "2025-01-11"
@@ -1346,7 +1346,7 @@ await smartCreateRecord(fields);                          // 正常操作,触发
 }
 ```
 
-**讀取**: 返回字串
+**讀取**: 回傳字串
 ```json
 {
   "customer_rating": "5"
@@ -1365,7 +1365,7 @@ await smartCreateRecord(fields);                          // 正常操作,触发
 }
 ```
 
-**獲取使用者ID**: 使用查詢使用者API
+**取得使用者ID**: 使用查詢使用者API
 ```bash
 POST /v3/users/lookup
 {
@@ -1380,7 +1380,7 @@ POST /v3/users/lookup
 }
 ```
 
-**讀取**: 返回使用者物件或物件陣列
+**讀取**: 回傳使用者物件或物件陣列
 ```json
 {
   "owner": {
@@ -1429,7 +1429,7 @@ POST /v3/users/lookup
 }
 ```
 
-**獲取部門ID**: 使用查詢部門API
+**取得部門ID**: 使用查詢部門API
 
 **方法1: 透過名稱查詢**
 ```bash
@@ -1450,7 +1450,7 @@ POST /v3/departments/lookup
 }
 ```
 
-**方法2: 獲取部門列表**
+**方法2: 取得部門清單**
 ```bash
 GET /v3/departments
 
@@ -1482,7 +1482,7 @@ GET /v3/departments
 }
 ```
 
-**單選部門讀取**: 返回部門物件
+**單選部門讀取**: 回傳部門物件
 ```json
 {
   "department": {
@@ -1492,7 +1492,7 @@ GET /v3/departments
 }
 ```
 
-**多選部門讀取**: 返回部門物件陣列
+**多選部門讀取**: 回傳部門物件陣列
 ```json
 {
   "departments": [
@@ -1586,7 +1586,7 @@ const records = await queryRecords({
 }
 ```
 
-**獲取地區編碼**: 使用地區資訊API
+**取得地區編碼**: 使用地區資訊API
 
 **方法1: 透過名稱搜尋地區**
 ```bash
@@ -1615,7 +1615,7 @@ POST /v3/regions
 }
 ```
 
-**方法2: 獲取子級地區**
+**方法2: 取得子級地區**
 ```bash
 POST /v3/regions
 {
@@ -1699,7 +1699,7 @@ POST /v3/regions
 }
 ```
 
-**granularity 引數說明**:
+**granularity 參數說明**:
 - `1` - 按省統計(例如: 上海市、北京市)
 - `2` - 按省/市統計(例如: 上海市-市轄區、北京市-市轄區)
 - `3` - 按省/市/區縣統計(例如: 上海市-市轄區-黃浦區)
@@ -1709,7 +1709,7 @@ POST /v3/regions
 2. 需要先透過 `/v3/regions` API 查詢地區編碼
 3. 地區編碼是國家標準行政區劃程式碼
 4. 篩選時使用 `eq` 運算子
-5. 透視分析時可使用 `granularity` 引數控制統計粒度
+5. 透視分析時可使用 `granularity` 參數控制統計粒度
 
 **使用示例**:
 ```javascript
@@ -1787,7 +1787,7 @@ const pivotData = await getPivotData({
 - 建議快取常用地區的編碼對映,避免頻繁呼叫地區API
 - 地區編碼是6位數字字串
 - 直轄市的"市轄區"層級是必需的(例如上海市需要先選市轄區,再選具體區)
-- 使用 `granularity` 引數可以實現靈活的地區維度分析
+- 使用 `granularity` 參數可以實現靈活的地區維度分析
 
 ---
 
@@ -1813,7 +1813,7 @@ const pivotData = await getPivotData({
 }
 ```
 
-**單條關聯讀取**: 返回物件陣列
+**單條關聯讀取**: 回傳物件陣列
 ```json
 {
   "related_customer": [
@@ -1825,7 +1825,7 @@ const pivotData = await getPivotData({
 }
 ```
 
-**多條關聯讀取**: 返回ID陣列
+**多條關聯讀取**: 回傳ID陣列
 ```json
 {
   "related_projects": [
@@ -1836,7 +1836,7 @@ const pivotData = await getPivotData({
 }
 ```
 
-**獲取關聯記錄完整資料**: 使用專用API
+**取得關聯記錄完整資料**: 使用專用API
 ```bash
 POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 
@@ -1878,11 +1878,11 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 }
 ```
 
-**type引數**:
+**type參數**:
 - `"0"` - 覆蓋模式:刪除已有附件,上傳新附件
 - `"1"` - 追加模式:保留已有附件,新增附件
 
-**讀取**: 返回附件物件陣列
+**讀取**: 回傳附件物件陣列
 ```json
 {
   "attachments": [
@@ -1902,7 +1902,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 
 **⚠️ 重要提示**:
 1. 附件上傳是**非同步處理**,通常需要5-10秒
-2. API返回成功不代表附件已上傳完成
+2. API回傳成功不代表附件已上傳完成
 3. 建議使用niio內部URL,外部URL可能有跨域限制
 4. 支援base64編碼的圖片直接上傳
 
@@ -2016,7 +2016,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 }
 ```
 
-**返回結果**:
+**回傳結果**:
 ```json
 {
   "success": true,
@@ -2121,7 +2121,7 @@ async function batchCreateRecords(allData, batchSize = 100) {
 }
 ```
 
-**返回結果**:
+**回傳結果**:
 ```json
 {
   "success": true,
@@ -2205,7 +2205,7 @@ await updateRecordsWithDifferentValues([
 }
 ```
 
-**返回結果**:
+**回傳結果**:
 ```json
 {
   "success": true,
@@ -2217,9 +2217,9 @@ await updateRecordsWithDifferentValues([
 }
 ```
 
-**permanent 引數說明**:
+**permanent 參數說明**:
 
-| 引數值 | 刪除方式 | 可恢復 | 資料去向 | 使用場景 |
+| 參數值 | 刪除方式 | 可恢復 | 資料去向 | 使用場景 |
 |-------|---------|--------|---------|---------|
 | `false` (預設) | 邏輯刪除 | ✅ 可以 | 進入回收站 | 日常資料清理 |
 | `true` | 物理刪除 | ❌ 不可恢復 | 永久刪除 | 敏感資料清除 |
@@ -2286,7 +2286,7 @@ async function safeDeleteRecords(rowIds, options = {}) {
 
 #### 3.6.4 批次操作效能最佳化
 
-**推薦配置**:
+**推薦設定**:
 
 ```javascript
 const BATCH_CONFIG = {
@@ -2403,8 +2403,8 @@ await batchCreateWithProgress(records, (progress) => {
 
 | 錯誤碼 | 說明 | 處理方案 |
 |-------|------|---------|
-| `10` | 引數錯誤 | 檢查欄位ID、值格式 |
-| `4` | 許可權不足 | 檢查API許可權配置 |
+| `10` | 參數錯誤 | 檢查欄位ID、值格式 |
+| `4` | 權限不足 | 檢查API權限設定 |
 | `-1` | 通用失敗 | 檢視error_msg詳情 |
 | `超时` | 請求超時 | 減少批次大小,重試 |
 
@@ -2571,7 +2571,7 @@ async function retryOneByOne(records) {
 4. ❌ 批次更新用於差異化更新
 5. ❌ 物理刪除(`permanent: true`)未經確認
 6. ❌ 無延遲連續批次請求
-7. ❌ 忽略API返回的error_code
+7. ❌ 忽略API回傳的error_code
 
 ---
 
@@ -2626,7 +2626,7 @@ Filter = {
 
 ---
 
-### 4.3 運算子完整列表
+### 4.3 運算子完整清單
 
 | 運算子 | 說明 | 需要value | value格式 | 適用欄位 |
 |-------|------|----------|----------|---------|
@@ -2729,7 +2729,7 @@ Filter = {
 }
 ```
 
-**如何獲取選項key**?
+**如何取得選項key**?
 
 **方法1**: 先查詢一條記錄
 ```bash
@@ -3110,7 +3110,7 @@ GET /v3/app/worksheets/{worksheet_id}
 
 ---
 
-### 5.2 維度配置
+### 5.2 維度設定
 
 **行/列維度結構**:
 ```json
@@ -3122,7 +3122,7 @@ GET /v3/app/worksheets/{worksheet_id}
 }
 ```
 
-**granularity引數** (僅日期和地區欄位):
+**granularity參數** (僅日期和地區欄位):
 
 **日期欄位**:
 - `1` - 按天
@@ -3136,9 +3136,9 @@ GET /v3/app/worksheets/{worksheet_id}
 
 ---
 
-### 5.3 值/指標配置
+### 5.3 值/指標設定
 
-**值配置結構**:
+**值設定結構**:
 ```json
 {
   "field": "annual_budget",     // 字段ID或别名
@@ -3198,7 +3198,7 @@ GET /v3/app/worksheets/{worksheet_id}
 }
 ```
 
-**返回結果**:
+**回傳結果**:
 ```json
 {
   "data": {
@@ -3255,7 +3255,7 @@ GET /v3/app/worksheets/{worksheet_id}
 }
 ```
 
-**返回結果**:
+**回傳結果**:
 ```json
 {
   "data": {
@@ -3307,7 +3307,7 @@ GET /v3/app/worksheets/{worksheet_id}
 }
 ```
 
-**返回結果**: 二維交叉資料
+**回傳結果**: 二維交叉資料
 ```json
 {
   "data": {
@@ -3462,7 +3462,7 @@ GET /v3/app/worksheets/{worksheet_id}
 
 **場景**: 為銷售機會關聯客戶
 
-**Step 1**: 查詢客戶記錄,獲取rowid
+**Step 1**: 查詢客戶記錄,取得rowid
 ```bash
 POST /v3/app/worksheets/你的worksheetID/rows/list
 {
@@ -3525,11 +3525,11 @@ GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
 
 ---
 
-### 6.5 獲取關聯記錄完整資料
+### 6.5 取得關聯記錄完整資料
 
-#### 6.5.1 關聯欄位返回的資料結構
+#### 6.5.1 關聯欄位回傳的資料結構
 
-當讀取包含關聯欄位的記錄時,niio API 返回的資料結構如下:
+當讀取包含關聯欄位的記錄時,niio API 回傳的資料結構如下:
 
 ```javascript
 {
@@ -3547,7 +3547,7 @@ GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
 - **`name`**: 關聯記錄的標題欄位值(僅顯示用途)
 
 **⚠️ 重要提示**:
-- 預設情況下,關聯欄位只返回 `sid` 和 `name` 兩個屬性
+- 預設情況下,關聯欄位只回傳 `sid` 和 `name` 兩個屬性
 - 如果需要展示關聯表的其他資訊(如圖片、價格、描述等),需要進行**深度查詢**
 - 深度查詢步驟:
   1. 找到該關聯欄位對應的目標工作表 ID
@@ -3557,7 +3557,7 @@ GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
 
 #### 6.5.2 方法1: 使用 get_record_relations API (推薦)
 
-**適用場景**: 獲取單條記錄的關聯詳情
+**適用場景**: 取得單條記錄的關聯詳情
 
 ```bash
 POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
@@ -3584,7 +3584,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 }
 ```
 
-**優點**: 一次請求獲取完整資料,無需手動查詢目標表
+**優點**: 一次請求取得完整資料,無需手動查詢目標表
 
 ---
 
@@ -3650,7 +3650,7 @@ POST /v3/app/worksheets/你的worksheetID/rows/list
 
 #### 6.5.4 批次查詢最佳化示例
 
-**場景**: 產品列表頁面,需要顯示每個產品的完整分類資訊(包括分類圖示、描述等)
+**場景**: 產品清單頁面,需要顯示每個產品的完整分類資訊(包括分類圖示、描述等)
 
 **問題**: 如果有 100 個產品,逐個查詢分類會產生 N+1 查詢問題(1次產品查詢 + N次分類查詢)
 
@@ -3718,7 +3718,7 @@ products.rows.forEach(product => {
 | 場景 | 推薦方法 | 原因 |
 |------|---------|------|
 | 單條記錄詳情頁 | 方法1 (get_record_relations) | 簡單直接,一次請求 |
-| 列表頁批次渲染 | 方法2 (批次查詢) | 避免 N+1 查詢,效能最優 |
+| 清單頁批次渲染 | 方法2 (批次查詢) | 避免 N+1 查詢,效能最優 |
 | 需要自訂篩選條件 | 方法2 | 可以在查詢目標表時新增額外篩選 |
 | 只需要顯示 name | 直接使用 | 無需額外查詢 |
 
@@ -3772,7 +3772,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
 
 ### 6.7 關聯欄位常見問題
 
-**Q1: 關聯欄位返回的 `sid` 和 `name` 有什麼區別?**
+**Q1: 關聯欄位回傳的 `sid` 和 `name` 有什麼區別?**
 
 - **`sid`**: 關聯記錄的唯一識別符號,等同於目標表的 `rowid`,用於查詢完整資料
 - **`name`**: 關聯記錄的標題欄位值,僅用於顯示
@@ -3831,7 +3831,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
 
 **Q7: 為什麼查詢關聯記錄要用 `rowid` 欄位而不是其他欄位?**
 
-因為 `rowid` 是 niio 系統欄位,每條記錄都有唯一的 `rowid`。關聯欄位返回的 `sid` 就是目標記錄的 `rowid`。
+因為 `rowid` 是 niio 系統欄位,每條記錄都有唯一的 `rowid`。關聯欄位回傳的 `sid` 就是目標記錄的 `rowid`。
 
 **示例**:
 ```javascript
@@ -3855,7 +3855,7 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 
 ### 7.1 選項欄位陷阱 ⭐⭐⭐
 
-**問題**: 篩選單選/多選欄位時返回空結果
+**問題**: 篩選單選/多選欄位時回傳空結果
 
 **錯誤示例**:
 ```json
@@ -3877,7 +3877,7 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 
 **解決方案**:
 1. 初始化時查詢工作表結構,快取選項對映
-2. 或先查詢一條記錄,從返回資料獲取key
+2. 或先查詢一條記錄,從回傳資料取得key
 3. 建立 value → key 的對映表
 
 ---
@@ -3971,7 +3971,7 @@ console.log(categoryData.rows[0].icon);  // ✅ 正确获取
 
 ---
 
-**問題3**: 在列表頁逐個查詢關聯資料 (N+1 問題)
+**問題3**: 在清單頁逐個查詢關聯資料 (N+1 問題)
 
 **錯誤示例**:
 ```javascript
@@ -4025,7 +4025,7 @@ products.forEach(p => {
 
 ### 7.4 附件欄位陷阱
 
-**問題**: 附件上傳後立即讀取返回空陣列
+**問題**: 附件上傳後立即讀取回傳空陣列
 
 **原因**: 附件上傳是非同步處理,需要5-10秒
 
@@ -4054,9 +4054,9 @@ console.log(record.attachments);  // 现在有数据了
 
 ### 7.5 日期欄位陷阱
 
-**問題**: 日期寫入時帶時間,讀取時只返回日期
+**問題**: 日期寫入時帶時間,讀取時只回傳日期
 
-**原因**: Date欄位的subType決定返回精度
+**原因**: Date欄位的subType決定回傳精度
 
 **示例**:
 ```json
@@ -4165,7 +4165,7 @@ POST /v3/users/lookup
 ### 8.1 查詢最佳化
 
 1. **合理使用分頁**: pageSize不要超過1000
-2. **指定返回欄位**: 使用fields引數,只返回需要的欄位
+2. **指定回傳欄位**: 使用fields參數,只回傳需要的欄位
 3. **使用欄位ID**: 比別名查詢效能更好
 4. **避免過度巢狀**: Filter巢狀控制在2層以內
 5. **善用檢視**: 複雜篩選可先建立檢視,再查詢檢視
@@ -4182,7 +4182,7 @@ POST /v3/users/lookup
 
 ### 8.3 關聯欄位最佳化
 
-1. **減少巢狀查詢**: 使用 get_record_relations API 一次獲取
+1. **減少巢狀查詢**: 使用 get_record_relations API 一次取得
 2. **快取關聯資料**: 頻繁訪問的關聯資料可快取
 3. **控制showFields**: 只顯示必要欄位,減少資料量
 
@@ -4239,7 +4239,7 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 - [ ] 數值欄位傳數字型別
 - [ ] 關聯欄位傳的是rowid
 - [ ] 成員欄位傳的是accountId
-- [ ] 附件欄位設定了type引數
+- [ ] 附件欄位設定了type參數
 
 ---
 
@@ -4248,14 +4248,14 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 **常見錯誤碼**:
 - `error_code: 1` - 成功
 - `error_code: -1` - 失敗,檢視error_msg
-- `error_code: 4` - 許可權不足
-- `error_code: 10` - 引數錯誤
+- `error_code: 4` - 權限不足
+- `error_code: 10` - 參數錯誤
 
 **建議**: 所有API呼叫都要檢查error_code和success
 
 ---
 
-## 十、完整示例:構建CRM應用
+## 十、完整示例:建置CRM應用
 
 ### 10.1 建立工作表
 
@@ -4345,7 +4345,7 @@ POST /v3/app/worksheets/{customer_table_id}/rows/pivot
 
 ## 附錄A:欄位型別速查表
 
-| 型別 | type值 | 寫入格式 | 讀取格式 | 關鍵引數 |
+| 型別 | type值 | 寫入格式 | 讀取格式 | 關鍵參數 |
 |-----|--------|---------|---------|---------|
 | 文字 | Text | 字串 | 字串 | - |
 | 數值 | Number | 數字 | 字串 | precision |

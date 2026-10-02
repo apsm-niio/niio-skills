@@ -46,7 +46,7 @@
 ### 場景:按行業分組顯示客戶
 
 **問題現象:**
-- 程式碼查詢行業欄位時返回 `undefined`
+- 程式碼查詢行業欄位時回傳 `undefined`
 - 所有客戶都被歸入"未分類"
 - 控制檯顯示 `行业字段: undefined`
 
@@ -70,7 +70,7 @@ const industryField = controls?.find(ctrl =>
 
 ### 資料格式
 
-選項欄位返回的原始值格式:
+選項欄位回傳的原始值格式:
 ```javascript
 // 原始值(JSON字符串)
 "[\"42ad38bf-d3e6-441f-a960-670e704abe4a\"]"
@@ -239,7 +239,7 @@ console.log('显示值:', displayValue);
    (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
    ```
 
-2. **從 config.controls 獲取欄位定義**
+2. **從 config.controls 取得欄位定義**
    ```javascript
    const control = config.controls.find(ctrl => ctrl.controlId === fieldId);
    ```
@@ -260,7 +260,7 @@ console.log('显示值:', displayValue);
 
 - niio 檢視外掛開發文件
 - niio API V3 文件
-- 欄位型別完整列表
+- 欄位型別完整清單
 
 ## 🎓 經驗教訓
 

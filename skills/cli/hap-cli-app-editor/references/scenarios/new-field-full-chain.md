@@ -35,6 +35,6 @@ hap --json app role permissions <appId> <role_id>    # 先读现状判断
 
 ## 注意
 
-- 第 3 步 `displayControls` 是**整組替換**，必須先讀出現有列表再追加,不能只傳新欄位。
+- 第 3 步 `displayControls` 是**整組替換**，必須先讀出現有清單再追加,不能只傳新欄位。
 - 第 1 步不要用 `hap worksheet update-fields` 加欄位——那是整表替換路徑。
 - 驗證：`hap --json worksheet view info <ws_id> <view_id>` 確認 displayControls 包含新 controlId。

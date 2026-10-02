@@ -1,9 +1,9 @@
-# 工作流節點深度配置 — 8 類高頻節點逐鍵字典
+# 工作流節點深度設定 — 8 類高頻節點逐鍵字典
 
 覆蓋 8 類高頻節點：ACTION(6)、SEARCH(7)、APPROVAL(4)、CC(5)、WEBHOOK(8)、EMAIL(11)、DELAY(12)、BRANCH 閘道器(1) + 分支項(2)。
 流程級與節點增刪見 [workflows.md](workflows.md)。
 
-**全域性規則**：改節點配置前先 `hap --json workflow node get <process_id> <node_id>` 匯出現狀，在真實結構上改，再寫回。**讀出來的結構就是寫回去的結構**——只改你理解的鍵，其餘原樣保留。
+**全域規則**：改節點設定前先 `hap --json workflow node get <process_id> <node_id>` 匯出現狀，在真實結構上改，再寫回。**讀出來的結構就是寫回去的結構**——只改你理解的鍵，其餘原樣保留。
 
 ## 兩層寫法：先分清 batch-add 高層 與 node save wire 層
 
@@ -49,12 +49,12 @@
 
 ### 填寫節點發布不過去
 
-`fill_in` 的 `config.formProperties` 逐欄位給許可權，取值 `editable`、`required`、`readonly`、
+`fill_in` 的 `config.formProperties` 逐欄位給權限，取值 `editable`、`required`、`readonly`、
 `hidden`。**一個可編輯欄位都沒有（全是隻讀或隱藏）就釋出不了**，而這隻有釋出才會告訴你。
 
 ## 呼叫正規化（wire 層）
 
-寫回配置走三條路，按節點型別選：
+寫回設定走三條路，按節點型別選：
 
 | 節點型別 | 命令 |
 |---|---|
@@ -81,22 +81,22 @@
   - **讀回時條件在哪個鍵**，跟寫入用的鍵不是一回事：查詢 / 資料 / 多條記錄節點讀回在 `filters`（每組帶
     `spliceType`），分支項讀回在 `conditions`；`operateCondition` 只是寫入時用的鍵。
 - 欄位寫入項（fields）的動態值用 `$<nodeId>-<fieldId>$` 模板引用上游節點的欄位，nodeId 來自 `node list`。完整結構 → [WorkflowFieldWrite](../scripts/types/workflow-field-write.schema.json)。
-- 資料 / 查詢 / 獲取多條記錄節點的目標工作表用 `node add --app-id` 給定，**也可以稍後在配置節點時再設定**。
+- 資料 / 查詢 / 取得多條記錄節點的目標工作表用 `node add --app-id` 給定，**也可以稍後在設定節點時再設定**。
 - `node add` 還有幾個位置與搬運選項：`--gateway parallel|exclusive`（分支節點走每條路還是隻走第一條
   符合條件的）、`--result-branch`（哪條是結果分支）、`--place left|right|withdraw`（新節點相對它
   跟隨的那個節點放哪）、`--copy`（把若干節點一併複製到新節點旁，配 `--move` 是移動、配
   `--copy-whole-branch` 整條分支一起帶走）。
 - 資料節點的動作號（`-a/--action-id`）不用記：`hap workflow node types` 會連型別號一起列出來。
-- **長尾節點型別的處理**：本文未覆蓋的型別（公式、程式碼塊、子流程、站內通知……）一律先 `hap --json workflow node get <pid> <nid> --type <typeId>` 讀現狀，照著返回結構的形狀改寫要改的鍵，再用 `node save` 整段寫回。不要憑空構造配置。
+- **長尾節點型別的處理**：本文未覆蓋的型別（公式、程式碼塊、子流程、站內通知……）一律先 `hap --json workflow node get <pid> <nid> --type <typeId>` 讀現狀，照著回傳結構的形狀改寫要改的鍵，再用 `node save` 整段寫回。不要憑空構造設定。
   - **程式碼塊節點(14)**：`node save --type 14 --config '{"code":"return { ok: 1 };"}'` —— **直接傳原始碼，
     不要自己做任何編碼轉換**（不要 base64）。原始碼裡的 Tab 會統一成 4 個空格，與介面裡儲存的效果一致；
     `node get` 讀出來的 `code` 是明文，改完原樣傳回。試跑用 `node test-code <pid> <nid> -c "…"`，
     `--language` 指定按哪種語言跑（不傳就用節點自己的設定）。可複用片段用 `node create-code-template`
     存、`node code-templates` 找，**按語言和歸屬兩項找**（`--scope mine` / 不加 `--scope` 是內建示例）。
   - **AI 節點**：`node test-ai` 試跑，`--kind` 說明它做什麼（`text` 寫文字 / `object` 填結構化結果，
-    這時必須配 `--outputs` 描述要填哪些欄位 / `agent` 執行助手）。`--model` 要的是本組織已配置的
+    這時必須配 `--outputs` 描述要填哪些欄位 / `agent` 執行助手）。`--model` 要的是本組織已設定的
     **某個模型的 ID**，不是 `gpt-4` 這樣的名稱——用 `node get` 讀節點能看到它當前用哪一個。
-  - **站內通知(27)** 有兩個易漏點：收件人寫「觸發者」用 `accounts:[{"type":6,"roleId":"triggeraid"}]`；且配置裡**必須保留 `flowNodeMap["106"]` 推送子塊**（read-modify-write 時原樣帶回，刪了釋出會報錯）。無現成模板時可先 `node get` 一個同流程已有的 27 節點照形改寫。
+  - **站內通知(27)** 有兩個易漏點：收件人寫「觸發者」用 `accounts:[{"type":6,"roleId":"triggeraid"}]`；且設定裡**必須保留 `flowNodeMap["106"]` 推送子塊**（read-modify-write 時原樣帶回，刪了釋出會報錯）。無現成模板時可先 `node get` 一個同流程已有的 27 節點照形改寫。
 
 ### 輔助命令（讀結構、查可選項）
 
@@ -162,13 +162,13 @@ hap workflow node save <pid> <nid> --type 5 -c '{
 }'
 ```
 
-> `-c` 傳的是配置 JSON；`node get` 返回中與配置無關的只讀鍵（id、連線等）不必回傳，但**所有配置鍵都應保留原值回傳**，漏鍵可能被視為清空。
+> `-c` 傳的是設定 JSON；`node get` 回傳中與設定無關的只讀鍵（id、連線等）不必回傳，但**所有設定鍵都應保留原值回傳**，漏鍵可能被視為清空。
 
 ## 資料字典
 
-字典生成於 2026-06-10；未覆蓋的鍵以 `hap workflow node get` 返回的實際結構為準。
+字典生成於 2026-06-10；未覆蓋的鍵以 `hap workflow node get` 回傳的實際結構為準。
 
-值形態分三級：① 標量/列舉（直接列值）；② 簡單結構（一句話描述）；③ 複雜結構（連結到 schema，或以 `node get` 實際返回為準）。
+值形態分三級：① 標量/列舉（直接列值）；② 簡單結構（一句話描述）；③ 複雜結構（連結到 schema，或以 `node get` 實際回傳為準）。
 
 ### ACTION(6)
 
@@ -185,11 +185,11 @@ hap workflow node save <pid> <nid> --type 5 -c '{
 | `random` | 忽略排序隨機取 | ① bool |
 | `destroy` | 刪除操作跳過回收站（硬刪） | ① bool |
 | `sourceAppId` / `sourceAppType` | 跨表複製/關聯時的來源物件 | ① 字串 ID / int（同 appType） |
-| `filters` | 批次操作的「條件+排序」分組 | ③ 元素內的條件同 OperateCondition 形狀；以 `node get` 實際返回為準 |
+| `filters` | 批次操作的「條件+排序」分組 | ③ 元素內的條件同 OperateCondition 形狀；以 `node get` 實際回傳為準 |
 
 ### SEARCH(7)
 
-查詢變體（406/420/421/422）在建節點時已固定，save 時不傳 `actionId`（專用命令的 `-a` 只用於選引數組合）。
+查詢變體（406/420/421/422）在建節點時已固定，save 時不傳 `actionId`（專用命令的 `-a` 只用於選參數組合）。
 
 | 鍵 | 含義 | 值形態 |
 |---|---|---|
@@ -200,14 +200,14 @@ hap workflow node save <pid> <nid> --type 5 -c '{
 | `random` | 忽略排序隨機取 | ① bool |
 | `executeType` | 查不到時 | ① 0=中止或走「無資料」分支 1=新建一條後繼續 2=跳過繼續 |
 | `fields` | `executeType=1` 時新建記錄的欄位值 | ③ → [WorkflowFieldWrite](../scripts/types/workflow-field-write.schema.json) 陣列 |
-| `findFields` | 連結解析/匹配模式下作為查詢鍵的欄位 | ③ 以 `node get` 實際返回為準 |
+| `findFields` | 連結解析/匹配模式下作為查詢鍵的欄位 | ③ 以 `node get` 實際回傳為準 |
 | `link` | 記錄連結來源值（連結解析變體） | ② 字串或欄位引用，待解析的記錄 URL |
 | `destroy` | 「查到並刪除」變體：硬刪跳過回收站 | ① bool |
 | `returnNew` | 後續節點看到的快照 | ① `false`=本節點時刻的資料副本，`null`=每次使用重新取最新 |
 | `ignoreError` | `executeType=1` 時插入失敗（唯一索引衝突）也繼續 | ① bool |
 | `execute` | 透傳標誌，按讀到的原值回傳 | ① bool |
 | `filters` | 「條件+排序」分組 | ③ 同 ACTION 的 filters |
-| `flowNodeMap` | 內嵌子節點配置（如查不到時的新建分支） | ③ 以 `node get` 實際返回為準 |
+| `flowNodeMap` | 內嵌子節點設定（如查不到時的新建分支） | ③ 以 `node get` 實際回傳為準 |
 
 ### APPROVAL(4)
 
@@ -218,24 +218,24 @@ hap workflow node save <pid> <nid> --type 5 -c '{
 | `multipleLevel` | 逐級模式的層數 | ① int，-1=直到最高層 |
 | `countersignType` | 多人審批方式 | ① 3=或籤（一人透過即可） 1=會籤（全員透過） 2=會籤（一人透過即透過，否決需全員） 4=會籤（按透過比例） |
 | `condition` | `countersignType=4` 的透過比例 | ① 字串 `"10"`…`"100"` |
-| `operationTypeList` | 啟用的附加操作（轉交/加簽/退回/列印…） | ② int 列表，按 `node get` 讀到的現值增刪 |
+| `operationTypeList` | 啟用的附加操作（轉交/加簽/退回/列印…） | ② int 清單，按 `node get` 讀到的現值增刪 |
 | `ignoreRequired` | 必填欄位為空也允許透過 | ① bool |
 | `isCallBack` | 退回後允許重新審批（回撥） | ① bool |
-| `callBackType` / `callBackMultipleLevel` / `callBackNodeType` / `callBackNodeIds` | 回撥方式 / 深度 / 退回到哪些節點 | ② int / int / int / 節點 ID 列表；照讀到的原值改 |
-| `formProperties` | 審批時每個欄位的檢視/編輯/必填/隱藏 | ③ 以 `node get` 實際返回為準 |
+| `callBackType` / `callBackMultipleLevel` / `callBackNodeType` / `callBackNodeIds` | 回撥方式 / 深度 / 退回到哪些節點 | ② int / int / int / 節點 ID 清單；照讀到的原值改 |
+| `formProperties` | 審批時每個欄位的檢視/編輯/必填/隱藏 | ③ 以 `node get` 實際回傳為準 |
 | `passBtnName` / `overruleBtnName` / `returnBtnName` | 自訂按鈕文案 | ① 字串 |
-| `auth` | 透過/否決時的簽名、附件要求 | ③ `{passAuth:[], overruleAuth:[]}`，以實際返回為準 |
+| `auth` | 透過/否決時的簽名、附件要求 | ③ `{passAuth:[], overruleAuth:[]}`，以實際回傳為準 |
 | `batchApprove` / `fastApprove` | 允許批次審批 / 免開啟記錄快速審批 | ① bool |
 | `allowUploadAttachment` | 審批意見允許傳附件 | ① bool |
-| `schedule` | 超時自動透過 / 升級提醒 | ③ 以 `node get` 實際返回為準 |
+| `schedule` | 超時自動透過 / 升級提醒 | ③ 以 `node get` 實際回傳為準 |
 | `passSendMessage` / `passMessage` / `overruleSendMessage` / `overruleMessage` | 透過/否決時通知發起人 + 模板文案 | ① bool / 字串 |
 | `encrypt` | 審批操作需身份驗證 | ① bool |
 | `operationUserRange` | 各操作（轉交/轉審…）允許的人員範圍 | ③ 操作碼 → Accounts 陣列的對映 |
-| `opinionTemplate` | 預置審批意見模板 | ③ 以 `node get` 實際返回為準 |
-| `flowNodeMap` | 內嵌通知子節點配置 | ③ 以 `node get` 實際返回為準 |
-| `userTaskNullMap` | 審批人為空時的處理 | ③ 以 `node get` 實際返回為準 |
-| `candidateUserMap` | `multipleLevelType=11` 的候選範圍 | ③ 以 `node get` 實際返回為準 |
-| `addNotAllowView` | 審批人無檢視許可權時隱藏記錄 | ① bool |
+| `opinionTemplate` | 預置審批意見模板 | ③ 以 `node get` 實際回傳為準 |
+| `flowNodeMap` | 內嵌通知子節點設定 | ③ 以 `node get` 實際回傳為準 |
+| `userTaskNullMap` | 審批人為空時的處理 | ③ 以 `node get` 實際回傳為準 |
+| `candidateUserMap` | `multipleLevelType=11` 的候選範圍 | ③ 以 `node get` 實際回傳為準 |
+| `addNotAllowView` | 審批人無檢視權限時隱藏記錄 | ① bool |
 | `signOperationType` | 加簽的先/後順序行為 | ① int，照讀到的原值改 |
 | `explain` | 展示給審批人的說明文字 | ① 字串 |
 
@@ -246,11 +246,11 @@ hap workflow node save <pid> <nid> --type 5 -c '{
 | `accounts` | 抄送物件 | ③ → [WorkflowAccounts](../scripts/types/workflow-accounts.schema.json) 陣列 |
 | `sendContent` | 通知正文（支援欄位引用） | ① 字串 |
 | `selectNodeId` | 被抄送記錄來自哪個節點 | ① 節點 ID 字串 |
-| `formProperties` | 收件人可見的欄位範圍 | ③ 以 `node get` 實際返回為準 |
+| `formProperties` | 收件人可見的欄位範圍 | ③ 以 `node get` 實際回傳為準 |
 | `viewId` | 用哪個檢視呈現記錄給收件人 | ① 檢視 ID 字串 |
-| `addNotAllowView` | 收件人無檢視許可權時限制檢視 | ① bool |
+| `addNotAllowView` | 收件人無檢視權限時限制檢視 | ① bool |
 | `showTitle` | 訊息裡顯示記錄標題（`sendContent` 為空時強制 true） | ① bool |
-| `flowNodeMap` | 內嵌子節點配置 | ③ 以 `node get` 實際返回為準 |
+| `flowNodeMap` | 內嵌子節點設定 | ③ 以 `node get` 實際回傳為準 |
 
 注意：`smsContent` / `templateId` 屬於簡訊節點（type 10），不是 CC 的鍵。
 
@@ -263,17 +263,17 @@ hap workflow node save <pid> <nid> --type 5 -c '{
 | `headers` | 請求頭（空名會被過濾） | ② `[{name, value}]` |
 | `contentType` | 請求體編碼 | ① 1=x-www-form-urlencoded 2=raw 3=raw 子變體 4=form-data 5=binary |
 | `body` | 原始請求體（contentType 2/3） | ① 字串 |
-| `formControls` | form-data / urlencoded 的鍵值引數 | ③ 以 `node get` 實際返回為準 |
-| `settings` | 超時、重試等傳輸設定 | ③ 以 `node get` 實際返回為準 |
+| `formControls` | form-data / urlencoded 的鍵值參數 | ③ 以 `node get` 實際回傳為準 |
+| `settings` | 超時、重試等傳輸設定 | ③ 以 `node get` 實際回傳為準 |
 | `successCode` | 視為成功的狀態碼 | ① 字串/int |
 | `errorMap` | 狀態碼 → 自訂錯誤訊息（兩側都要填） | ② 狀態碼到訊息的對映 |
 | `errorMsg` | 預設錯誤訊息 | ① 字串 |
 | `executeType` | 超時/失敗時 | ① 0=中止 2=跳過繼續（此節點沒有 1） |
 | `authId` | 關聯的身分驗證與授權賬戶 ID | ① 字串 ID |
-| `ignoreValueEmpty` | 跳過取值為空的引數 | ① bool |
+| `ignoreValueEmpty` | 跳過取值為空的參數 | ① bool |
 | `disabledCode` | 判定成功時忽略 HTTP 狀態碼 | ① bool |
 | `selectNodeId` | 欄位替換的資料來源節點 | ① 節點 ID 字串 |
-| `testMap` | 已儲存的測試引數值 | ③ 以 `node get` 實際返回為準 |
+| `testMap` | 已儲存的測試參數值 | ③ 以 `node get` 實際回傳為準 |
 
 正式儲存前可用 `hap workflow node test-webhook <pid> <nid> -u <url> -m POST -b '<body>'` 幹跑。
 
@@ -304,7 +304,7 @@ hap workflow node save <pid> <nid> --type 5 -c '{
 
 分支由兩層組成：**閘道器**（type 1，決定有哪些分支、求值順序、互斥還是並行）和**分支項**（type 2，每個分支自己的進入條件）。兩層都用同一個 `node save` 寫回，但讀法和鍵名各有坑，先看完再動手。
 
-**坑 A — 閘道器配置讀不出，要從 `node list` 取。** `node get --type 1` 對閘道器返回的 `flowIds` / `gatewayType` 全是 `null`（閘道器不是「詳情節點」）。閘道器的真實配置只在 `node list` 的 `flowNodeMap` 裡：
+**坑 A — 閘道器設定讀不出，要從 `node list` 取。** `node get --type 1` 對閘道器回傳的 `flowIds` / `gatewayType` 全是 `null`（閘道器不是「詳情節點」）。閘道器的真實設定只在 `node list` 的 `flowNodeMap` 裡：
 
 ```bash
 hap --json workflow node list <pid> | jq '.flowNodeMap["<gatewayId>"] | {flowIds, gatewayType}'
@@ -323,7 +323,7 @@ hap workflow node save <pid> <gatewayId> --type 1 -c '{"flowIds":["b3","b1","b2"
 
 **坑 B — 分支項條件「讀鍵 ≠ 寫鍵」，寫錯會靜默丟棄。** 這是分支裡最大的坑：
 
-- **讀**：`node get --type 2` 把條件放在 `conditions` 欄位裡返回（不是 `operateCondition`！`jq .operateCondition` 會得到 `null`）。
+- **讀**：`node get --type 2` 把條件放在 `conditions` 欄位裡回傳（不是 `operateCondition`！`jq .operateCondition` 會得到 `null`）。
 - **寫**：`node save --type 2` 的**規範寫鍵是 `operateCondition`**。值的二維陣列結構兩邊完全相同（外層 OR、內層 AND，→ [OperateCondition](../scripts/types/operate-condition.schema.json)）。
 - 本 CLI 已對分支項（type 2）做相容：`-c` 裡用 `conditions` 也會自動對映成 `operateCondition`，所以**直接把讀到的 `{conditions}` 原樣寫回也能生效**。但請優先用 `operateCondition` 作規範鍵。
 
@@ -333,7 +333,7 @@ hap workflow node save <pid> <gatewayId> --type 1 -c '{"flowIds":["b3","b1","b2"
 hap --json workflow node get <pid> <branchItemId> --type 2 | jq '{name, conditions}'
 ```
 
-save 配置只需 `{name, desc, operateCondition}`；`flowNodeList`/`flowNodeAppDtos` 是隻讀的欄位目錄，不必回傳。
+save 設定只需 `{name, desc, operateCondition}`；`flowNodeList`/`flowNodeAppDtos` 是隻讀的欄位目錄，不必回傳。
 
 | 分支項鍵 | 含義 | 值形態 |
 |---|---|---|

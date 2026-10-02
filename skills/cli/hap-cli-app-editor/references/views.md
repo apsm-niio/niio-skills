@@ -1,8 +1,8 @@
 # 檢視（view）— 命令參考與資料字典
 
-檢視命令都掛在 `hap worksheet view <动词>` 下。機器可讀輸出在 `hap` 後加全域性 `--json`。
+檢視命令都掛在 `hap worksheet view <动词>` 下。機器可讀輸出在 `hap` 後加全域 `--json`。
 
-> **全域性規則：改複雜值前先用讀命令匯出現狀，在真實結構上改，再寫回。**
+> **全域規則：改複雜值前先用讀命令匯出現狀，在真實結構上改，再寫回。**
 
 ## 呼叫正規化
 
@@ -87,8 +87,8 @@ hap worksheet view update 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 \
 坑位提示：
 
 - **advancedSetting 必須配對 `--edit-ad-keys`。** 只給 `--edit-attrs advancedSetting`
-  不給 `--edit-ad-keys`，等於讓服務端把整個 advancedSetting 當作改動範圍——
-  沒出現在 `--view-json` 裡的其它子鍵可能被清掉。永遠把改了哪幾個子鍵顯式列出來。
+  不給 `--edit-ad-keys`，等於讓伺服器端把整個 advancedSetting 當作改動範圍——
+  沒出現在 `--view-json` 裡的其他子鍵可能被清掉。永遠把改了哪幾個子鍵顯式列出來。
 - **advancedSetting 的值全部是字串**（布林寫 `"1"`/`"0"`，數字也寫成字串，
   JSON 結構先序列化成字串再放進去）。寫成裸數字/布林可能不生效。
 - `--edit-attrs` 之外的鍵即使出現在 `--view-json` 裡也不會被寫入；反過來，
@@ -171,13 +171,13 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 | `config.mode` 詳情檢視 | `all` 常規多條、`first` 只看第一條 |
 | `rowHeight` 行高 | `0` 緊湊、`1` 中等、`2` 高、`3` 超高 |
 
-- **`tableFields` 對錶格檢視是真的限制列**：列出哪幾列就只顯示哪幾列，順序也照給的來。其它檢視
+- **`tableFields` 對錶格檢視是真的限制列**：列出哪幾列就只顯示哪幾列，順序也照給的來。其他檢視
   型別上它表示卡片上顯示哪些欄位。
 - **`filterList`（左側分類）只能給一個欄位**，給兩個及以上會被拒絕——介面上本來也只能選一個。
 - **`quickFilters` 只寫欄位 ID 就行**，每項的型別按欄位自動定，不必自己猜配哪種比較方式。
 - **相對時間視窗**：篩選條件裡用 `dateRange` 表示「最近 N 天」這類相對視窗（`0` = 用絕對值），
   粒度用 `dateRangeType`。這兩個鍵**只在日期欄位上有意義**。
-- `filter` / `enableWhen` 跟其它篩選是同一種寫法 `{"logic","items":[{"field","op","value"}]}`，見
+- `filter` / `enableWhen` 跟其他篩選是同一種寫法 `{"logic","items":[{"field","op","value"}]}`，見
   `hap guide record filter`。檢視這邊能用的比較方式看 3.2 那張表的「檢視/規則/按鈕/圖表」一列——
   比記錄查詢多出 `self`、`rc_eq`、`array_eq`、`date_is` 這些；日期列上照常寫 `between` / `gt` /
   `lte`，`hap` 會按列型別自動換成日期專用的比較方式。舊的 `{"type":"group","children":[…]}` 那棵樹仍然可用。
@@ -199,7 +199,7 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 ---
 
 下面 §1–§3 是 **wire 層**：`view update --edit-attrs` / `--edit-ad-keys` 直接寫的鍵。
-未覆蓋的鍵以讀命令（`hap --json worksheet view info`）返回的實際結構為準。
+未覆蓋的鍵以讀命令（`hap --json worksheet view info`）回傳的實際結構為準。
 
 ### 1. viewType 列舉
 
@@ -216,7 +216,7 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 | 8 | map | 地圖檢視 |
 | 21 | customize | 外掛檢視 |
 
-`childType` 修飾符：詳情檢視 `1`=單條詳情、`2`=多條列表+詳情；層級檢視 `1`=單表層級（自關聯）、`2`=多表層級。
+`childType` 修飾符：詳情檢視 `1`=單條詳情、`2`=多條清單+詳情；層級檢視 `1`=單表層級（自關聯）、`2`=多表層級。
 
 ### 2. editAttrs — 頂層檢視屬性
 
@@ -226,18 +226,18 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 |---|---|---|
 | `name` | 檢視名（改名） | string |
 | `advancedSetting` | 設定項字串字典；**必須配 `--edit-ad-keys`**（見 §3） | 值全為字串的物件 |
-| `AdvancedSetting` | 服務端接受的首字母大寫別名 | 同上 |
+| `AdvancedSetting` | 伺服器端接受的首字母大寫別名 | 同上 |
 | `filters` | 檢視過濾條件 | 讀回是 → [FilterCondition[]](../scripts/types/filter-condition.schema.json)；寫入時 `--filter-json` / `--view-spec` 的 `filter` 用統一寫法 `{logic, items:[{field, op, value}]}` |
-| `fastFilters` | 快速篩選欄位配置 | 陣列 `[{controlId, dataType, spliceType, filterType, advancedSetting{…}}]`，每項的 advancedSetting 為模組專屬結構，先讀後改 |
+| `fastFilters` | 快速篩選欄位設定 | 陣列 `[{controlId, dataType, spliceType, filterType, advancedSetting{…}}]`，每項的 advancedSetting 為模組專屬結構，先讀後改 |
 | `moreSort` | 多欄位排序 | → [SortItem[]](../scripts/types/sort-item.schema.json) |
 | `sortCid` | 主排序欄位 | controlId 字串 |
 | `sortType` | 主排序方向 | int：`1`=升序 `2`=降序 |
-| `controls` | 欄位配置中的隱藏欄位列表（個人儲存場景下＝個人隱藏列） | controlId 的陣列 |
-| `displayControls` | 卡片 / 移動端列表顯示的欄位 | controlId 的陣列 |
+| `controls` | 欄位設定中的隱藏欄位清單（個人儲存場景下＝個人隱藏列） | controlId 的陣列 |
+| `displayControls` | 卡片 / 移動端清單顯示的欄位 | controlId 的陣列 |
 | `showControls` | 表格顯示列（`customdisplay='1'` 時生效） | controlId 的陣列 |
 | `ShowControls` | 大寫別名（列隱藏儲存路徑） | 同上 |
 | `controlsSorts` | 卡片欄位顯示順序 | controlId 的陣列 |
-| `customDisplay` | 移動端使用獨立顯示欄位列表 | boolean |
+| `customDisplay` | 移動端使用獨立顯示欄位清單 | boolean |
 | `coverCid` | 封面圖片欄位 | controlId 字串 |
 | `coverType` | 封面填充方式 | int：`0`=填滿 `1`=完整顯示 |
 | `showControlName` | 卡片上顯示欄位名 | boolean |
@@ -246,11 +246,11 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 | `viewControls` | 多表層級的層定義 | 陣列 `[{worksheetId, controlId, …}]`，先讀後改 |
 | `layersName` | 多表層級各層顯示名 | string 的陣列 |
 | `childType` | 見 §1 | int `1`\|`2` |
-| `navGroup` | 篩選列表分組欄位 | 最多 1 項的陣列 `[{controlId, viewId?, filterType?, isAsc?}]` |
+| `navGroup` | 篩選清單分組欄位 | 最多 1 項的陣列 `[{controlId, viewId?, filterType?, isAsc?}]` |
 | `personal_setting` | 標誌屬性：與 `controls` 同傳時把改動存入**個人層**而非共享檢視；資料落在 `advancedSetting.personal_setting` | JSON 字串 `{"controls":[…],"controlsSorts":[…]}` |
 | `pluginId` | 外掛檢視繫結的外掛 id | string |
 
-> 讀返回裡還會出現 `pluginName` / `pluginIcon` / `pluginIconColor` / `pluginSource`
+> 讀回傳裡還會出現 `pluginName` / `pluginIcon` / `pluginIconColor` / `pluginSource`
 > 等外掛元資料鍵，按讀到的實際結構處理。
 
 ### 3. editAdKeys — advancedSetting 子鍵
@@ -274,19 +274,19 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 | `liststyle` | 各列寬度/樣式 | JSON 字串 `{"time":<毫秒>,"styles":[{cid, width?, …}]}` | 表格 |
 | `fixedcolumncount` | 凍結列數 | 數字字串 | 表格 |
 | `layoutupdatetime` | 佈局最後儲存時間戳 | epoch 毫秒字串 | 表格 |
-| `customdisplay` | `"1"`=檢視用自己的列表（`showControls`）`"0"`=跟隨表單佈局 | `"0"`\|`"1"` | 表格 |
+| `customdisplay` | `"1"`=檢視用自己的清單（`showControls`）`"0"`=跟隨表單佈局 | `"0"`\|`"1"` | 表格 |
 | `customShowControls` | `customdisplay='0'` 時暫存的自訂列清單 | controlId 的 JSON 陣列（字串） | 表格 |
 | `sysids` | 跟隨表單佈局時可見的系統欄位 | controlId 的 JSON 陣列（字串） | 表格 |
 | `syssort` | 系統欄位順序 | controlId 的 JSON 陣列（字串） | 表格 |
 | `personal_setting` | 使用者個人的列隱藏/排序 | JSON 字串 `{"controls":[ids],"controlsSorts":[ids]}` | 表格 |
 
-#### 3.2 排序 / 過濾 / 重新整理 / 連結引數（各類檢視通用）
+#### 3.2 排序 / 過濾 / 重新整理 / 連結參數（各類檢視通用）
 
 | 鍵 | 含義 | 值形態 | 適用 |
 |---|---|---|---|
 | `closedefsort` | 清空自訂排序後禁用預設排序 | `"0"`\|`"1"` | 全部 |
 | `refreshtime` | 自動重新整理間隔（秒），`"0"`=關 | 列舉字串：`"0"`,`"30"`,`"60"`,… | 全部 |
-| `urlparams` | 檢視過濾可引用的 URL 引數 | 引數名字串的 JSON 陣列（每個 ≤20 字元） | 全部 |
+| `urlparams` | 檢視過濾可引用的 URL 參數 | 參數名字串的 JSON 陣列（每個 ≤20 字元） | 全部 |
 | `clicksearch` | 快篩：`"1"`=執行查詢後才顯示資料 | `"0"`\|`"1"` | 配了快篩的檢視 |
 | `enablebtn` | 快篩：顯示「查詢」按鈕（>3 個篩選時強制開） | `"0"`\|`"1"` | 配了快篩的檢視 |
 | `fastrequired` | 快篩：查詢前必填開關 | `"0"`\|`"1"`\|`""` | 配了快篩的檢視 |
@@ -299,11 +299,11 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 |---|---|---|---|
 | `clicktype` | 點記錄的動作 | `"0"`=開啟記錄 `"1"`=開啟連結 `"2"`=無 | 表格/卡片類 |
 | `clickcid` | `clicktype='1'` 時使用的連結欄位 | controlId 字串 | 同上 |
-| `listbtns` | 列表/行區顯示的自訂按鈕 | 按鈕 id 的 JSON 陣列（字串） | 表格/卡片類 |
+| `listbtns` | 清單/行區顯示的自訂按鈕 | 按鈕 id 的 JSON 陣列（字串） | 表格/卡片類 |
 | `detailbtns` | 記錄詳情中按鈕的順序 | 按鈕 id 的 JSON 陣列（字串） | 全部 |
 | `hidebtn` | 隱藏不可用按鈕 | `""`\|`"1"` | 全部 |
-| `acstyle` | 按鈕樣式配置 | JSON 物件字串，先讀後改 | 全部 |
-| `actioncolumn` | 行「操作列」配置（按鈕、寬度等） | JSON 物件字串，先讀後改 | 表格、層級（表格模式） |
+| `acstyle` | 按鈕樣式設定 | JSON 物件字串，先讀後改 | 全部 |
+| `actioncolumn` | 行「操作列」設定（按鈕、寬度等） | JSON 物件字串，先讀後改 | 表格、層級（表格模式） |
 
 #### 3.4 卡片外觀（看板/畫廊/層級/日曆/甘特/詳情/地圖/資源 的卡片）
 
@@ -321,29 +321,29 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 | `navempty` | 啟用「未指定」看板 | `"1"`=開 `"0"`=關 | 看板 |
 | `freezenav` | 滾動時凍結第一個看板 | `"0"`\|`"1"` | 看板 |
 
-#### 3.5 分組與篩選列表導航
+#### 3.5 分組與篩選清單導航
 
-`navshow`/`navfilters` 由看板分組、畫廊分組、篩選列表、資源檢視共用。
+`navshow`/`navfilters` 由看板分組、畫廊分組、篩選清單、資源檢視共用。
 
 | 鍵 | 含義 | 值形態 | 適用 |
 |---|---|---|---|
-| `navshow` | 顯示哪些分組項 | `"0"`=全部 `"1"`=有資料的項 `"2"`=指定項 `"3"`=滿足篩選條件的項 | 看板/畫廊分組、篩選列表、資源 |
+| `navshow` | 顯示哪些分組項 | `"0"`=全部 `"1"`=有資料的項 `"2"`=指定項 `"3"`=滿足篩選條件的項 | 看板/畫廊分組、篩選清單、資源 |
 | `navfilters` | `navshow='2'`：指定項 id/值的 JSON 陣列；`navshow='3'`：→ [FilterCondition[]](../scripts/types/filter-condition.schema.json)（序列化為字串） | JSON 字串，形態隨 navshow 變化，先讀後改 | 同上 |
-| `navsorts` | 分組項自訂順序 | JSON 陣列（字串） | 看板/篩選列表 |
+| `navsorts` | 分組項自訂順序 | JSON 陣列（字串） | 看板/篩選清單 |
 | `customitems` | 自訂/合併的分組項 | JSON 陣列字串，先讀後改 | 看板/畫廊分組 |
-| `customnavs` | 篩選列表自訂導航項 | JSON 陣列字串，先讀後改 | 篩選列表 |
-| `navlayer` | 層級型分組欄位顯示的層數，`"999"`=全部 | 數字字串 | 篩選列表 |
-| `navwidth` | 篩選列表面板預設寬度 px（100–500） | 數字字串 | 篩選列表 |
-| `usenav` | 新建記錄時把選中項作為預設值 | `"0"`\|`"1"` | 篩選列表 |
-| `navsearchtype` | 導航搜尋模式 | `"0"`=模糊 `"1"`=精確 | 篩選列表 |
-| `navsearchcontrol` | 導航內搜尋的欄位（關聯記錄分組） | controlId 字串 | 篩選列表 |
-| `showallitem` | 「全部」項 | `""`=顯示 `"1"`=隱藏 | 篩選列表/看板分組 |
-| `allitemname` | 「全部」項的自訂名稱 | string | 篩選列表/看板分組 |
-| `shownullitem` | 顯示「為空」項 | `"1"`=顯示 | 篩選列表/看板分組 |
-| `nullitemname` | 「為空」項的自訂名稱 | string | 篩選列表/看板分組 |
-| `appnavtype` | 移動端導航展示型別（關聯/級聯欄位固定 `"2"`） | `"1"`\|`"2"`\|`"3"` | 篩選列表（移動端） |
-| `showNextGroup` | 自動展開下一層分組（與 navshow `"2"` 搭配，`"999"`） | 數字字串 | 篩選列表 |
-| `groupsetting` | 表內分組欄位配置 | JSON 陣列字串 `[{controlId,…}]`，先讀後改 | 表格（分組）、看板 |
+| `customnavs` | 篩選清單自訂導航項 | JSON 陣列字串，先讀後改 | 篩選清單 |
+| `navlayer` | 層級型分組欄位顯示的層數，`"999"`=全部 | 數字字串 | 篩選清單 |
+| `navwidth` | 篩選清單面板預設寬度 px（100–500） | 數字字串 | 篩選清單 |
+| `usenav` | 新建記錄時把選中項作為預設值 | `"0"`\|`"1"` | 篩選清單 |
+| `navsearchtype` | 導航搜尋模式 | `"0"`=模糊 `"1"`=精確 | 篩選清單 |
+| `navsearchcontrol` | 導航內搜尋的欄位（關聯記錄分組） | controlId 字串 | 篩選清單 |
+| `showallitem` | 「全部」項 | `""`=顯示 `"1"`=隱藏 | 篩選清單/看板分組 |
+| `allitemname` | 「全部」項的自訂名稱 | string | 篩選清單/看板分組 |
+| `shownullitem` | 顯示「為空」項 | `"1"`=顯示 | 篩選清單/看板分組 |
+| `nullitemname` | 「為空」項的自訂名稱 | string | 篩選清單/看板分組 |
+| `appnavtype` | 移動端導航展示型別（關聯/級聯欄位固定 `"2"`） | `"1"`\|`"2"`\|`"3"` | 篩選清單（移動端） |
+| `showNextGroup` | 自動展開下一層分組（與 navshow `"2"` 搭配，`"999"`） | 數字字串 | 篩選清單 |
+| `groupsetting` | 表內分組欄位設定 | JSON 陣列字串 `[{controlId,…}]`，先讀後改 | 表格（分組）、看板 |
 | `groupshow` | 表內分組版 `navshow` | 同 navshow 取值 | 表格分組 |
 | `groupfilters` | 表內分組版 `navfilters` | 同 navfilters，先讀後改 | 表格分組 |
 | `groupsorts` | 表內分組版 `navsorts` | JSON 陣列（字串） | 表格分組 |
@@ -396,7 +396,7 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 
 | 鍵 | 含義 | 值形態 | 適用 |
 |---|---|---|---|
-| `maplocation` | 預設地圖中心/縮放配置 | JSON 物件字串（center、zoom…），先讀後改 | 地圖 |
+| `maplocation` | 預設地圖中心/縮放設定 | JSON 物件字串（center、zoom…），先讀後改 | 地圖 |
 | `tagType` | 地點標記展示型別 | 列舉字串 | 地圖 |
 | `tagcolorid` | 給標記上色的選項欄位 | controlId 字串 | 地圖 |
 
@@ -420,8 +420,8 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 
 | 鍵 | 含義 | 值形態 | 適用 |
 |---|---|---|---|
-| `environmentparams` | 傳給外掛的環境引數 | JSON 物件字串（自由鍵值） | 外掛 |
-| `plugin_map` | 按欄位 id 存放的外掛引數值 | JSON 物件字串 `{"<fieldId>": value}` | 外掛 |
+| `environmentparams` | 傳給外掛的環境參數 | JSON 物件字串（自由鍵值） | 外掛 |
+| `plugin_map` | 按欄位 id 存放的外掛參數值 | JSON 物件字串 `{"<fieldId>": value}` | 外掛 |
 | `plugin_attachement_info` | 鎖定的外掛版本資訊 | JSON 物件字串，先讀後改 | 外掛 |
 
 > 注意兩類同名不同層的鍵：快篩**每個篩選項內部**的 advancedSetting（`allowscan`、

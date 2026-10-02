@@ -61,7 +61,7 @@ hap custom-page save <pageId> --version <当前version> --components '[...]'
 範圍，所以 `chart create` 已不會空白；但 `chart update` **不補**（否則會覆蓋這張圖原本的時間範圍），
 所以改圖時只傳要改的項。
 
-**元件增刪改推薦走 edit-spec**（`hap app-editor apply`）：頁面佈局是整體讀改寫——讀全量元件列表、改目標、整頁寫回；edit-spec 的 `component.add/update/delete` 幫你處理這套流程並按名字定位元件，其餘元件原樣保留。一次性示例：
+**元件增刪改推薦走 edit-spec**（`hap app-editor apply`）：頁面佈局是整體讀改寫——讀全量元件清單、改目標、整頁寫回；edit-spec 的 `component.add/update/delete` 幫你處理這套流程並按名字定位元件，其餘元件原樣保留。一次性示例：
 
 ```json
 {
@@ -92,15 +92,15 @@ hap custom-page save <pageId> --version <N> --components '[ ...全量组件... ]
 
 坑位提示：
 
-- `info` / `save` / `update-config` 的位置引數是**頁面 id**；`create` / `rename` / `copy` / `delete` 的第一個引數才是應用 id。混填會讀到空或報錯。
-- `save` 必須帶 `info` 返回的 `version`；`components` 是整頁佈局的全量替換，不是增量。
+- `info` / `save` / `update-config` 的位置參數是**頁面 id**；`create` / `rename` / `copy` / `delete` 的第一個參數才是應用 id。混填會讀到空或報錯。
+- `save` 必須帶 `info` 回傳的 `version`；`components` 是整頁佈局的全量替換，不是增量。
 - filter 元件（type=6）可以內聯高層 `filtersGroup`（含 `filters[]`），儲存時會先落成儲存物件再替換為 id；這條路徑需要 `--owner-app-id <appId>`（預設時會嘗試自動解析）。
 - 元件的顯示名存在 `web.title`，讀回的元件**沒有頂層 name**——按名字找元件要看 `web.title`。
 - richText 的 `value` 是 HTML 字串；embedUrl / image 的 `value` 是 URL。資料繫結型元件（chart 要 reportId、view 要 worksheetId/viewId、filter 要 filtersGroup）用 `raw:{<wire 键>}` 直接給 wire 物件（最後合併、優先生效）。
 
 ## 資料字典
 
-字典生成於 2026-06-10；未覆蓋的鍵以讀命令返回的實際結構為準。
+字典生成於 2026-06-10；未覆蓋的鍵以讀命令回傳的實際結構為準。
 
 ### 元件型別（type 可寫名字或整數）
 
@@ -117,7 +117,7 @@ hap custom-page save <pageId> --version <N> --components '[ ...全量组件... ]
 | tabs | 10 | 標籤頁容器 | 24×8（通用預設） |
 | card | 11 | 卡片容器 | 24×8（通用預設） |
 
-### 元件通用鍵（wire 形態，info 返回 / save 提交）
+### 元件通用鍵（wire 形態，info 回傳 / save 提交）
 
 | 鍵 | 含義 | 值形態 |
 |---|---|---|
@@ -151,5 +151,5 @@ hap custom-page save <pageId> --version <N> --components '[ ...全量组件... ]
 | --permanently | 徹底刪除；不加就進應用回收站，用 `hap app trash` 能看到也能還原 | flag | delete |
 | --version | 佈局版本號（info 可得） | int | save 必填 |
 | --adjust-screen | 適配螢幕 | flag 對 | save/update-config |
-| --url-params | URL 引數描述符 | JSON array | save/update-config |
+| --url-params | URL 參數描述符 | JSON array | save/update-config |
 | --config | 頁面設定 | JSON object | save/update-config |

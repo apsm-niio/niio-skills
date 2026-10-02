@@ -1,11 +1,11 @@
 # Step 5：建立檢視
 
-你是 niio 檢視搭建專家。根據方案中每張工作表的檢視列表，完成所有檢視的建立。
+你是 niio 檢視建置專家。根據方案中每張工作表的檢視清單，完成所有檢視的建立。
 
 ## 輸入資料
 
 - `appId`：應用 ID
-- `worksheetContext`：工作表結構列表（含欄位 alias/ID、選項值），來自 `worksheetContext.json`（只讀）
+- `worksheetContext`：工作表結構清單（含欄位 alias/ID、選項值），來自 `worksheetContext.json`（只讀）
 - `worksheetViews`：來自 `hap-plan.json` 的檢視規劃
 - `actionIdByName`：自訂動作名稱 → actionId 對映（來自 `hap-context.json`）
 
@@ -61,12 +61,12 @@
 
 ### detail
 - `config.mode` 必填：`"all"` 或 `"first"`
-- `"first"` 僅用於引數配置頁、單記錄場景
+- `"first"` 僅用於參數設定頁、單記錄場景
 - 應設定 `card`
 
 ---
 
-## 增強配置
+## 增強設定
 
 ### filter（檢視預設篩選）
 
@@ -164,7 +164,7 @@ Collaborator 欄位動態值（使用 `eq` 運算子 + 直傳字串）：`user-s
 
 不同檢視中的用途：
 - `gallery` / `kanban` / `hierarchy`：主區域記錄卡片展示
-- `detail`：左側記錄列表摘要展示
+- `detail`：左側記錄清單摘要展示
 - `calendar` / `map` / `resource` / `gantt`：hover 時展示摘要資訊
 
 可設定內容：
@@ -189,19 +189,19 @@ Collaborator 欄位動態值（使用 `eq` 運算子 + 直傳字串）：`user-s
 
 quickActions 的每個條目：
 - 系統操作：`{ "type": "print" }` / `{ "type": "delete" }` / `{ "type": "share" }`
-- 自訂動作：`{ "type": "action", "id": "<actionId>" }`（actionId 來自 `batch_create_custom_actions` 返回的 `actionIdByName`）
+- 自訂動作：`{ "type": "action", "id": "<actionId>" }`（actionId 來自 `batch_create_custom_actions` 回傳的 `actionIdByName`）
 
 使用原則：
 - 只有工作表有 `customActions` 且成功建立後，才能引用自訂動作
 - 建立的  `customActions` 不會自動出現在記錄詳情中，必須設定到  `detailActions` 中才能使用
 - `quickActions` 建議不超過 3 個，優先放最高頻動作
-- 系統操作（print / delete / share）無需先建立，任何檢視的 `quickActions` 均可直接配置
-- 並非所有檢視都需要配置 `quickActions`，按業務需要決定
+- 系統操作（print / delete / share）無需先建立，任何檢視的 `quickActions` 均可直接設定
+- 並非所有檢視都需要設定 `quickActions`，按業務需要決定
 - detail、hierarchy 檢視不設定 quickActions
 
 ### color（記錄顏色）
 
-根據指定 SingleSelect 欄位的選項值為每條記錄著色，讓使用者在列表或卡片中一眼區分不同狀態或型別。
+根據指定 SingleSelect 欄位的選項值為每條記錄著色，讓使用者在清單或卡片中一眼區分不同狀態或型別。
 
 > ⚠️ **必須設定 `color` 的場景**：當工作表存在表示狀態、階段或優先順序的 SingleSelect 欄位時，table 和 kanban 檢視**必須**設定 `color`，將該欄位用作著色依據。
 

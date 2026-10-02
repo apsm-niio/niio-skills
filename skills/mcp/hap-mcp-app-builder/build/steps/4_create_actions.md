@@ -1,11 +1,11 @@
 # Step 4：建立自訂動作
 
-你是 niio 自訂動作搭建專家。根據方案中每張工作表的 `customActions` 列表，批次建立自訂動作按鈕。
+你是 niio 自訂動作建置專家。根據方案中每張工作表的 `customActions` 清單，批次建立自訂動作按鈕。
 
 ## 輸入資料
 
 - `appId`：應用 ID
-- `worksheetContext`：工作表結構列表（含欄位 alias/ID 對映），來自 `worksheetContext.json`（只讀）
+- `worksheetContext`：工作表結構清單（含欄位 alias/ID 對映），來自 `worksheetContext.json`（只讀）
 - `worksheetCustomActions`：來自 `hap-plan.json` 的自訂動作規劃
 
 ## 執行流程
@@ -13,8 +13,8 @@
 對每張有自訂動作的工作表：
 
 1. 呼叫 `create_custom_actions` 批次建立該表的所有動作
-2. 記錄返回的 `actionIdByName`（格式：`"工作表名/动作名" → actionId`）
-3. **關鍵**：`type=triggerWorkflow` 的動作，系統會自動建立工作流外殼並返回 `processId`——必須記錄到 `customActionWorkflows[]`
+2. 記錄回傳的 `actionIdByName`（格式：`"工作表名/动作名" → actionId`）
+3. **關鍵**：`type=triggerWorkflow` 的動作，系統會自動建立工作流外殼並回傳 `processId`——必須記錄到 `customActionWorkflows[]`
 4. 更新 `hap-context.json`：寫入 `actionIdByName`、`customActionWorkflows`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`actionIdByName` 條目數 = plan 中全部自訂動作總數。`customActionWorkflows[]` 條目數 = plan 中 `type=triggerWorkflow` 的動作數。
@@ -23,9 +23,9 @@
 
 ## build階段需要補充的欄位
 
-| type | 說明 | 必填額外引數 |
+| type | 說明 | 必填額外參數 |
 |---|---|---|
-| `updateCurrentRecord` | 允許使用者填寫當前記錄的指定欄位 | `updateFields`（欄位 alias 或 ID 列表）|
+| `updateCurrentRecord` | 允許使用者填寫當前記錄的指定欄位 | `updateFields`（欄位 alias 或 ID 清單）|
 | `createRelatedRecord` | 在關聯表中新建一條關聯記錄 | `relationField`（關聯欄位 alias 或 ID）|
 | `triggerWorkflow` | 直接觸發繫結的工作流 | 無 |
 
@@ -33,7 +33,7 @@
 
 ### updateFields 推斷
 
-plan 的 `description` 描述了"使用者填什麼"，build 階段從 worksheetFields 裡挑出對應欄位的 alias 列表。
+plan 的 `description` 描述了"使用者填什麼"，build 階段從 worksheetFields 裡挑出對應欄位的 alias 清單。
 
 例：
 - plan: `"办理签到"` description "填寫實際到場時間、證件核驗情況、訪客證編號"
@@ -96,7 +96,7 @@ plan 的 `targetWorksheet` 告訴我們要建哪張表的關聯記錄。workshee
 
 ## 建立結果
 
-`create_custom_actions` 返回 `actionIdByName`（按鈕名稱 → actionId 的對映），供後續檢視的 `actions` 配置引用。
+`create_custom_actions` 回傳 `actionIdByName`（按鈕名稱 → actionId 的對映），供後續檢視的 `actions` 設定引用。
 
 對 `type=triggerWorkflow` 的動作，還需記錄：
 ```json

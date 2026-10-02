@@ -1,13 +1,13 @@
 ---
 name: build
-description: niio 應用物理搭建排程器。讀取 hap-plan.json，逐步排程 steps/*.md 完成所有 niio 物件的建立與配置。支援 subagent 委派和內聯執行雙模式。
+description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排程 steps/*.md 完成所有 niio 物件的建立與設定。支援 subagent 委派和內聯執行雙模式。
 ---
 
-# niio 應用搭建排程器
+# niio 應用建置排程器
 
-你是 niio（niio）應用搭建**排程器**，只負責進度路由、上下文合併和結果校驗，不直接承載各步驟的詳細規則。
+你是 niio應用建置**排程器**，只負責進度路由、上下文合併和結果校驗，不直接承載各步驟的詳細規則。
 
-> 本檔案是物理搭建階段的輕量排程器，不直接包含各步驟的詳細搭建規則。
+> 本檔案是實際建置階段的輕量排程器，不直接包含各步驟的詳細建置規則。
 > 具體規則必須從 `steps/` 中對應步驟檔案讀取。
 > 無論使用 subagent 還是內聯執行，每一步都必須遵守 `OUTPUT_CONTRACT.md`。
 
@@ -15,7 +15,7 @@ description: niio 應用物理搭建排程器。讀取 hap-plan.json，逐步排
 
 ---
 
-## 🔒 全域性執行清單（標記 completed 前必須核對）
+## 🔒 全域執行清單（標記 completed 前必須核對）
 
 > [!CAUTION]
 > 以下每一項都是**硬性交付物**。標記 `progress="completed"` 之前，必須逐項核對並確認全部完成。遺漏任何一項即為執行失敗。
@@ -31,7 +31,7 @@ description: niio 應用物理搭建排程器。讀取 hap-plan.json，逐步排
 | 7 | 示例資料已寫入 | 各表均有記錄 | `progress >= sample_data_created` |
 | 8 | 頁面空殼已建立 | `customPageIdByName` 條目數匹配 plan | `customPageIdByName` |
 | 9 | AI 助手已建立（若有） | `chatbotIdByName` 條目數匹配 plan（或 plan 無則跳過） | `chatbotIdByName` |
-| 10 | 頁面元件已配置 | 所有頁面均已呼叫 `update_custom_page` | Step 7 完成 |
+| 10 | 頁面元件已設定 | 所有頁面均已呼叫 `update_custom_page` | Step 7 完成 |
 | 11 | 角色已建立 | `roleContext` 條目數 = plan 中角色數 | `roleContext` |
 | 12 | 工作流已設計 | `hap-plan.json` 中每條 workflow 和 customActionWorkflow 的 `nodes[]` 非空 | `hap-plan.json` |
 | 13 | 系統工作流已釋出 | 每個系統工作流 processId 已 publish | Step 10 完成 |
@@ -59,11 +59,11 @@ description: niio 應用物理搭建排程器。讀取 hap-plan.json，逐步排
 > 回填 MCP 蓋不到的硬缺口。
 >
 > [!IMPORTANT]
-> **本步不阻斷搭建主體**——純 MCP 已能獨立把應用建好。**唯一會讓 Step 12 跳過回填的情況是
+> **本步不阻斷建置主體**——純 MCP 已能獨立把應用建好。**唯一會讓 Step 12 跳過回填的情況是
 > 「hap 未安裝」**；「未登入」在本步自動登入解決，「組織不一致」留到 Step 12 自動切換解決。
 
 1. **探測 hap 是否安裝**：執行 `hap auth whoami`
-   - **命令不存在 / 未安裝** → `cliAvailable = false`（唯一的跳過情形）。不中斷，繼續搭建。
+   - **命令不存在 / 未安裝** → `cliAvailable = false`（唯一的跳過情形）。不中斷，繼續建置。
    - **命令存在但提示未登入** → 進入第 2 步自動登入。
    - **命令存在且已登入** → `cliAvailable = true`，跳到第 3 步。
 2. **自動登入**（僅「已安裝、未登入」時）：執行 `hap auth login`，走**瀏覽器授權**並等待授權完成。
@@ -84,17 +84,17 @@ description: niio 應用物理搭建排程器。讀取 hap-plan.json，逐步排
 在正式進入執行迴圈之前，**必須先完成以下檢查**：
 
 > [!IMPORTANT]
-> **本構建流程的執行即代表使用者已明確要求使用 sub agent。** 不得因平臺預設規則（如"只有使用者明確要求時才能使用 sub agent"）而跳過 sub agent 呼叫。**嚴禁退回內聯執行**。
+> **本建置流程的執行即代表使用者已明確要求使用 sub agent。** 不得因平台預設規則（如"只有使用者明確要求時才能使用 sub agent"）而跳過 sub agent 呼叫。**嚴禁退回內聯執行**。
 
-1. **探測子 agent 功能**：嘗試檢測當前平臺是否支援子 agent。各平臺的子 agent 工具名稱不同（Antigravity: `invoke_subagent`；Claude Code: `Task`；Codex: `multi_agent_v1.spawn_agent`），子 agent 工具可能不會出現在初始工具列表中，必須先透過工具發現查詢，不得僅因初始工具列表未顯示就判定子 agent 不可用。
+1. **探測子 agent 功能**：嘗試檢測當前平台是否支援子 agent。各平台的子 agent 工具名稱不同（Antigravity: `invoke_subagent`；Claude Code: `Task`；Codex: `multi_agent_v1.spawn_agent`），子 agent 工具可能不會出現在初始工具清單中，必須先透過工具發現查詢，不得僅因初始工具清單未顯示就判定子 agent 不可用。
 2. **根據檢測結果分流**：
    - **子 agent 可用** → 靜默透過，繼續執行
    - **子 agent 可用但必須使用者同意** → 執行下方授權提示流程
-   - **子 agent 不可用** → 告知使用者將全程使用內聯模式執行，搭建後期質量將直線下降，是否繼續
+   - **子 agent 不可用** → 告知使用者將全程使用內聯模式執行，建置後期質量將直線下降，是否繼續
 
 #### 授權提示流程
 
-如果檢測到當前平臺需要使用者授權才能使用子 agent，在搭建開始前向使用者輸出以下說明：
+如果檢測到當前平台需要使用者授權才能使用子 agent，在建置開始前向使用者輸出以下說明：
 
 ```
 ℹ️ 子 agent 授权说明
@@ -129,7 +129,7 @@ Step 1 是輕量的應用和導航分組建立，在主 agent 內執行：
 
 ### 階段 1.5：工作表建立與欄位重新整理（Step 2~3）
 
-Step 2 是整個搭建流程中規則最重的步驟（~400 行規則），**必須使用子 agent 隔離執行**，避免大量 MCP 呼叫和欄位配置資料汙染主排程器上下文，確保規則遵守率。
+Step 2 是整個建置流程中規則最重的步驟（~400 行規則），**必須使用子 agent 隔離執行**，避免大量 MCP 呼叫和欄位設定資料汙染主排程器上下文，確保規則遵守率。
 
 1. 將 Step 2 委派給子 agent → 等待完成 → 排程器寫入 `progress=worksheets_created`
 2. 讀取 `build/steps/3_refresh_fields.md` → 內聯執行指令碼（一條命令） → 排程器寫入 `progress=fields_refreshed`
@@ -162,12 +162,12 @@ Step 5b 是輕量操作（建立空白頁面導航項 + chatbot），為後續�
 
 ---
 
-### 階段 3：配置並行（Step 7 + Step 8 + Step 9，子 agent 執行）
+### 階段 3：設定並行（Step 7 + Step 8 + Step 9，子 agent 執行）
 
 #### 並行派發 ②：Step 7 + Step 8 + Step 9（page_shells_created 後觸發）
 
 Step 5b 完成後，三者的輸入已全部就緒：
-- **Step 7**（配置頁面元件）：需要 `customPageIdByName`（Step 5b）+ `worksheetContext` + `viewIdByName`
+- **Step 7**（設定頁面元件）：需要 `customPageIdByName`（Step 5b）+ `worksheetContext` + `viewIdByName`
 - **Step 8**（建立角色）：需要 `customPageIdByName` + `chatbotIdByName`（Step 5b）+ `worksheetContext` + `viewIdByName`
 - **Step 9**（設計工作流）：需要 `worksheetContext` + `viewIdByName` + `roles[]`（來自 hap-plan.json，不依賴 roleContext）
 
@@ -190,11 +190,11 @@ Step 10（系統工作流）和 Step 11（自訂動作工作流）均依賴 Step
 ### 階段 5：CLI 建後精修（Step 12，內聯執行）
 
 Step 12 用 `hap` 命令列工具補 MCP 蓋不到的硬缺口。**永不阻斷**：CLI 不可用/組織不一致時降級為
-「待補清單」，應用仍算搭建成功。
+「待補清單」，應用仍算建置成功。
 
 讀取 `build/steps/12_cli_refinement.md` → 內聯執行 → 排程器寫入 `progress="completed"`。
 
-> 本步內聯執行（非 subagent）：它依賴構建入口「CLI 自檢」寫入的 `cliAvailable`，
+> 本步內聯執行（非 subagent）：它依賴建置入口「CLI 自檢」寫入的 `cliAvailable`，
 > 且以對賬+少量 CLI 命令為主，上下文開銷小。
 
 ---
@@ -204,7 +204,7 @@ Step 12 用 `hap` 命令列工具補 MCP 蓋不到的硬缺口。**永不阻斷*
 對 Step 4~11 的每一步：
 
 1. **必須將任務委派給子 agent**，使用下方 Prompt 模板
-2. **委派成功** → 等待子 agent 完成 → 驗證產出資料是否到位（對照全域性執行清單）→ 排程器寫入 progress
+2. **委派成功** → 等待子 agent 完成 → 驗證產出資料是否到位（對照全域執行清單）→ 排程器寫入 progress
 3. **子 agent 不可用** → 退回內聯：完整讀取步驟檔案，在主 agent 內執行
 
 #### 子 agent Prompt 模板
@@ -244,7 +244,7 @@ Step 12 用 `hap` 命令列工具補 MCP 蓋不到的硬缺口。**永不阻斷*
 
 每步完成後：
 
-1. 驗證該步驟的交付物欄位非空（對照全域性執行清單）
+1. 驗證該步驟的交付物欄位非空（對照全域執行清單）
 2. 驗證透過後，**由排程器寫入對應的 `progress` 值**到 `hap-context.json`
 3. 若驗證失敗 → 向使用者報告錯誤並停止
 
@@ -259,7 +259,7 @@ Step 9 的產出是寫入 `hap-plan.json` 而非 `hap-context.json`。排程器�
 
 | 時機 | 輸出模板 |
 |------|---------| 
-| 搭建開始 | `🚀 开始搭建应用【{appName}】…` |
+| 建置開始 | `🚀 开始搭建应用【{appName}】…` |
 | 階段 1 完成 | `✅ 基础搭建完成：应用已创建，{N} 张工作表` |
 | Step 5b 完成 | `✅ 页面空壳与 AI 助手已创建，开始并行配置…` |
 | 階段 3 完成 | `✅ 页面组件、角色、工作流设计全部完成` |
@@ -288,7 +288,7 @@ Step 9 的產出是寫入 `hap-plan.json` 而非 `hap-context.json`。排程器�
 
 ## 完成
 
-在標記 `progress="completed"` 之前，**必須回到頂部的「🔒 全域性執行清單」逐項核對**。並行派發的步驟須等待全部完成後再推進（詳見上方「並行派發策略」）。
+在標記 `progress="completed"` 之前，**必須回到頂部的「🔒 全域執行清單」逐項核對**。並行派發的步驟須等待全部完成後再推進（詳見上方「並行派發策略」）。
 
 確認全部 15 項均已完成後，輸出成功摘要：
 
@@ -305,8 +305,8 @@ Step 9 的產出是寫入 `hap-plan.json` 而非 `hap-context.json`。排程器�
 ## 禁止事項
 
 - **禁止跳過 step 檔案**直接憑經驗執行
-- **禁止偽造 ID**——appId、worksheetId、fieldId、viewId、workflowId 必須來自工具返回值
-- **禁止把 MCP 原始返回全文寫入 context**——只提取關鍵 ID 和對映
+- **禁止偽造 ID**——appId、worksheetId、fieldId、viewId、workflowId 必須來自工具回傳值
+- **禁止把 MCP 原始回傳全文寫入 context**——只提取關鍵 ID 和對映
 - **禁止一個 step 修改其他 step 的職責範圍**
 - **禁止跳步**——必須嚴格按路由表順序執行
 

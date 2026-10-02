@@ -9,11 +9,11 @@
 - `appIcon`：應用圖示（來自 `hap-plan.json`）
 - `appColor`：應用配色（來自 `hap-plan.json`）
 - `enableExternalPortal`：是否啟用外部門戶（來自 `hap-plan.json`，若規劃了外部門戶角色則為 `true`）
-- `sections`：導航分組列表（來自 `hap-plan.json`）
+- `sections`：導航分組清單（來自 `hap-plan.json`）
 
 ## 執行流程
 
-1. 呼叫 `create_app` 建立應用，獲得 `appId`（引數規則見下方）
+1. 呼叫 `create_app` 建立應用，獲得 `appId`（參數規則見下方）
 2. 呼叫 `create_app_sections` 批次建立導航分組，記錄 `sectionIdByName`
 3. 寫入應用訪問連結（見下方）
 4. 更新 `hap-context.json`：寫入 `appId`、`sectionIdByName`（不寫 `progress`，由排程器統一管理）
@@ -22,7 +22,7 @@
 
 ---
 
-## 引數規則
+## 參數規則
 
 ### remark
 
@@ -30,12 +30,12 @@
 
 ### desc
 
-面向使用者的應用使用手冊（**必須使用原生 HTML + 行內 CSS 編寫，禁止使用 Markdown**）。讀取 `{PROJECT_ROOT}/apps/{appName}/overview.md` 和 `hap-plan.json` 中的 `roles` 列表，以使用者視角改寫為按角色組織的使用手冊。
+面向使用者的應用使用手冊（**必須使用原生 HTML + 行內 CSS 編寫，禁止使用 Markdown**）。讀取 `{PROJECT_ROOT}/apps/{appName}/overview.md` 和 `hap-plan.json` 中的 `roles` 清單，以使用者視角改寫為按角色組織的使用手冊。
 
 **內容結構**：
 
 1. **開頭**：一段簡短的應用介紹（1～2 句話說明應用用途）
-2. **核心業務流轉**：用一段話或簡短的步驟列表，概述端到端的主業務流程（如"預約 → 開單 → 服務 → 結賬 → 清潔"），讓使用者理解各角色之間如何協作、資料如何流轉
+2. **核心業務流轉**：用一段話或簡短的步驟清單，概述端到端的主業務流程（如"預約 → 開單 → 服務 → 結賬 → 清潔"），讓使用者理解各角色之間如何協作、資料如何流轉
 3. **按角色分塊**：為 `roles` 中的每個角色生成獨立章節，每個章節包含：
    - 角色名稱（作為小標題）
    - 職責說明（一句話概括該角色做什麼）

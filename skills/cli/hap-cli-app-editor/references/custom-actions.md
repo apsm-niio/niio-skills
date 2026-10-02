@@ -38,8 +38,8 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
 
 坑位提示：
 
-- **兩種模式二選一**：`--action-spec` 是乾淨的高層結構，由命令降級為 wire 配置；`--config` 是原始 wire 形態，原樣傳送。不要混填。
-- 每個按鈕建立時會**自動生成一條關聯的自動化流程**，命令會把它的 processId 一併返回，方便接著搭流程。**後續修改必須帶 `--btn-id` 原地更新**——不帶就會新建一個按鈕和一條新流程，老流程上的配置全丟。
+- **兩種模式二選一**：`--action-spec` 是乾淨的高層結構，由命令降級為 wire 設定；`--config` 是原始 wire 形態，原樣傳送。不要混填。
+- 每個按鈕建立時會**自動生成一條關聯的自動化流程**，命令會把它的 processId 一併回傳，方便接著搭流程。**後續修改必須帶 `--btn-id` 原地更新**——不帶就會新建一個按鈕和一條新流程，老流程上的設定全丟。
 - **`updateFields` 裡每個欄位的填寫模式，跟著欄位自己在工作表上的設定走**：工作表上必填的欄位
   在按鈕表單上也必填，其餘是選填，本來就不能填寫的型別（附件、公式、備註…）只讀展示。不需要、
   也不應該自己去指定檔位。
@@ -55,11 +55,11 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
 
 ## 資料字典
 
-字典核對於 hap-cli 0.9.0；未覆蓋的鍵以讀命令返回的實際結構為準。
+字典核對於 hap-cli 0.9.0；未覆蓋的鍵以讀命令回傳的實際結構為準。
 
 ### action_spec 鍵表（--action-spec 輸入）
 
-未列出的鍵會被忽略。worksheetId / appId / btnId 由命令列引數提供，不要寫進 JSON。
+未列出的鍵會被忽略。worksheetId / appId / btnId 由命令列參數提供，不要寫進 JSON。
 
 | 鍵 | 含義 | 值形態 |
 |---|---|---|
@@ -111,7 +111,7 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
 只讀，工作表上必填的欄位給 `3` 必填，其餘給 `2` 填寫。走 `--action-spec` / edit-spec 的
 `action_spec` 都會這樣推；**只有裸 `config` 不會**（見下）。
 
-### wire config 鍵表（--config 輸入 / custom-actions 返回）
+### wire config 鍵表（--config 輸入 / custom-actions 回傳）
 
 | 鍵 | 含義 | 值形態 |
 |---|---|---|
@@ -133,8 +133,8 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
 | enableConfirm | 填寫類按鈕（clickType 3）的二次確認開關 | bool；走 action_spec 時由 confirm 推導，裸 config 要自己給 |
 | verifyPwd | 執行前驗證密碼 | bool |
 | workflowId | 按鈕驅動的流程 id | string |
-| btnType / displayViews / status / iconUrl / updateTime / updateAccountId | 讀回還會帶這些，改按鈕時原樣保留即可 | 以讀命令返回為準 |
-| advancedSetting | 高階設定 | object（以讀命令返回為準） |
+| btnType / displayViews / status / iconUrl / updateTime / updateAccountId | 讀回還會帶這些，改按鈕時原樣保留即可 | 以讀命令回傳為準 |
+| advancedSetting | 高階設定 | object（以讀命令回傳為準） |
 
 ## 🚨 edit-spec 裡的 `config` 是原始逃生口，不經適配
 
@@ -147,4 +147,4 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
 - `writeControls[].type` 不會按欄位推導，全部落到預設檔
 
 它是「介面卡造不出來的形狀」的正當出口，但走它就等於放棄上面所有保護。**能用 `action_spec`
-就別用 `config`**；確實要用，就自己把整份 wire 配置寫全。
+就別用 `config`**；確實要用，就自己把整份 wire 設定寫全。

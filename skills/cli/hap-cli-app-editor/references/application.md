@@ -43,15 +43,15 @@ hap app logs <appId> --archived-id <归档ID>
 
 坑位提示：
 
-- **新建分組會排到側邊欄最前面**，連建多個後順序是反的；建完用 `sort-sections` 傳**完整** section id 列表一次性修正順序。
-- `app info` 返回的分組條目裡 `type` 區分成員型別：0=工作表，1=自訂頁面，2=子分組。按名找元素時先看這個欄位。
+- **新建分組會排到側邊欄最前面**，連建多個後順序是反的；建完用 `sort-sections` 傳**完整** section id 清單一次性修正順序。
+- `app info` 回傳的分組條目裡 `type` 區分成員型別：0=工作表，1=自訂頁面，2=子分組。按名找元素時先看這個欄位。
 - 改 `--pc-nav-style` 時圖示顯示預設隨樣式聯動；要精確控制用 `--display-icon`（3 位開關串，如 `011`）。
 - 整應用從零建立不在本 skill 範圍（用 hap-mcp-app-builder）；這裡只編輯已存在的應用。
 - chatbot 的 `--preset-question` 可重複傳，`update-config` 時是**整組替換**而非追加。
-- 想讓 AI 起草助手配置，先 `hap app chatbot generate <appId> "<一句话描述>"` 拿到建議的名字/圖示/開場白/提示詞，再餵給 `create`。
+- 想讓 AI 起草助手設定，先 `hap app chatbot generate <appId> "<一句话描述>"` 拿到建議的名字/圖示/開場白/提示詞，再餵給 `create`。
 - `app logs` 不指定 `--start/--end` 時預設**最近 30 天**；更早的要先 `app log-archives` 拿歸檔 id
   再用 `--archived-id` 查。`--kind` 取 `all|app|record|user`。
-- **備份、角色改名這類操作失敗不再被當成功**：以前服務端用裸狀態碼錶示「超限額」「重名」，CLI 照樣
+- **備份、角色改名這類操作失敗不再被當成功**：以前伺服器端用裸狀態碼錶示「超限額」「重名」，CLI 照樣
   報成功；現在會按狀態碼判定並非零退出。
 
 ### 刪了之後怎麼確認真的刪掉了
@@ -70,25 +70,25 @@ hap app logs <appId> --archived-id <归档ID>
 
 ## 資料字典
 
-字典生成於 2026-06-10；未覆蓋的鍵以讀命令返回的實際結構為準。
+字典生成於 2026-06-10；未覆蓋的鍵以讀命令回傳的實際結構為準。
 
 ### app update 列舉與取值
 
 | 鍵/選項 | 含義 | 值形態 |
 |---|---|---|
-| --pc-nav-style | PC 導航樣式 | int enum：0=經典，1=分組列表，2=卡片，3=樹形 |
+| --pc-nav-style | PC 導航樣式 | int enum：0=經典，1=分組清單，2=卡片，3=樹形 |
 | --display-icon | 圖示顯示開關 | 3 位 0/1 串（如 `011`），預設隨導航樣式 |
 | --icon-color / --nav-color | 圖示色 / 導航欄色 | 十六進位制色值字串（如 `#2196F3`） |
 | -n / -d | 應用名 / 描述 | string |
 
-### app info 返回的分組條目
+### app info 回傳的分組條目
 
 | 鍵 | 含義 | 值形態 |
 |---|---|---|
 | type | 條目型別 | int enum：0=工作表，1=自訂頁面，2=子分組 |
-| 其餘鍵 | 名稱、id、圖示等 | 以 `hap app info` 實際返回為準 |
+| 其餘鍵 | 名稱、id、圖示等 | 以 `hap app info` 實際回傳為準 |
 
-### chatbot 配置項
+### chatbot 設定項
 
 | 鍵/選項 | 含義 | 值形態 | 適用 |
 |---|---|---|---|

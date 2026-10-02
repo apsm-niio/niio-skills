@@ -1,22 +1,22 @@
-# Step 7：配置自訂頁面元件
+# Step 7：設定自訂頁面元件
 
-你是 niio 自訂頁面配置專家，根據應用方案為每個自訂頁面（儀表盤 dashboard 或工作臺 workspace）配置對應的元件。
+你是 niio 自訂頁面設定專家，根據應用方案為每個自訂頁面（儀表盤 dashboard 或工作臺 workspace）設定對應的元件。
 
-> 頁面空殼和 AI 助手已在 Step 5b 中建立完成，本步驟只負責配置頁面元件內容。
+> 頁面空殼和 AI 助手已在 Step 5b 中建立完成，本步驟只負責設定頁面元件內容。
 
 ## 輸入資料
 
 - `appId`：應用 ID
 - `customPageIdByName`：自訂頁面名稱 → 頁面 ID 的對映（來自 `hap-context.json`，由 Step 5b 寫入）
-- `worksheetContext`：工作表結構列表，每項含 `id`、`alias`、`fields`，來自 `worksheetContext.json`（只讀）
+- `worksheetContext`：工作表結構清單，每項含 `id`、`alias`、`fields`，來自 `worksheetContext.json`（只讀）
 - `viewIdByName`：檢視名稱 → ID 對映（來自 `hap-context.json`）
-- `customPages`：頁面規劃列表（來自 `hap-plan.json`）
+- `customPages`：頁面規劃清單（來自 `hap-plan.json`）
 
 ## 執行流程
 
-對每個自訂頁面，呼叫 `update_custom_page` 配置其元件（頁面 ID 從 `customPageIdByName` 獲取）。
+對每個自訂頁面，呼叫 `update_custom_page` 設定其元件（頁面 ID 從 `customPageIdByName` 取得）。
 
-**⛔ 驗證斷言**：所有自訂頁面均已配置元件（呼叫 `update_custom_page` 的次數 = plan 中自訂頁面數量）。
+**⛔ 驗證斷言**：所有自訂頁面均已設定元件（呼叫 `update_custom_page` 的次數 = plan 中自訂頁面數量）。
 
 ### 完成
 
@@ -24,7 +24,7 @@
 
 ---
 
-## 頁面配置規範
+## 頁面設定規範
 
 為每個自訂頁面分別呼叫一次 `update_custom_page`。
 
@@ -75,7 +75,7 @@ lineChart / columnChart / barChart / pieChart / rankingChart ...  ← 分析区
 
 #### Workspace（工作臺）
 
-頁面按「快捷入口 + 業務列表」方式組織。
+頁面按「快捷入口 + 業務清單」方式組織。
 
 推薦結構：
 ```
@@ -89,7 +89,7 @@ view × 1～3                     ← 列表视图区
 
 - 頂部使用 `text` 或 `carousel` 進行操作說明
 - 中部使用 `button` 元件組提供快捷操作入口
-- 下方使用 `view` 元件嵌入需要高頻處理的列表檢視
+- 下方使用 `view` 元件嵌入需要高頻處理的清單檢視
 
 ### 二、佈局規則（48 柵格）
 
@@ -135,7 +135,7 @@ view × 1～3                     ← 列表视图区
 - 不建議大量使用理解成本高的圖表，如 `radarChart`、`wordCloud`
 - 無地區欄位時**禁止**生成地圖元件
 
-### 四、按鈕元件引數
+### 四、按鈕元件參數
 
 **所有按鈕必須合併到一個 button 元件內**——透過 `buttons` 陣列包含多個按鈕項，而非為每個按鈕建立獨立元件。
 
@@ -146,10 +146,10 @@ view × 1～3                     ← 列表视图区
 - `action=2`（開啟檢視）：`value` 填 worksheetId，`viewId` **必填**（不支援 alias）
 
 > [!CAUTION]
-> 按鈕元件的 `style`、`width`、`count`、`mobileCount` 四個引數全部為**必填**。如果遺漏其中任何一個，API 將靜默失敗，按鈕元件不會被建立。請在每個按鈕元件中無條件設定這四個固定值。
+> 按鈕元件的 `style`、`width`、`count`、`mobileCount` 四個參數全部為**必填**。如果遺漏其中任何一個，API 將靜默失敗，按鈕元件不會被建立。請在每個按鈕元件中無條件設定這四個固定值。
 > **嚴禁**把多個按鈕拆成多個 button 元件——必須合併到同一個元件的 `buttons` 陣列中。
 
-### 五、輪播圖元件引數
+### 五、輪播圖元件參數
 
 - 固定設定：`action=1`（開啟記錄），`openMode=3`（彈窗開啟）
 - `title`：最能識別記錄的主標題欄位，僅支援文字型別欄位
@@ -168,7 +168,7 @@ view × 1～3                     ← 列表视图区
 
 **必須包含的樣式**：
 - 外層容器：`background`、`border-radius: 12px`、`padding: 20px 24px`
-- 文字顏色與字號：**為防止全域性 CSS 覆蓋，無論是深色還是淺色方案，都必須在內部所有文字標籤（如 `h4`, `p`, `ul`, `li`, `strong` 等）上顯式新增內聯顏色樣式和強制字號（例如 `style="color: #f1f5f9; font-size: 14px;"`），切勿只寫在最外層 div 上。**
+- 文字顏色與字號：**為防止全域 CSS 覆蓋，無論是深色還是淺色方案，都必須在內部所有文字標籤（如 `h4`, `p`, `ul`, `li`, `strong` 等）上顯式新增內聯顏色樣式和強制字號（例如 `style="color: #f1f5f9; font-size: 14px;"`），切勿只寫在最外層 div 上。**
 - 標題行：使用 `<h4>`，**顯式寫入內聯字號及字重（ `font-size: 17px; font-weight: 600;`）**，字號稍大、顏色醒目。
 - 正文：**顯式寫入內聯字號（例如 `font-size: 14px;`）**，且行高 `line-height: 1.8`，條目間距清晰。
 - 可選裝飾：標題前加 emoji 圖示、關鍵詞用 `<span>` 高亮色強調。
@@ -184,6 +184,6 @@ view × 1～3                     ← 列表视图区
 
 ## 推斷規則
 
-- `customPages` 有具體元件描述時嚴格按描述配置
+- `customPages` 有具體元件描述時嚴格按描述設定
 - 無描述時根據 `pageType` 和工作表欄位推斷最有價值的元件
 

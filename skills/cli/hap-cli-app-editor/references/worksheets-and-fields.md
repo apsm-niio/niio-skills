@@ -1,6 +1,6 @@
 # 工作表與欄位 — 命令參考與資料字典
 
-> **全域性規則：改複雜值前先用讀命令匯出現狀，在真實結構上改，再寫回。**
+> **全域規則：改複雜值前先用讀命令匯出現狀，在真實結構上改，再寫回。**
 
 ## 呼叫正規化
 
@@ -92,7 +92,7 @@ hap worksheet add-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @new-controls.json
 或把已有表掛上來），後者會連子表側的反向關聯一起配好——見
 [edit-spec.md](edit-spec.md) 的「子表有兩種模式」。
 
-> 🚨 **不要自己造 `controlId`。** 省略它，列 id 由服務端鑄。自己填一個（從別處抄來的、
+> 🚨 **不要自己造 `controlId`。** 省略它，列 id 由伺服器端鑄。自己填一個（從別處抄來的、
 > 或隨手生成的 UUID）會被原樣存下，**那樣的列在表格和關聯控制元件裡讀不出來，永遠是空白**。
 
 嵌入頁、自訂控制元件、查詢記錄、查詢按鈕、API 查詢、OCR、自由連線、分段這幾種以前沒有
@@ -171,8 +171,8 @@ hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @controls.json
 - 新建工作表自帶的 名稱/描述/附件 列在 update-fields 後會被丟棄，想保留就顯式傳回。
 - 寫回時未知鍵原樣保留，不要清洗你看不懂的鍵。
 - **條目帶不帶 `id` 決定它是改已有列還是建新列**：帶 `id`（`worksheet fields` 輸出裡的那個）
-  就是改那一列，資料留著；不帶 `id` 當成新列由服務端鑄 id，而原來那一列如果沒出現在這次
-  列表裡，它和它存的資料一起消失。
+  就是改那一列，資料留著；不帶 `id` 當成新列由伺服器端鑄 id，而原來那一列如果沒出現在這次
+  清單裡，它和它存的資料一起消失。
 - **儲存成功 ≠ 儲存對了**：引用了已不存在的欄位、表單裡留下空行、同一列出現兩次，這些都能
   儲存成功而不報錯。`--check` 只報告問題不寫入，改結構前先跑一次；真正儲存後會**自動回讀**
   把這次留下的問題報出來（要關掉用 `--no-verify`）。看到報告別當噪音。
@@ -226,7 +226,7 @@ hap worksheet pair-relation <工作表ID> 客户 --name 订单     # 指定对�
 hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方表上的残留列
 ```
 
-> 🚨 **不要用「佔位 `sourceControlId`」自己偽造反向端。** 那樣建出來的關聯服務端並沒有登記成
+> 🚨 **不要用「佔位 `sourceControlId`」自己偽造反向端。** 那樣建出來的關聯伺服器端並沒有登記成
 > 反向端，而且**之後每做一次整表替換，這個欄位就會被複制多出一份**，越改越多。已經這麼配過的
 > 表用 `--repair` 收拾：它覆蓋對方表上的殘留列（含重複的多份），**只重寫那一列，兩張表其餘列不動**。
 > 不加 `--repair` 時命令會先停下來告訴你有殘留，不會擅自覆蓋。
@@ -234,14 +234,14 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 #### 怎麼判斷一個關聯到底是不是雙向
 
 看 `hap worksheet fields` 輸出裡該欄位的 `relation.bidirectional`：`true`/`false` 是已查證的
-結論，**`null` 表示查不出來**（通常是對方表沒有讀取許可權）。
+結論，**`null` 表示查不出來**（通常是對方表沒有讀取權限）。
 
 **不能用「有沒有 `sourceControlId`」判斷雙向**——單向關聯也帶著它，那只是給反向端預留的位置，
 目標表裡並不存在這麼一列。只有去對方表裡找得到那一列才算數。
 
 ## 資料字典
 
-字典核對於 hap-cli 0.9.0；未覆蓋的鍵以讀命令（`hap --json worksheet fields <id> --raw`）返回的實際結構為準。
+字典核對於 hap-cli 0.9.0；未覆蓋的鍵以讀命令（`hap --json worksheet fields <id> --raw`）回傳的實際結構為準。
 速查用 `hap worksheet field-types`（它是執行時生成的，與本表不一致時以它為準）。
 
 ### 1. 控制元件型別列舉（`type` 整數）
@@ -305,12 +305,12 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 
 ### 2. WireControl 常用頂層鍵
 
-服務端原始控制元件物件，完整定義 → [WireControl](../scripts/types/wire-control.schema.json)。
-服務端接受部分欄位，按型別補預設值；活控制元件攜帶的鍵比下表多，**寫回時未知鍵原樣保留**。
+伺服器端原始控制元件物件，完整定義 → [WireControl](../scripts/types/wire-control.schema.json)。
+伺服器端接受部分欄位，按型別補預設值；活控制元件攜帶的鍵比下表多，**寫回時未知鍵原樣保留**。
 
 | 鍵 | 含義 | 值形態 |
 |---|---|---|
-| `controlId` | 欄位 id；**新建時必須省略**（服務端鑄；自造的 id 會建出永遠讀不出值的空白列），更新時必傳 | string |
+| `controlId` | 欄位 id；**新建時必須省略**（伺服器端鑄；自造的 id 會建出永遠讀不出值的空白列），更新時必傳 | string |
 | `controlName` | 欄位顯示名 | string |
 | `type` | 控制元件型別（見 §1） | int 列舉 |
 | `alias` | API 別名（記錄讀寫時可用） | string |
@@ -320,17 +320,17 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 | `row` / `col` | 0 起的網格位置；row 順序＝顯示順序；col 為行內列（0/1） | int |
 | `size` | 12 柵格跨度 | int：`3`\|`6`（半行）\|`12`（整行） |
 | `hint` | 輸入佔位提示 | string |
-| `options` | 選項列表（type 9/10/11） | 陣列 `[{key(uuid), value, isDeleted, index, checked, color}]` |
+| `options` | 選項清單（type 9/10/11） | 陣列 `[{key(uuid), value, isDeleted, index, checked, color}]` |
 | `advancedSetting` | 按型別的設定袋；**值全是字串**，JSON 結構序列化後放入 | 字串值的物件（見 §3） |
 | `dataSource` | 型別專屬橋接：RELATE_SHEET/SUB_LIST(掛載)=目標 worksheetId；SUB_LIST(內聯)=新 UUID；SHEET_FIELD/SUBTOTAL=`$<桥接controlId>$`；公式類=表示式字串 `$id$ * $id$` | string |
 | `sourceControlId` | SHEET_FIELD：目標表被對映列 id；SUBTOTAL：被聚合列 id | controlId 字串 |
 | `enumDefault` | 按型別的判別值：TEXT `1`=多行 `2`=單行；RELATE_SHEET `1`=單條 `2`=多條；ATTACHMENT `3`；SCORE `1`；SUBTOTAL=聚合方式 | int（按型別） |
 | `enumDefault2` | 次級判別值（如 MONEY=2、AREA_COUNTY=3） | int（按型別） |
 | `strDefault` | 按型別的位標誌串（如 RELATE_SHEET `"000"`、SHEET_FIELD `"10"`），語義不全明，先讀後改 | 數字位字串 |
-| `showControls` | RELATE_SHEET / SUB_LIST：在選擇器/內聯列表中展示的關聯欄位 | controlId 的 JSON 陣列 |
-| `relationControls` | SUB_LIST：完整子控制元件物件列表（內聯新建或掛載已有表） | 控制元件物件陣列，先讀後改 |
-| `userPermission` | 成員/部門欄位許可權標誌（預設 1） | int |
-| `fieldPermission` | 三位串：能否看見 / 能否編輯 / 新建記錄時能否看見。與角色許可權**按位與**之後才是最終結果 | `"111"` 這樣的三位串 |
+| `showControls` | RELATE_SHEET / SUB_LIST：在選擇器/內聯清單中展示的關聯欄位 | controlId 的 JSON 陣列 |
+| `relationControls` | SUB_LIST：完整子控制元件物件清單（內聯新建或掛載已有表） | 控制元件物件陣列，先讀後改 |
+| `userPermission` | 成員/部門欄位權限標誌（預設 1） | int |
+| `fieldPermission` | 三位串：能否看見 / 能否編輯 / 新建記錄時能否看見。與角色權限**按位與**之後才是最終結果 | `"111"` 這樣的三位串 |
 | `controlPermissions` | 同上三位，欄位自身允許的部分；`fields` 輸出的 `isHidden` / `isReadOnly` / `isHiddenOnCreate` 就是這兩串按位與算出來的 | 三位串 |
 | `dot` | 小數位（NUMBER 預設 0、MONEY/FORMULA_NUMBER 預設 2） | int |
 
@@ -349,7 +349,7 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 | 選項 9/10/11 | `showtype` | 單選顯示：`"0"`=下拉(→type 11) `"1"`=平鋪(→type 9) `"2"`=進度；切換會連帶改寫 `type` | 列舉字串 |
 | MULTI_SELECT (10) | `direction` / `checktype` / `showselectall` | 排列方向 / 勾選樣式 / 全選開關 | 列舉字串 |
 | DATE (15) | `showtype` | 日期精度（DATE 預設 `"3"`；DATE_TIME 預設 `"1"`） | 列舉字串 |
-| RELATE_SHEET (29) | `showtype` | 顯示：`"1"`=卡片 `"2"`=列表 `"3"`=下拉框 `"5"`=表格 `"6"`=標籤頁表格 | 列舉字串 |
+| RELATE_SHEET (29) | `showtype` | 顯示：`"1"`=卡片 `"2"`=清單 `"3"`=下拉框 `"5"`=表格 `"6"`=標籤頁表格 | 列舉字串 |
 | RELATE_SHEET (29) | `allowlink` / `searchrange` / `scanlink` / `scancontrol` | 開啟記錄連結、搜尋範圍、掃碼關聯開關 | `"0"`\|`"1"` |
 | RELATE_SHEET (29) | `coverid` | 卡片封面欄位 | controlId 字串 |
 | RELATE_SHEET (29) | `bidirectional` | 雙向關聯標誌 | `"0"`\|`"1"` |
@@ -359,7 +359,7 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 | SWITCH (36) | `showtype` | 檢查框顯示變體 | 列舉字串 |
 | SCORE (28) | `itemnum` / `itemtype` | 等級數 / 圖示型別 | 數字字串 |
 | AUTO_ID (33) | `increase` | 編號規則 | JSON 字串 `[{type,repeatType,start,length,format}]` |
-| ATTACHMENT (14) | `showtype` / `covertype` / `allowupload` / `allowdelete` / `allowdownload` / `alldownload` / `webcompress` | 畫廊或列表、封面、逐操作開關 | 列舉字串 / `"0"`\|`"1"` |
+| ATTACHMENT (14) | `showtype` / `covertype` / `allowupload` / `allowdelete` / `allowdownload` / `alldownload` / `webcompress` | 畫廊或清單、封面、逐操作開關 | 列舉字串 / `"0"`\|`"1"` |
 | 任意有預設值 | `defsource` | 預設值規則；靜態選項預設值還會同步置 `options[].checked` | JSON 字串 `[{cid,rcid,staticValue,…}]`，先讀後改 |
 | TEXT (2) | `analysislink` / `sorttype` | URL 自動轉連結 / 排序規則 | `"0"`\|`"1"`、`"en"` |
 | MOBILE_PHONE (3) | `defaultarea` / `commcountries` | 預設國別 / 允許的國別集 | JSON 字串 |
@@ -382,8 +382,8 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 | `data_source` / `dataSource` | 型別專屬橋接（語義同 WireControl `dataSource`；SHEET_FIELD/SUBTOTAL 只傳裸 controlId，`$…$` 包裹自動完成） | string |
 | `source_control_id` / `sourceField` | SHEET_FIELD/SUBTOTAL 的目標列 | controlId 字串 |
 | `show_controls` / `showFields` | RELATE_SHEET/SUB_LIST 展示的關聯欄位 | controlId 的 JSON 陣列 |
-| `relation_controls` / `relationControls` | SUB_LIST 掛載已有表模式：目標表完整控制元件列表 | 控制元件物件陣列，先讀後改 |
-| `child_fields` / `childFields` | SUB_LIST 內聯新建子表（推薦）：子欄位的 FieldSpec 列表 | FieldSpec 的陣列（遞迴同形） |
+| `relation_controls` / `relationControls` | SUB_LIST 掛載已有表模式：目標表完整控制元件清單 | 控制元件物件陣列，先讀後改 |
+| `child_fields` / `childFields` | SUB_LIST 內聯新建子表（推薦）：子欄位的 FieldSpec 清單 | FieldSpec 的陣列（遞迴同形） |
 | `multi` | RELATE_SHEET：`true`=多條 `false`=單條 | bool |
 | `is_title` / `isTitle` | 標為標題欄位（通常用命令級 `--title-name` 代替） | bool |
 | `row` / `col` / `size` | 顯式網格位置/跨度；不傳則自動流式佈局（半寬兩列一行） | int |

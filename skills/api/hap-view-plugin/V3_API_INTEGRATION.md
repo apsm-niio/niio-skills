@@ -12,7 +12,7 @@ niio niio 檢視外掛支援兩種資料操作方式:
 
 **特點:**
 - ✅ 已封裝好身分驗證與授權,開箱即用
-- ✅ 自動處理許可權和上下文
+- ✅ 自動處理權限和上下文
 - ✅ 提供完整的 TypeScript 型別定義
 - ✅ 與niio原生 UI 元件整合
 
@@ -39,7 +39,7 @@ await utils.openRecordInfo({ appId, worksheetId, viewId, recordId });
 - ✅ 完整的 RESTful API
 - ✅ 支援所有niio功能
 - ✅ 可在任何環境使用(外掛/獨立頁面)
-- ⚠️ 需要手動配置身分驗證與授權(Appkey & Sign)
+- ⚠️ 需要手動設定身分驗證與授權(Appkey & Sign)
 
 ## 在檢視外掛中使用 V3 介面
 
@@ -104,14 +104,14 @@ const roles = await callV3API('/v3/app/roles', 'GET');
 ## 常用 V3 介面
 
 ### 應用管理
-- `GET /v3/app` - 獲取應用資訊
-- `POST /v3/app/worksheets/list` - 獲取工作表列表
-- `GET /v3/app/worksheets/{worksheet_id}` - 獲取工作表詳情
+- `GET /v3/app` - 取得應用資訊
+- `POST /v3/app/worksheets/list` - 取得工作表清單
+- `GET /v3/app/worksheets/{worksheet_id}` - 取得工作表詳情
 
 ### 資料查詢
-- `POST /v3/app/worksheets/{worksheet_id}/rows/list` - 獲取記錄列表
-- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}` - 獲取記錄詳情
-- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field}` - 獲取關聯記錄
+- `POST /v3/app/worksheets/{worksheet_id}/rows/list` - 取得記錄清單
+- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}` - 取得記錄詳情
+- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field}` - 取得關聯記錄
 
 ### 資料操作
 - `POST /v3/app/worksheets/{worksheet_id}/rows` - 建立記錄
@@ -119,21 +119,21 @@ const roles = await callV3API('/v3/app/roles', 'GET');
 - `DELETE /v3/app/worksheets/{worksheet_id}/rows/batch` - 刪除記錄
 
 ### 選項集和角色
-- `GET /v3/app/optionsets` - 獲取選項集列表
-- `GET /v3/app/optionsets/{optionset_id}` - 獲取選項集詳情
-- `GET /v3/app/roles` - 獲取角色列表
-- `GET /v3/app/roles/{role_id}/members` - 獲取角色成員
+- `GET /v3/app/optionsets` - 取得選項集清單
+- `GET /v3/app/optionsets/{optionset_id}` - 取得選項集詳情
+- `GET /v3/app/roles` - 取得角色清單
+- `GET /v3/app/roles/{role_id}/members` - 取得角色成員
 
 ### 使用者和部門
 - `POST /v3/users/lookup` - 查詢使用者
 - `POST /v3/departments/lookup` - 查詢部門
-- `GET /v3/regions` - 獲取地區列表
+- `GET /v3/regions` - 取得地區清單
 
-## 獲取身分驗證與授權金鑰
+## 取得身分驗證與授權金鑰
 
-### 從 MCP 配置中提取
+### 從 MCP 設定中提取
 
-MCP 配置示例:
+MCP 設定示例:
 ```json
 {
   "hap-mcp-MEGA CRM": {
@@ -154,7 +154,7 @@ MCP 配置示例:
 
 ## 完整示例
 
-### 示例1: 獲取並展示選項集
+### 示例1: 取得並展示選項集
 
 ```javascript
 import React, { useState, useEffect } from 'react';

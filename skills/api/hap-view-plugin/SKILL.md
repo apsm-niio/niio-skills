@@ -16,12 +16,12 @@ license: MIT
 
 在使用此技能前，確保：
 1. 已安裝 16.20 或更高版本的 Node.js
-2. 擁有niio開發者帳號和外掛開發許可權
+2. 擁有niio開發者帳號和外掛開發權限
 3. 瞭解基本的 React 開發知識
 
-### 開發環境配置
+### 開發環境設定
 
-#### 編輯器規則配置（可選）
+#### 編輯器規則設定（可選）
 
 可在檢視開發專案根目錄下建立 AI 編輯器規則檔案（按所用工具選擇，如 Cursor 的 `.cursorrules`、Claude Code 的 `CLAUDE.md` 等），寫入niio檢視外掛開發的程式碼規範與約定，即可在編輯器中獲得相應的智慧提示和規範檢查。具體規範可參考本技能 `references/` 下的開發指南。
 
@@ -32,17 +32,17 @@ niio檢視外掛的 API 使用例項與最佳實踐，請參考本技能 `refere
 ### 核心功能
 
 #### 1. 安裝 mdye-cli 工具
-- 全域性安裝外掛開發專用的命令列工具
+- 全域安裝外掛開發專用的命令列工具
 - 驗證工具安裝是否成功
 
 #### 2. 初始化本地專案
 - 建立唯一的外掛專案資料夾
 - 使用 React 基礎示例模板
-- 生成專案配置檔案
+- 生成專案設定檔案
 
 #### 3. 安裝專案依賴
 - 安裝專案所需的 npm 依賴包
-- 配置開發環境
+- 設定開發環境
 
 #### 4. 啟動開發環境
 - 啟動本地開發伺服器
@@ -84,7 +84,7 @@ mdye --version
 mdye init view --id 你的worksheetID-你的视图ID --template React
 ```
 
-**引數說明：**
+**參數說明：**
 - `--id`: 外掛 ID（示例 ID，實際使用時需要替換）
 - `--template React`: 使用 React 基礎示例模板
 
@@ -121,14 +121,14 @@ mdye start
 
 **啟動後：**
 - 開發伺服器將在 `http://localhost:3000/` 啟動
-- 將除錯地址 `http://localhost:3000/bundle.js` 貼上到niio檢視配置開發除錯輸入框
+- 將除錯地址 `http://localhost:3000/bundle.js` 貼上到niio檢視設定開發除錯輸入框
 - 支援即時編輯和熱過載
 
 ## API 使用指南
 
-### 1. 環境變數及配置獲取
+### 1. 環境變數及設定取得
 
-#### 1.1 獲取 env 環境變數
+#### 1.1 取得 env 環境變數
 
 ```javascript
 // 使用辅助函数安全获取env中的配置项
@@ -151,7 +151,7 @@ const titleFieldId = getEnvValue(env, 'title');
 const maxRecords = getEnvValue(env, 'maxRecords', '50');
 ```
 
-#### 1.2 獲取 config 配置
+#### 1.2 取得 config 設定
 
 ```javascript
 import { config } from "mdye";
@@ -163,9 +163,9 @@ const { appId, worksheetId, viewId, controls } = config;
 const fieldControl = _.find(controls, { controlId: fieldId });
 ```
 
-### 2. 資料獲取 API
+### 2. 資料取得 API
 
-#### 2.1 獲取工作表資料 (getFilterRows)
+#### 2.1 取得工作表資料 (getFilterRows)
 
 ```javascript
 import { api } from "mdye";
@@ -188,7 +188,7 @@ async function loadRecords() {
 }
 ```
 
-#### 2.2 獲取記錄詳情 (getRowDetail)
+#### 2.2 取得記錄詳情 (getRowDetail)
 
 ```javascript
 async function getRecordDetail(rowId) {
@@ -203,7 +203,7 @@ async function getRecordDetail(rowId) {
 }
 ```
 
-#### 2.3 獲取關聯記錄 (getRowRelationRows)
+#### 2.3 取得關聯記錄 (getRowRelationRows)
 
 ```javascript
 async function loadRelationRows({ controlId, rowId }) {
@@ -282,9 +282,9 @@ async function deleteRecord(rowId) {
 優勢:
 - ✅ 原生體驗,與niio介面一致
 - ✅ 功能完整:支援編輯、刪除、討論、日誌、附件等所有功能
-- ✅ 自動處理許可權驗證
+- ✅ 自動處理權限驗證
 - ✅ 無需自己開發彈窗 UI
-- ✅ 返回操作結果,方便進行資料同步
+- ✅ 回傳操作結果,方便進行資料同步
 
 **基礎用法:**
 
@@ -329,7 +329,7 @@ const handleRecordClick = async (recordId) => {
 };
 ```
 
-**返回值說明:**
+**回傳值說明:**
 
 ```javascript
 {
@@ -547,7 +547,7 @@ useEffect(() => {
 
 ### 完整欄位型別對照表(V3 實用版)
 
-| 型別編號 | 列舉名稱 | 欄位型別 | API 建立 | API 返回 |
+| 型別編號 | 列舉名稱 | 欄位型別 | API 建立 | API 回傳 |
 |---------|---------|---------|---------|---------|
 | 2 | Text | 文字框 | ✅ | ✅ |
 | 3 | PhoneNumber | 手機 | ❌ | ✅ |
@@ -709,17 +709,17 @@ function parseLocation(value) {
 
 **關聯欄位 (type 29) 的特殊處理規則:**
 
-關聯欄位根據 `enumDefault` 或 `subType` 屬性分為兩種型別,返回資料格式完全不同:
+關聯欄位根據 `enumDefault` 或 `subType` 屬性分為兩種型別,回傳資料格式完全不同:
 
 1. **單條關聯** (enumDefault=1 或 subType=1)
-   - 返回格式: JSON 陣列字串
+   - 回傳格式: JSON 陣列字串
    - 示例: `"[{\"sid\":\"...\",\"name\":\"客户名称\",\"sourcevalue\":\"...\"}]"`
    - 處理方式: 直接解析 JSON 字串即可
 
 2. **多條關聯** (enumDefault=2 或 subType=2)
-   - 返回格式: 數字(表示關聯記錄的數量)
+   - 回傳格式: 數字(表示關聯記錄的數量)
    - 示例: `2` (表示關聯了 2 條記錄)
-   - 處理方式: **必須呼叫 `getRowRelationRows` API** 才能獲取實際資料
+   - 處理方式: **必須呼叫 `getRowRelationRows` API** 才能取得實際資料
 
 **完整處理示例:**
 
@@ -820,7 +820,7 @@ async function loadOrdersWithProducts() {
 }
 ```
 
-**欄位配置示例:**
+**欄位設定示例:**
 
 ```javascript
 // 在 config.controls 中查看关联字段配置
@@ -845,7 +845,7 @@ const relationControl = controls.find(ctrl => ctrl.controlId === 'relationFieldI
 }
 ```
 
-### 自動獲取欄位值的工具函式
+### 自動取得欄位值的工具函式
 
 ```javascript
 function getFieldValue(fieldId, record, controls) {
@@ -965,9 +965,9 @@ mdye sync-params -f <file-path>
 
 ### 外掛釋出流程（重要！）
 
-外掛開發完成後，需要按以下步驟提交發布到niio平臺。釋出成功後，本外掛在組織下所有應用均可使用。
+外掛開發完成後，需要按以下步驟提交發布到niio平台。釋出成功後，本外掛在組織下所有應用均可使用。
 
-#### 第1步：構建專案
+#### 第1步：建置專案
 
 執行以下命令將本地專案打包：
 
@@ -976,13 +976,13 @@ cd your_plugin_project
 mdye build
 ```
 
-**構建過程說明：**
+**建置過程說明：**
 - Webpack 會編譯並打包所有原始碼
 - 生成最佳化後的 `bundle.js` 檔案
 - 通常需要 1-2 秒完成編譯
-- 成功後會顯示 "構建程式碼完成" 和 bundle 檔案大小
+- 成功後會顯示 "建置程式碼完成" 和 bundle 檔案大小
 
-**構建輸出示例：**
+**建置輸出示例：**
 ```
 [21:20:33] 开始构建代码
 ℹ Compiling Webpack
@@ -994,7 +994,7 @@ webpack 5.98.0 compiled successfully in 1947 ms
 
 #### 第2步：提交併釋出
 
-執行以下命令將本地專案提交併推送到線上待發布外掛列表：
+執行以下命令將本地專案提交併推送到線上待發布外掛清單：
 
 ```bash
 mdye push -m "提交说明"
@@ -1056,12 +1056,12 @@ mdye push -m "订单状态视图插件首次发布
 #### 釋出後的狀態
 
 ✅ **外掛已釋出** - 可以在組織內所有應用中使用
-✅ **檢視地址** - 可以透過返回的 URL 直接訪問外掛
+✅ **檢視地址** - 可以透過回傳的 URL 直接訪問外掛
 ✅ **組織共享** - 組織內其他成員可以使用該外掛
 
 #### 常見問題
 
-**問題1: 構建失敗**
+**問題1: 建置失敗**
 - 檢查程式碼語法錯誤
 - 確保所有依賴已正確安裝 (`npm install`)
 - 檢視錯誤日誌定位問題
@@ -1069,7 +1069,7 @@ mdye push -m "订单状态视图插件首次发布
 **問題2: 推送失敗**
 - 確認已登入：`mdye whoami`
 - 檢查網路連線
-- 驗證帳號許可權是否支援外掛開發
+- 驗證帳號權限是否支援外掛開發
 
 **問題3: 登入超時**
 - 重新登入：`mdye auth`
@@ -1110,7 +1110,7 @@ plugin_project/
 
 ### 4. 安全注意事項
 - 避免硬編碼敏感資訊
-- 使用環境變數管理配置
+- 使用環境變數管理設定
 - 驗證使用者輸入
 - 防止 XSS 攻擊
 
@@ -1121,7 +1121,7 @@ plugin_project/
 **問題描述:** 單選或多選欄位顯示的是 UUID 格式的 key (如 `42ad38bf-d3e6-441f-a960-670e704abe4a`),而不是選項的顯示文字。
 
 **原因分析:**
-1. niio選項欄位返回的原始值是 JSON 格式的 key 陣列,如 `"[\"42ad38bf-d3e6-441f-a960-670e704abe4a\"]"`
+1. niio選項欄位回傳的原始值是 JSON 格式的 key 陣列,如 `"[\"42ad38bf-d3e6-441f-a960-670e704abe4a\"]"`
 2. 需要從 `config.controls` 中找到對應欄位的 `options`,然後根據 key 匹配出 value
 
 **解決方案:**
@@ -1165,7 +1165,7 @@ function parseSingleSelect(value, control) {
 
 ### 問題 2：找不到單選欄位
 
-**問題描述:** 使用 `controls.find()` 查詢單選欄位時,返回 `undefined`。
+**問題描述:** 使用 `controls.find()` 查詢單選欄位時,回傳 `undefined`。
 
 **原因分析:**
 - 單選欄位的 type 是 **9** 而不是 11
@@ -1192,9 +1192,9 @@ const selectField = controls?.find(ctrl =>
 **問題描述:** 關聯欄位顯示的是數字(如 `2`、`3`),而不是實際的關聯記錄資訊。
 
 **原因分析:**
-1. 多條關聯欄位 (enumDefault=2 或 subType=2) 返回的原始值是數字,表示關聯記錄的數量
-2. 與單條關聯不同,多條關聯不會直接返回 JSON 陣列字串
-3. 必須呼叫 `getRowRelationRows` API 才能獲取實際的關聯記錄資料
+1. 多條關聯欄位 (enumDefault=2 或 subType=2) 回傳的原始值是數字,表示關聯記錄的數量
+2. 與單條關聯不同,多條關聯不會直接回傳 JSON 陣列字串
+3. 必須呼叫 `getRowRelationRows` API 才能取得實際的關聯記錄資料
 
 **解決方案:**
 
@@ -1318,4 +1318,4 @@ if (typeof value === 'number' || !isNaN(value)) {
 
 ---
 
-**注意：** 此技能提供的是開發工作流程指導和 API 使用規範，實際開發中請根據具體需求調整配置和程式碼。
+**注意：** 此技能提供的是開發工作流程指導和 API 使用規範，實際開發中請根據具體需求調整設定和程式碼。

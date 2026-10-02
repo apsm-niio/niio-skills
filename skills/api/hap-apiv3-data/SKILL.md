@@ -1,57 +1,57 @@
 ---
 name: hap-apiv3-data
-description: 使用niio niio V3 介面搭建頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權配置、API 呼叫、篩選器使用、資料操作等。如果使用者已配置 niio MCP，AI 應該自動從 MCP 配置中提取身分驗證與授權金鑰。
+description: 使用niio niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。如果使用者已設定 niio MCP，AI 應該自動從 MCP 設定中提取身分驗證與授權金鑰。
 license: MIT
 ---
 
 # niio V3 API 使用技能
 
-此技能提供使用niio niio V3 介面搭建頁面、即時獲取資料和操作資料的完整指南。
+此技能提供使用niio niio V3 介面建置頁面、即時取得資料和操作資料的完整指南。
 
 ## Overview
 
-niio niio (High-performance Application Platform) 是一個超級應用平臺,透過這個基座可以搭建很多應用。透過 niio V3 介面,您可以:
+niio niio (High-performance Application Platform) 是一個超級應用平台,透過這個基座可以建置很多應用。透過 niio V3 介面,您可以:
 
 1. **在自訂檢視外掛中**呼叫 V3 介面操作資料
 2. **在獨立前端頁面中**使用 V3 介面編排業務邏輯
-3. **即時獲取和操作**niio應用中的資料
+3. **即時取得和操作**niio應用中的資料
 
 **核心能力:**
-- ✅ 完整的 API 使用工作流（從零搭建應用到資料操作）
+- ✅ 完整的 API 使用工作流（從零建置應用到資料操作）
 - ✅ 詳細的欄位型別處理規範
 - ✅ Filter 篩選器完整語法
 - ✅ 關聯欄位深度查詢指南
 - ✅ 常見陷阱和解決方案
 - ✅ 效能最佳化最佳實踐
 
-**詳細文件:** 參考 `references/hap-api-usage-guide.md` 獲取完整的 API 使用規範
+**詳細文件:** 參考 `references/hap-api-usage-guide.md` 取得完整的 API 使用規範
 
 ---
 
 ## 快速開始
 
-### 1. 獲取 API 憑證
+### 1. 取得 API 憑證
 
-**方法一: 從 MCP 配置中提取（推薦）**
+**方法一: 從 MCP 設定中提取（推薦）**
 
-如果使用者已經配置了 niio 應用執行 MCP，AI 助手應該**自動從 MCP 配置中提取身分驗證與授權金鑰**，而不是讓使用者手動輸入。
+如果使用者已經設定了 niio 應用執行 MCP，AI 助手應該**自動從 MCP 設定中提取身分驗證與授權金鑰**，而不是讓使用者手動輸入。
 
 #### 自動化提取步驟
 
-1. **讀取已配置的 niio MCP 配置檔案**（以編輯器/客戶端的 MCP 配置為準，例如其全域性 `settings.json`）
+1. **讀取已設定的 niio MCP 設定檔案**（以編輯器/客戶端的 MCP 設定為準，例如其全域 `settings.json`）
    - **macOS**: `~/Library/Application Support/<编辑器>/User/settings.json`
    - **Windows**: `%APPDATA%\<编辑器>\User\settings.json`
    - **Linux**: `~/.config/<编辑器>/User/settings.json`
 
-2. **查詢 MCP 配置**
-   - 在 `mcpServers` 物件中查詢 niio 的 MCP 伺服器配置（`url` 指向 `api.mingdao.com/mcp` 或 `api2.mingdao.com/mcp`）
+2. **查詢 MCP 設定**
+   - 在 `mcpServers` 物件中查詢 niio 的 MCP 伺服器設定（`url` 指向 `api.mingdao.com/mcp` 或 `api2.mingdao.com/mcp`）
    - 常見命名：AppKey 身分驗證與授權多為 `hap-mcp-应用名`；個人身分驗證與授權多為 `hap_personal_mcp`
 
-3. **識別身分驗證與授權型別並解析引數**
+3. **識別身分驗證與授權型別並解析參數**
 
-   niio MCP 配置有兩種身分驗證與授權格式，需分別處理：
+   niio MCP 設定有兩種身分驗證與授權格式，需分別處理：
 
-   **格式一 · AppKey + Sign**（金鑰寫在 `url` 查詢引數裡）
+   **格式一 · AppKey + Sign**（金鑰寫在 `url` 查詢參數裡）
    ```json
    {
      "mcpServers": {
@@ -77,7 +77,7 @@ niio niio (High-performance Application Platform) 是一個超級應用平臺,�
    ```
 
 4. **提取身分驗證與授權資訊**
-   - 格式一：從 `url` 查詢引數取 `HAP-Appkey`、`HAP-Sign`（引數可能經 URL 編碼，需正確解碼），請求時放入同名請求頭。
+   - 格式一：從 `url` 查詢參數取 `HAP-Appkey`、`HAP-Sign`（參數可能經 URL 編碼，需正確解碼），請求時放入同名請求頭。
    - 格式二：從 `headers.Authorization` 取整串 `Bearer …`，請求時原樣放入 `Authorization` 頭；如介面要求，另帶 `HAP-Appid`（應用 ID）。
    - 判定規則：`url` 含 `HAP-Appkey` → 走格式一；否則看 `headers.Authorization` → 走格式二。
 
@@ -135,41 +135,41 @@ if (hapMcpConfig) {
 
 當使用者需要呼叫 niio API 時，AI 應該：
 
-1. **檢查是否已配置 MCP**
-   - 讀取已配置的 niio MCP 配置
-   - 查詢 `hap-mcp-*` 配置
+1. **檢查是否已設定 MCP**
+   - 讀取已設定的 niio MCP 設定
+   - 查詢 `hap-mcp-*` 設定
 
 2. **提取身分驗證與授權資訊**
-   - 找到配置後，按格式自動提取：URL 引數裡的 `HAP-Appkey`/`HAP-Sign`，或 `headers.Authorization` 裡的 `Bearer` 令牌
-   - 如果找到多個 MCP 配置，詢問使用者使用哪個應用
+   - 找到設定後，按格式自動提取：URL 參數裡的 `HAP-Appkey`/`HAP-Sign`，或 `headers.Authorization` 裡的 `Bearer` 令牌
+   - 如果找到多個 MCP 設定，詢問使用者使用哪個應用
 
 3. **使用提取的身分驗證與授權**
    - 在 API 請求頭中帶上提取到的身分驗證與授權頭（`HAP-Appkey`+`HAP-Sign`，或 `Authorization: Bearer …`，PAT/OAuth 按需加 `HAP-Appid`）
-   - 如果提取失敗，提示使用者手動提供或檢查 MCP 配置
+   - 如果提取失敗，提示使用者手動提供或檢查 MCP 設定
 
 #### 注意事項
 
-- ✅ **優先使用 MCP 配置**: 如果使用者已配置 MCP，優先從配置中提取
-- ✅ **URL 解碼**: 注意 URL 引數可能經過編碼，需要正確解碼
-- ✅ **多個應用**: 如果配置了多個 niio MCP，詢問使用者使用哪個應用
-- ⚠️ **配置不存在**: 如果未找到 MCP 配置，提示使用者先配置 MCP 或手動提供金鑰
-- ⚠️ **許可權問題**: 如果無法讀取配置檔案，提示使用者檢查檔案許可權
+- ✅ **優先使用 MCP 設定**: 如果使用者已設定 MCP，優先從設定中提取
+- ✅ **URL 解碼**: 注意 URL 參數可能經過編碼，需要正確解碼
+- ✅ **多個應用**: 如果設定了多個 niio MCP，詢問使用者使用哪個應用
+- ⚠️ **設定不存在**: 如果未找到 MCP 設定，提示使用者先設定 MCP 或手動提供金鑰
+- ⚠️ **權限問題**: 如果無法讀取設定檔案，提示使用者檢查檔案權限
 
-**方法二: 手動獲取**
+**方法二: 手動取得**
 
-如果使用者未配置 MCP 或需要手動提供：
+如果使用者未設定 MCP 或需要手動提供：
 
 1. 登入niio → 應用 → 設定 → API 金鑰
 2. 複製 Appkey 和 Sign
-3. 或提供 MCP 配置資訊，讓 AI 自動提取
+3. 或提供 MCP 設定資訊，讓 AI 自動提取
 
-### 2. 配置請求頭（身分驗證與授權）
+### 2. 設定請求頭（身分驗證與授權）
 
-身分驗證與授權用於驗證"你是誰、有沒有許可權"，憑證統一放在請求 **Header** 中，每個請求都必須攜帶。V3 支援三種身分驗證與授權方式：
+身分驗證與授權用於驗證"你是誰、有沒有權限"，憑證統一放在請求 **Header** 中，每個請求都必須攜帶。V3 支援三種身分驗證與授權方式：
 
-| 方式 | Header 引數 | 操作身份 | 有效期 | 適用場景 |
+| 方式 | Header 參數 | 操作身份 | 有效期 | 適用場景 |
 | --- | --- | --- | --- | --- |
-| **AppKey + Sign** | `HAP-Appkey`、`HAP-Sign` | 應用管理員 | 長期 | 服務端整合 |
+| **AppKey + Sign** | `HAP-Appkey`、`HAP-Sign` | 應用管理員 | 長期 | 伺服器端整合 |
 | **PAT** | `Authorization: Bearer {access_token}`、`HAP-Appid`（部分介面必填） | 個人 | 可設定 | 個人指令碼 / 工具 |
 | **OAuth 2.0** | `Authorization: Bearer {access_token}`、`HAP-Appid`（部分介面必填） | 被授權使用者 | 短期，自動重新整理 | 第三方應用整合 |
 
@@ -189,7 +189,7 @@ const headers = {
 
 **方式二：PAT（個人訪問憑證）**
 
-自行建立，以個人身份操作，可設定有效期和許可權範圍。
+自行建立，以個人身份操作，可設定有效期和權限範圍。
 
 ```javascript
 const headers = {
@@ -211,13 +211,13 @@ const headers = {
 };
 ```
 
-**PAT / OAuth 2.0 的附加引數：**
+**PAT / OAuth 2.0 的附加參數：**
 - `HAP-Appid`（Header）：標識來源應用，值為應用 ID，**應用級介面必填**。
-- `orgId`（Query）：標識來源組織，值為組織 ID，**組織級介面必填**（如獲取應用列表、建立應用）。
+- `orgId`（Query）：標識來源組織，值為組織 ID，**組織級介面必填**（如取得應用清單、建立應用）。
 
-> 三種方式按場景選用：服務端整合用 AppKey + Sign；個人指令碼/工具用 PAT；第三方應用整合用 OAuth 2.0。
+> 三種方式按場景選用：伺服器端整合用 AppKey + Sign；個人指令碼/工具用 PAT；第三方應用整合用 OAuth 2.0。
 
-### 3. 獲取 API 文件
+### 3. 取得 API 文件
 
 **使用 Apifox MCP Server（推薦）:**
 
@@ -246,17 +246,17 @@ const headers = {
 
 ### 階段一: 準備工作
 
-**Step 1: 獲取 API 憑證**
-- **優先方式**: 從已配置的 niio MCP 配置中自動提取 Appkey 和 Sign（如果使用者已配置）
-- **備選方式**: 從 niio 後臺手動獲取或讓使用者提供
+**Step 1: 取得 API 憑證**
+- **優先方式**: 從已設定的 niio MCP 設定中自動提取 Appkey 和 Sign（如果使用者已設定）
+- **備選方式**: 從 niio 後臺手動取得或讓使用者提供
 
-**Step 2: 配置 API 請求頭**
+**Step 2: 設定 API 請求頭**
 - 使用提取或提供的 Appkey 和 Sign 設定請求頭
 - 設定 `HAP-Appkey` 和 `HAP-Sign` 請求頭
 
 ### 階段二: 建立應用結構
 
-**Step 3: 獲取應用資訊（可選）**
+**Step 3: 取得應用資訊（可選）**
 ```javascript
 GET /v3/app/info
 ```
@@ -284,8 +284,8 @@ POST /v3/app/worksheets
 ### 階段三: 填充資料
 
 **Step 5: 準備選項欄位對映**
-- 對於單選/多選欄位,需要先獲取選項的 key（UUID）
-- 查詢工作表結構獲取 options 列表
+- 對於單選/多選欄位,需要先取得選項的 key（UUID）
+- 查詢工作表結構取得 options 清單
 
 **Step 6: 建立記錄**
 ```javascript
@@ -308,13 +308,13 @@ POST /v3/app/worksheets/{worksheet_id}/rows
 **關鍵點:**
 - ⚠️ 選項欄位必須用 key,不能用顯示文字
 - ⚠️ 選項欄位即使單選也要用陣列格式
-- ✅ 數值欄位寫入時傳數字,讀取時返回字串
+- ✅ 數值欄位寫入時傳數字,讀取時回傳字串
 
 **詳細規範:** 參考 `references/hap-api-usage-guide.md` 第 3 節
 
 ### 階段四: 查詢和分析資料
 
-**Step 7: 查詢記錄列表**
+**Step 7: 查詢記錄清單**
 ```javascript
 POST /v3/app/worksheets/{worksheet_id}/rows/list
 {
@@ -370,7 +370,7 @@ Filter = {
 4. group 必須指定 `logic` (AND/OR)
 5. condition 必須指定 `field`, `operator`
 
-### 運算子完整列表
+### 運算子完整清單
 
 | 運算子 | 說明 | 需要value | value格式 | 適用欄位 |
 |-------|------|----------|----------|---------|
@@ -510,7 +510,7 @@ Filter = {
 }
 ```
 
-**讀取:** 返回包含 key 和 value 的物件陣列
+**讀取:** 回傳包含 key 和 value 的物件陣列
 ```javascript
 {
   "customer_type": [
@@ -541,7 +541,7 @@ Filter = {
 }
 ```
 
-**讀取:** 返回附件物件陣列
+**讀取:** 回傳附件物件陣列
 ```javascript
 {
   "attachments": [{
@@ -555,7 +555,7 @@ Filter = {
 
 **⚠️ 重要提示:**
 - 附件上傳是非同步處理,通常需要 5-10 秒
-- API 返回成功不代表附件已上傳完成
+- API 回傳成功不代表附件已上傳完成
 - 使用 `downloadUrl` 而非 `url`
 
 #### 3. 關聯欄位（Relation）⭐⭐⭐
@@ -568,7 +568,7 @@ Filter = {
 }
 ```
 
-**讀取:** 返回物件陣列（只包含 sid 和 name）
+**讀取:** 回傳物件陣列（只包含 sid 和 name）
 ```javascript
 {
   "related_customer": [{
@@ -578,7 +578,7 @@ Filter = {
 }
 ```
 
-**獲取完整關聯資料:**
+**取得完整關聯資料:**
 ```javascript
 // 方法1: 使用专用 API
 GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
@@ -611,7 +611,7 @@ POST /v3/app/worksheets/{target_worksheet_id}/rows/list
 }
 ```
 
-**獲取使用者ID:**
+**取得使用者ID:**
 ```javascript
 POST /v3/users/lookup
 {
@@ -629,7 +629,7 @@ POST /v3/users/lookup
 }
 ```
 
-**讀取:** 返回字串
+**讀取:** 回傳字串
 ```javascript
 {
   "annual_budget": "1000000.50"
@@ -642,9 +642,9 @@ POST /v3/users/lookup
 
 ---
 
-## triggerWorkflow 引數詳解 ⭐重要
+## triggerWorkflow 參數詳解 ⭐重要
 
-`triggerWorkflow` 引數控制是否在資料操作時觸發工作表相關的工作流。
+`triggerWorkflow` 參數控制是否在資料操作時觸發工作表相關的工作流。
 
 **適用範圍:**
 - ✅ 建立記錄
@@ -654,9 +654,9 @@ POST /v3/users/lookup
 - ✅ 刪除記錄
 - ✅ 批次刪除
 
-**引數說明:**
+**參數說明:**
 
-| 引數值 | 說明 | 預設值 | 使用場景 |
+| 參數值 | 說明 | 預設值 | 使用場景 |
 |-------|------|--------|---------|
 | `true` | 觸發工作流 | ✅ 是 | 正常業務操作,需要執行自動化流程 |
 | `false` | 不觸發工作流 | ❌ 否 | 資料遷移、批次初始化、測試資料 |
@@ -683,7 +683,7 @@ POST /v3/users/lookup
 
 ### 陷阱1: 選項欄位篩選使用顯示文字
 
-**問題:** 篩選單選/多選欄位時返回空結果
+**問題:** 篩選單選/多選欄位時回傳空結果
 
 **錯誤示例:**
 ```javascript
@@ -705,7 +705,7 @@ POST /v3/users/lookup
 
 **解決方案:**
 1. 初始化時查詢工作表結構,快取選項對映
-2. 或先查詢一條記錄,從返回資料獲取 key
+2. 或先查詢一條記錄,從回傳資料取得 key
 3. 建立 value → key 的對映表
 
 ### 陷阱2: 數值欄位篩選使用數字型別
@@ -756,7 +756,7 @@ POST /v3/users/lookup
 
 ### 陷阱4: 關聯欄位 N+1 查詢問題
 
-**問題:** 在列表頁逐個查詢關聯資料
+**問題:** 在清單頁逐個查詢關聯資料
 
 **錯誤示例:**
 ```javascript
@@ -808,7 +808,7 @@ categories.rows.forEach(cat => {
 ### 1. 查詢最佳化
 
 - **合理使用分頁**: pageSize 不要超過 1000
-- **指定返回欄位**: 使用 fields 引數,只返回需要的欄位
+- **指定回傳欄位**: 使用 fields 參數,只回傳需要的欄位
 - **使用欄位ID**: 比別名查詢效能更好
 - **避免過度巢狀**: Filter 巢狀控制在 2 層以內
 - **善用檢視**: 複雜篩選可先建立檢視,再查詢檢視
@@ -823,7 +823,7 @@ categories.rows.forEach(cat => {
 
 ### 3. 關聯欄位最佳化
 
-- **減少巢狀查詢**: 使用 get_record_relations API 一次獲取
+- **減少巢狀查詢**: 使用 get_record_relations API 一次取得
 - **批次查詢**: 避免 N+1 查詢問題
 - **快取關聯資料**: 頻繁訪問的關聯資料可快取
 - **控制 showFields**: 只顯示必要欄位,減少資料量
@@ -840,23 +840,23 @@ categories.rows.forEach(cat => {
 
 **優先順序順序：**
 
-1. **優先從 MCP 配置提取**（推薦）
-   - 讀取已配置的 niio MCP 配置
-   - 查詢 `hap-mcp-*` 配置
+1. **優先從 MCP 設定提取**（推薦）
+   - 讀取已設定的 niio MCP 設定
+   - 查詢 `hap-mcp-*` 設定
    - 從 URL 中提取 `HAP-Appkey` 和 `HAP-Sign`
-   - 如果找到多個配置，詢問使用者使用哪個應用
+   - 如果找到多個設定，詢問使用者使用哪個應用
 
 2. **使用者手動提供**
-   - 如果未找到 MCP 配置，提示使用者提供 Appkey 和 Sign
-   - 或引導使用者先配置 MCP
+   - 如果未找到 MCP 設定，提示使用者提供 Appkey 和 Sign
+   - 或引導使用者先設定 MCP
 
-3. **引導配置 MCP**
-   - 如果使用者有 MCP 配置資訊，幫助使用者配置到所用的編輯器/客戶端
-   - 然後從配置中提取金鑰
+3. **引導設定 MCP**
+   - 如果使用者有 MCP 設定資訊，幫助使用者設定到所用的編輯器/客戶端
+   - 然後從設定中提取金鑰
 
-### 2. 配置請求頭
+### 2. 設定請求頭
 
-提取到金鑰後，自動配置請求頭：
+提取到金鑰後，自動設定請求頭：
 
 ```javascript
 const headers = {
@@ -868,36 +868,36 @@ const headers = {
 
 ### 3. 處理多個應用
 
-如果使用者配置了多個 niio MCP：
+如果使用者設定了多個 niio MCP：
 
-- **明確指定應用名**: 如果使用者提到具體應用名，使用對應的配置
-- **詢問使用者**: 如果未指定，列出所有配置的應用，讓使用者選擇
-- **預設使用**: 如果只有一個配置，直接使用
+- **明確指定應用名**: 如果使用者提到具體應用名，使用對應的設定
+- **詢問使用者**: 如果未指定，列出所有設定的應用，讓使用者選擇
+- **預設使用**: 如果只有一個設定，直接使用
 
 ### 4. 錯誤處理
 
-- **配置不存在**: 提示使用者先配置 MCP 或手動提供金鑰
+- **設定不存在**: 提示使用者先設定 MCP 或手動提供金鑰
 - **URL 解析失敗**: 檢查 URL 格式是否正確
-- **引數缺失**: 檢查 Appkey 和 Sign 是否都存在
-- **許可權問題**: 如果無法讀取配置檔案，提示使用者檢查檔案許可權
+- **參數缺失**: 檢查 Appkey 和 Sign 是否都存在
+- **權限問題**: 如果無法讀取設定檔案，提示使用者檢查檔案權限
 
 ### 5. 實際操作示例
 
 **場景**: 使用者說"幫我呼叫 niio API 查詢資料"
 
 **AI 操作流程**:
-1. 讀取已配置的 niio MCP 配置檔案（路徑取決於所用編輯器/客戶端，如其全域性 `settings.json`）
-2. 查詢 `mcpServers` 中的 `hap-mcp-*` 配置
-3. 如果找到配置，從 URL 中提取 Appkey 和 Sign
-4. 如果找到多個配置，詢問使用者使用哪個應用
-5. 使用提取的金鑰配置 API 請求頭
+1. 讀取已設定的 niio MCP 設定檔案（路徑取決於所用編輯器/客戶端，如其全域 `settings.json`）
+2. 查詢 `mcpServers` 中的 `hap-mcp-*` 設定
+3. 如果找到設定，從 URL 中提取 Appkey 和 Sign
+4. 如果找到多個設定，詢問使用者使用哪個應用
+5. 使用提取的金鑰設定 API 請求頭
 6. 執行 API 呼叫
 
-**場景**: 使用者提供了 MCP 配置資訊
+**場景**: 使用者提供了 MCP 設定資訊
 
 **AI 操作流程**:
-1. 先幫助使用者將 MCP 配置新增到所用編輯器/客戶端的 MCP 配置檔案
-2. 然後從配置中提取 Appkey 和 Sign
+1. 先幫助使用者將 MCP 設定新增到所用編輯器/客戶端的 MCP 設定檔案
+2. 然後從設定中提取 Appkey 和 Sign
 3. 使用提取的金鑰進行後續 API 呼叫
 
 ---
@@ -949,15 +949,15 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 - [ ] 數值欄位傳數字型別
 - [ ] 關聯欄位傳的是 rowid
 - [ ] 成員欄位傳的是 accountId
-- [ ] 附件欄位設定了 type 引數
+- [ ] 附件欄位設定了 type 參數
 
 ### 4. 錯誤處理
 
 **常見錯誤碼:**
 - `error_code: 1` - 成功
 - `error_code: -1` - 失敗,檢視 error_msg
-- `error_code: 4` - 許可權不足
-- `error_code: 10` - 引數錯誤
+- `error_code: 4` - 權限不足
+- `error_code: 10` - 參數錯誤
 
 **建議:** 所有 API 呼叫都要檢查 error_code 和 success
 
@@ -967,7 +967,7 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 
 ## 常用 API 端點速查
 
-| 場景 | API 端點 | 關鍵引數 |
+| 場景 | API 端點 | 關鍵參數 |
 |-----|---------|---------|
 | 建立工作表 | `POST /v3/app/worksheets` | fields |
 | 新增欄位 | `POST /v3/app/worksheets/{id}` | addFields |
@@ -981,7 +981,7 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 | 透視分析 | `POST /v3/app/worksheets/{id}/rows/pivot` | rows, values |
 | 查詢使用者 | `POST /v3/users/lookup` | name |
 | 查詢部門 | `POST /v3/departments/lookup` | name |
-| 獲取地區 | `POST /v3/regions` | search, id |
+| 取得地區 | `POST /v3/regions` | search, id |
 
 ---
 
@@ -992,9 +992,9 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 - **`references/hap-api-usage-guide.md`** - niio V3 API 使用規範完整指南
   - 快速開始 - API 使用流程
   - 建立工作表規範
-  - 欄位型別引數詳解
+  - 欄位型別參數詳解
   - 建立/更新記錄規範（triggerWorkflow 詳解）
-  - 查詢篩選規範（Filter 物件結構、運算子列表）
+  - 查詢篩選規範（Filter 物件結構、運算子清單）
   - 資料透視分析規範
   - 關聯欄位完整指南
   - 常見陷阱與解決方案
@@ -1010,7 +1010,7 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 
 ### 相關技能
 
-- **niio 前後端專案搭建指南** - 使用 niio 作為資料庫搭建獨立網站
+- **niio 前後端專案建置指南** - 使用 niio 作為資料庫建置獨立網站
 - **niio 檢視外掛開發指南** - 開發 niio 自訂檢視外掛
 
 ---
@@ -1031,7 +1031,7 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 - 部門(Department): `in` / `eq` / `notin` 等（詳見欄位型別對照表；V3 API 無 belongsto）
 - 空值: `isempty`, `isnotempty`
 
-**subType 引數:**
+**subType 參數:**
 - Collaborator: `0`=單選, `1`=多選
 - Relation: `1`=單條, `2`=多條
 - Time: `1`=時:分, `6`=時:分:秒
