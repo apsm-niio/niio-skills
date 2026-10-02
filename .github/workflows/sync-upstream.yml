@@ -1,0 +1,33 @@
+name: 同步原始技能
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: 匯入原始內容
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 取得目前專案
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+
+      - name: 同步來源至 upstream 分支
+        env:
+          SOURCE_REPO: https://github.com/mingdaocom/hap-skills.git
+        run: |
+          set -euo pipefail
+          git fetch --no-tags "$SOURCE_REPO" \
+            refs/heads/main:refs/remotes/source/main
+          git push origin \
+            refs/remotes/source/main:refs/heads/upstream
