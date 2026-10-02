@@ -63,6 +63,27 @@ jobs:
             --output . \
             --terms localization/terms.json
 
+      - name: 設定技能更新來源
+        env:
+          TARGET_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path("skills/mcp/hap-mcp-app-builder/version.json")
+          metadata = json.loads(path.read_text(encoding="utf-8"))
+          metadata["repository"] = (
+              "https://github.com/" + os.environ["TARGET_REPOSITORY"]
+          )
+          metadata["branch"] = "main"
+          path.write_text(
+              json.dumps(metadata, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8"
+          )
+          PY
+
       - name: 記錄來源版本
         run: |
           python - <<'PY'
