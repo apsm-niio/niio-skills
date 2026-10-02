@@ -1,7 +1,15 @@
-name: 同步原始技能
+name: 同步並產生繁中技能
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 0 * * *'
+  push:
+    branches: [main]
+    paths:
+      - localization/terms.json
+      - scripts/localize.py
+      - .github/workflows/sync-upstream.yml
 
 permissions:
   contents: write
@@ -12,22 +20,86 @@ concurrency:
 
 jobs:
   sync:
-    name: 匯入原始內容
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    name: 同步與繁中轉換
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
       - name: 取得目前專案
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           ref: main
+          fetch-depth: 0
 
-      - name: 同步來源至 upstream 分支
+      - name: 準備 Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+
+      - name: 安裝轉換套件
+        run: |
+          python -m pip install \
+            opencc-python-reimplemented==0.1.7 \
+            markdown-it-py==3.0.0 \
+            PyYAML==6.0.3
+
+      - name: 取得來源快照
         env:
           SOURCE_REPO: https://github.com/mingdaocom/hap-skills.git
         run: |
           set -euo pipefail
           git fetch --no-tags "$SOURCE_REPO" \
             refs/heads/main:refs/remotes/source/main
-          git push origin \
-            refs/remotes/source/main:refs/heads/upstream
+          snapshot_dir="$(mktemp -d "$RUNNER_TEMP/niio-source.XXXXXX")"
+          echo "NIIO_SOURCE_SNAPSHOT=$snapshot_dir" >> "$GITHUB_ENV"
+          git archive refs/remotes/source/main | tar -x -C "$snapshot_dir"
+
+      - name: 產生繁中技能
+        run: |
+          set -euo pipefail
+          python scripts/localize.py \
+            --source "$NIIO_SOURCE_SNAPSHOT" \
+            --output . \
+            --terms localization/terms.json
+
+      - name: 記錄來源版本
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          from pathlib import Path
+
+          state = {
+              "upstreamCommit": subprocess.check_output(
+                  ["git", "rev-parse", "refs/remotes/source/main"],
+                  text=True
+              ).strip(),
+              "termsSha256": hashlib.sha256(
+                  Path("localization/terms.json").read_bytes()
+              ).hexdigest(),
+              "scriptSha256": hashlib.sha256(
+                  Path("scripts/localize.py").read_bytes()
+              ).hexdigest()
+          }
+          Path("localization/upstream-state.json").write_text(
+              json.dumps(state, indent=2, ensure_ascii=False) + "\n",
+              encoding="utf-8"
+          )
+          PY
+
+      - name: 提交與同步結果
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- skills THIRD_PARTY_LICENSE.txt localization/upstream-state.json
+          if git diff --cached --quiet; then
+            echo '內容沒有變動，無須新增提交。'
+          else
+            git commit -m 'chore: synchronize zh-TW skills'
+          fi
+          git push --atomic origin \
+            refs/remotes/source/main:refs/heads/upstream \
+            HEAD:refs/heads/main
