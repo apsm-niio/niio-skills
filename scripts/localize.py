@@ -137,17 +137,61 @@ def frontmatter(text):
 def map_body(body, convert, link=lambda value: value):
     env = {}
     tokens = MD.parse(body, env)
+    lines = body.splitlines(keepends=True)
     protected = set()
+    replacements = {}
 
     for token in tokens:
-        if (
-            token.type in {"fence", "code_block", "html_block"}
-            and token.map
-        ):
-            protected.update(range(*token.map))
+        if not token.map:
+            continue
+
+        start, end = token.map
+
+        if token.type == "fence":
+            language = token.info.strip().lower()
+            opening = re.match(
+                r"^ {0,3}(`{3,}|~{3,})",
+                lines[start]
+            )
+
+            # Markdown 範例可能是直接顯示給使用者的提示。
+            if language in {"markdown", "md"} and opening:
+                marker = opening[1]
+                closing = re.fullmatch(
+                    r" {0,3}" + re.escape(marker[0])
+                    + "{" + str(len(marker)) + r",}[ \t]*",
+                    lines[end - 1].rstrip("\r\n")
+                )
+
+                if closing and end > start + 1:
+                    content = "".join(
+                        lines[start + 1:end - 1]
+                    )
+                    replacements[start] = (
+                        end,
+                        lines[start]
+                        + map_body(content, convert, link)
+                        + lines[end - 1]
+                    )
+                    continue
+
+            protected.update(range(start, end))
+
+        elif token.type in {"code_block", "html_block"}:
+            protected.update(range(start, end))
 
     result = []
-    for index, line in enumerate(body.splitlines(keepends=True)):
+    index = 0
+
+    while index < len(lines):
+        if index in replacements:
+            end, replacement = replacements[index]
+            result.append(replacement)
+            index = end
+            continue
+
+        line = lines[index]
+
         if (
             index in protected
             or re.match(r"^\s{0,3}\[[^\]]+\]:", line)
@@ -162,6 +206,8 @@ def map_body(body, convert, link=lambda value: value):
                     link
                 )
             )
+
+        index += 1
 
     return "".join(result)
 
