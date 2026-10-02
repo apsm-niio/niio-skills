@@ -1,0 +1,4405 @@
+# niio V3 API 使用規範完整指南
+
+> 本文件總結了niio V3 API的核心使用規範、最佳實踐和常見陷阱,基於實際測試驗證
+
+## 📚 如何獲取最新的 API V3 文件
+
+在開始使用 niio API V3 之前,建議先透過以下方式獲取最新的 API 文件:
+
+### 方式一: 使用應用 API MCP 伺服器 (推薦)
+
+透過 MCP 伺服器直接訪問最新的 API V3 文件結構。當你看到以下 JSON 代表是 官方API文件的 MCP配置
+
+
+**配置方法**:
+
+```json
+{
+  "mcpServers": {
+    "应用 API - API 文档": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "apifox-mcp-server@latest",
+        "--site-id=5442569"
+      ]
+    }
+  }
+}
+```
+
+**💡 關於其他 MCP 配置**: 如需配置 niio 應用 MCP (用於操作 niio 資料),請參考 niio MCP 使用指南
+
+---
+
+### 方式二: 訪問線上文件
+
+如果無法透過 MCP訪問到應用 API文件,可以透過以下線上地址直接訪問 API V3 文件:
+
+**概述文件**:
+- [API 整體介紹](https://apifox.mingdao.com/7271706m0.md)
+- [欄位型別對照表](https://apifox.mingdao.com/7271709m0.md)
+- [篩選器使用指南](https://apifox.mingdao.com/7271713m0.md)
+- [錯誤碼說明](https://apifox.mingdao.com/7271715m0.md)
+
+**API 端點文件**: 完整的 API 端點列表見文件後面的"線上文件資源"章節。
+
+---
+
+## 線上文件資源
+
+優先使用 MCP 伺服器訪問最新的 API 文件結構。如果 MCP 不可用,可以透過以下官方線上文件獲取。
+
+### 應用 API V3 文件
+
+#### 概述文件
+- [V3-beta (AI 友好) 概述](https://apifox.mingdao.com/7271706m0.md) - API 整體介紹和使用說明
+- [V3-beta (AI 友好) 欄位型別對照表](https://apifox.mingdao.com/7271709m0.md) - 完整的欄位型別說明
+- [V3-beta (AI 友好) 篩選器使用指南](https://apifox.mingdao.com/7271713m0.md) - Filter 物件詳細說明
+- [V3-beta (AI 友好) 錯誤碼](https://apifox.mingdao.com/7271715m0.md) - API 錯誤碼說明
+
+#### 應用 API 端點文件
+- **應用**: [獲取應用資訊](https://apifox.mingdao.com/339496583e0.md)
+- **工作表**:
+  - [獲取工作表列表](https://apifox.mingdao.com/359328827e0.md)
+  - [獲取工作表結構資訊](https://apifox.mingdao.com/339496584e0.md)
+  - [編輯工作表](https://apifox.mingdao.com/339496585e0.md)
+  - [刪除工作表](https://apifox.mingdao.com/339496586e0.md)
+  - [新建工作表](https://apifox.mingdao.com/339496587e0.md)
+- **工作表行記錄**:
+  - [獲取行記錄列表](https://apifox.mingdao.com/339496588e0.md)
+  - [獲取行記錄詳情](https://apifox.mingdao.com/339496589e0.md)
+  - [新建行記錄](https://apifox.mingdao.com/339496593e0.md)
+  - [更新行記錄](https://apifox.mingdao.com/339496590e0.md)
+  - [刪除行記錄](https://apifox.mingdao.com/339496591e0.md)
+  - [批次新增行記錄](https://apifox.mingdao.com/339496594e0.md)
+  - [批次更新行記錄](https://apifox.mingdao.com/339496595e0.md)
+  - [批次刪除行記錄](https://apifox.mingdao.com/339496596e0.md)
+  - [獲取關聯記錄](https://apifox.mingdao.com/339496592e0.md)
+  - [獲取行記錄透視資料](https://apifox.mingdao.com/339496597e0.md)
+  - [獲取記錄分享連結](https://apifox.mingdao.com/339496598e0.md)
+  - [獲取行記錄日誌](https://apifox.mingdao.com/339496599e0.md)
+  - [獲取行記錄討論](https://apifox.mingdao.com/339496600e0.md)
+- **選項集**:
+  - [獲取選項集列表](https://apifox.mingdao.com/339496601e0.md)
+  - [建立選項集](https://apifox.mingdao.com/339496602e0.md)
+  - [編輯選項集](https://apifox.mingdao.com/339496603e0.md)
+  - [停用選項集](https://apifox.mingdao.com/339496604e0.md)
+- **工作流**:
+  - [獲取流程列表](https://apifox.mingdao.com/339496605e0.md)
+  - [獲取流程詳情](https://apifox.mingdao.com/339496606e0.md)
+  - [觸發流程](https://apifox.mingdao.com/339496607e0.md)
+- **角色**:
+  - [獲取角色列表](https://apifox.mingdao.com/339496608e0.md)
+  - [建立角色](https://apifox.mingdao.com/339496609e0.md)
+  - [獲取角色詳情](https://apifox.mingdao.com/339496610e0.md)
+  - [刪除角色](https://apifox.mingdao.com/339496611e0.md)
+  - [新增角色成員](https://apifox.mingdao.com/339496612e0.md)
+  - [移除角色成員](https://apifox.mingdao.com/339496613e0.md)
+  - [成員退出所有角色](https://apifox.mingdao.com/339496614e0.md)
+- **公共查詢**:
+  - [查詢成員](https://apifox.mingdao.com/339496615e0.md)
+  - [查詢部門](https://apifox.mingdao.com/339496616e0.md)
+  - [獲取地區資訊](https://apifox.mingdao.com/339496617e0.md)
+
+### 使用建議
+
+1. **優先使用 MCP**: 透過配置好的 MCP 伺服器可以直接在 Claude Code 中訪問最新的 API 結構,無需手動查閱文件
+2. **線上文件作為補充**: 當需要詳細說明或示例時,可以訪問上述線上文件
+3. **關注欄位型別**: 欄位型別對照表和篩選器使用指南是最常用的參考文件
+4. **錯誤排查**: 遇到 API 呼叫問題時,先檢視錯誤碼文件
+
+---
+
+## 目錄
+
+0. [快速開始 - API 使用流程](#零快速開始---api-使用流程)
+1. [建立工作表規範](#一建立工作表規範)
+2. [欄位型別引數詳解](#二欄位型別引數詳解)
+3. [建立/更新記錄規範](#三建立更新記錄規範)
+4. [查詢篩選規範](#四查詢篩選規範)
+5. [資料透視分析規範](#五資料透視分析規範)
+6. [關聯欄位完整指南](#六關聯欄位完整指南)
+7. [常見陷阱與解決方案](#七常見陷阱與解決方案)
+
+---
+
+## 零、快速開始 - API 使用流程
+
+### 0.1 niio V3 API 整體架構
+
+```
+明道云组织
+  └── 应用 (Application)
+       ├── 角色 (Role)
+       ├── 工作流 (Workflow)
+       ├── 工作表分组 (Section)
+       └── 工作表 (Worksheet)
+            ├── 字段 (Field/Control)
+            ├── 视图 (View)
+            └── 记录 (Row/Record)
+```
+
+---
+
+### 0.2 從零搭建應用的完整流程
+
+#### **階段一: 準備工作**
+
+**Step 1: 獲取 API 憑證**
+
+身分驗證與授權憑證統一放在請求 **Header** 中，每個請求都必須攜帶。V3 支援三種身分驗證與授權方式：
+
+| 方式 | Header 引數 | 建立者 | 操作身份 | 有效期 | 適用場景 |
+| --- | --- | --- | --- | --- | --- |
+| **AppKey + Sign** | `HAP-Appkey`、`HAP-Sign` | 管理員 | 應用管理員 | 長期 | 服務端整合 |
+| **PAT** | `Authorization: Bearer {access_token}`、`HAP-Appid`（部分介面必填） | 個人 | 個人 | 可設定 | 個人指令碼 / 工具 |
+| **OAuth 2.0** | `Authorization: Bearer {access_token}`、`HAP-Appid`（部分介面必填） | 整合開發者 | 被授權使用者 | 短期，自動重新整理 | 第三方應用整合 |
+
+- **AppKey + Sign**：應用金鑰身分驗證與授權，由管理員在「應用 → 設定 → API 金鑰」建立，以應用管理員身份訪問資料。需要獲取 **AppKey**、**Sign**、**應用 ID (app_id)**。
+- **PAT**：個人訪問憑證（Personal Access Token），自行建立，以個人身份操作，可設定有效期和許可權範圍。
+- **OAuth 2.0**：使用者透過 OAuth 整合完成授權，短期有效、支援自動重新整理。
+
+**PAT / OAuth 2.0 的附加引數：**
+- `HAP-Appid`（Header）：標識來源應用，值為應用 ID，**應用級介面必填**。
+- `orgId`（Query）：標識來源組織，值為組織 ID，**組織級介面必填**（如獲取應用列表、建立應用）。
+
+**Step 2: 配置 API 請求頭**
+
+方式一 · AppKey + Sign（最常用）：
+
+```javascript
+const headers = {
+  'Content-Type': 'application/json',
+  'HAP-Appkey': '你的Appkey',
+  'HAP-Sign': '你的Sign'
+};
+```
+
+方式二 / 三 · PAT 或 OAuth 2.0（Bearer Token）：
+
+```javascript
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer 你的access_token',
+  'HAP-Appid': '应用ID'   // 应用级接口必填
+};
+```
+
+---
+
+#### **階段二: 建立應用結構**
+
+**Step 3: 獲取應用資訊(可選)**
+
+檢視應用現有結構:
+
+```bash
+GET /v3/app/info
+```
+
+返回應用的分組、工作表、自訂頁面等資訊。
+
+---
+
+**Step 4: 建立工作表**
+
+```javascript
+// 示例: 创建客户信息表
+POST /v3/app/worksheets
+{
+  "name": "客户信息表",
+  "alias": "customers",
+  "fields": [
+    {
+      "name": "客户名称",
+      "alias": "customer_name",
+      "type": "Text",
+      "isTitle": true,
+      "required": true
+    },
+    {
+      "name": "客户类型",
+      "alias": "customer_type",
+      "type": "SingleSelect",
+      "options": [
+        {"value": "潜在客户", "index": 1},
+        {"value": "意向客户", "index": 2},
+        {"value": "成交客户", "index": 3}
+      ]
+    },
+    {
+      "name": "年度预算",
+      "alias": "annual_budget",
+      "type": "Number",
+      "precision": 2
+    }
+  ]
+}
+
+// 返回: { "worksheet_id": "你的worksheetID" }
+```
+
+**關鍵點**:
+- ✅ 一次性定義所有基礎欄位
+- ✅ 使用 `alias` 便於後續引用
+- ✅ 至少要有一個欄位設定 `isTitle: true`
+
+---
+
+**Step 5: 新增關聯欄位(如需要)**
+
+如果需要關聯其他工作表:
+
+```javascript
+// 先创建目标表(如上一步)
+// 然后创建关联字段
+
+POST /v3/app/worksheets/{worksheet_id}
+{
+  "addFields": [
+    {
+      "name": "关联客户",
+      "alias": "related_customer",
+      "type": "Relation",
+      "subType": "1",  // 单条关联
+      "dataSource": "你的worksheetID",  // 客户表ID
+      "relation": {
+        "bidirectional": false,
+        "showFields": ["customer_name", "customer_type"]
+      }
+    }
+  ]
+}
+```
+
+---
+
+#### **階段三: 填充資料**
+
+**Step 6: 準備選項欄位對映**
+
+對於單選/多選欄位,需要先獲取選項的 key:
+
+```javascript
+// 方法1: 查询工作表结构
+GET /v3/app/worksheets/{worksheet_id}
+
+// 从返回的 fields 中找到 options:
+{
+  "fields": [
+    {
+      "id": "customer_type",
+      "type": "SingleSelect",
+      "options": [
+        {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客户"},
+        {"key": "f488d4db-5046-4b10-978f-7869c4c70a71", "value": "意向客户"}
+      ]
+    }
+  ]
+}
+
+// 建立映射表
+const optionMap = {
+  "成交客户": "74c7b607-864d-4cc4-b401-28acba2636e9",
+  "意向客户": "f488d4db-5046-4b10-978f-7869c4c70a71"
+};
+```
+
+---
+
+**Step 7: 建立記錄**
+
+```javascript
+POST /v3/app/worksheets/{worksheet_id}/rows
+{
+  "fields": [
+    {
+      "id": "customer_name",
+      "value": "明道云科技有限公司"
+    },
+    {
+      "id": "customer_type",
+      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 使用选项key
+    },
+    {
+      "id": "annual_budget",
+      "value": 1000000.50
+    }
+  ],
+  "triggerWorkflow": true  // 是否触发工作流
+}
+
+// 返回: { "row_id": "c74a29f0-f694-4501-9ba0-936e259daa9d" }
+```
+
+**關鍵點**:
+- ⚠️ 選項欄位必須用 key,不能用顯示文字
+- ⚠️ 選項欄位即使單選也要用陣列格式
+- ✅ 數值欄位寫入時傳數字,讀取時返回字串
+
+---
+
+**Step 8: 批次建立記錄(可選)**
+
+```javascript
+POST /v3/app/worksheets/{worksheet_id}/rows/batch
+{
+  "rows": [
+    {
+      "fields": [
+        {"id": "customer_name", "value": "客户A"},
+        {"id": "customer_type", "value": ["key1"]}
+      ]
+    },
+    {
+      "fields": [
+        {"id": "customer_name", "value": "客户B"},
+        {"id": "customer_type", "value": ["key2"]}
+      ]
+    }
+  ],
+  "triggerWorkflow": true
+}
+```
+
+**建議**: 一次批次建立不超過 100 條記錄
+
+---
+
+#### **階段四: 查詢和分析資料**
+
+**Step 9: 查詢記錄列表**
+
+```javascript
+POST /v3/app/worksheets/{worksheet_id}/rows/list
+{
+  "filter": {
+    "type": "group",
+    "logic": "AND",
+    "children": [
+      {
+        "type": "condition",
+        "field": "customer_type",
+        "operator": "eq",
+        "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 成交客户
+      },
+      {
+        "type": "condition",
+        "field": "annual_budget",
+        "operator": "gte",
+        "value": ["500000"]  // 预算>=50万
+      }
+    ]
+  },
+  "sorts": [
+    {
+      "field": "annual_budget",
+      "isAsc": false  // 降序
+    }
+  ],
+  "pageIndex": 1,
+  "pageSize": 20
+}
+```
+
+---
+
+**Step 10: 資料透視分析**
+
+```javascript
+POST /v3/app/worksheets/{worksheet_id}/rows/pivot
+{
+  "rows": [
+    {
+      "field": "customer_type",
+      "displayName": "客户类型"
+    }
+  ],
+  "values": [
+    {
+      "field": "rowid",
+      "aggregation": "COUNT",
+      "displayName": "客户数量"
+    },
+    {
+      "field": "annual_budget",
+      "aggregation": "SUM",
+      "displayName": "预算总额"
+    }
+  ],
+  "includeSummary": true
+}
+```
+
+---
+
+#### **階段五: 更新和維護資料**
+
+**Step 11: 更新記錄**
+
+```javascript
+POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
+{
+  "fields": [
+    {
+      "id": "customer_type",
+      "value": ["new-option-key"]  // 更改客户类型
+    },
+    {
+      "id": "annual_budget",
+      "value": 1500000  // 更新预算
+    }
+  ],
+  "triggerWorkflow": true
+}
+```
+
+---
+
+**Step 12: 刪除記錄**
+
+```javascript
+// 单条删除
+DELETE /v3/app/worksheets/{worksheet_id}/rows/{row_id}
+{
+  "permanent": false,  // false=逻辑删除(可恢复), true=永久删除
+  "triggerWorkflow": true
+}
+
+// 批量删除
+DELETE /v3/app/worksheets/{worksheet_id}/rows/batch
+{
+  "rowIds": ["row-id-1", "row-id-2"],
+  "permanent": false,
+  "triggerWorkflow": true
+}
+```
+
+⚠️ **警告**: `permanent: true` 會永久刪除資料,無法恢復!
+
+---
+
+### 0.3 API 呼叫最佳實踐
+
+#### **初始化階段的建議步驟**
+
+```javascript
+// 1. 获取应用结构
+const appInfo = await getAppInfo();
+
+// 2. 获取所有工作表结构
+const worksheets = {};
+for (const ws of appInfo.worksheets) {
+  worksheets[ws.alias] = await getWorksheetStructure(ws.worksheet_id);
+}
+
+// 3. 建立选项字段映射
+const optionMaps = {};
+for (const [alias, structure] of Object.entries(worksheets)) {
+  optionMaps[alias] = {};
+  structure.fields.forEach(field => {
+    if (field.type === 'SingleSelect' || field.type === 'MultipleSelect') {
+      optionMaps[alias][field.alias] = {};
+      field.options.forEach(opt => {
+        optionMaps[alias][field.alias][opt.value] = opt.key;
+      });
+    }
+  });
+}
+
+// 4. 缓存字段ID映射
+const fieldMaps = {};
+for (const [alias, structure] of Object.entries(worksheets)) {
+  fieldMaps[alias] = {};
+  structure.fields.forEach(field => {
+    fieldMaps[alias][field.alias] = field.id;
+  });
+}
+```
+
+---
+
+#### **執行時的建議**
+
+1. **使用欄位ID而不是別名**: 效能更好
+2. **快取選項對映**: 避免重複查詢
+3. **合理使用分頁**: pageSize 建議 100-500
+4. **批次操作分批**: 每批不超過 100 條
+5. **非同步處理附件**: 上傳後等待 5-10 秒
+
+---
+
+### 0.4 常見場景快速參考
+
+| 場景 | API 端點 | 關鍵引數 |
+|-----|---------|---------|
+| 建立工作表 | `POST /v3/app/worksheets` | fields |
+| 新增欄位 | `POST /v3/app/worksheets/{id}` | addFields |
+| 建立記錄 | `POST /v3/app/worksheets/{id}/rows` | fields |
+| 批次建立 | `POST /v3/app/worksheets/{id}/rows/batch` | rows |
+| 查詢記錄 | `POST /v3/app/worksheets/{id}/rows/list` | filter, sorts |
+| 更新記錄 | `POST /v3/app/worksheets/{id}/rows/{row_id}` | fields |
+| 批次更新 | `PUT /v3/app/worksheets/{id}/rows/batch` | rowIds, fields |
+| 刪除記錄 | `DELETE /v3/app/worksheets/{id}/rows/{row_id}` | permanent |
+| 批次刪除 | `DELETE /v3/app/worksheets/{id}/rows/batch` | rowIds, permanent |
+| 透視分析 | `POST /v3/app/worksheets/{id}/rows/pivot` | rows, values |
+| 查詢使用者 | `POST /v3/users/lookup` | name |
+| 查詢部門 | `POST /v3/departments/lookup` | name |
+
+---
+
+### 0.5 關鍵概念速查
+
+**欄位型別 (type)**:
+- 基礎: `Text`, `Number`, `Date`, `Time`
+- 選擇: `SingleSelect`, `MultipleSelect`
+- 關係: `Relation`, `Collaborator`, `Department`
+- 其他: `Attachment`, `Rating`
+
+**篩選運算子 (operator)**:
+- 比較: `eq`, `ne`, `gt`, `gte`, `lt`, `lte`
+- 文字: `contains`, `startswith`, `endswith`
+- 範圍: `between`, `in`
+- 關聯(Relation): `in` / `eq`（值為 rowid 陣列）
+- 部門(Department): `in` / `eq` / `notin` 等（詳見 2.1.1 對照表；V3 API 無 belongsto）
+- 空值: `isempty`, `isnotempty`
+
+**subType 引數**:
+- Collaborator: `0`=單選, `1`=多選
+- Relation: `1`=單條, `2`=多條
+- Time: `1`=時:分, `6`=時:分:秒
+- Date: `3`=年月日, `6`=年月日時分秒
+
+---
+
+## 一、建立工作表規範
+
+### 1.1 基礎工作表建立
+
+**API**: `POST /v3/app/worksheets`
+
+**基本結構**:
+```json
+{
+  "name": "工作表名称",
+  "alias": "worksheet_alias",  // 可选,建议使用英文别名
+  "sectionId": "group-id",     // 可选,指定分组
+  "fields": [
+    // 字段定义数组
+  ]
+}
+```
+
+**示例 - 建立客戶資訊表**:
+```json
+{
+  "name": "客户信息表",
+  "alias": "customers",
+  "fields": [
+    {
+      "name": "客户名称",
+      "alias": "customer_name",
+      "type": "Text",
+      "isTitle": true,      // 标题字段
+      "required": true      // 必填
+    },
+    {
+      "name": "客户评级",
+      "alias": "rating",
+      "type": "Rating",
+      "max": 5,             // 最大等级0-10
+      "required": false
+    }
+  ]
+}
+```
+
+---
+
+### 1.2 特殊欄位型別處理
+
+#### 1.2.1 單選/多選欄位 (SingleSelect/MultipleSelect)
+
+**建立時必須提供選項**:
+
+```json
+{
+  "name": "客户类型",
+  "alias": "customer_type",
+  "type": "SingleSelect",
+  "options": [
+    {"value": "潜在客户", "index": 1},
+    {"value": "意向客户", "index": 2},
+    {"value": "成交客户", "index": 3}
+  ],
+  "required": false
+}
+```
+
+**關鍵點**:
+- ✅ 必須提供 `options` 陣列
+- ✅ 每個選項需要 `value` (顯示文字) 和 `index` (排序)
+- ⚠️ 系統會自動為每個選項生成唯一的 `key` (UUID)
+- ⚠️ 後續查詢/更新時必須使用 `key`,不能用 `value`
+
+---
+
+#### 1.2.2 關聯欄位 (Relation) ⭐重點
+
+**關聯欄位配置項**:
+
+| 引數 | 型別 | 必填 | 說明 |
+|-----|------|------|------|
+| `type` | string | ✅ | 必須為 "Relation" |
+| `dataSource` | string | ✅ | 關聯的目標工作表ID |
+| `subType` | string | ✅ | "1"=單條記錄, "2"=多條記錄 |
+| `relation` | object | ❌ | 關聯配置詳情 |
+| `relation.bidirectional` | boolean | ❌ | 是否雙向關聯 |
+| `relation.showFields` | array | ❌ | 關聯卡片顯示的欄位ID列表 |
+
+**示例 - 建立單條關聯欄位**:
+```json
+{
+  "name": "关联客户",
+  "alias": "related_customer",
+  "type": "Relation",
+  "subType": "1",                          // 单条记录
+  "dataSource": "你的worksheetID", // 目标表ID
+  "relation": {
+    "bidirectional": false,                // 单向关联
+    "showFields": [                        // 显示字段
+      "customer_name",
+      "customer_type"
+    ]
+  },
+  "required": false
+}
+```
+
+**示例 - 建立多條關聯欄位**:
+```json
+{
+  "name": "关联项目",
+  "alias": "related_projects",
+  "type": "Relation",
+  "subType": "2",                          // 多条记录
+  "dataSource": "你的worksheetID2",
+  "relation": {
+    "bidirectional": true,                 // 双向关联
+    "showFields": ["project_name", "project_status"]
+  },
+  "required": false
+}
+```
+
+**⚠️ 關聯欄位重要注意事項**:
+
+1. **dataSource不可修改**: 一旦建立,關聯的目標表不能更改,只能刪除重建
+2. **必須先建立目標表**: `dataSource` 的工作表ID必須已存在
+3. **雙向關聯自動建立**: `bidirectional: true` 會在目標表自動建立反向關聯欄位
+4. **showFields可為空**: 不提供時使用目標表的標題欄位
+5. **建議使用欄位ID**: `showFields` 使用欄位ID比別名更穩定
+
+---
+
+#### 1.2.3 成員欄位 (Collaborator)
+
+```json
+{
+  "name": "负责人",
+  "alias": "owner",
+  "type": "Collaborator",
+  "subType": "0",  // 0=单选, 1=多选
+  "required": false
+}
+```
+
+---
+
+#### 1.2.4 日期/時間欄位 (Date/DateTime/Time)
+
+**Date欄位 - subType控制精度**:
+
+```json
+{
+  "name": "成立日期",
+  "alias": "founded_date",
+  "type": "Date",
+  "subType": "3",  // 5=年, 4=年月, 3=年月日, 2=年月日时, 1=年月日时分, 6=年月日时分秒
+  "required": false
+}
+```
+
+**Time欄位**:
+```json
+{
+  "name": "工作时间",
+  "alias": "work_time",
+  "type": "Time",
+  "subType": "1",  // 1=时:分, 6=时:分:秒
+  "required": false
+}
+```
+
+---
+
+#### 1.2.5 數值欄位 (Number)
+
+```json
+{
+  "name": "年度预算",
+  "alias": "annual_budget",
+  "type": "Number",
+  "precision": 2,  // 小数位数 0-14
+  "required": false
+}
+```
+
+---
+
+#### 1.2.6 等級欄位 (Rating)
+
+```json
+{
+  "name": "客户评级",
+  "alias": "customer_rating",
+  "type": "Rating",
+  "max": 5,  // 最大等级 0-10
+  "required": false
+}
+```
+
+---
+
+#### 1.2.7 附件欄位 (Attachment)
+
+```json
+{
+  "name": "附件",
+  "alias": "attachments",
+  "type": "Attachment",
+  "required": false
+}
+```
+
+**說明**: 附件欄位建立時無需額外引數
+
+---
+
+### 1.3 完整建立工作表示例
+
+**場景**: 建立銷售機會表,包含關聯客戶
+
+```json
+{
+  "name": "销售机会表",
+  "alias": "opportunities",
+  "fields": [
+    {
+      "name": "机会名称",
+      "alias": "opportunity_name",
+      "type": "Text",
+      "isTitle": true,
+      "required": true
+    },
+    {
+      "name": "关联客户",
+      "alias": "related_customer",
+      "type": "Relation",
+      "subType": "1",
+      "dataSource": "你的worksheetID",  // 客户表ID
+      "relation": {
+        "bidirectional": false,
+        "showFields": ["customer_name", "customer_type"]
+      },
+      "required": true
+    },
+    {
+      "name": "销售阶段",
+      "alias": "stage",
+      "type": "SingleSelect",
+      "options": [
+        {"value": "初次接触", "index": 1},
+        {"value": "需求确认", "index": 2},
+        {"value": "方案报价", "index": 3},
+        {"value": "商务谈判", "index": 4},
+        {"value": "赢单", "index": 5}
+      ],
+      "required": false
+    },
+    {
+      "name": "预计金额",
+      "alias": "expected_amount",
+      "type": "Number",
+      "precision": 2,
+      "required": false
+    },
+    {
+      "name": "预计成交日期",
+      "alias": "close_date",
+      "type": "Date",
+      "subType": "3",
+      "required": false
+    },
+    {
+      "name": "成单概率",
+      "alias": "win_probability",
+      "type": "SingleSelect",
+      "options": [
+        {"value": "30%", "index": 1},
+        {"value": "50%", "index": 2},
+        {"value": "70%", "index": 3},
+        {"value": "90%", "index": 4}
+      ],
+      "required": false
+    }
+  ]
+}
+```
+
+---
+
+## 二、欄位型別引數詳解
+
+### 2.1 欄位型別對照表
+
+| 欄位型別 | type值 | 必需引數 | 可選引數 | 說明 |
+|---------|--------|---------|---------|------|
+| 文字 | Text | name | alias, required, isTitle, isUnique, isReadOnly, isHidden, isHiddenOnCreate | 基礎文字欄位 |
+| 數值 | Number | name | precision (0-14), alias, required | 支援小數 |
+| 單選 | SingleSelect | name, options | alias, required | 必須提供選項 |
+| 多選 | MultipleSelect | name, options | alias, required | 必須提供選項 |
+| 日期 | Date | name | subType (5/4/3/2/1/6), alias, required | 不同精度 |
+| 日期時間 | DateTime | name | subType (5/4/3/2/1/6), alias, required | 同Date,用於相容 |
+| 時間 | Time | name | subType (1/6), alias, required | 時分或時分秒 |
+| 成員 | Collaborator | name | subType (0/1), alias, required | 單選或多選 |
+| 部門 | Department | name | subType (0/1), alias, required | 單選或多選部門 |
+| 地區 | Region | name | alias, required | 省市區選擇 |
+| 關聯記錄 | Relation | name, dataSource, subType | relation, alias, required | 必須指定目標表 |
+| 附件 | Attachment | name | alias, required | 支援URL和base64 |
+| 等級 | Rating | name | max (0-10), alias, required | 星級評分 |
+
+---
+
+### 2.1.1 完整欄位型別 / Code / 篩選運算子對照表（API 權威）
+
+> ⭐ 本表是欄位 **Code** 與 **篩選運算子** 的權威依據。注意：**V3 API 不支援 `belongsto`**——部門(Department)/關聯(Relation) 等欄位一律使用本表列出的運算子（如 `in`、`eq`、`notin`）。`-` 表示該欄位不支援對應能力。
+
+| Type | Code | 描述 | API建立 | API查詢 | 支援的篩選運算子 |
+|------|------|------|:------:|:------:|------|
+| Text | 2 | 文字 | ✓ | ✓ | `eq`, `ne`, `contains`, `concurrent`, `notcontains`, `startswith`, `notstartswith`, `endswith`, `notendswith`, `isempty`, `isnotempty` |
+| PhoneNumber | 3 | 手機 | - | ✓ | 同 `Text` |
+| LandlinePhone | 4 | 座機 | - | ✓ | 同 `Text` |
+| Email | 5 | 郵箱 | - | ✓ | 同 `Text` |
+| Number | 6 | 數值 | ✓ | ✓ | `eq`, `ne`, `gt`, `lt`, `ge`, `le`, `between`, `notbetween`, `isempty`, `isnotempty` |
+| Certificate | 7 | 證件 | - | ✓ | 同 `Text` |
+| Currency | 8 | 金額 | - | ✓ | 同 `Number` |
+| SingleSelect | 9 | 單選 | ✓ | ✓ | `eq`, `ne`, `in`, `notin`, `isempty`, `isnotempty` |
+| MultipleSelect | 10 | 多選 | ✓ | ✓ | `eq`, `ne`, `in`, `notin`, `concurrent`, `isempty`, `isnotempty` |
+| Dropdown | 11 | 下拉 | - | ✓ | `eq`, `ne`, `in`, `notin`, `isempty`, `isnotempty` |
+| Attachment | 14 | 附件 | ✓ | ✓ | `isempty`, `isnotempty` |
+| Date | 15 | 日期 | ✓ | ✓ | `between`, `notbetween` |
+| DateTime | 16 | 時間 | ✓ | ✓ | `between`, `notbetween` |
+| Region | 19/23/24 | 地區 | - | ✓ | `eq`, `ne`, `between`, `notbetween`, `in`, `isempty`, `isnotempty` |
+| DynamicLink | 21 | 自由連結 | - | ✓ | `isempty`, `isnotempty` |
+| Divider | 22 | 分段 | - | - | - |
+| AmountInWords | 25 | 大寫金額 | - | ✓ | 同 `Number` |
+| Collaborator | 26 | 成員 | ✓ | ✓ | `eq`, `ne`, `in`, `notin`, `concurrent`, `isempty`, `isnotempty` |
+| Department | 27 | 部門 | - | ✓ | `eq`, `ne`, `between`, `notbetween`, `in`, `notin`, `concurrent`, `isempty`, `isnotempty` |
+| Rating | 28 | 等級 | - | ✓ | 同 `Number` |
+| Relation | 29 | 關聯記錄 | ✓ | ✓ | `eq`, `ne`, `in`, `notin`, `concurrent`, `isempty`, `isnotempty` |
+| Lookup | 30 | 他表欄位 | - | ✓ | - |
+| Formula | 31 | 公式 | - | ✓ | 同 `Number` |
+| Concatenate | 32 | 文字拼接 | - | ✓ | 同 `Text` |
+| AutoNumber | 33 | 自動編號 | - | ✓ | 同 `Text` |
+| SubTable | 34 | 子表 | - | ✓ | `isempty`, `isnotempty` |
+| CascadingSelect | 35 | 級聯選擇 | - | ✓ | `eq`, `ne`, `between`, `notbetween`, `isempty`, `isnotempty` |
+| Checkbox | 36 | 檢查框 | - | ✓ | `isempty`, `isnotempty` |
+| Rollup | 37 | 彙總 | - | ✓ | 同 `Number` |
+| DateFormula | 38 | 公式（日期） | - | ✓ | - |
+| CodeScan | 39 | 掃碼 | - | ✓ | - |
+| Location | 40 | 定位 | - | ✓ | `isempty`, `isnotempty` |
+| RichText | 41 | 富文字 | - | ✓ | `isempty`, `isnotempty` |
+| Signature | 42 | 簽名 | - | ✓ | `isempty`, `isnotempty` |
+| OCR | 43 | 文字識別 | - | ✓ | - |
+| Role | 44 | 角色 | - | ✓ | - |
+| Embed | 45 | 嵌入 | - | - | - |
+| Time | 46 | 時間 | ✓ | ✓ | `between`, `notbetween` |
+| Barcode | 47 | 條碼 | - | ✓ | - |
+| OrgRole | 48 | 組織角色 | - | ✓ | `eq`, `ne`, `in`, `notin`, `concurrent`, `isempty`, `isnotempty` |
+| Button | 49 | API查詢(按鈕) | - | - | - |
+| APIQuery | 50 | API查詢(下拉) | - | - | - |
+| QueryRecord | 51 | 查詢記錄 | - | - | - |
+| Section | 52 | 標籤頁 | - | - | - |
+| FunctionFormula | 53 | 函式公式 | - | ✓ | - |
+| CustomField | 54 | 自訂欄位 | - | - | - |
+| Array | 10000003 | 陣列 (工作流) | - | - | - |
+| Object | 10000006 | 物件 (工作流) | - | - | - |
+| SimpleArray | 10000007 | 普通陣列 (工作流) | - | - | - |
+| ObjectArray | 10000008 | 物件陣列 (工作流) | - | - | - |
+
+---
+
+### 2.2 subType引數詳解
+
+**Collaborator (成員欄位)**:
+- `"0"` - 單選成員
+- `"1"` - 多選成員
+
+**Relation (關聯欄位)**:
+- `"1"` - 單條記錄
+- `"2"` - 多條記錄
+
+**Time (時間欄位)**:
+- `"1"` - 時:分 (HH:mm)
+- `"6"` - 時:分:秒 (HH:mm:ss)
+
+**Date/DateTime (日期欄位)**:
+- `"5"` - 年 (YYYY)
+- `"4"` - 年月 (YYYY-MM)
+- `"3"` - 年月日 (YYYY-MM-DD)
+- `"2"` - 年月日時 (YYYY-MM-DD HH)
+- `"1"` - 年月日時分 (YYYY-MM-DD HH:mm)
+- `"6"` - 年月日時分秒 (YYYY-MM-DD HH:mm:ss)
+
+---
+
+### 2.3 欄位約束引數
+
+| 引數 | 型別 | 說明 | 適用欄位 |
+|-----|------|------|---------|
+| `required` | boolean | 是否必填 | 所有欄位 |
+| `isTitle` | boolean | 是否為標題欄位 | Text |
+| `isUnique` | boolean | 是否唯一 | Text, Number |
+| `isReadOnly` | boolean | 是否只讀 | 所有欄位 |
+| `isHidden` | boolean | 是否隱藏 | 所有欄位 |
+| `isHiddenOnCreate` | boolean | 建立時隱藏 | 所有欄位 |
+
+---
+
+## 三、建立/更新記錄規範
+
+### 3.1 建立記錄 API
+
+**API**: `POST /v3/app/worksheets/{worksheet_id}/rows`
+
+**請求體結構**:
+```json
+{
+  "fields": [
+    {"id": "field_id_or_alias", "value": "对应值"}
+  ],
+  "triggerWorkflow": true  // 是否触发工作流,默认true
+}
+```
+
+---
+
+### 3.2 triggerWorkflow 引數詳解 ⭐重要
+
+`triggerWorkflow` 引數控制是否在資料操作時觸發工作表相關的工作流。
+
+**適用範圍**:
+- ✅ 建立記錄: `POST /v3/app/worksheets/{worksheet_id}/rows`
+- ✅ 批次建立: `POST /v3/app/worksheets/{worksheet_id}/rows/batch`
+- ✅ 更新記錄: `POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}`
+- ✅ 批次更新: `PUT /v3/app/worksheets/{worksheet_id}/rows/batch`
+- ✅ 刪除記錄: `DELETE /v3/app/worksheets/{worksheet_id}/rows/{row_id}`
+- ✅ 批次刪除: `DELETE /v3/app/worksheets/{worksheet_id}/rows/batch`
+
+**引數說明**:
+
+| 引數值 | 說明 | 預設值 | 使用場景 |
+|-------|------|--------|----------|
+| `true` | 觸發工作流 | ✅ 是 | 正常業務操作,需要執行自動化流程 |
+| `false` | 不觸發工作流 | ❌ 否 | 資料遷移、批次初始化、測試資料 |
+
+**工作流觸發時機**:
+
+工作流根據觸發條件配置決定是否執行:
+- **新增記錄時**: 觸發"當記錄被新增時"型別的工作流
+- **更新記錄時**: 觸發"當記錄被更新時"型別的工作流
+- **刪除記錄時**: 觸發"當記錄被刪除時"型別的工作流
+- **欄位變更時**: 觸發特定欄位值變化的工作流
+
+**使用建議**:
+
+**✅ 應該設定為 `true` 的場景**:
+
+1. **正常業務操作**
+```javascript
+// 创建销售机会,触发自动分配负责人工作流
+await createRecord({
+  fields: [...],
+  triggerWorkflow: true  // 触发工作流
+});
+```
+
+2. **使用者提交表單**
+```javascript
+// 客户提交订单,触发通知和审批流程
+await createRecord({
+  fields: orderData,
+  triggerWorkflow: true
+});
+```
+
+3. **需要自動化處理的操作**
+```javascript
+// 更新客户状态,触发客户跟进提醒
+await updateRecord(worksheetId, rowId, {
+  fields: [{id: "status", value: ["已成交"]}],
+  triggerWorkflow: true  // 触发跟进工作流
+});
+```
+
+**❌ 應該設定為 `false` 的場景**:
+
+1. **資料遷移和匯入**
+```javascript
+// 从旧系统迁移数据,不需要触发通知
+await batchCreateRecords({
+  rows: migratedData,
+  triggerWorkflow: false  // 避免大量工作流执行
+});
+```
+
+2. **批次資料初始化**
+```javascript
+// 初始化测试数据
+await batchCreateRecords({
+  rows: testData,
+  triggerWorkflow: false  // 不触发工作流
+});
+```
+
+3. **定時同步任務**
+```javascript
+// 定时从外部系统同步数据
+async function syncExternalData() {
+  const externalData = await fetchFromExternalSystem();
+
+  await batchCreateRecords({
+    rows: externalData,
+    triggerWorkflow: false  // 避免重复触发工作流
+  });
+}
+```
+
+4. **測試和除錯**
+```javascript
+// 测试数据写入逻辑
+await createRecord({
+  fields: testFields,
+  triggerWorkflow: false  // 测试时不触发工作流
+});
+```
+
+**效能影響**:
+
+工作流執行會增加API響應時間:
+- ✅ `triggerWorkflow: false` - API 響應快,通常 < 500ms
+- ⚠️ `triggerWorkflow: true` - 需要等待工作流執行,可能需要 1-5 秒
+
+**批次操作時的注意事項**:
+
+```javascript
+// ❌ 错误: 批量操作时触发大量工作流可能导致超时
+await batchCreateRecords({
+  rows: Array(1000).fill({...}),  // 1000条记录
+  triggerWorkflow: true  // 会触发1000次工作流!
+});
+
+// ✅ 正确: 分批处理,或关闭工作流触发
+// 方案1: 关闭工作流
+await batchCreateRecords({
+  rows: records,
+  triggerWorkflow: false
+});
+
+// 方案2: 分批处理,控制并发
+for (let i = 0; i < records.length; i += 50) {
+  const batch = records.slice(i, i + 50);
+  await batchCreateRecords({
+    rows: batch,
+    triggerWorkflow: true
+  });
+  await sleep(2000);  // 批次间延迟
+}
+```
+
+**工作流觸發異常處理**:
+
+```javascript
+async function createRecordWithWorkflow(fields) {
+  try {
+    const result = await createRecord({
+      fields: fields,
+      triggerWorkflow: true
+    });
+
+    // API成功不代表工作流执行成功
+    // 工作流异常不会影响记录创建
+    console.log('记录创建成功:', result.row_id);
+
+    // 如需确认工作流执行结果,需查看工作流执行日志
+
+  } catch (error) {
+    console.error('记录创建失败:', error);
+  }
+}
+```
+
+**⚠️ 重要提示**:
+
+1. **記錄操作與工作流執行是非同步的**
+   - API 返回成功只表示記錄操作成功
+   - 工作流在後臺非同步執行
+   - 工作流執行失敗不會影響記錄操作
+
+2. **工作流觸發條件**
+   - 即使設定 `triggerWorkflow: true`,工作流也需要滿足自身配置的觸發條件
+   - 例如:設定了"僅當狀態=已完成"的工作流,建立草稿記錄不會觸發
+
+3. **工作流執行限制**
+   - niio對工作流執行有頻率限制
+   - 短時間內大量觸發可能被限流
+   - 批次操作時建議關閉工作流觸發
+
+4. **刪除操作的工作流**
+   - 邏輯刪除(`permanent: false`)會觸發"記錄被刪除"工作流
+   - 物理刪除(`permanent: true`)可能無法觸發工作流,因為記錄已徹底刪除
+
+**最佳實踐**:
+
+```javascript
+// 封装记录创建函数,根据场景决定是否触发工作流
+async function smartCreateRecord(fields, options = {}) {
+  const {
+    isMigration = false,     // 是否为数据迁移
+    isBatch = false,          // 是否为批量操作
+    isTest = false            // 是否为测试
+  } = options;
+
+  // 自动判断是否触发工作流
+  const triggerWorkflow = !(isMigration || (isBatch && fields.length > 50) || isTest);
+
+  return await createRecord({
+    fields: fields,
+    triggerWorkflow: triggerWorkflow
+  });
+}
+
+// 使用示例
+await smartCreateRecord(fields, { isMigration: true });  // 迁移数据,不触发
+await smartCreateRecord(fields, { isBatch: true });       // 批量操作,自动判断
+await smartCreateRecord(fields);                          // 正常操作,触发工作流
+```
+
+---
+
+### 3.3 各欄位型別傳參示例
+
+#### 3.3.1 文字欄位 (Text)
+
+```json
+{
+  "id": "customer_name",
+  "value": "明道云科技有限公司"
+}
+```
+
+---
+
+#### 3.3.2 數值欄位 (Number)
+
+**寫入**: 傳數字型別
+```json
+{
+  "id": "annual_budget",
+  "value": 1000000.50
+}
+```
+
+**讀取**: 返回字串
+```json
+{
+  "annual_budget": "1000000.50"
+}
+```
+
+⚠️ **注意**: 寫入數字,讀取字串
+
+---
+
+#### 3.3.3 單選欄位 (SingleSelect) ⭐重點
+
+**寫入**: 必須傳選項key的陣列
+```json
+{
+  "id": "customer_type",
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 选项key
+}
+```
+
+**讀取**: 返回包含key和value的物件陣列
+```json
+{
+  "customer_type": [
+    {
+      "key": "74c7b607-864d-4cc4-b401-28acba2636e9",
+      "value": "成交客户"
+    }
+  ]
+}
+```
+
+**⚠️ 關鍵點**:
+1. 即使是單選,也要用陣列 `["key"]`
+2. 不能傳顯示文字 `["成交客户"]`,必須用key
+3. 新增選項時可設定 `type` 引數
+
+**支援的type引數**:
+```json
+{
+  "id": "customer_type",
+  "type": "2",  // 1=不允许新增选项(默认), 2=允许新增选项
+  "value": ["新选项名称"]
+}
+```
+
+---
+
+#### 3.3.4 多選欄位 (MultipleSelect)
+
+**寫入**: 傳多個選項key的陣列
+```json
+{
+  "id": "customer_tags",
+  "value": [
+    "705de83e-b929-43e4-82ff-fff2f7dd6888",  // 重点客户
+    "422b4e56-263f-4bfa-bc88-77c09811080e",  // VIP
+    "a2ef7406-a9b1-4fc8-ba02-33aa172998d0"   // 长期合作
+  ]
+}
+```
+
+**讀取**: 返回物件陣列
+```json
+{
+  "customer_tags": [
+    {"key": "705de83e-b929-43e4-82ff-fff2f7dd6888", "value": "重点客户"},
+    {"key": "422b4e56-263f-4bfa-bc88-77c09811080e", "value": "VIP"},
+    {"key": "a2ef7406-a9b1-4fc8-ba02-33aa172998d0", "value": "长期合作"}
+  ]
+}
+```
+
+---
+
+#### 3.3.5 日期欄位 (Date)
+
+**寫入**: 傳字串格式
+```json
+{
+  "id": "founded_date",
+  "value": "2025-01-11"  // YYYY-MM-DD
+}
+```
+
+**日期時間格式**:
+```json
+{
+  "id": "created_datetime",
+  "value": "2025-01-11 14:30:45"  // YYYY-MM-DD HH:mm:ss
+}
+```
+
+**讀取**: 返回字串
+```json
+{
+  "founded_date": "2025-01-11"
+}
+```
+
+---
+
+#### 3.3.6 時間欄位 (Time)
+
+```json
+{
+  "id": "work_time",
+  "value": "14:30:45"  // HH:mm:ss 或 HH:mm
+}
+```
+
+---
+
+#### 3.3.7 等級欄位 (Rating)
+
+**寫入**: 傳字串格式的數字
+```json
+{
+  "id": "customer_rating",
+  "value": "5"  // 字符串格式
+}
+```
+
+**讀取**: 返回字串
+```json
+{
+  "customer_rating": "5"
+}
+```
+
+---
+
+#### 3.3.8 成員欄位 (Collaborator) ⭐重點
+
+**寫入**: 傳使用者ID陣列
+```json
+{
+  "id": "owner",
+  "value": ["user-account-id-123"]  // 用户ID,不是用户名
+}
+```
+
+**獲取使用者ID**: 使用查詢使用者API
+```bash
+POST /v3/users/lookup
+{
+  "name": "张三"  // 精确匹配姓名
+}
+
+# 返回
+{
+  "accountId": "user-account-id-123",
+  "fullname": "张三",
+  "email": "zhangsan@example.com"
+}
+```
+
+**讀取**: 返回使用者物件或物件陣列
+```json
+{
+  "owner": {
+    "accountId": "user-account-id-123",
+    "fullname": "张三",
+    "avatar": "https://...",
+    "email": "zhangsan@example.com",
+    "status": 1
+  }
+}
+```
+
+---
+
+#### 3.3.9 部門欄位 (Department) ⭐新增
+
+部門欄位用於選擇組織架構中的部門,與成員欄位類似,也支援單選和多選。
+
+**欄位建立**:
+```json
+{
+  "name": "所属部门",
+  "alias": "department",
+  "type": "Department",
+  "subType": "0",  // 0=单选, 1=多选
+  "required": false
+}
+```
+
+**單選部門寫入**: 傳部門ID陣列
+```json
+{
+  "id": "department",
+  "value": ["department-id-123"]  // 部门ID,不是部门名称
+}
+```
+
+**多選部門寫入**: 傳多個部門ID
+```json
+{
+  "id": "departments",
+  "value": [
+    "department-id-123",
+    "department-id-456"
+  ]
+}
+```
+
+**獲取部門ID**: 使用查詢部門API
+
+**方法1: 透過名稱查詢**
+```bash
+POST /v3/departments/lookup
+{
+  "name": "销售部"  // 精确匹配部门名称
+}
+
+# 返回
+{
+  "success": true,
+  "data": {
+    "departmentId": "department-id-123",
+    "departmentName": "销售部",
+    "parentId": "parent-dept-id",
+    "level": 2
+  }
+}
+```
+
+**方法2: 獲取部門列表**
+```bash
+GET /v3/departments
+
+# 返回组织架构树
+{
+  "success": true,
+  "data": [
+    {
+      "departmentId": "dept-001",
+      "departmentName": "总裁办",
+      "children": [
+        {
+          "departmentId": "dept-002",
+          "departmentName": "行政部"
+        }
+      ]
+    },
+    {
+      "departmentId": "dept-003",
+      "departmentName": "销售中心",
+      "children": [
+        {
+          "departmentId": "dept-004",
+          "departmentName": "华东区销售部"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**單選部門讀取**: 返回部門物件
+```json
+{
+  "department": {
+    "departmentId": "department-id-123",
+    "departmentName": "销售部"
+  }
+}
+```
+
+**多選部門讀取**: 返回部門物件陣列
+```json
+{
+  "departments": [
+    {
+      "departmentId": "department-id-123",
+      "departmentName": "销售部"
+    },
+    {
+      "departmentId": "department-id-456",
+      "departmentName": "市场部"
+    }
+  ]
+}
+```
+
+**部門欄位篩選**:
+```json
+{
+  "type": "group",
+  "logic": "AND",
+  "children": [
+    {
+      "type": "condition",
+      "field": "department",
+      "operator": "eq",
+      "value": ["department-id-123"]  // 使用部门ID
+    }
+  ]
+}
+```
+
+**⚠️ 關鍵點**:
+1. 必須使用部門ID,不能使用部門名稱
+2. 需要先透過 `/v3/departments/lookup` 查詢部門ID
+3. 部門ID格式通常為 UUID 字串
+4. 支援單選(`subType: "0"`)和多選(`subType: "1"`)
+5. 篩選時使用 `eq` 運算子
+
+**使用示例**:
+```javascript
+// 1. 查找部门ID
+const dept = await findDepartment({ name: "销售部" });
+const deptId = dept.data.departmentId;
+
+// 2. 创建记录时设置部门
+await createRecord({
+  fields: [
+    {
+      "id": "department",
+      "value": [deptId]
+    }
+  ]
+});
+
+// 3. 筛选某个部门的记录
+const records = await queryRecords({
+  filter: {
+    type: "group",
+    logic: "AND",
+    children: [{
+      type: "condition",
+      field: "department",
+      operator: "eq",
+      value: [deptId]
+    }]
+  }
+});
+```
+
+---
+
+#### 3.2.10 地區欄位 (Region) ⭐新增
+
+地區欄位用於選擇省市區等地理區域,支援不同級別的地區選擇。
+
+**欄位建立**:
+```json
+{
+  "name": "所在地区",
+  "alias": "region",
+  "type": "Region",
+  "required": false
+}
+```
+
+**地區欄位寫入**: 傳地區編碼字串
+```json
+{
+  "id": "region",
+  "value": "310100"  // 上海市市辖区的地区编码
+}
+```
+
+**獲取地區編碼**: 使用地區資訊API
+
+**方法1: 透過名稱搜尋地區**
+```bash
+POST /v3/regions
+{
+  "search": "上海"
+}
+
+# 返回匹配的地区列表
+{
+  "success": true,
+  "data": [
+    {
+      "id": "310000",
+      "name": "上海市",
+      "parentId": null,
+      "level": 1  // 1=省, 2=市, 3=区县
+    },
+    {
+      "id": "310100",
+      "name": "市辖区",
+      "parentId": "310000",
+      "level": 2
+    }
+  ]
+}
+```
+
+**方法2: 獲取子級地區**
+```bash
+POST /v3/regions
+{
+  "id": "310000"  // 上海市的ID
+}
+
+# 返回上海市下的所有区县
+{
+  "success": true,
+  "data": [
+    {
+      "id": "310100",
+      "name": "市辖区",
+      "parentId": "310000",
+      "level": 2
+    },
+    {
+      "id": "310101",
+      "name": "黄浦区",
+      "parentId": "310100",
+      "level": 3
+    },
+    {
+      "id": "310104",
+      "name": "徐汇区",
+      "parentId": "310100",
+      "level": 3
+    }
+  ]
+}
+```
+
+**地區欄位讀取**:
+```json
+{
+  "region": {
+    "id": "310100",
+    "name": "上海市-市辖区",
+    "code": "310100"
+  }
+}
+```
+
+**地區欄位篩選**:
+```json
+{
+  "type": "group",
+  "logic": "AND",
+  "children": [
+    {
+      "type": "condition",
+      "field": "region",
+      "operator": "eq",
+      "value": ["310100"]  // 使用地区编码
+    }
+  ]
+}
+```
+
+**資料透視分析中使用地區欄位**:
+
+地區欄位支援按不同粒度進行統計:
+
+```json
+{
+  "rows": [
+    {
+      "field": "region",
+      "displayName": "所在地区",
+      "granularity": 1,  // 1=省, 2=省/市, 3=省/市/区县
+      "includeEmpty": false
+    }
+  ],
+  "values": [
+    {
+      "field": "rowid",
+      "aggregation": "COUNT",
+      "displayName": "客户数量"
+    }
+  ]
+}
+```
+
+**granularity 引數說明**:
+- `1` - 按省統計(例如: 上海市、北京市)
+- `2` - 按省/市統計(例如: 上海市-市轄區、北京市-市轄區)
+- `3` - 按省/市/區縣統計(例如: 上海市-市轄區-黃浦區)
+
+**⚠️ 關鍵點**:
+1. 地區欄位值是地區編碼字串,不是地區名稱
+2. 需要先透過 `/v3/regions` API 查詢地區編碼
+3. 地區編碼是國家標準行政區劃程式碼
+4. 篩選時使用 `eq` 運算子
+5. 透視分析時可使用 `granularity` 引數控制統計粒度
+
+**使用示例**:
+```javascript
+// 1. 搜索地区编码
+const regions = await getRegions({ search: "上海" });
+const regionCode = regions.data[0].id;  // "310000"
+
+// 2. 创建记录时设置地区
+await createRecord({
+  fields: [
+    {
+      "id": "region",
+      "value": regionCode
+    }
+  ]
+});
+
+// 3. 筛选某个地区的记录
+const records = await queryRecords({
+  filter: {
+    type: "group",
+    logic: "AND",
+    children: [{
+      type: "condition",
+      field: "region",
+      operator: "eq",
+      value: [regionCode]
+    }]
+  }
+});
+
+// 4. 按省统计客户分布
+const pivotData = await getPivotData({
+  rows: [{
+    field: "region",
+    granularity: 1  // 按省统计
+  }],
+  values: [{
+    field: "rowid",
+    aggregation: "COUNT"
+  }]
+});
+```
+
+**地區資料層級結構示例**:
+```
+中国
+  ├── 北京市 (110000) - 直辖市
+  │    └── 市辖区 (110100)
+  │         ├── 东城区 (110101)
+  │         ├── 西城区 (110102)
+  │         └── ...
+  ├── 上海市 (310000) - 直辖市
+  │    └── 市辖区 (310100)
+  │         ├── 黄浦区 (310101)
+  │         ├── 徐汇区 (310104)
+  │         └── ...
+  └── 广东省 (440000) - 省
+       ├── 广州市 (440100)
+       │    ├── 越秀区 (440103)
+       │    └── ...
+       ├── 深圳市 (440300)
+       │    ├── 罗湖区 (440303)
+       │    └── ...
+       └── ...
+```
+
+**常見地區編碼**:
+- 北京市: `110000`
+- 上海市: `310000`
+- 廣東省: `440000`
+- 浙江省: `330000`
+
+**💡 提示**:
+- 建議快取常用地區的編碼對映,避免頻繁呼叫地區API
+- 地區編碼是6位數字字串
+- 直轄市的"市轄區"層級是必需的(例如上海市需要先選市轄區,再選具體區)
+- 使用 `granularity` 引數可以實現靈活的地區維度分析
+
+---
+
+#### 3.2.11 關聯欄位 (Relation) ⭐重點
+
+**單條關聯寫入**: 傳記錄ID陣列
+```json
+{
+  "id": "related_customer",
+  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 客户记录ID
+}
+```
+
+**多條關聯寫入**: 傳多個記錄ID
+```json
+{
+  "id": "related_projects",
+  "value": [
+    "2df27f5e-6b8a-462c-bb6f-3de224b50bc3",
+    "741c2c54-584f-49e4-9e96-01620da53e29",
+    "c2e726e4-1392-4730-9c71-e5737f8503d8"
+  ]
+}
+```
+
+**單條關聯讀取**: 返回物件陣列
+```json
+{
+  "related_customer": [
+    {
+      "sid": "945e6503-3823-4e91-9d84-a53f8bdd6fc5",
+      "name": "明道云科技有限公司"
+    }
+  ]
+}
+```
+
+**多條關聯讀取**: 返回ID陣列
+```json
+{
+  "related_projects": [
+    "2df27f5e-6b8a-462c-bb6f-3de224b50bc3",
+    "741c2c54-584f-49e4-9e96-01620da53e29",
+    "c2e726e4-1392-4730-9c71-e5737f8503d8"
+  ]
+}
+```
+
+**獲取關聯記錄完整資料**: 使用專用API
+```bash
+POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
+
+# 返回完整关联记录详情
+{
+  "data": {
+    "rows": [
+      {
+        "rowid": "945e6503-3823-4e91-9d84-a53f8bdd6fc5",
+        "customer_name": "明道云科技有限公司",
+        "customer_type": "成交客户",
+        "annual_budget": "1000000.00"
+      }
+    ],
+    "total": 1
+  }
+}
+```
+
+---
+
+#### 3.2.12 附件欄位 (Attachment) ⭐重點
+
+**寫入**: 支援URL和base64兩種格式
+```json
+{
+  "id": "attachments",
+  "type": "0",  // 0=覆盖已有附件, 1=追加新附件
+  "value": [
+    {
+      "name": "产品宣传册.pdf",
+      "url": "https://example.com/brochure.pdf"
+    },
+    {
+      "name": "公司介绍.png",
+      "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+    }
+  ]
+}
+```
+
+**type引數**:
+- `"0"` - 覆蓋模式:刪除已有附件,上傳新附件
+- `"1"` - 追加模式:保留已有附件,新增附件
+
+**讀取**: 返回附件物件陣列
+```json
+{
+  "attachments": [
+    {
+      "file_id": "7b866bd5-8541-40b7-976f-276081bdddcd",
+      "file_name": "70f9836904834c3eb44c75c587c3fcac.pdf",
+      "original_file_name": "产品宣传册.pdf",
+      "file_size": 2048576,
+      "file_type": 4,
+      "DownloadUrl": "https://p1.mingdaoyun.cn/doc/20260111/xxx.pdf",
+      "preview_url": "https://...",
+      "thumbnail_full_path": "https://..."
+    }
+  ]
+}
+```
+
+**⚠️ 重要提示**:
+1. 附件上傳是**非同步處理**,通常需要5-10秒
+2. API返回成功不代表附件已上傳完成
+3. 建議使用niio內部URL,外部URL可能有跨域限制
+4. 支援base64編碼的圖片直接上傳
+
+---
+
+### 3.4 完整建立記錄示例
+
+**場景**: 建立一條銷售機會記錄
+
+```json
+{
+  "fields": [
+    {
+      "id": "opportunity_name",
+      "value": "明道云-企业版年度续费"
+    },
+    {
+      "id": "related_customer",
+      "value": ["c74a29f0-f694-4501-9ba0-936e259daa9d"]
+    },
+    {
+      "id": "stage",
+      "value": ["a9ac7988-7603-4f03-86d5-985bd1f0cb66"]  // 商务谈判
+    },
+    {
+      "id": "expected_amount",
+      "value": 1200000
+    },
+    {
+      "id": "close_date",
+      "value": "2026-02-28"
+    },
+    {
+      "id": "win_probability",
+      "value": ["b9a6e559-7595-41f8-b0ad-febfb2daa4d5"]  // 90%
+    },
+    {
+      "id": "competitor",
+      "value": ""
+    },
+    {
+      "id": "description",
+      "value": "年度续约项目,增购100个账户"
+    }
+  ],
+  "triggerWorkflow": true
+}
+```
+
+---
+
+### 3.5 更新記錄 API
+
+**API**: `POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}`
+
+**請求體**: 與建立記錄相同
+```json
+{
+  "fields": [
+    {"id": "stage", "value": ["new-stage-key"]},
+    {"id": "expected_amount", "value": 1500000}
+  ],
+  "triggerWorkflow": true
+}
+```
+
+**⚠️ 注意**:
+- 只傳需要更新的欄位
+- 更新操作會覆蓋原有值(除附件type=1追加模式)
+- 關聯欄位更新會覆蓋原有關聯關係
+
+---
+
+### 3.6 批次操作完整指南
+
+批次操作可以顯著提高資料處理效率,但需要注意效能和錯誤處理。
+
+---
+
+#### 3.6.1 批次建立記錄
+
+**API**: `POST /v3/app/worksheets/{worksheet_id}/rows/batch`
+
+**請求體結構**:
+```json
+{
+  "rows": [
+    {
+      "fields": [
+        {"id": "customer_name", "value": "客户A"},
+        {"id": "customer_type", "value": ["option-key-1"]},
+        {"id": "annual_budget", "value": 500000}
+      ]
+    },
+    {
+      "fields": [
+        {"id": "customer_name", "value": "客户B"},
+        {"id": "customer_type", "value": ["option-key-2"]},
+        {"id": "annual_budget", "value": 800000}
+      ]
+    },
+    {
+      "fields": [
+        {"id": "customer_name", "value": "客户C"},
+        {"id": "customer_type", "value": ["option-key-1"]},
+        {"id": "annual_budget", "value": 1200000}
+      ]
+    }
+  ],
+  "triggerWorkflow": true
+}
+```
+
+**返回結果**:
+```json
+{
+  "success": true,
+  "error_code": 1,
+  "data": {
+    "successCount": 3,
+    "failCount": 0,
+    "rows": [
+      {"row_id": "abc123..."},
+      {"row_id": "def456..."},
+      {"row_id": "ghi789..."}
+    ]
+  }
+}
+```
+
+**使用場景**:
+- ✅ 初始資料匯入
+- ✅ 資料遷移
+- ✅ 定期批次同步
+- ✅ Excel/CSV 資料批次上傳
+
+**效能建議**:
+- 📊 **單次數量限制**: 建議每批 50-100 條記錄
+- 📊 **總量超過500條**: 分批處理,每批間隔 1-2 秒
+- 📊 **包含關聯欄位**: 減少到每批 30-50 條
+- 📊 **包含附件**: 建議單獨處理,不要批次
+
+**錯誤處理示例**:
+```javascript
+async function batchCreateRecords(allData, batchSize = 100) {
+  const results = [];
+  const errors = [];
+
+  // 分批处理
+  for (let i = 0; i < allData.length; i += batchSize) {
+    const batch = allData.slice(i, i + batchSize);
+
+    try {
+      const response = await createBatch({
+        rows: batch,
+        triggerWorkflow: true
+      });
+
+      results.push(...response.data.rows);
+
+      // 记录失败的记录
+      if (response.data.failCount > 0) {
+        errors.push({
+          batchIndex: i / batchSize,
+          failCount: response.data.failCount
+        });
+      }
+
+      // 批次间延迟
+      if (i + batchSize < allData.length) {
+        await sleep(1000);  // 等待1秒
+      }
+
+    } catch (error) {
+      console.error(`Batch ${i / batchSize} failed:`, error);
+      errors.push({
+        batchIndex: i / batchSize,
+        error: error.message
+      });
+    }
+  }
+
+  return { results, errors };
+}
+```
+
+---
+
+#### 3.6.2 批次更新記錄
+
+**API**: `PUT /v3/app/worksheets/{worksheet_id}/rows/batch`
+
+**請求體結構**:
+```json
+{
+  "rowIds": [
+    "c74a29f0-f694-4501-9ba0-936e259daa9d",
+    "945e6503-3823-4e91-9d84-a53f8bdd6fc5",
+    "2df27f5e-6b8a-462c-bb6f-3de224b50bc3"
+  ],
+  "fields": [
+    {
+      "id": "stage",
+      "value": ["new-stage-key"]
+    },
+    {
+      "id": "rating",
+      "value": "5"
+    },
+    {
+      "id": "last_contact_date",
+      "value": "2026-01-11"
+    }
+  ],
+  "triggerWorkflow": true
+}
+```
+
+**返回結果**:
+```json
+{
+  "success": true,
+  "error_code": 1,
+  "data": {
+    "successCount": 3,
+    "failCount": 0
+  }
+}
+```
+
+**⚠️ 重要限制**:
+1. **相同值應用**: 批次更新會將相同的欄位值應用到所有指定記錄
+2. **不支援差異化**: 如果需要為不同記錄設定不同值,必須單獨更新
+3. **覆蓋模式**: 更新操作會覆蓋原有值(附件 type=1 除外)
+
+**使用場景**:
+- ✅ 批次修改狀態(如:全部設為"已完成")
+- ✅ 批次分配負責人
+- ✅ 批次更新同一欄位
+- ❌ 不適合:為不同記錄設定不同值
+
+**正確示例 - 批次分配負責人**:
+```json
+{
+  "rowIds": ["id1", "id2", "id3"],
+  "fields": [
+    {
+      "id": "owner",
+      "value": ["user-account-id-123"]  // 将3条记录的负责人都改为同一人
+    }
+  ]
+}
+```
+
+**錯誤示例 - 嘗試差異化更新**:
+```json
+// ❌ 这样不行!批量更新不支持为每条记录设置不同值
+{
+  "rowIds": ["id1", "id2"],
+  "fields": [
+    {"id": "rating", "value": "5"},   // id1和id2都会被设为5
+    {"id": "rating", "value": "3"}    // 后面的值会被忽略或覆盖前面的
+  ]
+}
+```
+
+**需要差異化更新時的解決方案**:
+```javascript
+// 方案1: 单独更新每条记录
+async function updateRecordsWithDifferentValues(updates) {
+  const promises = updates.map(({rowId, fields}) =>
+    updateRecord(worksheetId, rowId, { fields })
+  );
+  return await Promise.all(promises);
+}
+
+// 用法
+await updateRecordsWithDifferentValues([
+  { rowId: "id1", fields: [{ id: "rating", value: "5" }] },
+  { rowId: "id2", fields: [{ id: "rating", value: "3" }] },
+  { rowId: "id3", fields: [{ id: "rating", value: "4" }] }
+]);
+```
+
+---
+
+#### 3.6.3 批次刪除記錄
+
+**API**: `DELETE /v3/app/worksheets/{worksheet_id}/rows/batch`
+
+**請求體結構**:
+```json
+{
+  "rowIds": [
+    "c74a29f0-f694-4501-9ba0-936e259daa9d",
+    "945e6503-3823-4e91-9d84-a53f8bdd6fc5"
+  ],
+  "permanent": false,  // false=逻辑删除(可恢复), true=物理删除(不可恢复)
+  "triggerWorkflow": true
+}
+```
+
+**返回結果**:
+```json
+{
+  "success": true,
+  "error_code": 1,
+  "data": {
+    "successCount": 2,
+    "failCount": 0
+  }
+}
+```
+
+**permanent 引數說明**:
+
+| 引數值 | 刪除方式 | 可恢復 | 資料去向 | 使用場景 |
+|-------|---------|--------|---------|---------|
+| `false` (預設) | 邏輯刪除 | ✅ 可以 | 進入回收站 | 日常資料清理 |
+| `true` | 物理刪除 | ❌ 不可恢復 | 永久刪除 | 敏感資料清除 |
+
+**⚠️ 嚴重警告**:
+```javascript
+// 🚨 危险操作!永久删除无法恢复!
+DELETE /v3/app/worksheets/{worksheet_id}/rows/batch
+{
+  "rowIds": ["id1", "id2"],
+  "permanent": true,  // ⚠️ 永久删除!
+  "triggerWorkflow": true
+}
+```
+
+**安全刪除的最佳實踐**:
+```javascript
+async function safeDeleteRecords(rowIds, options = {}) {
+  const {
+    permanent = false,
+    confirmCallback = null,
+    backupFirst = true
+  } = options;
+
+  // 1. 永久删除需要二次确认
+  if (permanent) {
+    const confirmed = confirmCallback
+      ? await confirmCallback(rowIds.length)
+      : confirm(`确定要永久删除 ${rowIds.length} 条记录吗?此操作不可恢复!`);
+
+    if (!confirmed) {
+      return { cancelled: true };
+    }
+  }
+
+  // 2. 可选:删除前备份数据
+  if (backupFirst) {
+    const records = await getRecords({ rowIds });
+    await saveBackup(records);  // 保存到本地或备份库
+  }
+
+  // 3. 执行删除
+  return await deleteBatch({
+    rowIds,
+    permanent,
+    triggerWorkflow: true
+  });
+}
+```
+
+**使用場景**:
+- ✅ 邏輯刪除(`permanent: false`):
+  - 日常資料清理
+  - 測試資料清理
+  - 可能需要恢復的資料
+
+- ⚠️ 物理刪除(`permanent: true`):
+  - GDPR 資料刪除要求
+  - 敏感資訊徹底清除
+  - 已確認不再需要的歷史資料
+  - **必須經過授權審批**
+
+---
+
+#### 3.6.4 批次操作效能最佳化
+
+**推薦配置**:
+
+```javascript
+const BATCH_CONFIG = {
+  // 基础配置
+  CREATE_BATCH_SIZE: 100,      // 创建批次大小
+  UPDATE_BATCH_SIZE: 100,      // 更新批次大小
+  DELETE_BATCH_SIZE: 100,      // 删除批次大小
+
+  // 特殊场景配置
+  WITH_RELATION_SIZE: 50,      // 包含关联字段时
+  WITH_ATTACHMENT_SIZE: 20,    // 包含附件时
+
+  // 延迟配置
+  BATCH_DELAY: 1000,           // 批次间延迟(毫秒)
+  LARGE_BATCH_DELAY: 2000,     // 大批次延迟(>500条时)
+
+  // 重试配置
+  MAX_RETRIES: 3,              // 最大重试次数
+  RETRY_DELAY: 3000            // 重试延迟
+};
+```
+
+**效能最佳化技巧**:
+
+1. **動態調整批次大小**:
+```javascript
+function calculateBatchSize(records) {
+  let batchSize = BATCH_CONFIG.CREATE_BATCH_SIZE;
+
+  // 检查是否包含关联字段
+  const hasRelation = records.some(r =>
+    r.fields.some(f => f.type === 'Relation')
+  );
+  if (hasRelation) {
+    batchSize = Math.min(batchSize, BATCH_CONFIG.WITH_RELATION_SIZE);
+  }
+
+  // 检查是否包含附件
+  const hasAttachment = records.some(r =>
+    r.fields.some(f => f.type === 'Attachment')
+  );
+  if (hasAttachment) {
+    batchSize = Math.min(batchSize, BATCH_CONFIG.WITH_ATTACHMENT_SIZE);
+  }
+
+  return batchSize;
+}
+```
+
+2. **併發控制**:
+```javascript
+async function batchProcessWithConcurrency(items, batchSize, maxConcurrency = 3) {
+  const batches = [];
+  for (let i = 0; i < items.length; i += batchSize) {
+    batches.push(items.slice(i, i + batchSize));
+  }
+
+  const results = [];
+  for (let i = 0; i < batches.length; i += maxConcurrency) {
+    const concurrentBatches = batches.slice(i, i + maxConcurrency);
+    const batchResults = await Promise.all(
+      concurrentBatches.map(batch => processBatch(batch))
+    );
+    results.push(...batchResults);
+
+    // 并发批次之间也要有延迟
+    if (i + maxConcurrency < batches.length) {
+      await sleep(BATCH_CONFIG.BATCH_DELAY);
+    }
+  }
+
+  return results;
+}
+```
+
+3. **進度追蹤**:
+```javascript
+async function batchCreateWithProgress(records, onProgress) {
+  const batchSize = calculateBatchSize(records);
+  const totalBatches = Math.ceil(records.length / batchSize);
+  let processedCount = 0;
+
+  for (let i = 0; i < totalBatches; i++) {
+    const batch = records.slice(i * batchSize, (i + 1) * batchSize);
+
+    await createBatch({ rows: batch });
+
+    processedCount += batch.length;
+    onProgress({
+      current: processedCount,
+      total: records.length,
+      percentage: Math.round((processedCount / records.length) * 100),
+      batchIndex: i + 1,
+      totalBatches
+    });
+
+    if (i < totalBatches - 1) {
+      await sleep(BATCH_CONFIG.BATCH_DELAY);
+    }
+  }
+}
+
+// 使用
+await batchCreateWithProgress(records, (progress) => {
+  console.log(`进度: ${progress.percentage}% (${progress.current}/${progress.total})`);
+});
+```
+
+---
+
+#### 3.6.5 批次操作錯誤處理
+
+**常見錯誤型別**:
+
+| 錯誤碼 | 說明 | 處理方案 |
+|-------|------|---------|
+| `10` | 引數錯誤 | 檢查欄位ID、值格式 |
+| `4` | 許可權不足 | 檢查API許可權配置 |
+| `-1` | 通用失敗 | 檢視error_msg詳情 |
+| `超时` | 請求超時 | 減少批次大小,重試 |
+
+**健壯的批次處理實現**:
+```javascript
+async function robustBatchCreate(records, options = {}) {
+  const {
+    batchSize = 100,
+    maxRetries = 3,
+    onError = null,
+    continueOnError = true
+  } = options;
+
+  const results = {
+    success: [],
+    failed: [],
+    errors: []
+  };
+
+  for (let i = 0; i < records.length; i += batchSize) {
+    const batch = records.slice(i, i + batchSize);
+    let retries = 0;
+    let success = false;
+
+    while (retries < maxRetries && !success) {
+      try {
+        const response = await createBatch({ rows: batch });
+
+        if (response.success) {
+          results.success.push(...response.data.rows);
+          success = true;
+        } else {
+          throw new Error(response.error_msg || 'Unknown error');
+        }
+
+      } catch (error) {
+        retries++;
+
+        const errorInfo = {
+          batchIndex: i / batchSize,
+          attempt: retries,
+          error: error.message,
+          records: batch
+        };
+
+        if (retries >= maxRetries) {
+          // 达到最大重试次数
+          results.failed.push(...batch);
+          results.errors.push(errorInfo);
+
+          if (onError) {
+            await onError(errorInfo);
+          }
+
+          if (!continueOnError) {
+            throw new Error(`Batch ${i / batchSize} failed after ${maxRetries} retries`);
+          }
+        } else {
+          // 等待后重试
+          console.log(`Batch ${i / batchSize} failed, retrying (${retries}/${maxRetries})...`);
+          await sleep(BATCH_CONFIG.RETRY_DELAY * retries);
+        }
+      }
+    }
+
+    // 批次间延迟
+    if (i + batchSize < records.length) {
+      await sleep(BATCH_CONFIG.BATCH_DELAY);
+    }
+  }
+
+  return results;
+}
+
+// 使用示例
+const result = await robustBatchCreate(records, {
+  batchSize: 50,
+  maxRetries: 3,
+  continueOnError: true,
+  onError: async (errorInfo) => {
+    // 记录错误日志
+    await logError(errorInfo);
+    // 发送通知
+    await notifyAdmin(`批次 ${errorInfo.batchIndex} 失败`);
+  }
+});
+
+console.log(`成功: ${result.success.length}, 失败: ${result.failed.length}`);
+if (result.failed.length > 0) {
+  // 导出失败记录
+  await exportFailedRecords(result.failed);
+}
+```
+
+**失敗記錄重試策略**:
+```javascript
+async function retryFailedRecords(failedRecords, originalBatchSize) {
+  // 策略1: 减小批次大小
+  const smallerBatchSize = Math.max(10, Math.floor(originalBatchSize / 2));
+
+  // 策略2: 逐条重试
+  if (failedRecords.length <= 10) {
+    return await retryOneByOne(failedRecords);
+  }
+
+  // 策略3: 使用更小的批次
+  return await robustBatchCreate(failedRecords, {
+    batchSize: smallerBatchSize,
+    maxRetries: 2
+  });
+}
+
+async function retryOneByOne(records) {
+  const results = { success: [], failed: [] };
+
+  for (const record of records) {
+    try {
+      const response = await createRecord({ fields: record.fields });
+      results.success.push(response.row_id);
+    } catch (error) {
+      results.failed.push({ record, error: error.message });
+    }
+  }
+
+  return results;
+}
+```
+
+---
+
+#### 3.6.6 批次操作最佳實踐總結
+
+**✅ 推薦做法**:
+
+1. **合理分批**:
+   - 基礎資料: 100條/批
+   - 包含關聯: 50條/批
+   - 包含附件: 20條/批,或單獨處理
+
+2. **新增延遲**:
+   - 批次間隔: 1-2秒
+   - 大量資料: 增加到2-3秒
+
+3. **錯誤處理**:
+   - 實現重試機制
+   - 記錄失敗資料
+   - 提供恢復方案
+
+4. **進度反饋**:
+   - 顯示處理進度
+   - 記錄處理日誌
+   - 通知完成狀態
+
+5. **效能監控**:
+   - 記錄API響應時間
+   - 監控成功率
+   - 調整批次大小
+
+**❌ 避免的做法**:
+
+1. ❌ 一次性批次超過200條
+2. ❌ 批次操作附件欄位
+3. ❌ 不做錯誤處理和重試
+4. ❌ 批次更新用於差異化更新
+5. ❌ 物理刪除(`permanent: true`)未經確認
+6. ❌ 無延遲連續批次請求
+7. ❌ 忽略API返回的error_code
+
+---
+
+## 四、查詢篩選規範
+
+### 4.1 查詢記錄 API
+
+**API**: `POST /v3/app/worksheets/{worksheet_id}/rows/list`
+
+**基本請求體**:
+```json
+{
+  "filter": {},           // 筛选条件,见下文
+  "sorts": [],            // 排序,见下文
+  "fields": [],           // 返回字段ID数组,可选
+  "search": "",           // 关键词搜索,可选
+  "pageIndex": 1,         // 页码
+  "pageSize": 100,        // 每页数量,最大1000
+  "viewId": "",           // 视图ID,可选
+  "includeSystemFields": false,  // 是否返回系统字段
+  "useFieldIdAsKey": false       // 返回数据key用字段ID还是别名
+}
+```
+
+---
+
+### 4.2 Filter物件結構
+
+**基礎結構**:
+```typescript
+Filter = {
+  type: 'group' | 'condition';
+
+  // type='group' 时的字段
+  logic?: 'AND' | 'OR';
+  children?: Filter[];  // 子条件,最多两层嵌套
+
+  // type='condition' 时的字段
+  field?: string;       // 字段ID或别名
+  operator?: string;    // 操作符
+  value?: any[];        // 值数组
+}
+```
+
+**規則**:
+1. 頂層必須是 `group` 型別
+2. 最多兩層巢狀: group → group → condition
+3. 同一group的children必須型別一致(全是group或全是condition)
+4. group必須指定 `logic` (AND/OR)
+5. condition必須指定 `field`, `operator`
+6. 部分運算子不需要 `value` (如isempty)
+
+---
+
+### 4.3 運算子完整列表
+
+| 運算子 | 說明 | 需要value | value格式 | 適用欄位 |
+|-------|------|----------|----------|---------|
+| `eq` | 等於 | ✅ | `["值"]` | 所有型別 |
+| `ne` | 不等於 | ✅ | `["值"]` | 所有型別 |
+| `contains` | 包含 | ✅ | `["值"]` | Text, MultipleSelect |
+| `notcontains` | 不包含 | ✅ | `["值"]` | Text, MultipleSelect |
+| `startswith` | 開頭是 | ✅ | `["值"]` | Text |
+| `endswith` | 結尾是 | ✅ | `["值"]` | Text |
+| `gt` | 大於 | ✅ | `["值"]` | Number, Date |
+| `gte` | 大於等於 | ✅ | `["值"]` | Number, Date |
+| `lt` | 小於 | ✅ | `["值"]` | Number, Date |
+| `lte` | 小於等於 | ✅ | `["值"]` | Number, Date |
+| `between` | 介於之間 | ✅ | `["最小值", "最大值"]` | Number, Date |
+| `isempty` | 為空 | ❌ | 不需要 | 所有型別 |
+| `isnotempty` | 不為空 | ❌ | 不需要 | 所有型別 |
+| `notin` | 不在其中 | ✅ | `["ID1", "ID2"]` | 多選/成員/部門/關聯等多值排除 |
+| `in` | 在...中 | ✅ | `["值1", "值2"]` | 所有型別（Relation 用 rowid 陣列） |
+| `concurrent` | 同時包含 | ✅ | `["值1", "值2"]` | MultipleSelect |
+
+---
+
+### 4.4 各欄位型別篩選示例
+
+#### 4.4.1 文字欄位篩選
+
+**包含查詢**:
+```json
+{
+  "type": "group",
+  "logic": "AND",
+  "children": [
+    {
+      "type": "condition",
+      "field": "customer_name",
+      "operator": "contains",
+      "value": ["明道"]
+    }
+  ]
+}
+```
+
+**開頭匹配**:
+```json
+{
+  "type": "condition",
+  "field": "customer_name",
+  "operator": "startswith",
+  "value": ["北京"]
+}
+```
+
+---
+
+#### 4.4.2 數值欄位篩選 ⭐重點
+
+**範圍查詢**:
+```json
+{
+  "type": "condition",
+  "field": "annual_budget",
+  "operator": "between",
+  "value": ["500000", "2000000"]  // ⚠️ 必须是字符串数组
+}
+```
+
+**大於查詢**:
+```json
+{
+  "type": "condition",
+  "field": "expected_amount",
+  "operator": "gt",
+  "value": ["1000000"]  // ⚠️ 字符串格式
+}
+```
+
+**⚠️ 關鍵點**: 數值欄位的value必須是字串陣列!
+
+---
+
+#### 4.4.3 單選欄位篩選 ⭐⭐⭐重點
+
+**等於查詢** (最常用):
+```json
+{
+  "type": "condition",
+  "field": "customer_type",
+  "operator": "eq",
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ⚠️ 必须用选项key
+}
+```
+
+**❌ 錯誤示例**:
+```json
+{
+  "type": "condition",
+  "field": "customer_type",
+  "operator": "eq",
+  "value": ["成交客户"]  // ❌ 不能用显示文本!
+}
+```
+
+**如何獲取選項key**?
+
+**方法1**: 先查詢一條記錄
+```bash
+POST /v3/app/worksheets/{worksheet_id}/rows/list
+{
+  "pageIndex": 1,
+  "pageSize": 1
+}
+
+# 返回数据中包含选项key
+{
+  "customer_type": [
+    {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客户"}
+  ]
+}
+```
+
+**方法2**: 查詢工作表結構
+```bash
+GET /v3/app/worksheets/{worksheet_id}
+
+# 返回字段定义,包含options的key
+{
+  "fields": [
+    {
+      "id": "customer_type",
+      "type": "SingleSelect",
+      "options": [
+        {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客户"},
+        {"key": "f488d4db-5046-4b10-978f-7869c4c70a71", "value": "意向客户"}
+      ]
+    }
+  ]
+}
+```
+
+**💡 最佳實踐**: 應用初始化時快取所有選項欄位的key-value對映
+
+---
+
+#### 4.4.4 多選欄位篩選
+
+**包含某個選項**:
+```json
+{
+  "type": "condition",
+  "field": "customer_tags",
+  "operator": "contains",
+  "value": ["705de83e-b929-43e4-82ff-fff2f7dd6888"]  // 重点客户的key
+}
+```
+
+**同時包含多個選項**:
+```json
+{
+  "type": "condition",
+  "field": "customer_tags",
+  "operator": "concurrent",
+  "value": [
+    "705de83e-b929-43e4-82ff-fff2f7dd6888",  // 重点客户
+    "422b4e56-263f-4bfa-bc88-77c09811080e"   // VIP
+  ]
+}
+```
+
+---
+
+#### 4.4.5 日期欄位篩選
+
+**日期範圍**:
+```json
+{
+  "type": "condition",
+  "field": "founded_date",
+  "operator": "between",
+  "value": ["2020-01-01", "2025-12-31"]
+}
+```
+
+**晚於某日期**:
+```json
+{
+  "type": "condition",
+  "field": "close_date",
+  "operator": "gte",
+  "value": ["2026-01-01"]
+}
+```
+
+**日期格式**: `YYYY-MM-DD` 或 `YYYY-MM-DD HH:mm:ss`
+
+---
+
+#### 4.4.6 關聯欄位篩選 ⭐⭐重點
+
+**屬於某個關聯記錄**:
+```json
+{
+  "type": "condition",
+  "field": "related_customer",
+  "operator": "eq",  // 单值用 eq
+  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 客户记录rowid
+}
+```
+
+**屬於多個關聯記錄之一**:
+```json
+{
+  "type": "condition",
+  "field": "related_customer",
+  "operator": "in",  // 多值用 in
+  "value": [
+    "945e6503-3823-4e91-9d84-a53f8bdd6fc5",
+    "c74a29f0-f694-4501-9ba0-936e259daa9d"
+  ]
+}
+```
+
+**⚠️ 關鍵點**:
+1. 關聯欄位用 `in` 或 `eq` 運算子
+2. V3 API 不支援 belongsto；部門(Department)欄位用 in / eq / notin 等（見 2.1.1 對照表）
+3. value 傳入關聯記錄的 rowid 陣列
+
+---
+
+#### 4.4.7 成員欄位篩選
+
+```json
+{
+  "type": "condition",
+  "field": "owner",
+  "operator": "eq",
+  "value": ["user-account-id-123"]  // 用户ID,不是姓名
+}
+```
+
+---
+
+#### 4.4.8 等級欄位篩選
+
+```json
+{
+  "type": "condition",
+  "field": "customer_rating",
+  "operator": "gte",
+  "value": ["4"]  // 字符串格式
+}
+```
+
+---
+
+### 4.5 組合條件示例
+
+#### 4.5.1 簡單AND條件
+
+**查詢**: 評級≥4星 且 客戶型別=成交客戶
+
+```json
+{
+  "type": "group",
+  "logic": "AND",
+  "children": [
+    {
+      "type": "condition",
+      "field": "customer_rating",
+      "operator": "gte",
+      "value": ["4"]
+    },
+    {
+      "type": "condition",
+      "field": "customer_type",
+      "operator": "eq",
+      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]
+    }
+  ]
+}
+```
+
+---
+
+#### 4.5.2 簡單OR條件
+
+**查詢**: 客戶型別=成交客戶 或 客戶型別=意向客戶
+
+```json
+{
+  "type": "group",
+  "logic": "OR",
+  "children": [
+    {
+      "type": "condition",
+      "field": "customer_type",
+      "operator": "eq",
+      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 成交
+    },
+    {
+      "type": "condition",
+      "field": "customer_type",
+      "operator": "eq",
+      "value": ["f488d4db-5046-4b10-978f-7869c4c70a71"]  // 意向
+    }
+  ]
+}
+```
+
+---
+
+#### 4.5.3 巢狀條件 (AND + OR)
+
+**查詢**: (型別=成交 或 型別=意向) 且 預算>50萬
+
+```json
+{
+  "type": "group",
+  "logic": "AND",
+  "children": [
+    {
+      "type": "group",
+      "logic": "OR",
+      "children": [
+        {
+          "type": "condition",
+          "field": "customer_type",
+          "operator": "eq",
+          "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]
+        },
+        {
+          "type": "condition",
+          "field": "customer_type",
+          "operator": "eq",
+          "value": ["f488d4db-5046-4b10-978f-7869c4c70a71"]
+        }
+      ]
+    },
+    {
+      "type": "condition",
+      "field": "annual_budget",
+      "operator": "gt",
+      "value": ["500000"]
+    }
+  ]
+}
+```
+
+---
+
+#### 4.5.4 複雜業務場景
+
+**查詢**: 網際網路行業的成交客戶,且(預算>100萬 或 評級=5星)
+
+```json
+{
+  "type": "group",
+  "logic": "AND",
+  "children": [
+    {
+      "type": "condition",
+      "field": "industry",
+      "operator": "eq",
+      "value": ["4f28cae6-6a76-4b0b-b6e8-62cc724c677d"]  // 互联网
+    },
+    {
+      "type": "condition",
+      "field": "customer_type",
+      "operator": "eq",
+      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 成交客户
+    },
+    {
+      "type": "group",
+      "logic": "OR",
+      "children": [
+        {
+          "type": "condition",
+          "field": "annual_budget",
+          "operator": "gt",
+          "value": ["1000000"]
+        },
+        {
+          "type": "condition",
+          "field": "customer_rating",
+          "operator": "eq",
+          "value": ["5"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+### 4.6 排序 (Sorts)
+
+**基本格式**:
+```json
+{
+  "sorts": [
+    {
+      "field": "annual_budget",
+      "isAsc": false  // false=降序, true=升序
+    },
+    {
+      "field": "customer_rating",
+      "isAsc": false
+    }
+  ]
+}
+```
+
+**多欄位排序**: 按陣列順序優先順序排序
+
+---
+
+### 4.7 完整查詢示例
+
+**業務場景**: 查詢網際網路行業的高價值客戶,按預算降序
+
+```json
+{
+  "filter": {
+    "type": "group",
+    "logic": "AND",
+    "children": [
+      {
+        "type": "condition",
+        "field": "industry",
+        "operator": "eq",
+        "value": ["4f28cae6-6a76-4b0b-b6e8-62cc724c677d"]
+      },
+      {
+        "type": "condition",
+        "field": "customer_rating",
+        "operator": "gte",
+        "value": ["4"]
+      },
+      {
+        "type": "condition",
+        "field": "annual_budget",
+        "operator": "gt",
+        "value": ["500000"]
+      }
+    ]
+  },
+  "sorts": [
+    {
+      "field": "annual_budget",
+      "isAsc": false
+    }
+  ],
+  "fields": ["customer_name", "customer_type", "annual_budget", "customer_rating"],
+  "pageIndex": 1,
+  "pageSize": 20,
+  "includeSystemFields": false
+}
+```
+
+---
+
+## 五、資料透視分析規範
+
+### 5.1 透視分析 API
+
+**API**: `POST /v3/app/worksheets/{worksheet_id}/rows/pivot`
+
+**基本請求體**:
+```json
+{
+  "rows": [],       // 行维度
+  "columns": [],    // 列维度(可选)
+  "values": [],     // 值/指标
+  "filter": {},     // 筛选条件(可选)
+  "sorts": [],      // 排序(可选)
+  "includeSummary": true,  // 是否包含汇总
+  "pageIndex": 1,
+  "pageSize": 1000
+}
+```
+
+---
+
+### 5.2 維度配置
+
+**行/列維度結構**:
+```json
+{
+  "field": "industry",          // 字段ID或别名
+  "displayName": "所属行业",    // 显示名称(可选)
+  "granularity": 1,             // 粒度(日期/地区字段)
+  "includeEmpty": false         // 是否包含空值
+}
+```
+
+**granularity引數** (僅日期和地區欄位):
+
+**日期欄位**:
+- `1` - 按天
+- `2` - 按周
+- `3` - 按月
+
+**地區欄位**:
+- `1` - 省
+- `2` - 省/市
+- `3` - 省/市/區縣
+
+---
+
+### 5.3 值/指標配置
+
+**值配置結構**:
+```json
+{
+  "field": "annual_budget",     // 字段ID或别名
+  "aggregation": "SUM",         // 聚合函数
+  "displayName": "预算总额",    // 显示名称(可选)
+  "includeEmpty": false         // 是否包含空值
+}
+```
+
+**聚合函式** (不區分大小寫):
+
+| 函式 | 說明 | 適用欄位 |
+|-----|------|---------|
+| `COUNT` | 計數 | 所有欄位 |
+| `DISTINCTCOUNT` | 去重計數 | 所有欄位 |
+| `SUM` | 求和 | Number |
+| `AVG` | 平均值 | Number |
+| `MIN` | 最小值 | Number, Date |
+| `MAX` | 最大值 | Number, Date |
+
+**⚠️ 注意**:
+- 統計行數時,`field` 使用 `"rowid"`
+- `aggregation` 不區分大小寫
+
+---
+
+### 5.4 透視分析示例
+
+#### 5.4.1 單維度統計
+
+**場景**: 按行業統計客戶數量和預算總額
+
+```json
+{
+  "rows": [
+    {
+      "field": "industry",
+      "displayName": "所属行业",
+      "includeEmpty": false
+    }
+  ],
+  "values": [
+    {
+      "field": "rowid",
+      "aggregation": "COUNT",
+      "displayName": "客户数量"
+    },
+    {
+      "field": "annual_budget",
+      "aggregation": "SUM",
+      "displayName": "预算总额"
+    }
+  ],
+  "includeSummary": true,
+  "pageIndex": 1,
+  "pageSize": 50
+}
+```
+
+**返回結果**:
+```json
+{
+  "data": {
+    "pivot": [
+      {
+        "rows": {"industry": "互联网"},
+        "values": {"rowid": 4.0, "annual_budget": 2150000.0}
+      },
+      {
+        "rows": {"industry": "金融"},
+        "values": {"rowid": 1.0, "annual_budget": 2000000.0}
+      }
+    ],
+    "summary": {
+      "rowid": 12.0,
+      "annual_budget": 7900000.0
+    }
+  }
+}
+```
+
+---
+
+#### 5.4.2 多指標統計
+
+**場景**: 按銷售階段統計機會的數量、金額總計、平均金額
+
+```json
+{
+  "rows": [
+    {
+      "field": "opportunity_stage",
+      "displayName": "销售阶段"
+    }
+  ],
+  "values": [
+    {
+      "field": "rowid",
+      "aggregation": "COUNT",
+      "displayName": "机会数量"
+    },
+    {
+      "field": "expected_amount",
+      "aggregation": "SUM",
+      "displayName": "金额总计"
+    },
+    {
+      "field": "expected_amount",
+      "aggregation": "AVG",
+      "displayName": "平均金额"
+    }
+  ],
+  "includeSummary": true
+}
+```
+
+**返回結果**:
+```json
+{
+  "data": {
+    "pivot": [
+      {
+        "rows": {"opportunity_stage": "商务谈判"},
+        "values": {
+          "rowid": 3.0,
+          "expected_amount": 2710000.0,
+          "expected_amount_avg": 903333.33
+        }
+      }
+    ],
+    "summary": {
+      "rowid": 10.0,
+      "expected_amount": 8990000.0,
+      "expected_amount_avg": 899000.0
+    }
+  }
+}
+```
+
+---
+
+#### 5.4.3 多維度交叉分析
+
+**場景**: 按客戶型別和行業交叉統計客戶數
+
+```json
+{
+  "rows": [
+    {
+      "field": "customer_type",
+      "displayName": "客户类型"
+    },
+    {
+      "field": "industry",
+      "displayName": "所属行业"
+    }
+  ],
+  "values": [
+    {
+      "field": "rowid",
+      "aggregation": "COUNT",
+      "displayName": "客户数"
+    }
+  ],
+  "includeSummary": true
+}
+```
+
+**返回結果**: 二維交叉資料
+```json
+{
+  "data": {
+    "pivot": [
+      {
+        "rows": {
+          "customer_type": "成交客户",
+          "industry": "互联网"
+        },
+        "values": {"rowid": 3.0}
+      },
+      {
+        "rows": {
+          "customer_type": "意向客户",
+          "industry": "制造业"
+        },
+        "values": {"rowid": 2.0}
+      }
+    ],
+    "summary": {"rowid": 12.0}
+  }
+}
+```
+
+---
+
+#### 5.4.4 帶篩選的透視分析
+
+**場景**: 統計2026年Q1預計成交的機會
+
+```json
+{
+  "filter": {
+    "type": "group",
+    "logic": "AND",
+    "children": [
+      {
+        "type": "condition",
+        "field": "expected_close_date",
+        "operator": "between",
+        "value": ["2026-01-01", "2026-03-31"]
+      }
+    ]
+  },
+  "rows": [
+    {
+      "field": "opportunity_stage",
+      "displayName": "销售阶段"
+    }
+  ],
+  "values": [
+    {
+      "field": "rowid",
+      "aggregation": "COUNT",
+      "displayName": "机会数量"
+    },
+    {
+      "field": "expected_amount",
+      "aggregation": "SUM",
+      "displayName": "金额总计"
+    }
+  ],
+  "includeSummary": true
+}
+```
+
+---
+
+## 六、關聯欄位完整指南
+
+### 6.1 關聯欄位設計原則
+
+**建立關聯欄位前需考慮**:
+1. 關聯方向:單向還是雙向?
+2. 關聯數量:單條還是多條?
+3. 顯示欄位:關聯卡片顯示哪些資訊?
+4. 資料依賴:目標表必須先存在
+
+---
+
+### 6.2 關聯欄位建立步驟
+
+**Step 1**: 建立目標工作表(如客戶表)
+```json
+{
+  "name": "客户信息表",
+  "fields": [
+    {"name": "客户名称", "type": "Text", "isTitle": true},
+    {"name": "客户类型", "type": "SingleSelect", "options": [...]}
+  ]
+}
+
+// 返回: {"worksheet_id": "你的worksheetID"}
+```
+
+**Step 2**: 在源工作表建立關聯欄位(如機會表)
+```json
+{
+  "name": "销售机会表",
+  "fields": [
+    {"name": "机会名称", "type": "Text", "isTitle": true},
+    {
+      "name": "关联客户",
+      "alias": "related_customer",
+      "type": "Relation",
+      "subType": "1",  // 单条关联
+      "dataSource": "你的worksheetID",  // 客户表ID
+      "relation": {
+        "bidirectional": false,
+        "showFields": ["customer_name", "customer_type"]
+      }
+    }
+  ]
+}
+```
+
+---
+
+### 6.3 單向 vs 雙向關聯
+
+**單向關聯** (`bidirectional: false`):
+- 只在源表建立關聯欄位
+- 目標表不會自動建立反向欄位
+- 適用場景:機會→客戶,任務→專案
+
+**雙向關聯** (`bidirectional: true`):
+- 源表和目標表都有關聯欄位
+- 系統自動在目標表建立反向欄位
+- 適用場景:客戶↔聯絡人,專案↔任務
+
+**示例 - 雙向關聯**:
+```json
+{
+  "name": "关联项目",
+  "type": "Relation",
+  "subType": "2",  // 多条关联
+  "dataSource": "project-table-id",
+  "relation": {
+    "bidirectional": true,  // 双向
+    "showFields": ["project_name", "project_status"]
+  }
+}
+```
+
+**效果**:
+- 聯絡人表:顯示"關聯專案"欄位
+- 專案表:自動建立"關聯聯絡人"反向欄位
+
+---
+
+### 6.4 關聯欄位寫入完整流程
+
+**場景**: 為銷售機會關聯客戶
+
+**Step 1**: 查詢客戶記錄,獲取rowid
+```bash
+POST /v3/app/worksheets/你的worksheetID/rows/list
+{
+  "filter": {
+    "type": "group",
+    "logic": "AND",
+    "children": [
+      {
+        "type": "condition",
+        "field": "customer_name",
+        "operator": "contains",
+        "value": ["明道云"]
+      }
+    ]
+  },
+  "pageSize": 1
+}
+
+# 返回
+{
+  "data": {
+    "rows": [
+      {"rowid": "c74a29f0-f694-4501-9ba0-936e259daa9d", ...}
+    ]
+  }
+}
+```
+
+**Step 2**: 建立機會記錄,傳入客戶rowid
+```bash
+POST /v3/app/worksheets/你的worksheetID2/rows
+{
+  "fields": [
+    {
+      "id": "opportunity_name",
+      "value": "明道云-年度续费"
+    },
+    {
+      "id": "related_customer",
+      "value": ["c74a29f0-f694-4501-9ba0-936e259daa9d"]  // 客户rowid
+    }
+  ]
+}
+```
+
+**Step 3**: 讀取驗證
+```bash
+GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
+
+# 返回
+{
+  "related_customer": [
+    {
+      "sid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
+      "name": "明道云科技有限公司"
+    }
+  ]
+}
+```
+
+---
+
+### 6.5 獲取關聯記錄完整資料
+
+#### 6.5.1 關聯欄位返回的資料結構
+
+當讀取包含關聯欄位的記錄時,niio API 返回的資料結構如下:
+
+```javascript
+{
+  "示例控件ID": [  // 关联字段ID
+    {
+      "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 关联记录的ID (等同于 rowid)
+      "name": "实木衣柜"  // 关联记录的标题字段值
+    }
+  ]
+}
+```
+
+**關鍵屬性說明**:
+- **`sid`**: 關聯記錄的唯一識別符號,等同於目標表中的 `rowid`
+- **`name`**: 關聯記錄的標題欄位值(僅顯示用途)
+
+**⚠️ 重要提示**:
+- 預設情況下,關聯欄位只返回 `sid` 和 `name` 兩個屬性
+- 如果需要展示關聯表的其他資訊(如圖片、價格、描述等),需要進行**深度查詢**
+- 深度查詢步驟:
+  1. 找到該關聯欄位對應的目標工作表 ID
+  2. 使用 `sid` (等同於 `rowid`) 去目標表查詢完整資料
+
+---
+
+#### 6.5.2 方法1: 使用 get_record_relations API (推薦)
+
+**適用場景**: 獲取單條記錄的關聯詳情
+
+```bash
+POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
+{
+  "pageIndex": 1,
+  "pageSize": 10,
+  "isReturnSystemFields": false
+}
+
+# 返回完整关联记录详情
+{
+  "data": {
+    "rows": [
+      {
+        "rowid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
+        "customer_name": "明道云科技有限公司",
+        "customer_type": [{"key": "...", "value": "成交客户"}],
+        "annual_budget": "1000000.00",
+        "customer_rating": "5"
+      }
+    ],
+    "total": 1
+  }
+}
+```
+
+**優點**: 一次請求獲取完整資料,無需手動查詢目標表
+
+---
+
+#### 6.5.3 方法2: 先讀取關聯ID,再查詢目標表
+
+**適用場景**: 批次查詢多條記錄的關聯詳情(避免 N+1 查詢問題)
+
+**Step 1**: 讀取包含關聯欄位的記錄
+```bash
+GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
+
+# 返回
+{
+  "related_customer": [
+    {
+      "sid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
+      "name": "明道云科技有限公司"
+    }
+  ]
+}
+```
+
+**Step 2**: 使用 `sid` 查詢目標表完整資料
+
+⚠️ **關鍵**: 使用 `rowid` 欄位 + `in` 運算子進行查詢
+
+```bash
+POST /v3/app/worksheets/你的worksheetID/rows/list
+{
+  "filter": {
+    "type": "group",
+    "logic": "AND",
+    "children": [
+      {
+        "type": "condition",
+        "field": "rowid",  // ⚠️ 使用系统字段 rowid
+        "operator": "in",  // ⚠️ 使用 in 操作符
+        "value": ["c74a29f0-f694-4501-9ba0-936e259daa9d"]  // 传入 sid 值
+      }
+    ]
+  }
+}
+
+# 返回完整数据
+{
+  "data": {
+    "rows": [
+      {
+        "rowid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
+        "customer_name": "明道云科技有限公司",
+        "customer_type": [{"key": "...", "value": "成交客户"}],
+        "customer_logo": [{"downloadUrl": "https://..."}],
+        "annual_budget": "1000000.00",
+        "customer_rating": "5",
+        "customer_address": "上海市徐汇区"
+      }
+    ]
+  }
+}
+```
+
+---
+
+#### 6.5.4 批次查詢最佳化示例
+
+**場景**: 產品列表頁面,需要顯示每個產品的完整分類資訊(包括分類圖示、描述等)
+
+**問題**: 如果有 100 個產品,逐個查詢分類會產生 N+1 查詢問題(1次產品查詢 + N次分類查詢)
+
+**解決方案**: 批次收集所有分類 ID,一次性查詢所有分類
+
+```javascript
+// Step 1: 获取产品列表
+const products = await getRows('products-worksheet-id', {
+  pageSize: 100
+});
+
+// Step 2: 收集所有产品的分类 ID (使用 Set 自动去重)
+const categoryIds = new Set();
+products.rows.forEach(product => {
+  const categories = product['category_field_id'];  // 关联字段
+  if (Array.isArray(categories)) {
+    categories.forEach(cat => {
+      categoryIds.add(cat.sid);  // 收集 sid
+    });
+  }
+});
+
+// Step 3: 批量查询所有分类的完整数据 (1次请求!)
+const categoriesData = await getRows('categories-worksheet-id', {
+  filter: {
+    type: 'group',
+    logic: 'AND',
+    children: [{
+      type: 'condition',
+      field: 'rowid',
+      operator: 'in',
+      value: Array.from(categoryIds)  // 传入所有 sid 数组
+    }]
+  }
+});
+
+// Step 4: 建立分类 ID → 分类数据的映射 (O(1) 查找)
+const categoryMap = {};
+categoriesData.rows.forEach(cat => {
+  categoryMap[cat.rowid] = cat;
+});
+
+// Step 5: 渲染产品列表,直接从 map 中取分类数据
+products.rows.forEach(product => {
+  const categories = product['category_field_id'];
+  const categoryData = categoryMap[categories[0].sid];
+
+  console.log({
+    productName: product.name,
+    categoryName: categoryData.name,
+    categoryIcon: categoryData.icon[0].downloadUrl,
+    categoryDesc: categoryData.description
+  });
+});
+```
+
+**效能對比**:
+- ❌ 逐個查詢: 1 + 100 = 101 次 API 請求
+- ✅ 批次查詢: 1 + 1 = 2 次 API 請求 (效能提升 50 倍!)
+
+---
+
+#### 6.5.5 方法選擇建議
+
+| 場景 | 推薦方法 | 原因 |
+|------|---------|------|
+| 單條記錄詳情頁 | 方法1 (get_record_relations) | 簡單直接,一次請求 |
+| 列表頁批次渲染 | 方法2 (批次查詢) | 避免 N+1 查詢,效能最優 |
+| 需要自訂篩選條件 | 方法2 | 可以在查詢目標表時新增額外篩選 |
+| 只需要顯示 name | 直接使用 | 無需額外查詢 |
+
+---
+
+### 6.6 關聯欄位更新
+
+**覆蓋關聯**:
+```json
+{
+  "fields": [
+    {
+      "id": "related_customer",
+      "value": ["new-customer-id"]  // 覆盖原有关联
+    }
+  ]
+}
+```
+
+**清空關聯**:
+```json
+{
+  "fields": [
+    {
+      "id": "related_customer",
+      "value": []  // 空数组=清空关联
+    }
+  ]
+}
+```
+
+**多條關聯追加**: 需要先讀取原有ID,再合併
+```bash
+# Step 1: 读取原有关联
+GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}
+# 返回: {"related_projects": ["id1", "id2"]}
+
+# Step 2: 合并新ID并更新
+POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
+{
+  "fields": [
+    {
+      "id": "related_projects",
+      "value": ["id1", "id2", "id3"]  // 原有+新增
+    }
+  ]
+}
+```
+
+---
+
+### 6.7 關聯欄位常見問題
+
+**Q1: 關聯欄位返回的 `sid` 和 `name` 有什麼區別?**
+
+- **`sid`**: 關聯記錄的唯一識別符號,等同於目標表的 `rowid`,用於查詢完整資料
+- **`name`**: 關聯記錄的標題欄位值,僅用於顯示
+
+**關鍵理解**:
+```javascript
+// 读取产品记录
+{
+  "category_field": [
+    {
+      "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 用于查询
+      "name": "实木衣柜"  // 用于显示
+    }
+  ]
+}
+
+// 如果需要获取分类的图标、描述等其他信息,必须使用 sid 查询
+// sid === 目标表中的 rowid
+```
+
+**使用場景**:
+- 只需要顯示名稱 → 直接使用 `name`
+- 需要顯示其他欄位(圖片、價格、描述等) → 使用 `sid` 查詢目標表
+
+---
+
+**Q2: 關聯欄位建立後能修改dataSource嗎?**
+
+❌ 不能。dataSource一旦設定不可修改,只能刪除欄位重建。
+
+---
+
+**Q3: 如何實現級聯刪除?**
+
+透過工作流實現。當源記錄刪除時,觸發工作流刪除關聯記錄。
+
+---
+
+**Q4: 關聯欄位能跨應用嗎?**
+
+✅ 可以。只要有目標工作表的ID,即使在不同應用也能關聯。
+
+---
+
+**Q5: 雙向關聯的反向欄位名稱可以自訂嗎?**
+
+❌ 不能。系統自動生成,格式為"關聯{源表名}"。
+
+---
+
+**Q6: 關聯記錄被刪除後,關聯欄位會怎樣?**
+
+關聯欄位會自動清空該關聯關係,不會報錯。
+
+---
+
+**Q7: 為什麼查詢關聯記錄要用 `rowid` 欄位而不是其他欄位?**
+
+因為 `rowid` 是 niio 系統欄位,每條記錄都有唯一的 `rowid`。關聯欄位返回的 `sid` 就是目標記錄的 `rowid`。
+
+**示例**:
+```javascript
+// 关联字段返回的 sid
+const categoryId = product.category[0].sid;  // "9dd9272b-..."
+
+// 查询目标表时,使用 rowid 字段匹配
+{
+  "filter": {
+    "type": "condition",
+    "field": "rowid",  // 必须用 rowid
+    "operator": "in",
+    "value": [categoryId]  // 传入 sid
+  }
+}
+```
+
+---
+
+## 七、常見陷阱與解決方案
+
+### 7.1 選項欄位陷阱 ⭐⭐⭐
+
+**問題**: 篩選單選/多選欄位時返回空結果
+
+**錯誤示例**:
+```json
+{
+  "field": "customer_type",
+  "operator": "eq",
+  "value": ["成交客户"]  // ❌ 使用了显示文本
+}
+```
+
+**正確做法**:
+```json
+{
+  "field": "customer_type",
+  "operator": "eq",
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ✅ 使用选项key
+}
+```
+
+**解決方案**:
+1. 初始化時查詢工作表結構,快取選項對映
+2. 或先查詢一條記錄,從返回資料獲取key
+3. 建立 value → key 的對映表
+
+---
+
+### 7.2 數值欄位陷阱
+
+**問題**: 數值篩選無結果或報錯
+
+**錯誤示例**:
+```json
+{
+  "field": "annual_budget",
+  "operator": "gt",
+  "value": [1000000]  // ❌ 数字类型
+}
+```
+
+**正確做法**:
+```json
+{
+  "field": "annual_budget",
+  "operator": "gt",
+  "value": ["1000000"]  // ✅ 字符串数组
+}
+```
+
+**記憶口訣**: 篩選條件的value永遠是字串陣列
+
+---
+
+### 7.3 關聯欄位陷阱 ⭐⭐⭐
+
+**問題1**: 使用錯誤的運算子篩選關聯欄位
+
+**錯誤示例**:
+```json
+{
+  "field": "related_customer",
+  "operator": "belongsto",  // ❌ V3 API 不支持 belongsto；关联字段应用 in/eq
+  "value": ["customer-id"]
+}
+```
+
+**正確做法**:
+```json
+{
+  "field": "related_customer",
+  "operator": "in",  // ✅ 使用 in 或 eq
+  "value": ["customer-id"]  // 传入关联记录的 rowid 数组
+}
+```
+
+**關聯欄位支援的運算子**:
+- `in`: 在指定關聯記錄中（值為 rowid 陣列）
+- `eq`: 等於指定關聯記錄（單值）
+- `isempty`: 關聯欄位為空
+- `isnotempty`: 關聯欄位不為空
+
+---
+
+**問題2**: 混淆 `sid` 和欄位名
+
+**錯誤示例**:
+```javascript
+// 错误:尝试从关联字段直接获取目标表的其他字段
+const categoryIcon = product.category[0].icon;  // ❌ undefined!
+```
+
+**正確理解**:
+```javascript
+// 关联字段只返回 sid 和 name
+const category = product.category[0];
+console.log(category);
+// {
+//   "sid": "9dd9272b-...",  // 关联记录ID
+//   "name": "实木衣柜"      // 标题字段值
+// }
+
+// 如果需要 icon 等其他字段,必须查询目标表
+const categoryData = await getRows('category-worksheet-id', {
+  filter: {
+    type: 'condition',
+    field: 'rowid',
+    operator: 'in',
+    value: [category.sid]  // 使用 sid 查询
+  }
+});
+
+console.log(categoryData.rows[0].icon);  // ✅ 正确获取
+```
+
+---
+
+**問題3**: 在列表頁逐個查詢關聯資料 (N+1 問題)
+
+**錯誤示例**:
+```javascript
+// ❌ 性能灾难:100个产品 = 1 + 100 = 101次请求
+const products = await getProductList();  // 1次请求
+
+for (const product of products) {
+  const categoryId = product.category[0].sid;
+  const category = await getCategoryById(categoryId);  // 100次请求!
+  console.log(category.name);
+}
+```
+
+**正確做法**: 批次查詢 (參見 Section 6.5.4)
+```javascript
+// ✅ 性能优化:100个产品 = 1 + 1 = 2次请求
+const products = await getProductList();  // 1次请求
+
+// 收集所有分类ID
+const categoryIds = new Set();
+products.forEach(p => {
+  if (p.category && p.category.length > 0) {
+    categoryIds.add(p.category[0].sid);
+  }
+});
+
+// 批量查询所有分类
+const categories = await getRows('category-worksheet-id', {
+  filter: {
+    type: 'condition',
+    field: 'rowid',
+    operator: 'in',
+    value: Array.from(categoryIds)
+  }
+});  // 1次请求
+
+// 建立映射
+const categoryMap = {};
+categories.rows.forEach(cat => {
+  categoryMap[cat.rowid] = cat;
+});
+
+// O(1) 查找
+products.forEach(p => {
+  const category = categoryMap[p.category[0].sid];
+  console.log(category.name, category.icon);
+});
+```
+
+---
+
+### 7.4 附件欄位陷阱
+
+**問題**: 附件上傳後立即讀取返回空陣列
+
+**原因**: 附件上傳是非同步處理,需要5-10秒
+
+**解決方案**:
+```javascript
+// 上传附件
+await updateRecord({
+  fields: [{
+    id: "attachments",
+    type: "0",
+    value: [{name: "file.pdf", url: "https://..."}]
+  }]
+});
+
+// 等待5秒
+await sleep(5000);
+
+// 再读取记录
+const record = await getRecord(rowId);
+console.log(record.attachments);  // 现在有数据了
+```
+
+**建議**: 使用niio內部URL,外部URL可能有跨域限制
+
+---
+
+### 7.5 日期欄位陷阱
+
+**問題**: 日期寫入時帶時間,讀取時只返回日期
+
+**原因**: Date欄位的subType決定返回精度
+
+**示例**:
+```json
+// 创建字段
+{
+  "type": "Date",
+  "subType": "3"  // 年月日
+}
+
+// 写入
+{
+  "value": "2025-01-11 14:30:00"
+}
+
+// 读取返回
+{
+  "date_field": "2025-01-11"  // 时间被截断
+}
+```
+
+**解決方案**: 如需保留時間,使用 `subType: "6"` (年月日時分秒)
+
+---
+
+### 7.6 Filter巢狀陷阱
+
+**問題**: 過度巢狀導致查詢失敗
+
+**錯誤示例**:
+```json
+{
+  "type": "group",
+  "children": [
+    {
+      "type": "group",
+      "children": [
+        {
+          "type": "group",  // ❌ 第三层嵌套
+          "children": [...]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**限制**: 最多兩層巢狀 (group → group → condition)
+
+**解決方案**: 重新設計查詢邏輯,合併條件
+
+---
+
+### 7.7 成員欄位陷阱
+
+**問題**: 使用姓名查詢成員欄位失敗
+
+**錯誤示例**:
+```json
+{
+  "field": "owner",
+  "operator": "eq",
+  "value": ["张三"]  // ❌ 姓名无效
+}
+```
+
+**正確做法**:
+```bash
+# Step 1: 通过姓名查找用户ID
+POST /v3/users/lookup
+{"name": "张三"}
+
+# 返回: {"accountId": "user-123"}
+
+# Step 2: 使用用户ID筛选
+{
+  "field": "owner",
+  "operator": "eq",
+  "value": ["user-123"]  // ✅ 用户ID
+}
+```
+
+---
+
+### 7.8 批次操作陷阱
+
+**問題**: 批次更新時誤覆蓋不同記錄
+
+**場景**: 想給不同客戶設定不同評級
+
+**錯誤做法**:
+```json
+{
+  "rowIds": ["id1", "id2", "id3"],
+  "fields": [
+    {"id": "rating", "value": "5"}  // ❌ 所有记录都变成5星
+  ]
+}
+```
+
+**解決方案**: 使用單條更新或批次建立時分別指定
+
+---
+
+## 八、效能最佳化建議
+
+### 8.1 查詢最佳化
+
+1. **合理使用分頁**: pageSize不要超過1000
+2. **指定返回欄位**: 使用fields引數,只返回需要的欄位
+3. **使用欄位ID**: 比別名查詢效能更好
+4. **避免過度巢狀**: Filter巢狀控制在2層以內
+5. **善用檢視**: 複雜篩選可先建立檢視,再查詢檢視
+
+---
+
+### 8.2 批次操作最佳化
+
+1. **批次建立**: 一次最多100條
+2. **批次更新**: 一次最多100條
+3. **非同步處理**: 大批次操作使用佇列非同步處理
+
+---
+
+### 8.3 關聯欄位最佳化
+
+1. **減少巢狀查詢**: 使用 get_record_relations API 一次獲取
+2. **快取關聯資料**: 頻繁訪問的關聯資料可快取
+3. **控制showFields**: 只顯示必要欄位,減少資料量
+
+---
+
+## 九、最佳實踐總結
+
+### 9.1 初始化階段
+
+**必做事項**:
+1. 查詢所有工作表結構
+2. 快取所有選項欄位的key-value對映
+3. 快取工作表ID和欄位ID
+4. 建立使用者姓名→ID對映
+
+**示例程式碼邏輯**:
+```javascript
+// 1. 获取工作表结构
+const structure = await getWorksheetStructure(worksheetId);
+
+// 2. 提取选项字段映射
+const optionMaps = {};
+structure.fields.forEach(field => {
+  if (field.type === 'SingleSelect' || field.type === 'MultipleSelect') {
+    optionMaps[field.id] = {};
+    field.options.forEach(opt => {
+      optionMaps[field.id][opt.value] = opt.key;  // value → key
+    });
+  }
+});
+
+// 3. 使用时查找key
+const customerTypeKey = optionMaps['customer_type']['成交客户'];
+```
+
+---
+
+### 9.2 查詢階段
+
+**建議**:
+1. 優先使用欄位ID而不是別名
+2. 選項欄位必須用key,提前轉換
+3. 數值欄位value用字串
+4. 關聯欄位用 in 或 eq 運算子（value 為 rowid 陣列）
+5. 合理設定pageSize(建議100-500)
+
+---
+
+### 9.3 寫入階段
+
+**檢查清單**:
+- [ ] 選項欄位value是陣列格式
+- [ ] 選項欄位傳的是key不是value
+- [ ] 數值欄位傳數字型別
+- [ ] 關聯欄位傳的是rowid
+- [ ] 成員欄位傳的是accountId
+- [ ] 附件欄位設定了type引數
+
+---
+
+### 9.4 錯誤處理
+
+**常見錯誤碼**:
+- `error_code: 1` - 成功
+- `error_code: -1` - 失敗,檢視error_msg
+- `error_code: 4` - 許可權不足
+- `error_code: 10` - 引數錯誤
+
+**建議**: 所有API呼叫都要檢查error_code和success
+
+---
+
+## 十、完整示例:構建CRM應用
+
+### 10.1 建立工作表
+
+```bash
+# 1. 创建客户表
+POST /v3/app/worksheets
+{
+  "name": "客户信息表",
+  "fields": [
+    {"name": "客户名称", "type": "Text", "isTitle": true},
+    {"name": "客户类型", "type": "SingleSelect", "options": [...]},
+    {"name": "年度预算", "type": "Number", "precision": 2}
+  ]
+}
+
+# 2. 创建机会表(关联客户)
+POST /v3/app/worksheets
+{
+  "name": "销售机会表",
+  "fields": [
+    {"name": "机会名称", "type": "Text", "isTitle": true},
+    {
+      "name": "关联客户",
+      "type": "Relation",
+      "subType": "1",
+      "dataSource": "{customer_table_id}"
+    }
+  ]
+}
+```
+
+---
+
+### 10.2 建立資料
+
+```bash
+# 1. 创建客户
+POST /v3/app/worksheets/{customer_table_id}/rows
+{
+  "fields": [
+    {"id": "customer_name", "value": "明道云科技"},
+    {"id": "customer_type", "value": ["{成交客户key}"]},
+    {"id": "annual_budget", "value": 1000000}
+  ]
+}
+
+# 2. 创建机会(关联客户)
+POST /v3/app/worksheets/{opportunity_table_id}/rows
+{
+  "fields": [
+    {"id": "opportunity_name", "value": "年度续费"},
+    {"id": "related_customer", "value": ["{customer_rowid}"]}
+  ]
+}
+```
+
+---
+
+### 10.3 查詢分析
+
+```bash
+# 1. 查询重点客户
+POST /v3/app/worksheets/{customer_table_id}/rows/list
+{
+  "filter": {
+    "type": "group",
+    "logic": "AND",
+    "children": [
+      {"type": "condition", "field": "customer_type", "operator": "eq", "value": ["{成交key}"]},
+      {"type": "condition", "field": "annual_budget", "operator": "gte", "value": ["500000"]}
+    ]
+  }
+}
+
+# 2. 按行业统计客户
+POST /v3/app/worksheets/{customer_table_id}/rows/pivot
+{
+  "rows": [{"field": "industry"}],
+  "values": [
+    {"field": "rowid", "aggregation": "COUNT"},
+    {"field": "annual_budget", "aggregation": "SUM"}
+  ]
+}
+```
+
+---
+
+## 附錄A:欄位型別速查表
+
+| 型別 | type值 | 寫入格式 | 讀取格式 | 關鍵引數 |
+|-----|--------|---------|---------|---------|
+| 文字 | Text | 字串 | 字串 | - |
+| 數值 | Number | 數字 | 字串 | precision |
+| 單選 | SingleSelect | 陣列[key] | 物件陣列 | options |
+| 多選 | MultipleSelect | 陣列[key...] | 物件陣列 | options |
+| 日期 | Date | 字串 | 字串 | subType |
+| 時間 | Time | 字串 | 字串 | subType |
+| 成員 | Collaborator | 陣列[id] | 物件/陣列 | subType |
+| 關聯 | Relation | 陣列[rowid] | 物件/陣列 | dataSource, subType |
+| 附件 | Attachment | 物件陣列 | 物件陣列 | - |
+| 等級 | Rating | 字串 | 字串 | max |
+
+---
+
+## 附錄B:運算子速查表
+
+| 運算子 | 適用欄位 | value格式 | 說明 |
+|-------|---------|----------|------|
+| eq | 所有 | ["值"] | 等於 |
+| ne | 所有 | ["值"] | 不等於 |
+| contains | Text, Multi | ["值"] | 包含 |
+| startswith | Text | ["值"] | 開頭是 |
+| gt/gte/lt/lte | Number, Date | ["值"] | 比較 |
+| between | Number, Date | ["最小", "最大"] | 範圍 |
+| isempty | 所有 | 無 | 為空 |
+| in / eq | Relation | ["rowid"...] | 關聯（值為 rowid） |
+| in / eq / notin | 部門(Department) | ["部門ID"...] | 部門篩選（V3 API 無 belongsto） |
+
+---
+
+## 附錄C:錯誤排查清單
+
+**篩選無結果**:
+- [ ] 選項欄位是否用了key而不是value?
+- [ ] 數值欄位value是否用了字串?
+- [ ] 關聯欄位是否用了 in/eq + rowid?
+- [ ] Filter巢狀是否超過2層?
+- [ ] 欄位ID是否正確?
+
+**建立/更新失敗**:
+- [ ] 必填欄位是否都提供了?
+- [ ] 關聯欄位的dataSource是否存在?
+- [ ] 選項欄位的key是否有效?
+- [ ] 成員欄位的accountId是否有效?
+- [ ] 數值欄位是否超出範圍?
+
+**資料異常**:
+- [ ] 附件是否等待了5-10秒?
+- [ ] 日期精度subType是否正確?
+- [ ] 關聯記錄是否已刪除?
+
+---
+
+**文件版本**: v1.0
+**生成時間**: 2026-01-11
+**基於**: niio API V3
+**測試驗證**: 完整CRM應用場景測試

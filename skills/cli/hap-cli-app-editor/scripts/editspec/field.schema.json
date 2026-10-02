@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "field ops",
+  "description": "Deep schema for op.type starting with 'field.'. Field strategy (decision #10): add uses the incremental add-fields path (preserves auto reverse controls); update/delete/reorder use read-full-controls -> mutate -> write-back-full (update-fields).",
+  "oneOf": [
+    { "$ref": "#/$defs/add" },
+    { "$ref": "#/$defs/update" },
+    { "$ref": "#/$defs/delete" },
+    { "$ref": "#/$defs/reorder" }
+  ],
+  "$defs": {
+    "field": {
+      "type": "object",
+      "description": "A field definition (clean, name-referenced). 'type' is the field type code (Text, Number, Relation, ...).",
+      "required": ["name", "type"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "unique": { "type": "boolean" },
+        "options": { "type": "array" },
+        "relation": {
+          "type": "object",
+          "description": "Relation fields: which worksheet the records come from.",
+          "additionalProperties": false,
+          "required": ["worksheet"],
+          "properties": {
+            "worksheet": { "type": "string", "minLength": 1, "description": "Worksheet the related records come from — name or id." },
+            "multiple": { "type": "boolean", "description": "true = several records, false = one (default)." },
+            "showFields": { "type": "array", "items": { "type": "string" }, "description": "Columns of the far worksheet to surface — names or ids." }
+          }
+        },
+        "lookup": {
+          "type": "object",
+          "description": "Lookup fields: mirror a column of a related record.",
+          "additionalProperties": false,
+          "required": ["via", "field"],
+          "properties": {
+            "via": { "type": "string", "minLength": 1, "description": "Relation column on this worksheet to reach the other one through — name or id." },
+            "field": { "type": "string", "minLength": 1, "description": "Column on the far worksheet to mirror — name or id." }
+          }
+        },
+        "rollup": {
+          "type": "object",
+          "description": "Rollup fields: add up a column of the related records.",
+          "additionalProperties": false,
+          "required": ["via", "field"],
+          "properties": {
+            "via": { "type": "string", "minLength": 1, "description": "Sub-table or multi-record relation column on this worksheet — name or id." },
+            "field": { "type": "string", "minLength": 1, "description": "Column on the far worksheet to add up — name or id." }
+          }
+        },
+        "formula": { "type": "string", "minLength": 1, "description": "Formula fields: the expression, e.g. \"$id1$ * $id2$\"." },
+        "subtable": {
+          "type": "object",
+          "description": "Sub-table fields: either the columns of a new child worksheet (fields), or an existing worksheet to mount (worksheet). Exactly one of the two.",
+          "additionalProperties": false,
+          "oneOf": [
+            { "required": ["fields"] },
+            { "required": ["worksheet"] }
+          ],
+          "properties": {
+            "fields": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/field" },
+              "description": "Columns of the child worksheet to create, in the same clean form as a top-level field."
+            },
+            "worksheet": { "type": "string", "minLength": 1, "description": "Existing worksheet to mount as the sub-table — name or id." },
+            "showFields": { "type": "array", "items": { "type": "string" }, "description": "Which child columns the inline list shows — names or ids. Defaults to all visible ones." }
+          }
+        },
+        "control": { "type": "object", "description": "Raw control keys, merged last. Escape hatch for shapes the clean vocabulary does not model." }
+      }
+    },
+    "add": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "worksheet", "field"],
+      "properties": {
+        "type": { "const": "field.add" },
+        "label": { "type": "string" },
+        "worksheet": { "type": "string", "minLength": 1 },
+        "field": { "$ref": "#/$defs/field" }
+      }
+    },
+    "update": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "worksheet", "field", "set"],
+      "properties": {
+        "type": { "const": "field.update" },
+        "label": { "type": "string" },
+        "worksheet": { "type": "string", "minLength": 1 },
+        "field": { "type": "string", "minLength": 1, "description": "Target field: name, alias, or controlId." },
+        "rename": { "type": "string", "description": "New field name (sets controlName)." },
+        "set": {
+          "type": "object",
+          "description": "Raw control keys merged onto the existing control (read-modify-write). E.g. {\"required\": true}, {\"options\": [...]}. The full control set is written back, so other fields/reverse controls are preserved."
+        }
+      }
+    },
+    "delete": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "worksheet", "field", "confirm"],
+      "properties": {
+        "type": { "const": "field.delete" },
+        "label": { "type": "string" },
+        "worksheet": { "type": "string", "minLength": 1 },
+        "field": { "type": "string", "minLength": 1, "description": "Field name or controlId to remove." },
+        "confirm": { "type": "boolean", "const": true }
+      }
+    },
+    "reorder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "worksheet", "order"],
+      "properties": {
+        "type": { "const": "field.reorder" },
+        "label": { "type": "string" },
+        "worksheet": { "type": "string", "minLength": 1 },
+        "order": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Field names/controlIds in the desired order."
+        }
+      }
+    }
+  }
+}
