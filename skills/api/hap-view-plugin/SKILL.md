@@ -3,6 +3,8 @@ name: hap-view-plugin
 description: 建立和開發niio niio 自訂檢視外掛的技能。立即觸發條件：使用者提到"niio 檢視外掛"、"自訂檢視"、"mdye"、"檢視開發"、"外掛開發"、"初始化檢視專案"、"啟動檢視除錯"。提供完整的開發工作流程、API 使用指南和最佳實踐。
 license: MIT
 ---
+> **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
+
 
 # niio 自訂檢視外掛開發技能
 
@@ -131,18 +133,18 @@ mdye start
 #### 1.1 取得 env 環境變數
 
 ```javascript
-// 使用辅助函数安全获取env中的配置项
+// 使用輔助函式安全取得env中的設定項
 function getEnvValue(env, key, defaultValue = null) {
   if (!env || !key) return defaultValue;
 
   const value = env[key];
 
-  // 处理数组类型(字段选择器)
+  // 處理陣列型別(欄位選擇器)
   if (Array.isArray(value)) {
     return value.length > 0 ? value[0] : defaultValue;
   }
 
-  // 处理普通值
+  // 處理普通值
   return value !== undefined ? value : defaultValue;
 }
 
@@ -156,10 +158,10 @@ const maxRecords = getEnvValue(env, 'maxRecords', '50');
 ```javascript
 import { config } from "mdye";
 
-// 获取应用、工作表、视图的ID
+// 取得應用、工作表、檢視的ID
 const { appId, worksheetId, viewId, controls } = config;
 
-// 获取字段控件信息
+// 取得欄位控制元件資訊
 const fieldControl = _.find(controls, { controlId: fieldId });
 ```
 
@@ -173,18 +175,18 @@ import { api } from "mdye";
 async function loadRecords() {
   const result = await api.getFilterRows({
     worksheetId,     // 必填-工作表ID
-    viewId,          // 必填-视图ID
-    pageIndex: 1,    // 可选-页码
-    pageSize: 50,    // 可选-每页记录数
-    sortId: "fieldId", // 可选-排序字段
-    isAsc: true,     // 可选-升序排序
-    // 获取关联字段数据
+    viewId,          // 必填-檢視ID
+    pageIndex: 1,    // 可選-頁碼
+    pageSize: 50,    // 可選-每頁記錄數
+    sortId: "fieldId", // 可選-排序欄位
+    isAsc: true,     // 可選-升序排序
+    // 取得關聯欄位資料
     requestParams: {
       plugin_detail_control: relationFieldId
     }
   });
 
-  return result.data; // 记录数组
+  return result.data; // 記錄陣列
 }
 ```
 
@@ -209,8 +211,8 @@ async function getRecordDetail(rowId) {
 async function loadRelationRows({ controlId, rowId }) {
   const result = await api.getRowRelationRows({
     worksheetId,
-    controlId,       // 关联字段ID
-    rowId,           // 主记录ID
+    controlId,       // 關聯欄位ID
+    rowId,           // 主記錄ID
     pageIndex: 1,
     pageSize: 10
   });
@@ -291,7 +293,7 @@ async function deleteRecord(rowId) {
 ```javascript
 import { utils } from "mdye";
 
-// 打开记录详情
+// 開啟記錄詳情
 const handleRecordClick = async (recordId) => {
   try {
     const result = await utils.openRecordInfo({
@@ -301,24 +303,24 @@ const handleRecordClick = async (recordId) => {
       recordId
     });
 
-    // 处理返回结果
+    // 處理回傳結果
     if (result) {
       console.log('操作结果:', result);
 
-      // 根据操作类型处理
+      // 根據操作型別處理
       switch (result.action) {
         case 'update':
-          // 记录被更新,刷新数据
+          // 記錄被更新,重新整理資料
           console.log('记录已更新:', result.value);
-          loadRecords(); // 重新加载数据
+          loadRecords(); // 重新載入資料
           break;
         case 'delete':
-          // 记录被删除,刷新列表
+          // 記錄被刪除,重新整理清單
           console.log('记录已删除');
-          loadRecords(); // 重新加载数据
+          loadRecords(); // 重新載入資料
           break;
         case 'close':
-          // 用户关闭弹窗(无修改)
+          // 使用者關閉彈窗(無修改)
           console.log('用户关闭了弹窗');
           break;
       }
@@ -333,8 +335,8 @@ const handleRecordClick = async (recordId) => {
 
 ```javascript
 {
-  action: 'update' | 'delete' | 'close',  // 操作类型
-  value: object | null                     // 更新后的记录数据(仅 action='update' 时)
+  action: 'update' | 'delete' | 'close',  // 操作型別
+  value: object | null                     // 更新後的記錄資料(僅 action='update' 時)
 }
 ```
 
@@ -416,7 +418,7 @@ function RecordsList() {
 **效能最佳化建議:**
 
 ```javascript
-// 1. 使用 useCallback 避免重复创建函数
+// 1. 使用 useCallback 避免重複建立函式
 const handleRecordClick = useCallback(async (recordId) => {
   const result = await utils.openRecordInfo({
     appId, worksheetId, viewId, recordId
@@ -426,20 +428,20 @@ const handleRecordClick = useCallback(async (recordId) => {
   }
 }, [appId, worksheetId, viewId]);
 
-// 2. 只在需要时刷新
+// 2. 只在需要時重新整理
 const handleRecordClick = async (recordId) => {
   const result = await utils.openRecordInfo({
     appId, worksheetId, viewId, recordId
   });
 
-  // 根据具体操作决定是否刷新
+  // 根據具體操作決定是否重新整理
   if (result?.action === 'update') {
-    // 局部更新(性能更好)
+    // 區域性更新(效能更好)
     setRecords(prev =>
       prev.map(r => r.rowid === recordId ? result.value : r)
     );
   } else if (result?.action === 'delete') {
-    // 从列表中移除
+    // 從清單中移除
     setRecords(prev => prev.filter(r => r.rowid !== recordId));
   }
 };
@@ -463,7 +465,7 @@ utils.openNewRecord({
 ```javascript
 const users = await utils.selectUsers({
   projectId: "orgId1",
-  unique: false  // 是否单选
+  unique: false  // 是否單選
 });
 ```
 
@@ -506,7 +508,7 @@ import { md_emitter } from "mdye";
 useEffect(() => {
   const handleFiltersUpdate = (newFilters) => {
     console.log('筛选条件已更新:', newFilters);
-    // 重新获取数据
+    // 重新取得資料
   };
 
   md_emitter.addListener('filters-update', handleFiltersUpdate);
@@ -594,7 +596,7 @@ useEffect(() => {
 
 ❌ **錯誤寫法:**
 ```javascript
-// 只查找 type 10 和 11,会遗漏 type 9 的单选字段
+// 只查詢 type 10 和 11,會遺漏 type 9 的單選欄位
 const selectField = controls?.find(ctrl =>
   ctrl.controlName?.includes('状态') && (ctrl.type === 10 || ctrl.type === 11)
 );
@@ -602,7 +604,7 @@ const selectField = controls?.find(ctrl =>
 
 ✅ **正確寫法:**
 ```javascript
-// 包含 type 9, 10, 11 所有选项字段类型
+// 包含 type 9, 10, 11 所有選項欄位型別
 const selectField = controls?.find(ctrl =>
   ctrl.controlName?.includes('状态') && (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
 );
@@ -724,12 +726,12 @@ function parseLocation(value) {
 **完整處理示例:**
 
 ```javascript
-// 1. 判断是否为多条关联
+// 1. 判斷是否為多條關聯
 function isMultipleRelation(value) {
   return typeof value === 'number' || (!isNaN(value) && value !== '');
 }
 
-// 2. 解析单条关联数据
+// 2. 解析單條關聯資料
 function parseRelationData(value) {
   try {
     if (!value) return [];
@@ -762,7 +764,7 @@ function parseRelationData(value) {
   }
 }
 
-// 3. 完整使用示例（包含单条和多条处理）
+// 3. 完整使用示例（包含單條和多條處理）
 async function loadOrdersWithProducts() {
   const result = await api.getFilterRows({
     worksheetId,
@@ -771,20 +773,20 @@ async function loadOrdersWithProducts() {
     pageIndex: 1
   });
 
-  // 使用 Promise.all 并行处理所有订单
+  // 使用 Promise.all 並行處理所有訂單
   const ordersData = await Promise.all(
     result.data.map(async (row) => {
-      // 获取关联产品字段值
+      // 取得關聯產品欄位值
       const productsValue = row['relationFieldId'];
       let products = [];
 
-      // 判断是单条还是多条关联
+      // 判斷是單條還是多條關聯
       if (isMultipleRelation(productsValue)) {
-        // 多条关联:调用 API 获取详情
+        // 多條關聯:呼叫 API 取得詳情
         try {
           const relationResult = await api.getRowRelationRows({
             worksheetId,
-            controlId: 'relationFieldId',  // 关联字段ID
+            controlId: 'relationFieldId',  // 關聯欄位ID
             rowId: row.rowid,
             pageSize: 100,
             pageIndex: 1
@@ -792,9 +794,9 @@ async function loadOrdersWithProducts() {
 
           if (relationResult && relationResult.data) {
             products = relationResult.data.map(item => ({
-              name: item['productNameFieldId'],    // 产品名称字段ID
-              code: item['productCodeFieldId'],    // 产品编码字段ID
-              price: item['productPriceFieldId'],  // 产品单价字段ID
+              name: item['productNameFieldId'],    // 產品名稱欄位ID
+              code: item['productCodeFieldId'],    // 產品編碼欄位ID
+              price: item['productPriceFieldId'],  // 產品單價欄位ID
               rowid: item.rowid
             }));
           }
@@ -802,7 +804,7 @@ async function loadOrdersWithProducts() {
           console.error('获取多条关联失败:', error);
         }
       } else {
-        // 单条关联:直接解析
+        // 單條關聯:直接解析
         products = parseRelationData(productsValue);
       }
 
@@ -823,25 +825,25 @@ async function loadOrdersWithProducts() {
 **欄位設定示例:**
 
 ```javascript
-// 在 config.controls 中查看关联字段配置
+// 在 config.controls 中檢視關聯欄位設定
 const relationControl = controls.find(ctrl => ctrl.controlId === 'relationFieldId');
 
-// 单条关联配置
+// 單條關聯設定
 {
   "controlId": "示例控件ID",
   "type": 29,
   "controlName": "关联客户",
   "enumDefault": 1,  // 或 subType: 1
-  // ... 其他属性
+  // ... 其他屬性
 }
 
-// 多条关联配置
+// 多條關聯設定
 {
   "controlId": "示例控件ID2",
   "type": 29,
   "controlName": "关联产品",
   "enumDefault": 2,  // 或 subType: 2
-  // ... 其他属性
+  // ... 其他屬性
 }
 ```
 
@@ -899,32 +901,32 @@ function getFieldValue(fieldId, record, controls) {
 
 function getFieldTypeByControlType(controlType) {
   const typeMap = {
-    2: 'text',           // 文本框
-    3: 'phone',          // 手机
-    4: 'phone',          // 座机
-    5: 'email',          // 邮箱
-    6: 'number',         // 数值
-    7: 'certificate',    // 证件
-    8: 'number',         // 金额
-    9: 'select',         // 单选 ⚠️ 重要:type 9 是单选
-    10: 'multiselect',   // 多选
+    2: 'text',           // 文字框
+    3: 'phone',          // 手機
+    4: 'phone',          // 座機
+    5: 'email',          // 郵箱
+    6: 'number',         // 數值
+    7: 'certificate',    // 證件
+    8: 'number',         // 金額
+    9: 'select',         // 單選 ⚠️ 重要:type 9 是單選
+    10: 'multiselect',   // 多選
     11: 'select',        // 下拉
     14: 'attachment',    // 附件
     15: 'date',          // 日期
-    16: 'datetime',      // 时间
-    19: 'region',        // 地区
-    23: 'region',        // 地区
-    24: 'region',        // 地区
-    26: 'user',          // 成员
-    27: 'department',    // 部门
-    28: 'rating',        // 等级
-    29: 'relation',      // 连接他表
-    36: 'boolean',       // 检查框
+    16: 'datetime',      // 時間
+    19: 'region',        // 地區
+    23: 'region',        // 地區
+    24: 'region',        // 地區
+    26: 'user',          // 成員
+    27: 'department',    // 部門
+    28: 'rating',        // 等級
+    29: 'relation',      // 連線他表
+    36: 'boolean',       // 檢查框
     40: 'location',      // 定位
-    41: 'richtext',      // 富文本
-    42: 'signature',     // 签名
-    46: 'time',          // 时间
-    48: 'role',          // 组织角色
+    41: 'richtext',      // 富文字
+    42: 'signature',     // 簽名
+    46: 'time',          // 時間
+    48: 'role',          // 組織角色
   };
   return typeMap[controlType] || 'unknown';
 }
@@ -935,31 +937,31 @@ function getFieldTypeByControlType(controlType) {
 ### 基本命令
 
 ```bash
-# 查看版本
+# 檢視版本
 mdye --version
 
-# 授权登录
+# 授權登入
 mdye auth
 
-# 初始化项目
+# 初始化專案
 mdye init view --id <id> --template <template-name>
 
-# 启动开发
+# 啟動開發
 mdye start
 
-# 构建项目
+# 建置專案
 mdye build
 
-# 提交插件
+# 提交外掛
 mdye push -m "提交说明"
 
-# 查看当前用户
+# 檢視當前使用者
 mdye whoami
 
-# 注销
+# 登出
 mdye logout
 
-# 同步插件参数配置
+# 同步外掛參數設定
 mdye sync-params -f <file-path>
 ```
 
@@ -1040,16 +1042,16 @@ mdye push -m "订单状态视图插件首次发布
 釋出成功後會顯示外掛資訊：
 
 ```
-[21:20:54] 文件上传成功
+[21:20:54] 檔案上傳成功
 [21:20:55] push成功
 ┌──────────────────────────────────────────────────────────┐
-│  ---- 插件信息 ----                                       │
+│  ---- 外掛資訊 ----                                       │
 │                                                           │
-│  插件名称: 自定义视图                                     │
-│  视图名称: 自定义视图                                     │
-│  视图地址: https://www.mingdao.com/worksheet/...         │
-│  提交信息: 订单状态视图插件首次发布                       │
-│  提交人: 用户名                                           │
+│  外掛名稱: 自訂檢視                                     │
+│  檢視名稱: 自訂檢視                                     │
+│  檢視地址: https://www.mingdao.com/worksheet/...         │
+│  提交資訊: 訂單狀態檢視外掛首次釋出                       │
+│  提交人: 使用者名稱                                           │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -1079,15 +1081,15 @@ mdye push -m "订单状态视图插件首次发布
 
 ```
 plugin_project/
-├── .config/          # 配置文件目录
-├── src/              # 源代码目录
-│   ├── components/   # 组件目录
-│   ├── utils/        # 工具函数目录
-│   ├── App.js        # 主应用组件
-│   ├── index.js      # 入口文件
-│   └── style.less    # 样式文件
-├── mdye.json         # 插件配置文件
-└── package.json      # 项目依赖配置
+├── .config/          # 設定檔案目錄
+├── src/              # 原始碼目錄
+│   ├── components/   # 元件目錄
+│   ├── utils/        # 工具函式目錄
+│   ├── App.js        # 主應用元件
+│   ├── index.js      # 入口檔案
+│   └── style.less    # 樣式檔案
+├── mdye.json         # 外掛設定檔案
+└── package.json      # 專案依賴設定
 ```
 
 ## 最佳實踐
@@ -1126,15 +1128,15 @@ plugin_project/
 
 **解決方案:**
 ```javascript
-// 1. 获取字段控件定义(包含options)
+// 1. 取得欄位控制元件定義(包含options)
 const control = config.controls.find(ctrl => ctrl.controlId === fieldId);
 
-// 2. 解析选项字段
+// 2. 解析選項欄位
 function parseSingleSelect(value, control) {
   try {
     if (!value) return { key: "", text: "" };
 
-    // 解析 JSON 字符串得到 key 数组
+    // 解析 JSON 字串得到 key 陣列
     let keys = [];
     if (typeof value === 'string') {
       try {
@@ -1148,7 +1150,7 @@ function parseSingleSelect(value, control) {
 
     const selectedKey = keys[0] || "";
 
-    // 从 options 中查找对应的显示文本
+    // 從 options 中查詢對應的顯示文字
     let selectedText = "";
     if (control && control.options) {
       const option = control.options.find(opt => opt.key === selectedKey);
@@ -1174,13 +1176,13 @@ function parseSingleSelect(value, control) {
 
 **解決方案:**
 ```javascript
-// ✅ 正确:包含所有选项字段类型
+// ✅ 正確:包含所有選項欄位型別
 const selectField = controls?.find(ctrl =>
   ctrl.controlName?.includes('状态') &&
   (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
 );
 
-// ❌ 错误:会遗漏 type 9
+// ❌ 錯誤:會遺漏 type 9
 const selectField = controls?.find(ctrl =>
   ctrl.controlName?.includes('状态') &&
   (ctrl.type === 10 || ctrl.type === 11)
@@ -1199,17 +1201,17 @@ const selectField = controls?.find(ctrl =>
 **解決方案:**
 
 ```javascript
-// 1. 判断是否为多条关联
+// 1. 判斷是否為多條關聯
 function isMultipleRelation(value) {
   return typeof value === 'number' || (!isNaN(value) && value !== '');
 }
 
-// 2. 处理关联字段(支持单条和多条)
+// 2. 處理關聯欄位(支援單條和多條)
 async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
   let relationData = [];
 
   if (isMultipleRelation(fieldValue)) {
-    // 多条关联:调用 API 获取详情
+    // 多條關聯:呼叫 API 取得詳情
     try {
       const result = await api.getRowRelationRows({
         worksheetId,
@@ -1222,15 +1224,15 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
       if (result && result.data) {
         relationData = result.data.map(item => ({
           rowid: item.rowid,
-          name: item['titleFieldId'],  // 使用实际的标题字段ID
-          // 解析其他需要的字段
+          name: item['titleFieldId'],  // 使用實際的標題欄位ID
+          // 解析其他需要的欄位
         }));
       }
     } catch (error) {
       console.error('获取多条关联失败:', error);
     }
   } else {
-    // 单条关联:直接解析
+    // 單條關聯:直接解析
     relationData = parseRelationData(fieldValue);
   }
 
@@ -1246,7 +1248,7 @@ async function loadRecordsWithRelations() {
     pageIndex: 1
   });
 
-  // 使用 Promise.all 并行处理
+  // 使用 Promise.all 並行處理
   const records = await Promise.all(
     result.data.map(async (row) => {
       const relationValue = row['relationFieldId'];
@@ -1272,7 +1274,7 @@ async function loadRecordsWithRelations() {
 **如何判斷欄位是單條還是多條關聯:**
 
 ```javascript
-// 方法1: 查看字段配置
+// 方法1: 檢視欄位設定
 const control = config.controls.find(ctrl => ctrl.controlId === 'relationFieldId');
 if (control) {
   const isSingle = control.enumDefault === 1 || control.subType === 1;
@@ -1280,7 +1282,7 @@ if (control) {
   console.log('单条关联:', isSingle, '多条关联:', isMultiple);
 }
 
-// 方法2: 根据返回值类型判断
+// 方法2: 根據回傳值型別判斷
 const value = row['relationFieldId'];
 if (typeof value === 'number' || !isNaN(value)) {
   console.log('这是多条关联,需要调用 getRowRelationRows');

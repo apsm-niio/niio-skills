@@ -5,8 +5,8 @@
 本篇只講「改已有的圖」在 app-editor 場景下必須知道的幾條。
 
 ```bash
-hap worksheet chart list <worksheetId>                # 个人图 + 共享图，全都列
-hap worksheet chart list <worksheetId> --owner-only   # 只看自己的个人图
+hap worksheet chart list <worksheetId>                # 個人圖 + 共享圖，全都列
+hap worksheet chart list <worksheetId> --owner-only   # 只看自己的個人圖
 hap --json worksheet chart get <reportId> --app-id <worksheetId>
 hap worksheet chart update <reportId> --app-id <worksheetId> --name "新名字" --report-type 1 \
   -j '{"yaxisList":[{"controlId":"<金额字段>","controlType":6,"normType":4}]}'

@@ -9,13 +9,13 @@
 ### 當使用者說:"幫我建立一個 XXX 檢視外掛,ID 是 xxx-yyy" 時:
 
 ```
-第1步: 检查并安装 mdye-cli
-第2步: 根据需求选择模板并创建项目
-第3步: 安装依赖
-第4步: 根据需求编写代码（在模板基础上修改或完全重写）
-第5步: 启动开发服务器(后台运行,静默执行)
-第6步: 等待用户反馈并修改代码
-第7步: 用户确认后构建并发布
+第1步: 檢查並安裝 mdye-cli
+第2步: 根據需求選擇模板並建立專案
+第3步: 安裝依賴
+第4步: 根據需求編寫程式碼（在模板基礎上修改或完全重寫）
+第5步: 啟動開發伺服器(後臺執行,靜默執行)
+第6步: 等待使用者反饋並修改程式碼
+第7步: 使用者確認後建置併發布
 ```
 
 **⚠️ 重要提醒：**
@@ -30,7 +30,7 @@
 ### 你需要做:
 
 ```bash
-# 检查 mdye-cli 是否已安装
+# 檢查 mdye-cli 是否已安裝
 mdye --version
 ```
 
@@ -50,7 +50,7 @@ npm install -g mdye-cli
 
 ```bash
 mdye --version
-# 应该输出类似: beta-0.0.37
+# 應該輸出類似: beta-0.0.37
 ```
 
 ---
@@ -73,16 +73,16 @@ niio 提供多種外掛模板，透過 `--template` 參數選擇：
 **根據使用者需求選擇合適的模板：**
 
 ```bash
-# 用户会给你一个 ID，格式类似:
-# 你的worksheetID-你的视图ID
+# 使用者會給你一個 ID，格式類似:
+# 你的worksheetID-你的檢視ID
 
-# 1. JavaScript 基础模板（简单展示）
+# 1. JavaScript 基礎模板（簡單展示）
 echo "view-plugin" | mdye init view --id <用户提供的ID> --template JavaScript
 
-# 2. React 模板（推荐，交互复杂场景）
+# 2. React 模板（推薦，互動複雜場景）
 echo "view-plugin" | mdye init view --id <用户提供的ID> --template React
 
-# 3. React + Tailwind CSS 模板（需要快速样式开发）
+# 3. React + Tailwind CSS 模板（需要快速樣式開發）
 echo "view-plugin" | mdye init view --id <用户提供的ID> --template React-Tailwind
 
 # 4. Vue 模板
@@ -113,17 +113,17 @@ cd view-plugin
 ### 你需要做:
 
 ```bash
-# 基础依赖
+# 基礎依賴
 npm install
 
-# 根据用户需求安装额外依赖:
-# 如果是 BI 驾驶舱 → 安装 recharts
+# 根據使用者需求安裝額外依賴:
+# 如果是 BI 駕駛艙 → 安裝 recharts
 npm install recharts
 
-# 如果需要样式库 → 安装 styled-components
+# 如果需要樣式庫 → 安裝 styled-components
 npm install styled-components
 
-# 如果需要日期处理 → 安装 dayjs
+# 如果需要日期處理 → 安裝 dayjs
 npm install dayjs
 ```
 
@@ -234,13 +234,13 @@ function parseSingleSelect(value, control) {
 // 使用:
 const statusControl = controls.find(c => c.type === 9 && c.controlName?.includes('状态'));
 const status = parseSingleSelect(record[statusControl.controlId], statusControl);
-// status.text 就是显示文本,如"已完成"
+// status.text 就是顯示文字,如"已完成"
 ```
 
 **多條關聯欄位 (type 29) 解析:**
 
 ```javascript
-// 多条关联返回的是数字(关联记录数量),需要调用 API 获取详情
+// 多條關聯回傳的是數字(關聯記錄數量),需要呼叫 API 取得詳情
 async function loadRelationData(worksheetId, controlId, rowId, fieldValue) {
   if (typeof fieldValue === 'number') {
     const result = await api.getRowRelationRows({
@@ -252,7 +252,7 @@ async function loadRelationData(worksheetId, controlId, rowId, fieldValue) {
     });
     return result.data || [];
   } else {
-    // 单条关联,直接解析 JSON
+    // 單條關聯,直接解析 JSON
     try {
       return typeof fieldValue === 'string' ? JSON.parse(fieldValue) : fieldValue;
     } catch {
@@ -372,7 +372,7 @@ return (
 
 ```bash
 mdye start
-# 重要: 使用 run_in_background: true 参数
+# 重要: 使用 run_in_background: true 參數
 ```
 
 **關鍵點:**
@@ -398,7 +398,7 @@ mdye start
 **✅ 正確的做法:**
 啟動伺服器後,**保持完全靜默**,直接等待使用者反饋,或者簡單回覆:
 ```
-已完成,请在明道云中查看效果。
+已完成,請在niio中檢視效果。
 ```
 
 ---
@@ -449,10 +449,10 @@ new_string: "font-size: 24px;"
 ### 你需要做:
 
 ```bash
-# 第1步: 构建
+# 第1步: 建置
 mdye build
 
-# 第2步: 发布
+# 第2步: 釋出
 mdye push -m "视图插件发布说明"
 ```
 
@@ -478,7 +478,7 @@ mdye push -m "订单看板视图首次发布
 **釋出成功後,簡單回覆:**
 
 ```
-已发布
+已釋出
 ```
 
 **❌ 不要說:**
@@ -549,10 +549,10 @@ mdye push -m "订单看板视图首次发布
 **1. 單選欄位不是 type 11,是 type 9!**
 
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 const field = controls.find(c => c.type === 11);
 
-// ✅ 正确
+// ✅ 正確
 const field = controls.find(c => c.type === 9);
 ```
 
@@ -636,7 +636,7 @@ if (typeof record.relationField === 'number') {
 
 **完成程式碼編寫後:**
 ```
-已完成,请在明道云中查看效果。
+已完成,請在niio中檢視效果。
 ```
 
 **使用者要求修改後:**
@@ -646,7 +646,7 @@ if (typeof record.relationField === 'number') {
 
 **使用者要求釋出後:**
 ```
-已发布
+已釋出
 ```
 
 **就這麼簡單,不要多說一個字!**
@@ -664,18 +664,18 @@ if (typeof record.relationField === 'number') {
 #### 1.1 取得 env 環境變數
 
 ```javascript
-// 使用辅助函数安全获取env中的配置项
+// 使用輔助函式安全取得env中的設定項
 function getEnvValue(env, key, defaultValue = null) {
   if (!env || !key) return defaultValue;
 
   const value = env[key];
 
-  // 处理数组类型(字段选择器)
+  // 處理陣列型別(欄位選擇器)
   if (Array.isArray(value)) {
     return value.length > 0 ? value[0] : defaultValue;
   }
 
-  // 处理普通值
+  // 處理普通值
   return value !== undefined ? value : defaultValue;
 }
 
@@ -689,10 +689,10 @@ const maxRecords = getEnvValue(env, 'maxRecords', '50');
 ```javascript
 import { config } from "mdye";
 
-// 获取应用、工作表、视图的ID
+// 取得應用、工作表、檢視的ID
 const { appId, worksheetId, viewId, controls } = config;
 
-// 获取字段控件信息
+// 取得欄位控制元件資訊
 const fieldControl = _.find(controls, { controlId: fieldId });
 ```
 
@@ -706,18 +706,18 @@ import { api } from "mdye";
 async function loadRecords() {
   const result = await api.getFilterRows({
     worksheetId,     // 必填-工作表ID
-    viewId,          // 必填-视图ID
-    pageIndex: 1,    // 可选-页码
-    pageSize: 50,    // 可选-每页记录数
-    sortId: "fieldId", // 可选-排序字段
-    isAsc: true,     // 可选-升序排序
-    // 获取关联字段数据
+    viewId,          // 必填-檢視ID
+    pageIndex: 1,    // 可選-頁碼
+    pageSize: 50,    // 可選-每頁記錄數
+    sortId: "fieldId", // 可選-排序欄位
+    isAsc: true,     // 可選-升序排序
+    // 取得關聯欄位資料
     requestParams: {
       plugin_detail_control: relationFieldId
     }
   });
 
-  return result.data; // 记录数组
+  return result.data; // 記錄陣列
 }
 ```
 
@@ -742,8 +742,8 @@ async function getRecordDetail(rowId) {
 async function loadRelationRows({ controlId, rowId }) {
   const result = await api.getRowRelationRows({
     worksheetId,
-    controlId,       // 关联字段ID
-    rowId,           // 主记录ID
+    controlId,       // 關聯欄位ID
+    rowId,           // 主記錄ID
     pageIndex: 1,
     pageSize: 10
   });
@@ -824,7 +824,7 @@ async function deleteRecord(rowId) {
 ```javascript
 import { utils } from "mdye";
 
-// 打开记录详情
+// 開啟記錄詳情
 const handleRecordClick = async (recordId) => {
   try {
     const result = await utils.openRecordInfo({
@@ -834,24 +834,24 @@ const handleRecordClick = async (recordId) => {
       recordId
     });
 
-    // 处理返回结果
+    // 處理回傳結果
     if (result) {
       console.log('操作结果:', result);
 
-      // 根据操作类型处理
+      // 根據操作型別處理
       switch (result.action) {
         case 'update':
-          // 记录被更新,刷新数据
+          // 記錄被更新,重新整理資料
           console.log('记录已更新:', result.value);
-          loadRecords(); // 重新加载数据
+          loadRecords(); // 重新載入資料
           break;
         case 'delete':
-          // 记录被删除,刷新列表
+          // 記錄被刪除,重新整理清單
           console.log('记录已删除');
-          loadRecords(); // 重新加载数据
+          loadRecords(); // 重新載入資料
           break;
         case 'close':
-          // 用户关闭弹窗(无修改)
+          // 使用者關閉彈窗(無修改)
           console.log('用户关闭了弹窗');
           break;
       }
@@ -880,7 +880,7 @@ utils.openNewRecord({
 ```javascript
 const users = await utils.selectUsers({
   projectId: "orgId1",
-  unique: false  // 是否单选
+  unique: false  // 是否單選
 });
 ```
 
@@ -904,7 +904,7 @@ import { md_emitter } from "mdye";
 useEffect(() => {
   const handleFiltersUpdate = (newFilters) => {
     console.log('筛选条件已更新:', newFilters);
-    // 重新获取数据
+    // 重新取得資料
   };
 
   md_emitter.addListener('filters-update', handleFiltersUpdate);
@@ -1049,12 +1049,12 @@ function parseMultiSelect(value, control) {
    - 處理方式: **必須呼叫 `getRowRelationRows` API** 才能取得實際資料
 
 ```javascript
-// 判断是否为多条关联
+// 判斷是否為多條關聯
 function isMultipleRelation(value) {
   return typeof value === 'number' || (!isNaN(value) && value !== '');
 }
 
-// 解析单条关联数据
+// 解析單條關聯資料
 function parseRelationData(value) {
   try {
     if (!value) return [];
@@ -1073,12 +1073,12 @@ function parseRelationData(value) {
   }
 }
 
-// 完整处理示例
+// 完整處理示例
 async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
   let relationData = [];
 
   if (isMultipleRelation(fieldValue)) {
-    // 多条关联:调用 API 获取详情
+    // 多條關聯:呼叫 API 取得詳情
     const result = await api.getRowRelationRows({
       worksheetId,
       controlId,
@@ -1091,7 +1091,7 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
       relationData = result.data;
     }
   } else {
-    // 单条关联:直接解析
+    // 單條關聯:直接解析
     relationData = parseRelationData(fieldValue);
   }
 
@@ -1173,32 +1173,32 @@ function getFieldValue(fieldId, record, controls) {
 
 function getFieldTypeByControlType(controlType) {
   const typeMap = {
-    2: 'text',           // 文本框
-    3: 'phone',          // 手机
-    4: 'phone',          // 座机
-    5: 'email',          // 邮箱
-    6: 'number',         // 数值
-    7: 'certificate',    // 证件
-    8: 'number',         // 金额
-    9: 'select',         // 单选 ⚠️ 重要:type 9 是单选
-    10: 'multiselect',   // 多选
+    2: 'text',           // 文字框
+    3: 'phone',          // 手機
+    4: 'phone',          // 座機
+    5: 'email',          // 郵箱
+    6: 'number',         // 數值
+    7: 'certificate',    // 證件
+    8: 'number',         // 金額
+    9: 'select',         // 單選 ⚠️ 重要:type 9 是單選
+    10: 'multiselect',   // 多選
     11: 'select',        // 下拉
     14: 'attachment',    // 附件
     15: 'date',          // 日期
-    16: 'datetime',      // 时间
-    19: 'region',        // 地区
-    23: 'region',        // 地区
-    24: 'region',        // 地区
-    26: 'user',          // 成员
-    27: 'department',    // 部门
-    28: 'rating',        // 等级
-    29: 'relation',      // 连接他表
-    36: 'boolean',       // 检查框
+    16: 'datetime',      // 時間
+    19: 'region',        // 地區
+    23: 'region',        // 地區
+    24: 'region',        // 地區
+    26: 'user',          // 成員
+    27: 'department',    // 部門
+    28: 'rating',        // 等級
+    29: 'relation',      // 連線他表
+    36: 'boolean',       // 檢查框
     40: 'location',      // 定位
-    41: 'richtext',      // 富文本
-    42: 'signature',     // 签名
-    46: 'time',          // 时间
-    48: 'role',          // 组织角色
+    41: 'richtext',      // 富文字
+    42: 'signature',     // 簽名
+    46: 'time',          // 時間
+    48: 'role',          // 組織角色
   };
   return typeMap[controlType] || 'unknown';
 }
@@ -1228,14 +1228,14 @@ niio niio 檢視外掛支援兩種資料操作方式:
 ```javascript
 import { api, utils, config, md_emitter } from 'mdye';
 
-// 获取当前视图数据
+// 取得當前檢視資料
 api.getFilterRows({ worksheetId, viewId });
 
-// 打开原生记录详情弹窗
+// 開啟原生記錄詳情彈窗
 utils.openRecordInfo({ appId, worksheetId, viewId, recordId });
 
-// 获取工作表结构信息
-config.controls; // 字段列表
+// 取得工作表結構資訊
+config.controls; // 欄位清單
 ```
 
 #### 2. 使用 niio V3 公開介面 (REST API)
@@ -1265,7 +1265,7 @@ import { api, config } from 'mdye';
 
 const { appId, worksheetId, viewId } = config;
 
-// 已包含鉴权,直接调用
+// 已包含身分驗證與授權,直接呼叫
 const result = await api.getFilterRows({
   worksheetId,
   viewId,
@@ -1293,11 +1293,11 @@ const result = await api.getFilterRows({
 **第1步：設定身分驗證與授權資訊**
 
 ```javascript
-// 在项目根目录创建 config/api.config.js
+// 在專案根目錄建立 config/api.config.js
 const API_CONFIG = {
   baseUrl: 'https://api.mingdao.com',
-  appkey: 'YOUR_APPKEY',  // 从明道云后台获取
-  sign: 'YOUR_SIGN'       // 从明道云后台获取
+  appkey: 'YOUR_APPKEY',  // 從niio後臺取得
+  sign: 'YOUR_SIGN'       // 從niio後臺取得
 };
 
 export default API_CONFIG;
@@ -1646,14 +1646,14 @@ export default MultiTableDashboard;
 
 #### 1. API 呼叫最佳化
 ```javascript
-// ✅ 推荐：并行加载多个无依赖的数据
+// ✅ 推薦：並行載入多個無依賴的資料
 const [data1, data2, data3] = await Promise.all([
   getRecordList(worksheet1),
   getRecordList(worksheet2),
   getPivotData(worksheet3, config)
 ]);
 
-// ❌ 避免：串行加载导致性能差
+// ❌ 避免：序列載入導致效能差
 const data1 = await getRecordList(worksheet1);
 const data2 = await getRecordList(worksheet2);
 const data3 = await getPivotData(worksheet3, config);
@@ -1666,7 +1666,7 @@ try {
   setRecords(data.rows);
 } catch (error) {
   console.error('加载失败:', error);
-  // 显示友好错误提示
+  // 顯示友好錯誤提示
   if (error.message.includes('401')) {
     alert('认证失败，请检查 API 密钥');
   } else {
@@ -1677,7 +1677,7 @@ try {
 
 #### 3. 資料快取
 ```javascript
-// 简单的内存缓存
+// 簡單的記憶體快取
 const cache = new Map();
 
 async function getCachedData(key, fetchFn, ttl = 5 * 60 * 1000) {
@@ -1774,16 +1774,16 @@ mdye push -m "订单状态视图插件首次发布
 釋出成功後會顯示外掛資訊：
 
 ```
-[21:20:54] 文件上传成功
+[21:20:54] 檔案上傳成功
 [21:20:55] push成功
 ┌──────────────────────────────────────────────────────────┐
-│  ---- 插件信息 ----                                       │
+│  ---- 外掛資訊 ----                                       │
 │                                                           │
-│  插件名称: 自定义视图                                     │
-│  视图名称: 自定义视图                                     │
-│  视图地址: https://www.mingdao.com/worksheet/...         │
-│  提交信息: 订单状态视图插件首次发布                       │
-│  提交人: 用户名                                           │
+│  外掛名稱: 自訂檢視                                     │
+│  檢視名稱: 自訂檢視                                     │
+│  檢視地址: https://www.mingdao.com/worksheet/...         │
+│  提交資訊: 訂單狀態檢視外掛首次釋出                       │
+│  提交人: 使用者名稱                                           │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -1926,10 +1926,10 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 
 **示例：**
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 总数：1,234
 
-// ✅ 正确
+// ✅ 正確
 本月已完成订单总数：1,234
 统计范围：2025年1月1日-1月31日
 统计条件：订单状态 = "已完成"
@@ -1944,10 +1944,10 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 
 **示例：**
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 销售额：¥1,234,567
 
-// ✅ 正确
+// ✅ 正確
 本月销售额：¥123.46 万元
 统计范围：2025年1月1日-1月31日
 统计口径：已完成订单的订单金额汇总
@@ -1963,10 +1963,10 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 
 **示例：**
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 完成率：75%
 
-// ✅ 正确
+// ✅ 正確
 本月订单完成率：75%
 计算公式：已完成订单数 ÷ 总订单数 = 150 ÷ 200
 统计范围：2025年1月1日-1月31日
@@ -1981,10 +1981,10 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 
 **示例：**
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 订单数：150 ↑ +20%
 
-// ✅ 正确
+// ✅ 正確
 本月订单数：150
 对比上月：125（2024年12月）
 环比增长：+20% [（150-125）÷ 125]
@@ -2001,10 +2001,10 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 
 **示例：**
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 Top 5 产品
 
-// ✅ 正确
+// ✅ 正確
 本月销售额 Top 5 产品
 排名依据：已完成订单的产品销售额汇总
 统计范围：2025年1月1日-1月31日
@@ -2197,10 +2197,10 @@ function ChartCard({ title, description, timeRange, data }) {
 **排查步驟：**
 
 ```bash
-# 检查开发服务器是否在运行
+# 檢查開發伺服器是否在執行
 ps aux | grep "mdye start"
 
-# 如果没有输出，说明服务器未启动，执行：
+# 如果沒有輸出，說明伺服器未啟動，執行：
 cd view-plugin
 mdye start
 ```
@@ -2222,16 +2222,16 @@ http://localhost:3000/bundle.js
 **排查步驟：**
 
 ```bash
-# macOS/Linux：检查 3000 端口占用情况
+# macOS/Linux：檢查 3000 埠占用情況
 lsof -i :3000
 
-# 如果端口被占用，有两种解决方案：
+# 如果埠被佔用，有兩種解決方案：
 
-# 方案1：结束占用端口的进程（推荐）
-kill -9 <PID>  # PID 是上一步查到的进程 ID
+# 方案1：結束佔用埠的程序（推薦）
+kill -9 <PID>  # PID 是上一步查到的程序 ID
 
-# 方案2：使用其他端口
-# 编辑 mdye.config.js，修改端口号：
+# 方案2：使用其他埠
+# 編輯 mdye.config.js，修改埠號：
 {
   devServer: {
     port: 3001  // 改为其他未占用的端口
@@ -2257,15 +2257,15 @@ taskkill /PID <PID> /F
 **排查步驟：**
 
 ```bash
-# macOS：检查防火墙状态
+# macOS：檢查防火牆狀態
 sudo /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
 
-# 如果防火墙已开启，临时关闭测试（不推荐长期关闭）
+# 如果防火牆已開啟，臨時關閉測試（不推薦長期關閉）
 sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
 
-# 或者允许 Node.js 通过防火墙（推荐）
-# 系统偏好设置 → 安全性与隐私 → 防火墙 → 防火墙选项
-# 找到 Node.js，设置为"允许传入连接"
+# 或者允許 Node.js 透過防火牆（推薦）
+# 系統偏好設定 → 安全性與隱私 → 防火牆 → 防火牆選項
+# 找到 Node.js，設定為"允許傳入連線"
 ```
 
 #### 4. 檢查程式碼編譯錯誤
@@ -2346,22 +2346,22 @@ npm install recharts
 echo "=== HAP 视图插件开发环境诊断 ==="
 echo ""
 
-# 1. 检查 Node.js 版本
+# 1. 檢查 Node.js 版本
 echo "1. Node.js 版本："
 node --version || echo "❌ Node.js 未安装"
 echo ""
 
-# 2. 检查 mdye-cli 是否安装
+# 2. 檢查 mdye-cli 是否安裝
 echo "2. mdye-cli 版本："
 mdye --version || echo "❌ mdye-cli 未安装"
 echo ""
 
-# 3. 检查当前目录
+# 3. 檢查當前目錄
 echo "3. 当前目录："
 pwd
 echo ""
 
-# 4. 检查项目文件
+# 4. 檢查專案檔案
 echo "4. 项目文件检查："
 if [ -f "package.json" ]; then
   echo "✓ package.json 存在"
@@ -2376,7 +2376,7 @@ else
 fi
 echo ""
 
-# 5. 检查端口占用
+# 5. 檢查埠占用
 echo "5. 检查 3000 端口："
 if lsof -i :3000 > /dev/null 2>&1; then
   echo "⚠️  3000 端口已被占用："
@@ -2386,7 +2386,7 @@ else
 fi
 echo ""
 
-# 6. 检查开发服务器
+# 6. 檢查開發伺服器
 echo "6. 检查开发服务器："
 if ps aux | grep -v grep | grep "mdye start" > /dev/null; then
   echo "✓ 开发服务器正在运行"
@@ -2400,7 +2400,7 @@ echo "=== 诊断完成 ==="
 
 **使用方法：**
 ```bash
-# 保存为 diagnose.sh
+# 儲存為 diagnose.sh
 chmod +x diagnose.sh
 ./diagnose.sh
 ```
@@ -2431,8 +2431,8 @@ chmod +x diagnose.sh
 2. 強制重新整理瀏覽器（`Cmd+Shift+R` 或 `Ctrl+Shift+R`）
 3. 重啟開發伺服器：
    ```bash
-   # 停止服务器（按 Ctrl+C）
-   # 重新启动
+   # 停止伺服器（按 Ctrl+C）
+   # 重新啟動
    mdye start
    ```
 
@@ -2442,19 +2442,19 @@ chmod +x diagnose.sh
 
 1. **詢問具體症狀：**
    ```
-   请问您遇到的具体情况是：
-   1. 明道云后台显示"加载失败"
-   2. 显示空白页面
-   3. 显示错误信息（请截图）
-   4. 其他情况
+   請問您遇到的具體情況是：
+   1. niio後臺顯示"載入失敗"
+   2. 顯示空白頁面
+   3. 顯示錯誤資訊（請截圖）
+   4. 其他情況
    ```
 
 2. **執行基礎檢查：**
    ```bash
-   # 检查开发服务器状态
+   # 檢查開發伺服器狀態
    ps aux | grep "mdye start"
 
-   # 检查端口占用
+   # 檢查埠占用
    lsof -i :3000
    ```
 
@@ -2466,10 +2466,10 @@ chmod +x diagnose.sh
 
 4. **確認問題解決：**
    ```
-   现在请尝试刷新明道云页面，应该可以看到插件效果了。
-   如果还有问题，请提供：
-   1. 浏览器控制台的错误截图
-   2. 开发服务器控制台的输出
+   現在請嘗試重新整理niio頁面，應該可以看到外掛效果了。
+   如果還有問題，請提供：
+   1. 瀏覽器控制檯的錯誤截圖
+   2. 開發伺服器控制檯的輸出
    ```
 
 ---
@@ -2486,10 +2486,10 @@ chmod +x diagnose.sh
 
 **解決方案:**
 ```javascript
-// 1. 获取字段控件定义(包含options)
+// 1. 取得欄位控制元件定義(包含options)
 const control = config.controls.find(ctrl => ctrl.controlId === fieldId);
 
-// 2. 解析选项字段
+// 2. 解析選項欄位
 function parseSingleSelect(value, control) {
   try {
     if (!value) return { key: "", text: "" };
@@ -2497,7 +2497,7 @@ function parseSingleSelect(value, control) {
     const keys = typeof value === 'string' ? JSON.parse(value) : value;
     const selectedKey = keys[0] || "";
 
-    // 从 options 中查找对应的显示文本
+    // 從 options 中查詢對應的顯示文字
     let selectedText = "";
     if (control && control.options) {
       const option = control.options.find(opt => opt.key === selectedKey);
@@ -2523,13 +2523,13 @@ function parseSingleSelect(value, control) {
 
 **解決方案:**
 ```javascript
-// ✅ 正确:包含所有选项字段类型
+// ✅ 正確:包含所有選項欄位型別
 const selectField = controls?.find(ctrl =>
   ctrl.controlName?.includes('状态') &&
   (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
 );
 
-// ❌ 错误:会遗漏 type 9
+// ❌ 錯誤:會遺漏 type 9
 const selectField = controls?.find(ctrl =>
   ctrl.controlName?.includes('状态') &&
   (ctrl.type === 10 || ctrl.type === 11)
@@ -2548,17 +2548,17 @@ const selectField = controls?.find(ctrl =>
 **解決方案:**
 
 ```javascript
-// 1. 判断是否为多条关联
+// 1. 判斷是否為多條關聯
 function isMultipleRelation(value) {
   return typeof value === 'number' || (!isNaN(value) && value !== '');
 }
 
-// 2. 处理关联字段(支持单条和多条)
+// 2. 處理關聯欄位(支援單條和多條)
 async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
   let relationData = [];
 
   if (isMultipleRelation(fieldValue)) {
-    // 多条关联:调用 API 获取详情
+    // 多條關聯:呼叫 API 取得詳情
     try {
       const result = await api.getRowRelationRows({
         worksheetId,
@@ -2575,7 +2575,7 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
       console.error('获取多条关联失败:', error);
     }
   } else {
-    // 单条关联:直接解析
+    // 單條關聯:直接解析
     relationData = parseRelationData(fieldValue);
   }
 

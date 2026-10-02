@@ -3,6 +3,8 @@ name: hap-api-website
 description: 立即觸發條件：使用者提到"niio 建置網站"、"niio 前端專案"、"niio 作為資料庫"、"企業官網"、"官網"、"透過 niio 建置"、"用 niio 做網站"、"niio 網站"、"建置官網"、"前後端分離"、"內容管理系統"、"niio 前端"、"niio 官網"。提供完整的 niio + 前端專案建置指南，包括 niio 後臺設定、前端專案結構、API 整合和資料渲染。
 license: MIT
 ---
+> **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
+
 
 # niio 前後端專案建置指南
 
@@ -61,12 +63,12 @@ license: MIT
 **必須執行：**
 1. **讀取應用結構**
    ```javascript
-   // 获取应用工作表列表
+   // 取得應用工作表清單
    mcp__hap_mcp____get_app_worksheets_list({
        responseFormat: 'md'
    })
    
-   // 获取特定工作表结构
+   // 取得特定工作表結構
    mcp__hap_mcp____get_worksheet_structure({
        worksheet_id: '工作表ID',
        responseFormat: 'md',
@@ -171,7 +173,7 @@ AskUserQuestion({
 
 3. **新增示例資料**（如使用者同意）
    ```javascript
-   // 🔴 重要：附件字段必须填充图片 URL
+   // 🔴 重要：附件欄位必須填充圖片 URL
    mcp__hap_mcp____batch_create_records({
        worksheet_id: '工作表ID',
        rows: [
@@ -187,7 +189,7 @@ AskUserQuestion({
                    { id: '是否发布字段ID', value: '1' }
                ]
            }
-           // ... 至少 5 条示例数据
+           // ... 至少 5 條示例資料
        ],
        triggerWorkflow: false,
        ai_description: '工作表: 新闻资讯'
@@ -242,15 +244,15 @@ AskUserQuestion({
 **專案結構：**
 ```
 project-name/
-├── index.html          # 主页面
+├── index.html          # 主頁面
 ├── css/
-│   └── style.css       # 样式文件
+│   └── style.css       # 樣式檔案
 ├── js/
-│   ├── config.js       # HAP 配置（Appkey、Sign、字段映射）
-│   ├── api.js          # API 封装（请求、分页、筛选）
-│   └── main.js         # 应用逻辑（渲染、事件处理）
-├── images/             # 图片资源（可选）
-└── README.md           # 项目说明
+│   ├── config.js       # niio 設定（Appkey、Sign、欄位對映）
+│   ├── api.js          # API 封裝（請求、分頁、篩選）
+│   └── main.js         # 應用邏輯（渲染、事件處理）
+├── images/             # 圖片資源（可選）
+└── README.md           # 專案說明
 ```
 
 **核心檔案模板：**
@@ -320,7 +322,7 @@ const CONFIG = {
        pageIndex: 1,
        pageSize: 20,
        includeTotalCount: true,
-       filter: { /* 筛选条件 */ },
+       filter: { /* 篩選條件 */ },
        sorts: [ /* 排序 */ ]
    })
    ```
@@ -456,15 +458,15 @@ async loadProducts() {
 **🔴 重要警告：篩選必須使用 key（UUID），不能使用顯示文字！**
 
 ```javascript
-// ❌ 错误：使用显示文本
-value: ['现代简约']  // 筛选失败！
+// ❌ 錯誤：使用顯示文字
+value: ['现代简约']  // 篩選失敗！
 
-// ✅ 正确：使用 key
-value: ['a1b2c3d4-e5f6-7890-abcd-ef1234567890']  // 筛选成功
+// ✅ 正確：使用 key
+value: ['a1b2c3d4-e5f6-7890-abcd-ef1234567890']  // 篩選成功
 
-// 获取 key 的方法：
-// 1. 调用 get_worksheet_structure 获取字段的 options
-// 2. 从 options 中找到匹配的 key
+// 取得 key 的方法：
+// 1. 呼叫 get_worksheet_structure 取得欄位的 options
+// 2. 從 options 中找到匹配的 key
 ```
 
 ---

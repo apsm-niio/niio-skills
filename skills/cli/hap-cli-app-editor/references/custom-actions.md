@@ -3,14 +3,14 @@
 ## 呼叫正規化
 
 ```bash
-# 列出工作表上的按钮
+# 列出工作表上的按鈕
 hap worksheet custom-actions <worksheetId>
-hap worksheet custom-actions <worksheetId> --view-id <viewId>   # 只看该视图显示的
-hap worksheet custom-actions <worksheetId> --kind ai            # 只看 AI 动作（另一档是 action）
-hap worksheet custom-actions <worksheetId> --deleted            # 已删除的按钮
-hap worksheet custom-actions <worksheetId> --record-id <rowid>  # 这条记录上哪些按钮能点
+hap worksheet custom-actions <worksheetId> --view-id <viewId>   # 只看該檢視顯示的
+hap worksheet custom-actions <worksheetId> --kind ai            # 只看 AI 動作（另一檔是 action）
+hap worksheet custom-actions <worksheetId> --deleted            # 已刪除的按鈕
+hap worksheet custom-actions <worksheetId> --record-id <rowid>  # 這條記錄上哪些按鈕能點
 
-# 模式一：--action-spec 高层声明（推荐）
+# 模式一：--action-spec 高層宣告（推薦）
 hap worksheet create-custom-action <worksheetId> -a <appId> --action-spec '{
   "name": "标记完成",
   "type": "updateCurrentRecord",
@@ -21,17 +21,17 @@ hap worksheet create-custom-action <worksheetId> -a <appId> --action-spec '{
     {"field":"<状态列>","op":"ne","value":"<已完成选项key>"}]}
 }'
 
-# 模式二：--config 原始 wire 配置，原样下发
+# 模式二：--config 原始 wire 設定，原樣下發
 hap worksheet create-custom-action <worksheetId> -a <appId> --config '{...}'
 
-# 原地更新：带 --btn-id，在原按钮上改
+# 原地更新：帶 --btn-id，在原按鈕上改
 hap worksheet create-custom-action <worksheetId> -a <appId> \
   --btn-id <btnId> --action-spec '{...}'
 
-# 删除（永久，不进回收站）
+# 刪除（永久，不進回收站）
 hap worksheet delete-custom-action <worksheetId> <btnId> -a <appId> -y
 
-# 「从某个视图里撤下」是另一回事，不是删除
+# 「從某個檢視裡撤下」是另一回事，不是刪除
 hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId>
 hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --placement list
 ```
@@ -55,7 +55,7 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
 
 ## 資料字典
 
-字典核對於 hap-cli 0.9.0；未覆蓋的鍵以讀命令回傳的實際結構為準。
+字典核對於 niio CLI 0.9.0；未覆蓋的鍵以讀命令回傳的實際結構為準。
 
 ### action_spec 鍵表（--action-spec 輸入）
 

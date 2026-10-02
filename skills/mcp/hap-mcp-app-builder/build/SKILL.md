@@ -2,6 +2,8 @@
 name: build
 description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排程 steps/*.md 完成所有 niio 物件的建立與設定。支援 subagent 委派和內聯執行雙模式。
 ---
+> **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
+
 
 # niio 應用建置排程器
 
@@ -36,7 +38,7 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
 | 12 | 工作流已設計 | `hap-plan.json` 中每條 workflow 和 customActionWorkflow 的 `nodes[]` 非空 | `hap-plan.json` |
 | 13 | 系統工作流已釋出 | 每個系統工作流 processId 已 publish | Step 10 完成 |
 | 14 | 自訂動作工作流已釋出 | `customActionWorkflows[]` 每條均已 publish | Step 11 完成 |
-| 15 | CLI 建後精修已對賬 | CLI 可用→已校正組織+設當前應用+回填 `cliGaps[]`；hap 未安裝→已輸出待補清單且未中斷 | Step 12 完成 |
+| 15 | CLI 建後精修已對賬 | CLI 可用→已校正組織+設當前應用+回填 `cliGaps[]`；niio CLI 未安裝→已輸出待補清單且未中斷 | Step 12 完成 |
 
 ---
 
@@ -60,9 +62,9 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
 >
 > [!IMPORTANT]
 > **本步不阻斷建置主體**——純 MCP 已能獨立把應用建好。**唯一會讓 Step 12 跳過回填的情況是
-> 「hap 未安裝」**；「未登入」在本步自動登入解決，「組織不一致」留到 Step 12 自動切換解決。
+> 「niio CLI 未安裝」**；「未登入」在本步自動登入解決，「組織不一致」留到 Step 12 自動切換解決。
 
-1. **探測 hap 是否安裝**：執行 `hap auth whoami`
+1. **探測 niio CLI 是否安裝**：執行 `hap auth whoami`
    - **命令不存在 / 未安裝** → `cliAvailable = false`（唯一的跳過情形）。不中斷，繼續建置。
    - **命令存在但提示未登入** → 進入第 2 步自動登入。
    - **命令存在且已登入** → `cliAvailable = true`，跳到第 3 步。
@@ -210,32 +212,32 @@ Step 12 用 `hap` 命令列工具補 MCP 蓋不到的硬缺口。**永不阻斷*
 #### 子 agent Prompt 模板
 
 ```
-你是 HAP 应用搭建执行器，负责执行一个特定的搭建步骤。
+你是 niio 應用建置執行器，負責執行一個特定的建置步驟。
 
-## 你的任务
-完整阅读步骤文件 `{STEP_FILE_PATH}` 并严格按其要求执行。
+## 你的任務
+完整閱讀步驟檔案 `{STEP_FILE_PATH}` 並嚴格按其要求執行。
 
-## 关键信息
-- 应用名称：{appName}
-- 项目根目录：{PROJECT_ROOT}
-- Skill 目录：{SKILL_DIR}（步骤文件所在的 skill 根目录）
-- 方案文件：{PROJECT_ROOT}/apps/{appName}/hap-plan.json
-- 进度文件：{PROJECT_ROOT}/apps/{appName}/hap-context.json
-- 字段结构：{PROJECT_ROOT}/apps/{appName}/worksheetContext.json（如存在）
-- 引用的规则文件：{RULE_FILES}（如果步骤文件引用了共享规则文件，此处填入路径列表；没有则留空）
+## 關鍵資訊
+- 應用名稱：{appName}
+- 專案根目錄：{PROJECT_ROOT}
+- Skill 目錄：{SKILL_DIR}（步驟檔案所在的 skill 根目錄）
+- 方案檔案：{PROJECT_ROOT}/apps/{appName}/hap-plan.json
+- 進度檔案：{PROJECT_ROOT}/apps/{appName}/hap-context.json
+- 欄位結構：{PROJECT_ROOT}/apps/{appName}/worksheetContext.json（如存在）
+- 引用的規則檔案：{RULE_FILES}（如果步驟檔案引用了共享規則檔案，此處填入路徑清單；沒有則留空）
 
-## 执行要求
-1. 先完整读取步骤文件
-2. **如果步骤文件引用了其他规则文件（如 `workflow_rules.md`），必须先完整阅读该规则文件后再开始执行**
-3. 从 hap-plan.json 读取方案数据
-4. 从 hap-context.json 读取已有的 ID 映射
-5. 如需字段信息，从 worksheetContext.json 读取（只读）
-6. 如步骤文件要求运行脚本（如 generate_fill_templates.py），使用 `{SKILL_DIR}` 定位脚本路径
-7. 严格按步骤文件中的规则执行所有操作
-8. 所有 MCP 调用必须使用调度器指定的明道云 MCP 服务（服务名称由调度器在委派时传入）
-9. 完成后严格按步骤文件中「完成标志」章节的要求写入数据。写入目标可能是 `hap-context.json` 或 `hap-plan.json`，以步骤文件为准。不写 `progress`（由调度器统一管理）
-10. 验证步骤文件末尾的 ⛔ 验证断言全部通过
-11. 输出**执行问题总结**：列出执行过程中遇到的所有问题（如 API 报错、字段/选项映射失败、节点跳过、重试等），每条包含问题描述和处理方式。如果全程无问题，输出「无异常」
+## 執行要求
+1. 先完整讀取步驟檔案
+2. **如果步驟檔案引用了其他規則檔案（如 `workflow_rules.md`），必須先完整閱讀該規則檔案後再開始執行**
+3. 從 hap-plan.json 讀取方案資料
+4. 從 hap-context.json 讀取已有的 ID 對映
+5. 如需欄位資訊，從 worksheetContext.json 讀取（只讀）
+6. 如步驟檔案要求執行指令碼（如 generate_fill_templates.py），使用 `{SKILL_DIR}` 定位指令碼路徑
+7. 嚴格按步驟檔案中的規則執行所有操作
+8. 所有 MCP 呼叫必須使用排程器指定的niio MCP 服務（服務名稱由排程器在委派時傳入）
+9. 完成後嚴格按步驟檔案中「完成標誌」章節的要求寫入資料。寫入目標可能是 `hap-context.json` 或 `hap-plan.json`，以步驟檔案為準。不寫 `progress`（由排程器統一管理）
+10. 驗證步驟檔案末尾的 ⛔ 驗證斷言全部透過
+11. 輸出**執行問題總結**：列出執行過程中遇到的所有問題（如 API 報錯、欄位/選項對映失敗、節點跳過、重試等），每條包含問題描述和處理方式。如果全程無問題，輸出「無異常」
 ```
 
 ---
@@ -265,7 +267,7 @@ Step 9 的產出是寫入 `hap-plan.json` 而非 `hap-context.json`。排程器�
 | 階段 3 完成 | `✅ 页面组件、角色、工作流设计全部完成` |
 | 階段 4 完成 | `✅ 工作流已全部发布，开始建后精修…` |
 | Step 12 完成（已回填） | `✅ 建后精修完成：已用 CLI 补齐 {N} 项 MCP 未覆盖的配置` |
-| Step 12 完成（降級，hap 未安裝） | `ℹ️ 应用已建好；安装并登录 hap-cli 后可补齐 {M} 项增强配置（见摘要）` |
+| Step 12 完成（降級，niio CLI 未安裝） | `ℹ️ 应用已建好；安装并登录 hap-cli 后可补齐 {M} 项增强配置（见摘要）` |
 | 全部完成 | 輸出完整摘要（見下方「完成」章節） |
 
 ---

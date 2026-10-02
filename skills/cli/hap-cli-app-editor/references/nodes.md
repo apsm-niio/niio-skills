@@ -101,23 +101,23 @@
 ### 輔助命令（讀結構、查可選項）
 
 ```bash
-hap workflow node controls <pid> <nid>       # 可用于节点配置的工作表字段
-hap workflow node form-property <pid> <nid>  # 节点表单属性
-hap workflow node sub-processes <pid>        # 子流程节点可选的子流程
-hap workflow node json-to-controls ...       # 把 JSON 转成工作流字段
-hap workflow node desc <pid> <nid> ...       # 设置节点说明与别名
-hap workflow node test-webhook <pid> <nid>   # 「发送自定义请求」节点的测试 API
+hap workflow node controls <pid> <nid>       # 可用於節點設定的工作表欄位
+hap workflow node form-property <pid> <nid>  # 節點表單屬性
+hap workflow node sub-processes <pid>        # 子流程節點可選的子流程
+hap workflow node json-to-controls ...       # 把 JSON 轉成工作流欄位
+hap workflow node desc <pid> <nid> ...       # 設定節點說明與別名
+hap workflow node test-webhook <pid> <nid>   # 「傳送自訂請求」節點的測試 API
 ```
 
 ### ACTION(6) — 增 / 改 / 刪記錄
 
 ```bash
-# 在目标表新增一条记录，两个字段：一个静态值、一个引用触发记录的字段
+# 在目標表新增一條記錄，兩個欄位：一個靜態值、一個引用觸發記錄的欄位
 hap workflow node save-action <pid> <nid> -a 1 --app-id <worksheet_id> \
   -f '[{"fieldId":"<状态字段id>","type":11,"fieldValue":"<选项key>"},
        {"fieldId":"<标题字段id>","type":2,"fieldValue":"$<trigger_node_id>-<标题字段id>$"}]'
 
-# 按条件更新上游节点指向的记录
+# 按條件更新上游節點指向的記錄
 hap workflow node save-action <pid> <nid> -a 2 --app-id <worksheet_id> \
   -s <source_node_id> \
   -f '[{"fieldId":"<金额字段id>","type":6,"fieldValue":"100"}]' \
@@ -127,7 +127,7 @@ hap workflow node save-action <pid> <nid> -a 2 --app-id <worksheet_id> \
 ### SEARCH(7) — 查詢單條記錄
 
 ```bash
-# 按条件查一条，查不到就新建（--not-found 1），新建时写入 fields
+# 按條件查一條，查不到就新建（--not-found 1），新建時寫入 fields
 hap workflow node save-search <pid> <nid> -a 406 --app-id <worksheet_id> \
   --condition '{"logic":"and","items":[{"field":"<编号字段>","op":"eq",
        "value":{"kind":"field","node":"<trigger_node_id>","fieldId":"<编号字段id>"}}]}' \
@@ -153,7 +153,7 @@ hap workflow node save <pid> <nid> --type 4 -c "$(cat /tmp/node.json | jq '.<配
 一次性給一個 CC 節點換收件人（寫成應用角色）的最小示例：
 
 ```bash
-hap --json workflow node get <pid> <nid> --type 5   # 先读，确认其余键
+hap --json workflow node get <pid> <nid> --type 5   # 先讀，確認其餘鍵
 hap workflow node save <pid> <nid> --type 5 -c '{
   "selectNodeId": "<trigger_node_id>",
   "accounts": [{"type": 2, "entityId": "<app_id>", "roleId": "<role_id>"}],
@@ -343,17 +343,17 @@ save 設定只需 `{name, desc, operateCondition}`；`flowNodeList`/`flowNodeApp
 **給已有閘道器加一條並列分支（標準四步）。** `node add --type 2 --after <gatewayId>` 建的新分支項總是**追加到 `flowIds` 末尾**，排在「預設分支」（空條件那條）之後。排他閘道器（`gatewayType=2`）按 `flowIds` 順序求值、**空 `operateCondition` 的分支項 = 預設兜底分支，必須排在最後**，所以新分支幾乎總要手動前移：
 
 ```bash
-# 1. 建分支项（自动入网关 flowIds 末尾）
+# 1. 建分支項（自動入閘道器 flowIds 末尾）
 hap workflow node add <pid> --type 2 -n "高优先级" --after <gatewayId>
-# → 记下返回的新分支项 ID，设为 <newId>
+# → 記下回傳的新分支項 ID，設為 <newId>
 
-# 2. 回写网关，调整 flowIds 顺序（更具体的条件靠前、空条件默认分支放最后）
+# 2. 回寫閘道器，調整 flowIds 順序（更具體的條件靠前、空條件預設分支放最後）
 hap workflow node save <pid> <gatewayId> --type 1 -c '{"flowIds":["<newId>","<existingId>","<defaultId>"]}'
 
-# 3. 写新分支项的进入条件
+# 3. 寫新分支項的進入條件
 hap workflow node save <pid> <newId> --type 2 -c '{"operateCondition":[[{"filedId":"<字段id>","filedTypeId":6,"conditionId":"9","conditionValues":[{"value":"0"}]}]]}'
-# ↑ node save -c 走的是存储形态（filedId 二维数组），不收统一筛选写法
+# ↑ node save -c 走的是儲存形態（filedId 二維陣列），不收統一篩選寫法
 
-# 4. 在新分支项后接动作节点
+# 4. 在新分支項後接動作節點
 hap workflow node add <pid> --type 6 -n "处理" --after <newId> -a 1 --app-id <worksheet_id>
 ```

@@ -26,7 +26,7 @@
 
 讀 `cliAvailable`：
 
-- **`cliAvailable = false`**（hap 未安裝，或已安裝但瀏覽器授權始終未完成）→ 跳到
+- **`cliAvailable = false`**（niio CLI 未安裝，或已安裝但瀏覽器授權始終未完成）→ 跳到
   「步驟 3：降級輸出」。這是**唯一**跳過回填的情形。
 - **`cliAvailable = true`** → 做以下「就緒校正」，然後進入步驟 1：
 
@@ -73,11 +73,11 @@
 > [!CAUTION]
 > 回填只針對 `cliGaps[]` 列出的硬缺口。**不要**用 CLI 去重做 MCP 已經建好的物件。
 
-### 步驟 3：降級輸出（僅 `cliAvailable = false`，即 hap 未安裝/未完成登入）
+### 步驟 3：降級輸出（僅 `cliAvailable = false`，即 niio CLI 未安裝/未完成登入）
 
 不回填，改為把按 plan 推斷的待補項渲染成**「待補清單」**寫入收尾摘要：
 
-> ℹ️ 應用已建好。以下增強設定 MCP 暫未覆蓋。安裝並登入 hap-cli 後，可用「應用編輯」能力補齊：{清單}
+> ℹ️ 應用已建好。以下增強設定 MCP 暫未覆蓋。安裝並登入 niio CLI 後，可用「應用編輯」能力補齊：{清單}
 >
 > 安裝：`pip install hap-cli`；登入：`hap auth login`（瀏覽器授權）。
 

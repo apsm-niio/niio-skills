@@ -3,36 +3,36 @@
 ## 呼叫正規化
 
 ```bash
-# 列出角色 / 查看某角色完整权限明细
+# 列出角色 / 檢視某角色完整權限明細
 hap app role list -a <appId>
 hap app role permissions <roleId> -a <appId>
 
-# 粗粒度创建（permission-scope > 0，按整体范围授权）
+# 粗粒度建立（permission-scope > 0，按整體範圍授權）
 hap app role create -a <appId> --name "运营" --description "运营人员" \
   --type 0 --permission-scope 20
 
-# 细粒度创建（permission-scope 0 的推荐入口：逐表声明意图，未写到的部分自动补全为允许）
+# 細粒度建立（permission-scope 0 的推薦入口：逐表宣告意圖，未寫到的部分自動補全為允許）
 hap app role create-fine <appId> -n "区域经理" -d "只能看和改自己的记录" \
   --worksheet-permissions '[{"worksheetId":"<wsId>",
     "recordDataScope":{"read":20,"edit":20,"delete":0}}]' \
   --page-permissions '[{"pageId":"<pageId>","enable":true}]'
 
-# 改名与改权限是两条独立命令，互不影响
+# 改名與改權限是兩條獨立命令，互不影響
 hap app role rename <appId> <roleId> -n "新名字"
 hap app role set-permissions <appId> <roleId> --permission-way 10
 
-# 成员增删（平铺 id 选项，可重复传入，一次一个 id）
+# 成員增刪（平鋪 id 選項，可重複傳入，一次一個 id）
 hap app role add-member <roleId> -a <appId> \
   --user-ids <accountId> --user-ids <accountId2> --department-ids <deptId>
 hap app role remove-member <roleId> -a <appId> --user-ids <accountId>
 
-# 删除角色
+# 刪除角色
 hap app role delete <roleId> -a <appId> -y
 
-# 角色可访问的 AI 助手
+# 角色可訪問的 AI 助手
 hap app role set-chatbots <appId> <roleId> ...
 
-# 加入申请：待处理列表 / 通过并分配角色 / 拒绝；把人从本应用所有角色里移除
+# 加入申請：待處理清單 / 透過並分配角色 / 拒絕；把人從本應用所有角色裡移除
 hap app role pending <appId>
 hap app role approve ...
 hap app role reject ...

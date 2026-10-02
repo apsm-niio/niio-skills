@@ -78,15 +78,15 @@
 
 ```
 hap-api-website/
-├── SKILL.md                          # 技能主文档
-├── README.md                          # 本文件
+├── SKILL.md                          # 技能主文件
+├── README.md                          # 本檔案
 ├── references/
-│   ├── hap-as-database-guide.md      # 完整的 HAP 前后端项目搭建指南
-│   └── hap-api-usage-guide.md        # HAP API V3 使用规范
+│   ├── hap-as-database-guide.md      # 完整的 niio 前後端專案建置指南
+│   └── hap-api-usage-guide.md        # niio API V3 使用規範
 └── assets/
-    ├── config.js.template             # 配置文件模板
-    ├── api.js.template                # API 封装模板
-    └── main.js.template               # 主应用逻辑模板
+    ├── config.js.template             # 設定檔案模板
+    ├── api.js.template                # API 封裝模板
+    └── main.js.template               # 主應用邏輯模板
 ```
 
 ## 參考資源

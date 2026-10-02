@@ -20,10 +20,10 @@ niio niio 檢視外掛支援兩種資料操作方式:
 ```javascript
 import { api, utils, config } from 'mdye';
 
-// 获取数据
+// 取得資料
 const result = await api.getFilterRows({ worksheetId, viewId });
 
-// 打开记录详情
+// 開啟記錄詳情
 await utils.openRecordInfo({ appId, worksheetId, viewId, recordId });
 ```
 
@@ -52,7 +52,7 @@ import { api, config } from 'mdye';
 
 const { appId, worksheetId, viewId } = config;
 
-// 已包含鉴权,直接调用
+// 已包含身分驗證與授權,直接呼叫
 const result = await api.getFilterRows({
   worksheetId,
   viewId,

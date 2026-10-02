@@ -98,15 +98,15 @@
 ### 三、欄位型別決策
 
 ```
-单选 ≤ 5 个选项 → SingleSelect
-单选 > 5 个选项 → Dropdown
-多选 ≤ 10 个选项 → MultipleSelect
-多选 > 10 个选项 → Dropdown
-单个是/否 → Checkbox（不要用 SingleSelect + 是/否）
-人员 → Collaborator（不要用 Text 替代）
-电话 → PhoneNumber，邮箱 → Email，金额 → Currency
-流水号 → AutoNumber，计算值 → Formula
-日期差/时长计算 → DateFormula（如工龄、逾期天数、项目周期）
+單選 ≤ 5 個選項 → SingleSelect
+單選 > 5 個選項 → Dropdown
+多選 ≤ 10 個選項 → MultipleSelect
+多選 > 10 個選項 → Dropdown
+單個是/否 → Checkbox（不要用 SingleSelect + 是/否）
+人員 → Collaborator（不要用 Text 替代）
+電話 → PhoneNumber，郵箱 → Email，金額 → Currency
+流水號 → AutoNumber，計算值 → Formula
+日期差/時長計算 → DateFormula（如工齡、逾期天數、專案週期）
 ```
 
 ### Date / DateTime / Time 顯示格式（必須）

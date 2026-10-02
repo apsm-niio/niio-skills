@@ -9,13 +9,13 @@
 ### 讀：list / info
 
 ```bash
-# 列出工作表下的所有视图（拿 viewId / viewType / 名称）
+# 列出工作表下的所有檢視（拿 viewId / viewType / 名稱）
 hap --json worksheet view list 6845f0a1b2c3d4e5f6a7b8c9
 
-# 找回删掉的视图（带删除时间）
+# 找回刪掉的檢視（帶刪除時間）
 hap --json worksheet view list 6845f0a1b2c3d4e5f6a7b8c9 --deleted
 
-# 单个视图完整配置：filters、排序、显示字段、advancedSetting 全在这里
+# 單個檢視完整設定：filters、排序、顯示欄位、advancedSetting 全在這裡
 hap --json worksheet view info 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789
 ```
 
@@ -62,23 +62,23 @@ hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "紧凑表" \
 `view update` 是**區域性**更新：只有 `--edit-attrs` 列出的頂層屬性會被寫入，其餘保持原樣。
 
 ```bash
-# 仅改名（最简形态，--edit-attrs 自动按 name 处理）
+# 僅改名（最簡形態，--edit-attrs 自動按 name 處理）
 hap worksheet view update 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 \
   --name "看板（新）"
 
-# 改 advancedSetting 子键 —— 必须三者配对：
-#   --view-json 给值 + --edit-attrs 含 advancedSetting + --edit-ad-keys 列出改动子键
+# 改 advancedSetting 子鍵 —— 必須三者配對：
+#   --view-json 給值 + --edit-attrs 含 advancedSetting + --edit-ad-keys 列出改動子鍵
 hap worksheet view update 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 \
   --view-json '{"advancedSetting":{"alternatecolor":"1","titlewrap":"1"}}' \
   --edit-attrs advancedSetting \
   --edit-ad-keys alternatecolor,titlewrap
 
-# 改分组字段（看板分组 / 层级父字段 / 日历主时间字段都叫 viewControl）
+# 改分組欄位（看板分組 / 層級父欄位 / 日曆主時間欄位都叫 viewControl）
 hap worksheet view update 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 \
   --view-json '{"viewControl":"ctrl_owner_24hex"}' \
   --edit-attrs viewControl
 
-# 改卡片显示字段及顺序（先 info 读出现有数组再整体替换）
+# 改卡片顯示欄位及順序（先 info 讀出現有陣列再整體替換）
 hap worksheet view update 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 \
   --view-json '{"displayControls":["ctrl_a","ctrl_b"],"controlsSorts":["ctrl_a","ctrl_b"]}' \
   --edit-attrs displayControls,controlsSorts
@@ -101,10 +101,10 @@ hap worksheet view update 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 \
 ```bash
 hap worksheet view delete 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 -y
 
-# 复制（可选给新名字）—— 复杂视图调参前先 copy 一份当沙盒
+# 複製（可選給新名字）—— 複雜檢視調參前先 copy 一份當沙盒
 hap worksheet view copy 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789 "看板-副本"
 
-# 视图在导航栏的顺序 = 传入 viewId 的顺序（要列全）
+# 檢視在導航欄的順序 = 傳入 viewId 的順序（要列全）
 hap worksheet view sort 6845f0a1b2c3d4e5f6a7b8c9 \
   64a1b2c3d4e5f60123456789 64a1b2c3d4e5f6012345678a 64a1b2c3d4e5f6012345678b
 ```
@@ -113,7 +113,7 @@ hap worksheet view sort 6845f0a1b2c3d4e5f6a7b8c9 \
 
 ## 資料字典
 
-字典核對於 hap-cli 0.9.0
+字典核對於 niio CLI 0.9.0
 
 ### 0. `--view-spec` 高層方言
 
@@ -125,19 +125,19 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 ```jsonc
 {
   "viewType": "gallery",
-  "config": {"mode": "all"},                 // 详情视图：all 常规多条 / first 只看第一条
+  "config": {"mode": "all"},                 // 詳情檢視：all 常規多條 / first 只看第一條
   "card": {
     "titleField": "<字段ID>",
     "coverField": "<附件字段ID>",
     "coverDirection": "top",                 // top | left | right
-    "coverDisplayMode": "rectangle"          // rectangle | circle | full（square 是 rectangle 的旧写法）
+    "coverDisplayMode": "rectangle"          // rectangle | circle | full（square 是 rectangle 的舊寫法）
   },
   "sort": [{"fieldId": "<字段ID>", "sortType": 1}],   // 1 升序 / 2 降序
   "quickFilters": ["<字段ID>"],
-  "filterList": ["<字段ID>"],                 // 左侧导航分类，只能给一个字段
+  "filterList": ["<字段ID>"],                 // 左側導航分類，只能給一個欄位
   "color": "<单选字段ID>",
   "tableFields": ["<字段ID>", "..."],
-  "rowHeight": 0,                             // 0 紧凑 / 1 中等 / 2 高 / 3 超高
+  "rowHeight": 0,                             // 0 緊湊 / 1 中等 / 2 高 / 3 超高
   "filter": {"logic":"and", "items":[
     {"field":"<状态字段ID>", "op":"eq", "value":"<选项key>"}
   ]}

@@ -131,15 +131,15 @@
 
 ```
 hap-view-plugin/
-├── SKILL.md                              # 技能主文档
-├── README.md                             # 本文件
+├── SKILL.md                              # 技能主文件
+├── README.md                             # 本檔案
 ├── references/
-│   ├── hap-view-plugin-dev-guide.md     # 完整开发指南
-│   └── field-type-guide.md              # 字段类型指南
+│   ├── hap-view-plugin-dev-guide.md     # 完整開發指南
+│   └── field-type-guide.md              # 欄位型別指南
 └── scripts/
-    ├── init-hap-view-project.sh         # 初始化项目脚本
-    ├── quick-start.sh                    # 快速启动脚本
-    └── test-mdye-check.sh               # 环境检查脚本
+    ├── init-hap-view-project.sh         # 初始化專案指令碼
+    ├── quick-start.sh                    # 快速啟動指令碼
+    └── test-mdye-check.sh               # 環境檢查指令碼
 ```
 
 ## 更新日誌

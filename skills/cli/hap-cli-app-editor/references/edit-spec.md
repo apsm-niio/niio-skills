@@ -51,16 +51,16 @@ niio 即時讀取結構來解析。
 寫了不在表裡的 `type`（比如 `view.update`、`node.add`），`validate` 會直接報錯並給出應該改用的 `hap` 命令。
 
 > op 的欄位級 schema 在 `scripts/editspec/`（envelope + field + component + custom-action 各一份）。
-> 這四份是 **hap-cli 同名檔案的副本**，放在這裡只為方便離線查閱；真正做校驗的是 CLI 內建的那份，
+> 這四份是 **niio CLI 同名檔案的副本**，放在這裡只為方便離線查閱；真正做校驗的是 CLI 內建的那份，
 > 兩者不一致時**以 CLI 內建的為準**（`hap app-editor validate` 的結果就是權威答案）。
 
 ## 命令
 
 ```bash
-hap app-editor validate <edit-spec.json>                 # 本地校验，零网络
-hap app-editor plan     <edit-spec.json> [--app <id>]    # dry-run 预演
-hap app-editor apply    <edit-spec.json> [--app <id>] [--continue]  # 执行
-hap app-editor inspect  <appId|名称> [--org-id <org>]    # 打印实时 名→id 结构
+hap app-editor validate <edit-spec.json>                 # 本地校驗，零網路
+hap app-editor plan     <edit-spec.json> [--app <id>]    # dry-run 預演
+hap app-editor apply    <edit-spec.json> [--app <id>] [--continue]  # 執行
+hap app-editor inspect  <appId|名称> [--org-id <org>]    # 列印即時 名→id 結構
 ```
 
 `inspect` 回傳 `app_id` / `org_id` / `name` / `sections` / `worksheets` / `pages_and_chatbots` /
@@ -189,8 +189,8 @@ hap app-editor inspect  <appId|名称> [--org-id <org>]    # 打印实时 名→
 `hap app-editor validate` 階段（零網路）就會拒絕：
 
 ```
-两者都给 → ops[0].field.subtable: 'fields' and 'worksheet' cannot both be given; give exactly one
-都不给   → ops[0].field.subtable: give exactly one of: 'fields', 'worksheet'
+兩者都給 → ops[0].field.subtable: 'fields' and 'worksheet' cannot both be given; give exactly one
+都不給   → ops[0].field.subtable: give exactly one of: 'fields', 'worksheet'
 ```
 
 ## 這個引擎繼承哪些修復

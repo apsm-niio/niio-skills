@@ -3,6 +3,8 @@ name: hap-apiv3-data
 description: 使用niio niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。如果使用者已設定 niio MCP，AI 應該自動從 MCP 設定中提取身分驗證與授權金鑰。
 license: MIT
 ---
+> **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
+
 
 # niio V3 API 使用技能
 
@@ -195,7 +197,7 @@ const headers = {
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer 你的access_token',
-  'HAP-Appid': '应用ID'   // 应用级接口必填
+  'HAP-Appid': '应用ID'   // 應用級介面必填
 };
 ```
 
@@ -207,7 +209,7 @@ const headers = {
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer 你的access_token',
-  'HAP-Appid': '应用ID'   // 应用级接口必填
+  'HAP-Appid': '应用ID'   // 應用級介面必填
 };
 ```
 
@@ -352,14 +354,14 @@ POST /v3/app/worksheets/{worksheet_id}/rows/list
 Filter = {
   type: 'group' | 'condition';
   
-  // type='group' 时的字段
+  // type='group' 時的欄位
   logic?: 'AND' | 'OR';
-  children?: Filter[];  // 子条件,最多两层嵌套
+  children?: Filter[];  // 子條件,最多兩層巢狀
   
-  // type='condition' 时的字段
-  field?: string;       // 字段ID或别名
-  operator?: string;    // 操作符
-  value?: any[];        // 值数组
+  // type='condition' 時的欄位
+  field?: string;       // 欄位ID或別名
+  operator?: string;    // 運算子
+  value?: any[];        // 值陣列
 }
 ```
 
@@ -406,7 +408,7 @@ Filter = {
   }]
 }
 
-// ❌ 错误: value: ["成交客户"]  // 不能用显示文本!
+// ❌ 錯誤: value: ["成交客戶"]  // 不能用顯示文字!
 ```
 
 **示例2: 數值範圍篩選（⚠️ value 必須是字串陣列）**
@@ -415,10 +417,10 @@ Filter = {
   "type": "condition",
   "field": "annual_budget",
   "operator": "between",
-  "value": ["500000", "2000000"]  // ✅ 字符串数组
+  "value": ["500000", "2000000"]  // ✅ 字串陣列
 }
 
-// ❌ 错误: value: [500000, 2000000]  // 不能用数字!
+// ❌ 錯誤: value: [500000, 2000000]  // 不能用數字!
 ```
 
 **示例3: 關聯欄位篩選（⚠️ 用 in 或 eq）**
@@ -426,11 +428,11 @@ Filter = {
 {
   "type": "condition",
   "field": "related_customer",
-  "operator": "in",  // ✅ 关联字段用 in（多值）或 eq（单值）
-  "value": ["customer-row-id"]  // 传入关联记录的 rowid 数组
+  "operator": "in",  // ✅ 關聯欄位用 in（多值）或 eq（單值）
+  "value": ["customer-row-id"]  // 傳入關聯記錄的 rowid 陣列
 }
 
-// ❌ 错误: operator: "belongsto"  // V3 API 无 belongsto 运算符，关联字段应用 in/eq + rowid
+// ❌ 錯誤: operator: "belongsto"  // V3 API 無 belongsto 運算子，關聯欄位應用 in/eq + rowid
 ```
 
 **詳細規範:** 參考 `references/hap-api-usage-guide.md` 第 4 節
@@ -506,7 +508,7 @@ Filter = {
 ```javascript
 {
   "id": "customer_type",
-  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 选项key
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 選項key
 }
 ```
 
@@ -533,7 +535,7 @@ Filter = {
 ```javascript
 {
   "id": "attachments",
-  "type": "0",  // 0=覆盖, 1=追加
+  "type": "0",  // 0=覆蓋, 1=追加
   "value": [{
     "name": "产品宣传册.pdf",
     "url": "https://example.com/brochure.pdf"
@@ -564,7 +566,7 @@ Filter = {
 ```javascript
 {
   "id": "related_customer",
-  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 记录rowid
+  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 記錄rowid
 }
 ```
 
@@ -607,7 +609,7 @@ POST /v3/app/worksheets/{target_worksheet_id}/rows/list
 ```javascript
 {
   "id": "owner",
-  "value": ["user-account-id-123"]  // 用户ID,不是用户名
+  "value": ["user-account-id-123"]  // 使用者ID,不是使用者名稱
 }
 ```
 
@@ -690,7 +692,7 @@ POST /v3/users/lookup
 {
   "field": "customer_type",
   "operator": "eq",
-  "value": ["成交客户"]  // ❌ 使用了显示文本
+  "value": ["成交客户"]  // ❌ 使用了顯示文字
 }
 ```
 
@@ -699,7 +701,7 @@ POST /v3/users/lookup
 {
   "field": "customer_type",
   "operator": "eq",
-  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ✅ 使用选项key
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ✅ 使用選項key
 }
 ```
 
@@ -717,7 +719,7 @@ POST /v3/users/lookup
 {
   "field": "annual_budget",
   "operator": "gt",
-  "value": [1000000]  // ❌ 数字类型
+  "value": [1000000]  // ❌ 數字型別
 }
 ```
 
@@ -726,7 +728,7 @@ POST /v3/users/lookup
 {
   "field": "annual_budget",
   "operator": "gt",
-  "value": ["1000000"]  // ✅ 字符串数组
+  "value": ["1000000"]  // ✅ 字串陣列
 }
 ```
 
@@ -740,7 +742,7 @@ POST /v3/users/lookup
 ```javascript
 {
   "field": "related_customer",
-  "operator": "belongsto",  // ❌ V3 API 不支持 belongsto；关联字段应用 in/eq
+  "operator": "belongsto",  // ❌ V3 API 不支援 belongsto；關聯欄位應用 in/eq
   "value": ["customer-id"]
 }
 ```
@@ -749,8 +751,8 @@ POST /v3/users/lookup
 ```javascript
 {
   "field": "related_customer",
-  "operator": "in",  // ✅ 关联字段用 in 或 eq
-  "value": ["customer-row-id"]  // 传入关联记录的 rowid 数组
+  "operator": "in",  // ✅ 關聯欄位用 in 或 eq
+  "value": ["customer-row-id"]  // 傳入關聯記錄的 rowid 陣列
 }
 ```
 
@@ -760,21 +762,21 @@ POST /v3/users/lookup
 
 **錯誤示例:**
 ```javascript
-// ❌ 性能灾难:100个产品 = 1 + 100 = 101次请求
-const products = await getProductList();  // 1次请求
+// ❌ 效能災難:100個產品 = 1 + 100 = 101次請求
+const products = await getProductList();  // 1次請求
 
 for (const product of products) {
   const categoryId = product.category[0].sid;
-  const category = await getCategoryById(categoryId);  // 100次请求!
+  const category = await getCategoryById(categoryId);  // 100次請求!
 }
 ```
 
 **正確做法:** 批次查詢
 ```javascript
-// ✅ 性能优化:100个产品 = 1 + 1 = 2次请求
-const products = await getProductList();  // 1次请求
+// ✅ 效能最佳化:100個產品 = 1 + 1 = 2次請求
+const products = await getProductList();  // 1次請求
 
-// 收集所有分类ID
+// 收集所有分類ID
 const categoryIds = new Set();
 products.forEach(p => {
   if (p.category && p.category.length > 0) {
@@ -782,7 +784,7 @@ products.forEach(p => {
   }
 });
 
-// 批量查询所有分类
+// 批次查詢所有分類
 const categories = await getRows('category-worksheet-id', {
   filter: {
     type: 'condition',
@@ -790,9 +792,9 @@ const categories = await getRows('category-worksheet-id', {
     operator: 'in',
     value: Array.from(categoryIds)
   }
-});  // 1次请求
+});  // 1次請求
 
-// 建立映射
+// 建立對映
 const categoryMap = {};
 categories.rows.forEach(cat => {
   categoryMap[cat.rowid] = cat;
@@ -861,8 +863,8 @@ categories.rows.forEach(cat => {
 ```javascript
 const headers = {
   'Content-Type': 'application/json',
-  'HAP-Appkey': extractedAppkey,  // 从 MCP 配置提取
-  'HAP-Sign': extractedSign        // 从 MCP 配置提取
+  'HAP-Appkey': extractedAppkey,  // 從 MCP 設定提取
+  'HAP-Sign': extractedSign        // 從 MCP 設定提取
 };
 ```
 
@@ -914,10 +916,10 @@ const headers = {
 
 **示例程式碼:**
 ```javascript
-// 1. 获取工作表结构
+// 1. 取得工作表結構
 const structure = await getWorksheetStructure(worksheetId);
 
-// 2. 提取选项字段映射
+// 2. 提取選項欄位對映
 const optionMaps = {};
 structure.fields.forEach(field => {
   if (field.type === 'SingleSelect' || field.type === 'MultipleSelect') {
@@ -928,7 +930,7 @@ structure.fields.forEach(field => {
   }
 });
 
-// 3. 使用时查找key
+// 3. 使用時查詢key
 const customerTypeKey = optionMaps['customer_type']['成交客户'];
 ```
 

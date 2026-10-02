@@ -109,29 +109,29 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ AI 开发阶段                                                  │
+│ AI 開發階段                                                  │
 ├─────────────────────────────────────────────────────────────┤
-│ 1. AI 通过 MCP 读取 HAP 应用结构                            │
-│ 2. AI 判断是否需要新增工作表/字段                           │
-│ 3. AI 通过 MCP 创建工作表并添加示例数据（5条+）             │
-│ 4. AI 编写前端代码,调用 HAP API V3                          │
+│ 1. AI 透過 MCP 讀取 niio 應用結構                            │
+│ 2. AI 判斷是否需要新增工作表/欄位                           │
+│ 3. AI 透過 MCP 建立工作表並新增示例資料（5條+）             │
+│ 4. AI 編寫前端程式碼,呼叫 niio API V3                          │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 前端运行阶段                                                │
+│ 前端執行階段                                                │
 ├─────────────────────────────────────────────────────────────┤
-│ 1. 用户访问网站（静态 HTML/CSS/JS）                         │
-│ 2. JS 通过 fetch 调用 HAP API V3                            │
-│ 3. API 返回 HAP 中的数据                                    │
-│ 4. JS 动态渲染页面内容                                      │
+│ 1. 使用者訪問網站（靜態 HTML/CSS/JS）                         │
+│ 2. JS 透過 fetch 呼叫 niio API V3                            │
+│ 3. API 回傳 niio 中的資料                                    │
+│ 4. JS 動態渲染頁面內容                                      │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 内容更新阶段                                                │
+│ 內容更新階段                                                │
 ├─────────────────────────────────────────────────────────────┤
-│ 1. 业务人员登录 HAP 后台                                    │
-│ 2. 在工作表中修改数据（添加产品、修改价格等）               │
-│ 3. 前端网站自动显示最新数据（无需重新部署）                 │
+│ 1. 業務人員登入 niio 後臺                                    │
+│ 2. 在工作表中修改資料（新增產品、修改價格等）               │
+│ 3. 前端網站自動顯示最新資料（無需重新部署）                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -139,13 +139,13 @@
 
 ❌ **錯誤 1**: 在前端程式碼中使用 MCP
 ```javascript
-// ❌ 错误：前端不能调用 MCP
+// ❌ 錯誤：前端不能呼叫 MCP
 mcp__hap_mcp____get_record_list(...)
 ```
 
 ✅ **正確做法**: 前端使用 fetch 呼叫 API V3
 ```javascript
-// ✅ 正确：前端调用 API V3
+// ✅ 正確：前端呼叫 API V3
 fetch('https://api.mingdao.com/v3/app/worksheets/{id}/rows/list', {
     method: 'POST',
     headers: {
@@ -157,19 +157,19 @@ fetch('https://api.mingdao.com/v3/app/worksheets/{id}/rows/list', {
 
 ❌ **錯誤 2**: 在前端程式碼中使用檢視外掛 SDK
 ```javascript
-// ❌ 错误：这是视图插件的 SDK
+// ❌ 錯誤：這是檢視外掛的 SDK
 import { useData } from '@mdfe/view';
 ```
 
 ✅ **正確做法**: 前端使用原生 fetch
 ```javascript
-// ✅ 正确：独立网站使用原生 API 调用
+// ✅ 正確：獨立網站使用原生 API 呼叫
 const data = await fetchProducts();
 ```
 
 ❌ **錯誤 3**: 在前端程式碼中寫死資料
 ```javascript
-// ❌ 错误：数据写死在代码里
+// ❌ 錯誤：資料寫死在程式碼裡
 const products = [
     { name: '产品1', price: 1000 },
     { name: '产品2', price: 2000 }
@@ -178,7 +178,7 @@ const products = [
 
 ✅ **正確做法**: 透過 API 動態取得
 ```javascript
-// ✅ 正确：从 HAP 动态获取数据
+// ✅ 正確：從 niio 動態取得資料
 const products = await API.getProducts();
 ```
 
@@ -225,8 +225,8 @@ const products = await API.getProducts();
 
 **判斷標準：**
 ```
-如果这个内容需要业务人员在后台修改 → 必须从 HAP 获取
-如果这个内容是固定的 UI 文案 → 可以写在前端代码里
+如果這個內容需要業務人員在後臺修改 → 必須從 niio 取得
+如果這個內容是固定的 UI 文案 → 可以寫在前端程式碼裡
 ```
 
 #### 2. 空應用 / 已有結構相容原則（必須判斷）
@@ -237,32 +237,32 @@ const products = await API.getProducts();
 
 **⚠️ 強制要求：**
 ```
-步骤 1: 通过 MCP 读取应用当前结构
-步骤 2: 判断是否需要新增工作表/字段
-步骤 3: 根据判断结果决定后续行为
+步驟 1: 透過 MCP 讀取應用當前結構
+步驟 2: 判斷是否需要新增工作表/欄位
+步驟 3: 根據判斷結果決定後續行為
 ```
 
 **示例判斷邏輯：**
 ```javascript
-// 1. 读取应用结构
+// 1. 讀取應用結構
 const structure = await mcp__hap_mcp____get_app_worksheets_list({
     responseFormat: 'md'
 });
 
-// 2. 判断是否存在"产品表"
+// 2. 判斷是否存在"產品表"
 if (!structure.includes('产品表')) {
-    // 3a. 不存在 → 创建新表
+    // 3a. 不存在 → 建立新表
     await mcp__hap_mcp____create_worksheet({
         name: '产品表',
         fields: [...]
     });
 } else {
-    // 3b. 已存在 → 检查是否需要补充字段
+    // 3b. 已存在 → 檢查是否需要補充欄位
     const worksheet = await mcp__hap_mcp____get_worksheet_structure({
         worksheet_id: 'xxx'
     });
 
-    // 判断缺少哪些字段，只新增缺失的
+    // 判斷缺少哪些欄位，只新增缺失的
 }
 ```
 
@@ -294,14 +294,14 @@ if (!structure.includes('产品表')) {
 
 **示例資料質量標準：**
 ```javascript
-// ❌ 错误：数据质量差（没有图片）
+// ❌ 錯誤：資料質量差（沒有圖片）
 {
     name: '测试1',
-    image: '',  // ❌ 空的附件字段会导致页面无图片！
+    image: '',  // ❌ 空的附件欄位會導致頁面無圖片！
     price: 0
 }
 
-// ✅ 正确：真实、可用的示例数据
+// ✅ 正確：真實、可用的示例資料
 {
     name: '现代简约沙发',
     image: [{
@@ -337,11 +337,11 @@ if (!structure.includes('产品表')) {
 ```
 ┌─────────────────┐         ┌──────────────────┐         ┌─────────────────┐
 │                 │         │                  │         │                 │
-│   前端页面      │ ◄─────► │  HAP API V3     │ ◄─────► │   HAP 后台      │
-│  (HTML/CSS/JS)  │  HTTPS  │  (REST API)     │         │  (数据管理)     │
+│   前端頁面      │ ◄─────► │  niio API V3     │ ◄─────► │   niio 後臺      │
+│  (HTML/CSS/JS)  │  HTTPS  │  (REST API)     │         │  (資料管理)     │
 │                 │         │                  │         │                 │
 └─────────────────┘         └──────────────────┘         └─────────────────┘
-      用户访问                  数据接口                    管理员操作
+      使用者訪問                  資料 API                    管理員操作
 ```
 
 ### 架構優勢
@@ -365,21 +365,21 @@ if (!structure.includes('产品表')) {
 ### 5 分鐘快速上手
 
 ```bash
-# 1. 创建项目目录
+# 1. 建立專案目錄
 mkdir my-hap-website
 cd my-hap-website
 
-# 2. 创建文件结构
+# 2. 建立檔案結構
 mkdir css js
 touch index.html css/style.css js/config.js js/api.js js/main.js
 
-# 3. 启动本地服务器
+# 3. 啟動本地伺服器
 python -m http.server 8000
 # 或
 npx serve
 
-# 4. 访问网站
-# 浏览器打开 http://localhost:8000
+# 4. 訪問網站
+# 瀏覽器開啟 http://localhost:8000
 ```
 
 ### ⚠️ AI 必須執行：自動啟動開發伺服器
@@ -421,14 +421,14 @@ php -S localhost:8000
 
 **示例程式碼：**
 ```javascript
-// 在完成所有文件创建后
+// 在完成所有檔案建立後
 await Bash({
     command: 'cd /path/to/project && python -m http.server 8000',
     description: '启动本地开发服务器',
     run_in_background: true
 });
 
-// 向用户输出
+// 向使用者輸出
 console.log('✅ 项目搭建完成！');
 console.log('🚀 本地服务器已启动');
 console.log('📍 访问地址: http://localhost:8000');
@@ -504,13 +504,13 @@ https://你的图片URL/示例.png
 當透過 MCP 建立示例資料時，附件欄位的 `value` 必須是以下格式的陣列：
 
 ```javascript
-// ✅ 正确的附件字段格式
+// ✅ 正確的附件欄位格式
 {
     id: '附件字段ID',
     value: [
         {
-            name: 'product-image.png',  // 文件名（可自定义）
-            url: 'https://你的图片URL/示例.png'  // 完整的图片 URL（替换为你自己上传到 HAP 的有效附件 URL）
+            name: 'product-image.png',  // 檔名（可自訂）
+            url: 'https://你的图片URL/示例.png'  // 完整的圖片 URL（替換為你自己上傳到 niio 的有效附件 URL）
         }
     ]
 }
@@ -519,7 +519,7 @@ https://你的图片URL/示例.png
 **完整示例：建立帶圖片的產品記錄**
 
 ```javascript
-// 通过 MCP 批量创建产品示例数据
+// 透過 MCP 批次建立產品示例資料
 await mcp__hap_mcp____batch_create_records({
     worksheet_id: '产品表ID',
     rows: [
@@ -530,7 +530,7 @@ await mcp__hap_mcp____batch_create_records({
                     value: '现代简约沙发'
                 },
                 {
-                    id: '产品图片字段ID',  // ⚠️ 附件字段（最重要）
+                    id: '产品图片字段ID',  // ⚠️ 附件欄位（最重要）
                     value: [
                         {
                             name: 'sofa.png',
@@ -589,7 +589,7 @@ await mcp__hap_mcp____batch_create_records({
                 }
             ]
         }
-        // ... 更多记录（建议至少 5 条）
+        // ... 更多記錄（建議至少 5 條）
     ],
     triggerWorkflow: false,
     ai_description: '工作表: 产品表'
@@ -606,29 +606,29 @@ await mcp__hap_mcp____batch_create_records({
 
 **❌ 常見錯誤：**
 ```javascript
-// ❌ 错误 1：value 不是数组
+// ❌ 錯誤 1：value 不是陣列
 {
     id: '附件字段ID',
-    value: 'https://...'  // 错误！必须是数组
+    value: 'https://...'  // 錯誤！必須是陣列
 }
 
-// ❌ 错误 2：缺少 name 属性
+// ❌ 錯誤 2：缺少 name 屬性
 {
     id: '附件字段ID',
     value: [
         {
-            url: 'https://...'  // 错误！缺少 name 属性
+            url: 'https://...'  // 錯誤！缺少 name 屬性
         }
     ]
 }
 
-// ❌ 错误 3：附件字段为空（最严重的错误）
+// ❌ 錯誤 3：附件欄位為空（最嚴重的錯誤）
 {
     id: '附件字段ID',
-    value: []  // ❌ 错误！会导致页面无图片，严重影响用户体验！
+    value: []  // ❌ 錯誤！會導致頁面無圖片，嚴重影響使用者體驗！
 }
 
-// ❌ 错误 4：附件字段被完全忽略（AI 最常犯的错误）
+// ❌ 錯誤 4：附件欄位被完全忽略（AI 最常犯的錯誤）
 {
     id: '产品名称字段ID',
     value: '现代简约沙发'
@@ -637,15 +637,15 @@ await mcp__hap_mcp____batch_create_records({
     id: '价格字段ID',
     value: 5999
 }
-// ❌ 完全没有提供附件字段！导致所有记录都没有图片！
+// ❌ 完全沒有提供附件欄位！導致所有記錄都沒有圖片！
 
-// ✅ 正确做法
+// ✅ 正確做法
 {
     id: '产品名称字段ID',
     value: '现代简约沙发'
 },
 {
-    id: '产品图片字段ID',  // ✅ 必须包含附件字段
+    id: '产品图片字段ID',  // ✅ 必須包含附件欄位
     value: [{
         name: 'sofa.png',
         url: 'https://你的图片URL/示例.png'
@@ -660,7 +660,7 @@ await mcp__hap_mcp____batch_create_records({
 **❌ 錯誤 5：SingleSelect/MultipleSelect 篩選使用顯示文字而非 key（AI 常犯錯誤）**
 
 ```javascript
-// ❌ 错误：使用选项的显示文本（value）进行筛选
+// ❌ 錯誤：使用選項的顯示文字（value）進行篩選
 const result = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
     filter: {
         type: 'group',
@@ -669,13 +669,13 @@ const result = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
             type: 'condition',
             field: '风格字段ID',
             operator: 'eq',
-            value: ['现代简约']  // ❌ 错误！这是显示文本，不是 key
+            value: ['现代简约']  // ❌ 錯誤！這是顯示文字，不是 key
         }]
     }
 });
-// 结果：筛选失败，返回空数据或全部数据
+// 結果：篩選失敗，回傳空資料或全部資料
 
-// ✅ 正确：使用选项的 key（UUID）进行筛选
+// ✅ 正確：使用選項的 key（UUID）進行篩選
 const result = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
     filter: {
         type: 'group',
@@ -684,25 +684,25 @@ const result = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
             type: 'condition',
             field: '风格字段ID',
             operator: 'eq',
-            value: ['a1b2c3d4-e5f6-7890-abcd-ef1234567890']  // ✅ 正确！使用 key
+            value: ['a1b2c3d4-e5f6-7890-abcd-ef1234567890']  // ✅ 正確！使用 key
         }]
     }
 });
 
-// 🔴 关键原则：
-// - 显示时使用 option.value（显示文本）→ "现代简约"
-// - 筛选时使用 option.key（UUID）→ "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-// - 如果不知道 key，需要先调用 get_worksheet_structure 获取字段的 options 列表
+// 🔴 關鍵原則：
+// - 顯示時使用 option.value（顯示文字）→ "現代簡約"
+// - 篩選時使用 option.key（UUID）→ "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+// - 如果不知道 key，需要先呼叫 get_worksheet_structure 取得欄位的 options 清單
 
-// 正确的流程示例：
-// 1. 获取工作表结构，找到选项的 key
+// 正確的流程示例：
+// 1. 取得工作表結構，找到選項的 key
 const structure = await mcp__hap_mcp____get_worksheet_structure({
     worksheet_id: '工作表ID',
     ai_description: '工作表: 产品表'
 });
-// 从返回的字段结构中找到：options: [{key: 'xxx', value: '现代简约'}, ...]
+// 從回傳的欄位結構中找到：options: [{key: 'xxx', value: '現代簡約'}, ...]
 
-// 2. 使用 key 进行筛选
+// 2. 使用 key 進行篩選
 const modernProducts = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
     filter: {
         type: 'group',
@@ -711,7 +711,7 @@ const modernProducts = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
             type: 'condition',
             field: '风格字段ID',
             operator: 'eq',
-            value: ['xxx']  // 使用从结构中获取的 key
+            value: ['xxx']  // 使用從結構中取得的 key
         }]
     }
 });
@@ -874,12 +874,12 @@ AI 需要運用設計師的審美標準建立高質量的樣式：
 **使用工具:**
 
 ```javascript
-// 获取应用工作表列表(推荐使用 Markdown 格式)
+// 取得應用工作表清單(推薦使用 Markdown 格式)
 mcp__hap_mcp____get_app_worksheets_list({
-    responseFormat: 'md'  // 返回易读的 Markdown 格式
+    responseFormat: 'md'  // 回傳易讀的 Markdown 格式
 })
 
-// 获取特定工作表的详细结构
+// 取得特定工作表的詳細結構
 mcp__hap_mcp____get_worksheet_structure({
     worksheet_id: '工作表ID',
     responseFormat: 'md',
@@ -917,11 +917,11 @@ AI 必須基於以下資訊進行評估:
 
 示例:
 ```
-用户需求: 企业官网需要展示产品、案例、新闻
-业务对象识别:
-  - 产品展示 → 需要产品信息(名称、图片、价格、描述等)
-  - 案例展示 → 需要案例信息(标题、封面图、客户名称、详情等)
-  - 新闻资讯 → 需要新闻信息(标题、发布时间、内容、作者等)
+使用者需求: 企業官網需要展示產品、案例、新聞
+業務物件識別:
+  - 產品展示 → 需要產品資訊(名稱、圖片、價格、描述等)
+  - 案例展示 → 需要案例資訊(標題、封面圖、客戶名稱、詳情等)
+  - 新聞資訊 → 需要新聞資訊(標題、釋出時間、內容、作者等)
 ```
 
 **(2) 現有結構可複用性判斷**
@@ -934,17 +934,17 @@ AI 必須基於以下資訊進行評估:
 
 示例:
 ```
-现有结构评估:
-  ✅ 发现工作表"产品管理"(alias: products)
-     - 包含字段:产品名称、产品图片、价格、详情
-     - 评估:可直接用于产品展示页面
+現有結構評估:
+  ✅ 發現工作表"產品管理"(alias: products)
+     - 包含欄位:產品名稱、產品圖片、價格、詳情
+     - 評估:可直接用於產品展示頁面
 
-  ⚠️ 发现工作表"客户案例"(alias: cases)
-     - 包含字段:案例标题、客户名称
-     - 评估:缺少封面图和详情字段,需补充
+  ⚠️ 發現工作表"客戶案例"(alias: cases)
+     - 包含欄位:案例標題、客戶名稱
+     - 評估:缺少封面圖和詳情欄位,需補充
 
-  ❌ 未发现新闻相关工作表
-     - 评估:需新建"新闻资讯"工作表
+  ❌ 未發現新聞相關工作表
+     - 評估:需新建"新聞資訊"工作表
 ```
 
 **(3) 差距識別(只增不刪)**
@@ -1044,7 +1044,7 @@ AI 必須輸出一份清晰的評估結果摘要:
 
 **核心原則：**
 ```
-未经用户明确同意 = 禁止执行任何写操作（创建、修改、删除）
+未經使用者明確同意 = 禁止執行任何寫操作（建立、修改、刪除）
 ```
 
 ---
@@ -1142,17 +1142,17 @@ AskUserQuestion({
 **🚫 禁止 1：未確認即新增工作表**
 
 ```javascript
-// ❌ 严重错误：未经用户同意直接创建工作表
+// ❌ 嚴重錯誤：未經使用者同意直接建立工作表
 await mcp__hap_mcp____create_worksheet({
     name: '新闻资讯',
     fields: [...]
 })
-// 后果：用户应用中突然出现未知的工作表，可能影响现有业务流程
+// 後果：使用者應用中突然出現未知的工作表，可能影響現有業務流程
 ```
 
 ✅ **正確做法：先詢問，得到明確同意後再執行**
 ```javascript
-// 1. 先询问用户
+// 1. 先詢問使用者
 const answer = await AskUserQuestion({
     questions: [{
         question: "是否允许创建新的「新闻资讯」工作表？",
@@ -1165,14 +1165,14 @@ const answer = await AskUserQuestion({
     }]
 })
 
-// 2. 仅在用户明确同意后才执行
+// 2. 僅在使用者明確同意後才執行
 if (answer.includes('同意创建')) {
     await mcp__hap_mcp____create_worksheet({
         name: '新闻资讯',
         fields: [...]
     })
 } else {
-    // 用户拒绝，调整开发方案
+    // 使用者拒絕，調整開發方案
     console.log('用户拒绝创建新表，使用现有结构')
 }
 ```
@@ -1182,14 +1182,14 @@ if (answer.includes('同意创建')) {
 **🚫 禁止 2：未確認即新增欄位**
 
 ```javascript
-// ❌ 严重错误：未经用户同意直接添加字段
+// ❌ 嚴重錯誤：未經使用者同意直接新增欄位
 await mcp__hap_mcp____update_worksheet({
     worksheet_id: 'xxx',
     addFields: [
         { name: '封面图', type: 'Attachment' }
     ]
 })
-// 后果：现有工作表结构被修改，可能影响用户已有的视图、工作流、权限配置
+// 後果：現有工作表結構被修改，可能影響使用者已有的檢視、工作流、權限設定
 ```
 
 ✅ **正確做法：詳細說明擬新增的欄位，得到使用者同意**
@@ -1215,12 +1215,12 @@ if (answer.includes('同意')) {
 **🚫 禁止 3：未確認即寫入示例資料**
 
 ```javascript
-// ❌ 严重错误：未经用户同意直接写入数据
+// ❌ 嚴重錯誤：未經使用者同意直接寫入資料
 await mcp__hap_mcp____batch_create_records({
     worksheet_id: 'xxx',
     rows: [...]
 })
-// 后果：用户的生产数据中混入测试数据，可能导致数据混乱
+// 後果：使用者的生產資料中混入測試資料，可能導致資料混亂
 ```
 
 ✅ **正確做法：說明示例資料的用途和內容**
@@ -1246,23 +1246,23 @@ if (answer.includes('添加')) {
 **🚫 禁止 4：假設使用者意圖（最危險）**
 
 ```javascript
-// ❌ 严重错误：自作主张，假设用户需要
-// "用户说要做官网，肯定需要新闻表，我直接创建吧"
+// ❌ 嚴重錯誤：自作主張，假設使用者需要
+// "使用者說要做官網，肯定需要新聞表，我直接建立吧"
 await mcp__hap_mcp____create_worksheet({ name: '新闻资讯' })
-// 后果：用户可能已有新闻表，或不需要该功能，造成混乱
+// 後果：使用者可能已有新聞表，或不需要該功能，造成混亂
 ```
 
 ✅ **正確做法：讀取現有結構，分析需求，詢問使用者**
 ```javascript
-// 1. 读取应用结构
+// 1. 讀取應用結構
 const structure = await mcp__hap_mcp____get_app_worksheets_list()
 
-// 2. 判断是否需要新增
+// 2. 判斷是否需要新增
 if (!structure.includes('新闻')) {
-    // 3. 询问用户
+    // 3. 詢問使用者
     const answer = await AskUserQuestion({...})
 
-    // 4. 根据用户回答执行
+    // 4. 根據使用者回答執行
     if (answer.includes('同意')) {
         await mcp__hap_mcp____create_worksheet({...})
     }
@@ -1274,11 +1274,11 @@ if (!structure.includes('新闻')) {
 **🚫 禁止 5：批次操作前未確認**
 
 ```javascript
-// ❌ 严重错误：一次性创建多个表/字段/数据，未分别确认
+// ❌ 嚴重錯誤：一次性建立多個表/欄位/資料，未分別確認
 for (const table of ['产品', '案例', '新闻']) {
-    await mcp__hap_mcp____create_worksheet({ name: table })  // 未确认！
+    await mcp__hap_mcp____create_worksheet({ name: table })  // 未確認！
 }
-// 后果：用户可能只需要其中一部分，导致冗余表的创建
+// 後果：使用者可能只需要其中一部分，導致冗餘表的建立
 ```
 
 ✅ **正確做法：逐項確認或一次性展示完整計劃**
@@ -1320,7 +1320,7 @@ const answer = await AskUserQuestion({
 **執行示例:**
 
 ```javascript
-// 1. 用户确认后创建工作表
+// 1. 使用者確認後建立工作表
 if (userConfirmed) {
     const result = await mcp__hap_mcp____create_worksheet({
         name: '新闻资讯',
@@ -1335,14 +1335,14 @@ if (userConfirmed) {
         ai_description: '工作表:新闻资讯'
     });
 
-    // 2. 添加示例数据（必须包含图片）
+    // 2. 新增示例資料（必須包含圖片）
     await mcp__hap_mcp____batch_create_records({
         worksheet_id: result.worksheetId,
         rows: [
             {
                 fields: [
                     { id: '标题字段ID', value: '公司荣获年度最佳创新奖' },
-                    // 🔴 重要：附件字段必须填充完整的图片 URL
+                    // 🔴 重要：附件欄位必須填充完整的圖片 URL
                     { id: '封面图字段ID', value: [{
                         name: 'award.jpg',
                         url: 'https://你的图片URL/示例.png'
@@ -1352,7 +1352,7 @@ if (userConfirmed) {
                     { id: '是否发布字段ID', value: '1' }
                 ]
             },
-            // ... 至少 5 条示例数据，每条都必须包含图片
+            // ... 至少 5 條示例資料，每條都必須包含圖片
         ],
         ai_description: '工作表:新闻资讯'
     });
@@ -1367,58 +1367,58 @@ if (userConfirmed) {
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 阶段 1: 读取应用结构                                        │
+│ 階段 1: 讀取應用結構                                        │
 ├─────────────────────────────────────────────────────────────┤
-│ 1. 调用 get_app_worksheets_list 获取工作表列表             │
-│ 2. 调用 get_worksheet_structure 获取关键表的字段结构       │
-│ 3. 整理现有结构摘要                                         │
+│ 1. 呼叫 get_app_worksheets_list 取得工作表清單             │
+│ 2. 呼叫 get_worksheet_structure 取得關鍵表的欄位結構       │
+│ 3. 整理現有結構摘要                                         │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│ 阶段 2: 结构差距评估(分析阶段)                             │
+│ 階段 2: 結構差距評估(分析階段)                             │
 ├─────────────────────────────────────────────────────────────┤
-│ 1. 识别业务对象                                             │
-│ 2. 判断现有结构可复用性                                     │
-│ 3. 识别差距(完全满足/部分满足/不足)                         │
-│ 4. 输出评估报告                                             │
-│ 🚫 不执行任何新增操作                                       │
+│ 1. 識別業務物件                                             │
+│ 2. 判斷現有結構可複用性                                     │
+│ 3. 識別差距(完全滿足/部分滿足/不足)                         │
+│ 4. 輸出評估報告                                             │
+│ 🚫 不執行任何新增操作                                       │
 └─────────────────────────────────────────────────────────────┘
                             ↓
         ┌─────────────────────────────────┐
-        │ 结构完全满足?                   │
+        │ 結構完全滿足?                   │
         └─────────────────────────────────┘
                  /              \
                是                否
                 ↓                ↓
     ┌───────────────┐    ┌─────────────────────────┐
-    │ 直接开发前端   │    │ 阶段 3: 结构补齐决策    │
-    │ 使用现有结构   │    │ (用户确认阶段)          │
+    │ 直接開發前端   │    │ 階段 3: 結構補齊決策    │
+    │ 使用現有結構   │    │ (使用者確認階段)          │
     └───────────────┘    └─────────────────────────┘
                                     ↓
                          ┌───────────────────────┐
                          │ 使用 AskUserQuestion  │
-                         │ 列出建议操作          │
+                         │ 列出建議操作          │
                          │ - 新增工作表?         │
-                         │ - 补充字段?           │
-                         │ - 添加示例数据?       │
+                         │ - 補充欄位?           │
+                         │ - 新增示例資料?       │
                          └───────────────────────┘
                                     ↓
                          ┌───────────────────────┐
-                         │ 用户确认同意?         │
+                         │ 使用者確認同意?         │
                          └───────────────────────┘
                                  /        \
-                              同意        拒绝
+                              同意        拒絕
                                 ↓          ↓
                     ┌──────────────────┐  ┌────────────────┐
-                    │ 执行确认的操作   │  │ 使用现有结构   │
-                    │ 1. 创建工作表    │  │ 调整开发方案   │
-                    │ 2. 补充字段      │  │ 降低功能预期   │
-                    │ 3. 添加示例数据  │  └────────────────┘
+                    │ 執行確認的操作   │  │ 使用現有結構   │
+                    │ 1. 建立工作表    │  │ 調整開發方案   │
+                    │ 2. 補充欄位      │  │ 降低功能預期   │
+                    │ 3. 新增示例資料  │  └────────────────┘
                     └──────────────────┘
                                 ↓
                     ┌──────────────────┐
-                    │ 验证结构完整性   │
-                    │ 开始前端开发     │
+                    │ 驗證結構完整性   │
+                    │ 開始前端開發     │
                     └──────────────────┘
 ```
 
@@ -1507,7 +1507,7 @@ niio API V3 已經設定了 CORS 支援,可以直接從前端發起跨域請求�
 **示例 1: 基礎 CORS 請求**
 
 ```javascript
-// 直接从浏览器调用 HAP API
+// 直接從瀏覽器呼叫 niio API
 async function fetchHAPData() {
     const response = await fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/rows/list', {
         method: 'POST',
@@ -1980,7 +1980,7 @@ await filterPager.clearFilters();
        CONFIG.PRODUCT_FIELDS.NAME,
        CONFIG.PRODUCT_FIELDS.IMAGE,
        CONFIG.PRODUCT_FIELDS.PRICE
-   ]  // 只获取需要的字段
+   ]  // 只取得需要的欄位
    ```
 
 3. **啟用資料快取**
@@ -2020,22 +2020,22 @@ await filterPager.clearFilters();
 建立 `js/config.js`：
 
 ```javascript
-// HAP API 配置
+// niio API 設定
 const CONFIG = {
-    // HAP 应用公开 API V3 基础 URL
+    // niio 應用公開 API V3 基礎 URL
     API_BASE_URL: 'https://api.mingdao.com',
 
-    // HAP 应用认证信息（从 HAP 后台获取）
+    // niio 應用認證資訊（從 niio 後臺取得）
     HAP_APPKEY: '你的HAP_APPKEY',
     HAP_SIGN: '你的HAP_SIGN',
 
-    // 工作表 ID（从 HAP 后台或 MCP 获取）
+    // 工作表 ID（從 niio 後臺或 MCP 取得）
     WORKSHEETS: {
         PRODUCTS: '你的产品表ID',
         ORDERS: '你的订单表ID'
     },
 
-    // 字段 ID 映射（从 HAP 后台或 MCP 获取）
+    // 欄位 ID 對映（從 niio 後臺或 MCP 取得）
     PRODUCT_FIELDS: {
         NAME: '产品名称字段ID',
         IMAGE: '产品图片字段ID',
@@ -2100,7 +2100,7 @@ filter: {
 **示例 3：巢狀篩選**
 
 ```javascript
-// 筛选已上架且（价格>1000 或 推荐）的产品
+// 篩選已上架且（價格>1000 或 推薦）的產品
 filter: {
     type: 'group',
     logic: 'AND',
@@ -2166,7 +2166,7 @@ filter: {
 ### 6.2 表單提交
 
 ```javascript
-// 在 App 对象中添加表单处理方法
+// 在 App 物件中新增表單處理方法
 setupForm() {
     const form = document.getElementById('orderForm');
 
@@ -2222,14 +2222,14 @@ setupForm() {
 - 錯誤：~~`value[0].url`~~
 
 ```javascript
-// ❌ 错误示例
+// ❌ 錯誤示例
 if (value[0].url) {
-    return value[0].url;  // 这会失败！
+    return value[0].url;  // 這會失敗！
 }
 
-// ✅ 正确示例
+// ✅ 正確示例
 if (value[0].downloadUrl) {
-    return value[0].downloadUrl;  // 正确获取附件 URL
+    return value[0].downloadUrl;  // 正確取得附件 URL
 }
 ```
 
@@ -2240,7 +2240,7 @@ if (value[0].downloadUrl) {
 - 錯誤：~~`value.join(', ')`~~
 
 ```javascript
-// 实际返回数据
+// 實際回傳資料
 {
     "示例控件ID": [
         {
@@ -2250,13 +2250,13 @@ if (value[0].downloadUrl) {
     ]
 }
 
-// ❌ 错误解析
+// ❌ 錯誤解析
 const style = value.join(', ');
-// 结果: "[object Object]"
+// 結果: "[object Object]"
 
-// ✅ 正确解析
+// ✅ 正確解析
 const style = value.map(item => item.value).join(', ');
-// 结果: "美式风格"
+// 結果: "美式風格"
 ```
 
 #### 1.3 完整的欄位值解析函式
@@ -2284,15 +2284,15 @@ async loadPage(pageIndex) {
 ### 3. 排序
 
 ```javascript
-// 多字段排序
+// 多欄位排序
 sorts: [
     {
         field: CONFIG.PRODUCT_FIELDS.SORT,
-        isAsc: true  // 排序字段升序
+        isAsc: true  // 排序欄位升序
     },
     {
         field: CONFIG.PRODUCT_FIELDS.PRICE,
-        isAsc: false  // 价格降序
+        isAsc: false  // 價格降序
     }
 ]
 ```
@@ -2300,9 +2300,9 @@ sorts: [
 ### 4. 關鍵字搜尋
 
 ```javascript
-// 搜索产品名称包含"沙发"的记录
+// 搜尋產品名稱包含"沙發"的記錄
 const data = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
-    search: '沙发'  // 会在所有文本字段中搜索
+    search: '沙发'  // 會在所有文字欄位中搜尋
 });
 ```
 
@@ -2321,7 +2321,7 @@ async loadData() {
     } catch (error) {
         console.error('加载失败:', error);
 
-        // 友好的错误提示
+        // 友好的錯誤提示
         if (error.message.includes('401')) {
             alert('认证失败，请检查 API 密钥');
         } else if (error.message.includes('404')) {
@@ -2350,10 +2350,10 @@ function getThumbnail(imageUrl, width = 300) {
 ### 3. 資料快取
 
 ```javascript
-// 简单的内存缓存
+// 簡單的記憶體快取
 const DataCache = {
     cache: {},
-    ttl: 5 * 60 * 1000,  // 5分钟
+    ttl: 5 * 60 * 1000,  // 5分鐘
 
     set(key, data) {
         this.cache[key] = {
@@ -2366,7 +2366,7 @@ const DataCache = {
         const item = this.cache[key];
         if (!item) return null;
 
-        // 检查是否过期
+        // 檢查是否過期
         if (Date.now() - item.timestamp > this.ttl) {
             delete this.cache[key];
             return null;
@@ -2376,7 +2376,7 @@ const DataCache = {
     }
 };
 
-// 使用缓存
+// 使用快取
 async getProducts() {
     const cacheKey = 'products';
     const cached = DataCache.get(cacheKey);
@@ -2395,7 +2395,7 @@ async getProducts() {
 ### 4. 環境設定
 
 ```javascript
-// config.js 中区分环境
+// config.js 中區分環境
 const ENV = {
     development: {
         API_BASE_URL: 'https://api.mingdao.com',
@@ -2409,7 +2409,7 @@ const ENV = {
     }
 };
 
-// 根据域名判断环境
+// 根據域名判斷環境
 const isDev = window.location.hostname === 'localhost';
 const CONFIG = {
     ...(isDev ? ENV.development : ENV.production),
@@ -2420,7 +2420,7 @@ const CONFIG = {
 ### 5. 防抖與節流
 
 ```javascript
-// 搜索框防抖
+// 搜尋框防抖
 function debounce(func, wait) {
     let timeout;
     return function(...args) {
@@ -2454,7 +2454,7 @@ searchInput.addEventListener('input', debounce(async (e) => {
 
 **A:**
 ```javascript
-// 在 api.js 的 request 方法中添加日志
+// 在 api.js 的 request 方法中新增日誌
 async request(url, options = {}) {
     console.log('请求URL:', url);
     console.log('请求参数:', options);
@@ -2483,7 +2483,7 @@ async request(url, options = {}) {
 
 2. **API 查詢**：
    ```javascript
-   // 通过浏览器控制台调用
+   // 透過瀏覽器控制檯呼叫
    fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/structure', {
        headers: {
            'HAP-Appkey': 'xxx',
@@ -2531,7 +2531,7 @@ async request(url, options = {}) {
 export default async function handler(req, res) {
     const response = await fetch('https://api.mingdao.com/v3/...', {
         headers: {
-            'HAP-Appkey': process.env.HAP_APPKEY,  // 存储在环境变量
+            'HAP-Appkey': process.env.HAP_APPKEY,  // 儲存在環境變數
             'HAP-Sign': process.env.HAP_SIGN
         },
         body: JSON.stringify(req.body)
@@ -2549,12 +2549,12 @@ export default async function handler(req, res) {
 ```javascript
 const isPublished = API.getFieldValue(product, CONFIG.PRODUCT_FIELDS.PUBLISHED);
 
-// 判断是否选中
+// 判斷是否選中
 if (isPublished === '1') {
     console.log('已上架');
 }
 
-// 或转换为布尔值
+// 或轉換為布林值
 const published = isPublished === '1';
 ```
 
@@ -2563,7 +2563,7 @@ const published = isPublished === '1';
 **A:** niio API V3 不支援 WebSocket，可使用輪詢：
 
 ```javascript
-// 每 30 秒刷新一次数据
+// 每 30 秒重新整理一次資料
 setInterval(async () => {
     const data = await API.getProducts();
     this.renderProducts(data.rows);
@@ -2592,7 +2592,7 @@ niio API V3 回傳的欄位值格式因欄位型別而異。正確解析這些�
 #### 1.2 資料結構
 
 ```javascript
-// API 返回的附件字段数据
+// API 回傳的附件欄位資料
 {
     "fieldId": [
         {
@@ -2614,16 +2614,16 @@ niio API V3 回傳的欄位值格式因欄位型別而異。正確解析這些�
 #### 1.3 解析方法
 
 ```javascript
-// ✅ 正确：使用 downloadUrl
+// ✅ 正確：使用 downloadUrl
 const getAttachmentUrl = (row, fieldId) => {
     const attachments = row[fieldId];
     if (!Array.isArray(attachments) || attachments.length === 0) {
         return '';
     }
-    return attachments[0].downloadUrl;  // 获取第一个附件的下载链接
+    return attachments[0].downloadUrl;  // 取得第一個附件的下載連結
 };
 
-// 获取所有附件
+// 取得所有附件
 const getAllAttachments = (row, fieldId) => {
     const attachments = row[fieldId];
     if (!Array.isArray(attachments)) return [];
@@ -2636,7 +2636,7 @@ const getAllAttachments = (row, fieldId) => {
     }));
 };
 
-// ❌ 错误：使用 url（旧版本字段名）
+// ❌ 錯誤：使用 url（舊版本欄位名）
 const wrongUrl = attachments[0].url;  // undefined!
 ```
 
@@ -2692,7 +2692,7 @@ const renderProductCard = (product) => {
 #### 2.2 資料結構
 
 ```javascript
-// 单选字段返回数据
+// 單選欄位回傳資料
 {
     "styleField": [
         {
@@ -2702,7 +2702,7 @@ const renderProductCard = (product) => {
     ]
 }
 
-// 多选字段返回数据
+// 多選欄位回傳資料
 {
     "tagsField": [
         {
@@ -2724,13 +2724,13 @@ const renderProductCard = (product) => {
 #### 2.3 解析方法
 
 ```javascript
-// ✅ 正确：提取 value 属性
+// ✅ 正確：提取 value 屬性
 const getSingleSelectValue = (row, fieldId) => {
     const options = row[fieldId];
     if (!Array.isArray(options) || options.length === 0) {
         return '';
     }
-    return options[0].value;  // 单选只取第一个
+    return options[0].value;  // 單選只取第一個
 };
 
 const getMultiSelectValue = (row, fieldId) => {
@@ -2738,12 +2738,12 @@ const getMultiSelectValue = (row, fieldId) => {
     if (!Array.isArray(options) || options.length === 0) {
         return '';
     }
-    return options.map(opt => opt.value).join(', ');  // 多选用逗号连接
+    return options.map(opt => opt.value).join(', ');  // 多選用逗號連線
 };
 
-// ❌ 错误：直接 join 数组
+// ❌ 錯誤：直接 join 陣列
 const wrongValue = options.join(', ');
-// 结果: "[object Object], [object Object]"
+// 結果: "[object Object], [object Object]"
 ```
 
 #### 2.4 篩選查詢
@@ -2874,17 +2874,17 @@ const renderProductTags = (product) => {
 #### 3.2 資料結構
 
 ```javascript
-// 关联记录字段返回数据（实际示例）
+// 關聯記錄欄位回傳資料（實際示例）
 {
     "示例控件ID": [
         {
-            "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 关联记录的 ID
-            "name": "实木衣柜"  // 关联记录的标题字段值
+            "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 關聯記錄的 ID
+            "name": "实木衣柜"  // 關聯記錄的標題欄位值
         }
     ]
 }
 
-// 多个关联记录
+// 多個關聯記錄
 {
     "categoryField": [
         {
@@ -2909,7 +2909,7 @@ const renderProductTags = (product) => {
 #### 3.3 解析方法
 
 ```javascript
-// ✅ 正确：获取关联记录名称（基础用法）
+// ✅ 正確：取得關聯記錄名稱（基礎用法）
 const getRelationName = (row, fieldId) => {
     const relations = row[fieldId];
     if (!Array.isArray(relations) || relations.length === 0) {
@@ -2920,9 +2920,9 @@ const getRelationName = (row, fieldId) => {
 
 // 使用示例
 const productCategory = getRelationName(product, CONFIG.PRODUCT_FIELDS.CATEGORY);
-// 结果: "实木衣柜" 或 "客厅家具, 卧室家具"
+// 結果: "實木衣櫃" 或 "客廳傢俱, 臥室傢俱"
 
-// 获取关联记录 ID（用于进一步查询）
+// 取得關聯記錄 ID（用於進一步查詢）
 const getRelationIds = (row, fieldId) => {
     const relations = row[fieldId];
     if (!Array.isArray(relations)) return [];
@@ -2931,7 +2931,7 @@ const getRelationIds = (row, fieldId) => {
 
 // 使用示例
 const relatedIds = getRelationIds(product, CONFIG.PRODUCT_FIELDS.CATEGORY);
-// 结果: ["9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2"]
+// 結果: ["9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2"]
 ```
 
 #### 3.4 深度查詢關聯記錄
@@ -2939,29 +2939,29 @@ const relatedIds = getRelationIds(product, CONFIG.PRODUCT_FIELDS.CATEGORY);
 如果需要顯示關聯記錄的更多欄位資訊（不僅僅是 name），需要進行深度查詢：
 
 ```javascript
-// 方法 1: 通过记录 ID 查询完整信息
+// 方法 1: 透過記錄 ID 查詢完整資訊
 const getRelatedRecordDetails = async (relatedIds, relatedWorksheetId) => {
-    // 使用关联记录的 sid 查询完整数据
+    // 使用關聯記錄的 sid 查詢完整資料
     const data = await API.getRows(relatedWorksheetId, {
         filter: {
             type: 'group',
             logic: 'AND',
             children: [{
                 type: 'condition',
-                field: 'rowid',  // 系统字段 rowid
+                field: 'rowid',  // 系統欄位 rowid
                 operator: 'in',
-                value: relatedIds  // 传入 sid 数组
+                value: relatedIds  // 傳入 sid 陣列
             }]
         }
     });
     return data.rows;
 };
 
-// 使用示例：查询产品的完整分类信息
-const product = /* 从 API 获取的产品数据 */;
+// 使用示例：查詢產品的完整分類資訊
+const product = /* 從 API 取得的產品資料 */;
 const categoryIds = getRelationIds(product, CONFIG.PRODUCT_FIELDS.CATEGORY);
 
-// 假设分类表 ID 是 CONFIG.WORKSHEETS.CATEGORIES
+// 假設分類表 ID 是 CONFIG.WORKSHEETS.CATEGORIES
 const categoryDetails = await getRelatedRecordDetails(
     categoryIds,
     CONFIG.WORKSHEETS.CATEGORIES
@@ -2971,8 +2971,8 @@ console.log(categoryDetails);
 // [
 //     {
 //         rowid: "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",
-//         name: "实木衣柜",
-//         description: "高品质实木材质",
+//         name: "實木衣櫃",
+//         description: "高品質實木材質",
 //         image: "https://...",
 //         sort: 1
 //     }
@@ -2984,7 +2984,7 @@ console.log(categoryDetails);
 在篩選查詢中使用關聯記錄：
 
 ```javascript
-// 筛选指定分类的产品
+// 篩選指定分類的產品
 const filterByCategory = async (categoryId) => {
     const data = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
         filter: {
@@ -2993,8 +2993,8 @@ const filterByCategory = async (categoryId) => {
             children: [{
                 type: 'condition',
                 field: CONFIG.PRODUCT_FIELDS.CATEGORY,
-                operator: 'contains',  // 关联字段用 contains
-                value: [categoryId]  // 传入关联记录的 sid
+                operator: 'contains',  // 關聯欄位用 contains
+                value: [categoryId]  // 傳入關聯記錄的 sid
             }]
         }
     });
@@ -3018,16 +3018,16 @@ const furnitureProducts = await filterByCategory('9dd9272b-e7e5-40d5-8a6d-d2403d
 #### 4.2 資料格式
 
 ```javascript
-// 日期字段
+// 日期欄位
 "2024-12-01"
 
-// 日期时间字段
+// 日期時間欄位
 "2024-12-01 14:30:00"
 
-// 时间字段
+// 時間欄位
 "14:30"
 
-// 有时返回时间戳（毫秒）
+// 有時回傳時間戳（毫秒）
 1733049600000
 ```
 
@@ -3135,7 +3135,7 @@ const renderCollaborators = (row, fieldId) => {
 #### 6.2 解析方法
 
 ```javascript
-// 转换为布尔值
+// 轉換為布林值
 const isChecked = (row, fieldId) => {
     return row[fieldId] === '1';
 };
@@ -3146,12 +3146,12 @@ if (published) {
     console.log('产品已上架');
 }
 
-// 在筛选中使用
+// 在篩選中使用
 filter: {
     type: 'condition',
     field: CONFIG.PRODUCT_FIELDS.PUBLISHED,
     operator: 'eq',
-    value: ['1']  // 选中
+    value: ['1']  // 選中
 }
 ```
 
@@ -3166,10 +3166,10 @@ filter: {
 #### 7.2 資料格式
 
 ```javascript
-// 返回地区编码
+// 回傳地區編碼
 "310100"  // 上海市
 
-// 或返回对象
+// 或回傳物件
 {
     "code": "310100",
     "name": "上海市/市辖区"
@@ -3179,7 +3179,7 @@ filter: {
 #### 7.3 解析方法
 
 ```javascript
-// 获取地区名称
+// 取得地區名稱
 const getRegionName = (row, fieldId) => {
     const region = row[fieldId];
     if (!region) return '';
@@ -3188,7 +3188,7 @@ const getRegionName = (row, fieldId) => {
         return region.name;
     }
 
-    // 如果只返回编码，需要查询地区信息
+    // 如果只回傳編碼，需要查詢地區資訊
     return region;
 };
 ```
@@ -3356,10 +3356,10 @@ const tags = getFieldValue(product, CONFIG.PRODUCT_FIELDS.TAGS, {
 const API = {
     // ... 其他方法
 
-    // 通用字段值获取
-    getFieldValue: getFieldValue,  // 使用上面的完整函数
+    // 通用欄位值取得
+    getFieldValue: getFieldValue,  // 使用上面的完整函式
 
-    // 特定类型快捷方法
+    // 特定型別快捷方法
     getImageUrl: (row, fieldId, width = 300) => {
         return getFieldValue(row, fieldId, { imageWidth: width });
     },
@@ -3423,7 +3423,7 @@ const safeGetFieldValue = (row, fieldId, defaultValue = '') => {
 #### 10.4 效能最佳化
 
 ```javascript
-// 批量解析字段（避免重复调用）
+// 批次解析欄位（避免重複呼叫）
 const parseRecord = (row, fieldConfig) => {
     const result = {};
     for (const [key, fieldId] of Object.entries(fieldConfig)) {
@@ -3442,10 +3442,10 @@ const productData = parseRecord(product, {
 
 console.log(productData);
 // {
-//     name: "实木沙发",
+//     name: "實木沙發",
 //     image: "https://...",
 //     price: 5999,
-//     category: "客厅家具"
+//     category: "客廳傢俱"
 // }
 ```
 
@@ -3456,42 +3456,42 @@ console.log(productData);
 #### 問題 1: 圖片不顯示
 
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 const image = row[fieldId][0].url;  // url 不存在
 
-// ✅ 正确
+// ✅ 正確
 const image = row[fieldId][0].downloadUrl;
 ```
 
 #### 問題 2: 選項顯示 [object Object]
 
 ```javascript
-// ❌ 错误
+// ❌ 錯誤
 const category = row[fieldId].join(', ');
 
-// ✅ 正确
+// ✅ 正確
 const category = row[fieldId].map(opt => opt.value).join(', ');
 ```
 
 #### 問題 3: 檢查框判斷錯誤
 
 ```javascript
-// ❌ 错误（字符串 "0" 在 JS 中是 truthy）
+// ❌ 錯誤（字串 "0" 在 JS 中是 truthy）
 if (row[fieldId]) { ... }
 
-// ✅ 正确
+// ✅ 正確
 if (row[fieldId] === '1') { ... }
 ```
 
 #### 問題 4: 日期格式不統一
 
 ```javascript
-// ✅ 统一处理
+// ✅ 統一處理
 const formatDate = (value) => {
     if (typeof value === 'number') {
         return new Date(value).toLocaleDateString('zh-CN');
     }
-    return value.split(' ')[0];  // 去除时间部分
+    return value.split(' ')[0];  // 去除時間部分
 };
 ```
 
@@ -3568,7 +3568,7 @@ const formatDate = (value) => {
 ### B. 常用過濾器示例
 
 ```javascript
-// 1. 文本包含
+// 1. 文字包含
 {
     type: 'condition',
     field: 'fieldId',
@@ -3576,7 +3576,7 @@ const formatDate = (value) => {
     value: ['关键词']
 }
 
-// 2. 数值范围
+// 2. 數值範圍
 {
     type: 'condition',
     field: 'fieldId',
@@ -3584,7 +3584,7 @@ const formatDate = (value) => {
     value: ['1000', '5000']
 }
 
-// 3. 日期范围
+// 3. 日期範圍
 {
     type: 'condition',
     field: 'fieldId',
@@ -3592,7 +3592,7 @@ const formatDate = (value) => {
     value: ['2024-01-01', '2024-12-31']
 }
 
-// 4. 多选包含某项
+// 4. 多選包含某項
 {
     type: 'condition',
     field: 'fieldId',
@@ -3600,12 +3600,12 @@ const formatDate = (value) => {
     value: ['选项1']
 }
 
-// 5. 字段不为空
+// 5. 欄位不為空
 {
     type: 'condition',
     field: 'fieldId',
     operator: 'isnotempty',
-    value: []  // 空数组
+    value: []  // 空陣列
 }
 ```
 
@@ -3641,7 +3641,7 @@ const formatDate = (value) => {
 niio API V3 原生支援 CORS,前端可直接呼叫:
 
 ```javascript
-// 核心配置
+// 核心設定
 headers: {
     'HAP-Appkey': 'your_appkey',
     'HAP-Sign': 'your_sign',
@@ -3676,11 +3676,11 @@ headers: {
 niio 使用巢狀結構的篩選器:
 
 ```javascript
-// 基础结构
+// 基礎結構
 filter: {
-    type: 'group',      // 组
-    logic: 'AND',       // 逻辑关系
-    children: [         // 子条件
+    type: 'group',      // 組
+    logic: 'AND',       // 邏輯關係
+    children: [         // 子條件
         {
             type: 'condition',
             field: '字段ID',
@@ -3702,14 +3702,14 @@ filter: {
 
 ```
 my-website/
-├── index.html          # 主页面
+├── index.html          # 主頁面
 ├── css/
-│   └── style.css       # 样式文件
+│   └── style.css       # 樣式檔案
 ├── js/
-│   ├── config.js       # HAP 配置(Appkey、Sign、字段映射)
-│   ├── api.js          # API 封装(请求、分页、筛选)
-│   └── main.js         # 应用逻辑(渲染、事件处理)
-└── images/             # 图片资源
+│   ├── config.js       # niio 設定(Appkey、Sign、欄位對映)
+│   ├── api.js          # API 封裝(請求、分頁、篩選)
+│   └── main.js         # 應用邏輯(渲染、事件處理)
+└── images/             # 圖片資源
 ```
 
 **關鍵原則:**
@@ -3720,20 +3720,20 @@ my-website/
 #### 2. 錯誤處理
 
 ```javascript
-// 完善的错误处理机制
+// 完善的錯誤處理機制
 try {
     const data = await API.getProducts();
     renderProducts(data);
 } catch (error) {
-    // 认证错误
+    // 認證錯誤
     if (error.message.includes('401')) {
         alert('API 密钥错误,请检查配置');
     }
-    // 网络错误
+    // 網路錯誤
     else if (error.message.includes('Network')) {
         alert('网络连接失败,请检查网络');
     }
-    // 其他错误
+    // 其他錯誤
     else {
         alert('加载失败,请刷新重试');
     }
@@ -3752,16 +3752,16 @@ try {
 
 **開發環境:**
 ```javascript
-// 可直接在前端配置
+// 可直接在前端設定
 HAP_APPKEY: 'dev_key',
 HAP_SIGN: 'dev_sign'
 ```
 
 **生產環境(推薦):**
 ```javascript
-// 方案 1: 使用后端代理
-// 前端 → 自己的后端 → HAP API
-// 密钥存储在服务器环境变量
+// 方案 1: 使用後端代理
+// 前端 → 自己的後端 → niio API
+// 金鑰儲存在伺服器環境變數
 
 // 方案 2: Serverless Functions (Vercel/Netlify)
 // api/hap.js
@@ -3826,7 +3826,7 @@ const thumbnailUrl = `${imageUrl}?imageView2/2/w/300`;
 
 **方案 1: 輪詢**
 ```javascript
-// 每 30 秒刷新一次
+// 每 30 秒重新整理一次
 setInterval(async () => {
     const data = await API.getProducts();
     renderProducts(data);

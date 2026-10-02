@@ -74,31 +74,31 @@
 ### 1. 選項欄位篩選必須使用 key（UUID）
 
 ```javascript
-// ❌ 错误
-value: ["成交客户"]  // 显示文本
+// ❌ 錯誤
+value: ["成交客户"]  // 顯示文字
 
-// ✅ 正确
-value: ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 选项key
+// ✅ 正確
+value: ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 選項key
 ```
 
 ### 2. 數值欄位篩選 value 必須是字串陣列
 
 ```javascript
-// ❌ 错误
-value: [1000000]  // 数字类型
+// ❌ 錯誤
+value: [1000000]  // 數字型別
 
-// ✅ 正确
-value: ["1000000"]  // 字符串数组
+// ✅ 正確
+value: ["1000000"]  // 字串陣列
 ```
 
 ### 3. 關聯欄位使用 in 或 eq 運算子
 
 ```javascript
-// ❌ 错误
-operator: "belongsto"  // V3 API 无 belongsto 运算符
+// ❌ 錯誤
+operator: "belongsto"  // V3 API 無 belongsto 運算子
 
-// ✅ 正确
-operator: "in"  // 关联字段用 in（多值）或 eq（单值），value 为 rowid 数组
+// ✅ 正確
+operator: "in"  // 關聯欄位用 in（多值）或 eq（單值），value 為 rowid 陣列
 ```
 
 ### 4. triggerWorkflow 參數
@@ -110,10 +110,10 @@ operator: "in"  // 关联字段用 in（多值）或 eq（单值），value 为 
 
 ```
 hap-apiv3-data/
-├── SKILL.md                          # 技能主文档
-├── README.md                          # 本文件
+├── SKILL.md                          # 技能主文件
+├── README.md                          # 本檔案
 └── references/
-    └── hap-api-usage-guide.md         # HAP V3 API 使用规范完整指南
+    └── hap-api-usage-guide.md         # niio V3 API 使用規範完整指南
 ```
 
 ## 參考資源

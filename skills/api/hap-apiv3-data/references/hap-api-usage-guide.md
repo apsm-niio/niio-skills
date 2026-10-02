@@ -129,15 +129,15 @@
 ### 0.1 niio V3 API 整體架構
 
 ```
-明道云组织
-  └── 应用 (Application)
+niio組織
+  └── 應用 (Application)
        ├── 角色 (Role)
        ├── 工作流 (Workflow)
-       ├── 工作表分组 (Section)
+       ├── 工作表分組 (Section)
        └── 工作表 (Worksheet)
-            ├── 字段 (Field/Control)
-            ├── 视图 (View)
-            └── 记录 (Row/Record)
+            ├── 欄位 (Field/Control)
+            ├── 檢視 (View)
+            └── 記錄 (Row/Record)
 ```
 
 ---
@@ -182,7 +182,7 @@ const headers = {
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer 你的access_token',
-  'HAP-Appid': '应用ID'   // 应用级接口必填
+  'HAP-Appid': '应用ID'   // 應用級介面必填
 };
 ```
 
@@ -485,16 +485,16 @@ DELETE /v3/app/worksheets/{worksheet_id}/rows/batch
 #### **初始化階段的建議步驟**
 
 ```javascript
-// 1. 获取应用结构
+// 1. 取得應用結構
 const appInfo = await getAppInfo();
 
-// 2. 获取所有工作表结构
+// 2. 取得所有工作表結構
 const worksheets = {};
 for (const ws of appInfo.worksheets) {
   worksheets[ws.alias] = await getWorksheetStructure(ws.worksheet_id);
 }
 
-// 3. 建立选项字段映射
+// 3. 建立選項欄位對映
 const optionMaps = {};
 for (const [alias, structure] of Object.entries(worksheets)) {
   optionMaps[alias] = {};
@@ -508,7 +508,7 @@ for (const [alias, structure] of Object.entries(worksheets)) {
   });
 }
 
-// 4. 缓存字段ID映射
+// 4. 快取欄位ID對映
 const fieldMaps = {};
 for (const [alias, structure] of Object.entries(worksheets)) {
   fieldMaps[alias] = {};
@@ -1029,16 +1029,16 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 1. **正常業務操作**
 ```javascript
-// 创建销售机会,触发自动分配负责人工作流
+// 建立銷售機會,觸發自動分配負責人工作流
 await createRecord({
   fields: [...],
-  triggerWorkflow: true  // 触发工作流
+  triggerWorkflow: true  // 觸發工作流
 });
 ```
 
 2. **使用者提交表單**
 ```javascript
-// 客户提交订单,触发通知和审批流程
+// 客戶提交訂單,觸發通知和審批流程
 await createRecord({
   fields: orderData,
   triggerWorkflow: true
@@ -1047,10 +1047,10 @@ await createRecord({
 
 3. **需要自動化處理的操作**
 ```javascript
-// 更新客户状态,触发客户跟进提醒
+// 更新客戶狀態,觸發客戶跟進提醒
 await updateRecord(worksheetId, rowId, {
   fields: [{id: "status", value: ["已成交"]}],
-  triggerWorkflow: true  // 触发跟进工作流
+  triggerWorkflow: true  // 觸發跟進工作流
 });
 ```
 
@@ -1058,41 +1058,41 @@ await updateRecord(worksheetId, rowId, {
 
 1. **資料遷移和匯入**
 ```javascript
-// 从旧系统迁移数据,不需要触发通知
+// 從舊系統遷移資料,不需要觸發通知
 await batchCreateRecords({
   rows: migratedData,
-  triggerWorkflow: false  // 避免大量工作流执行
+  triggerWorkflow: false  // 避免大量工作流執行
 });
 ```
 
 2. **批次資料初始化**
 ```javascript
-// 初始化测试数据
+// 初始化測試資料
 await batchCreateRecords({
   rows: testData,
-  triggerWorkflow: false  // 不触发工作流
+  triggerWorkflow: false  // 不觸發工作流
 });
 ```
 
 3. **定時同步任務**
 ```javascript
-// 定时从外部系统同步数据
+// 定時從外部系統同步資料
 async function syncExternalData() {
   const externalData = await fetchFromExternalSystem();
 
   await batchCreateRecords({
     rows: externalData,
-    triggerWorkflow: false  // 避免重复触发工作流
+    triggerWorkflow: false  // 避免重複觸發工作流
   });
 }
 ```
 
 4. **測試和除錯**
 ```javascript
-// 测试数据写入逻辑
+// 測試資料寫入邏輯
 await createRecord({
   fields: testFields,
-  triggerWorkflow: false  // 测试时不触发工作流
+  triggerWorkflow: false  // 測試時不觸發工作流
 });
 ```
 
@@ -1105,27 +1105,27 @@ await createRecord({
 **批次操作時的注意事項**:
 
 ```javascript
-// ❌ 错误: 批量操作时触发大量工作流可能导致超时
+// ❌ 錯誤: 批次操作時觸發大量工作流可能導致超時
 await batchCreateRecords({
-  rows: Array(1000).fill({...}),  // 1000条记录
-  triggerWorkflow: true  // 会触发1000次工作流!
+  rows: Array(1000).fill({...}),  // 1000條記錄
+  triggerWorkflow: true  // 會觸發1000次工作流!
 });
 
-// ✅ 正确: 分批处理,或关闭工作流触发
-// 方案1: 关闭工作流
+// ✅ 正確: 分批處理,或關閉工作流觸發
+// 方案1: 關閉工作流
 await batchCreateRecords({
   rows: records,
   triggerWorkflow: false
 });
 
-// 方案2: 分批处理,控制并发
+// 方案2: 分批處理,控制併發
 for (let i = 0; i < records.length; i += 50) {
   const batch = records.slice(i, i + 50);
   await batchCreateRecords({
     rows: batch,
     triggerWorkflow: true
   });
-  await sleep(2000);  // 批次间延迟
+  await sleep(2000);  // 批次間延遲
 }
 ```
 
@@ -1139,11 +1139,11 @@ async function createRecordWithWorkflow(fields) {
       triggerWorkflow: true
     });
 
-    // API成功不代表工作流执行成功
-    // 工作流异常不会影响记录创建
+    // API成功不代表工作流執行成功
+    // 工作流異常不會影響記錄建立
     console.log('记录创建成功:', result.row_id);
 
-    // 如需确认工作流执行结果,需查看工作流执行日志
+    // 如需確認工作流執行結果,需檢視工作流執行日誌
 
   } catch (error) {
     console.error('记录创建失败:', error);
@@ -1174,15 +1174,15 @@ async function createRecordWithWorkflow(fields) {
 **最佳實踐**:
 
 ```javascript
-// 封装记录创建函数,根据场景决定是否触发工作流
+// 封裝記錄建立函式,根據場景決定是否觸發工作流
 async function smartCreateRecord(fields, options = {}) {
   const {
-    isMigration = false,     // 是否为数据迁移
-    isBatch = false,          // 是否为批量操作
-    isTest = false            // 是否为测试
+    isMigration = false,     // 是否為資料遷移
+    isBatch = false,          // 是否為批次操作
+    isTest = false            // 是否為測試
   } = options;
 
-  // 自动判断是否触发工作流
+  // 自動判斷是否觸發工作流
   const triggerWorkflow = !(isMigration || (isBatch && fields.length > 50) || isTest);
 
   return await createRecord({
@@ -1192,9 +1192,9 @@ async function smartCreateRecord(fields, options = {}) {
 }
 
 // 使用示例
-await smartCreateRecord(fields, { isMigration: true });  // 迁移数据,不触发
-await smartCreateRecord(fields, { isBatch: true });       // 批量操作,自动判断
-await smartCreateRecord(fields);                          // 正常操作,触发工作流
+await smartCreateRecord(fields, { isMigration: true });  // 遷移資料,不觸發
+await smartCreateRecord(fields, { isBatch: true });       // 批次操作,自動判斷
+await smartCreateRecord(fields);                          // 正常操作,觸發工作流
 ```
 
 ---
@@ -1372,7 +1372,7 @@ POST /v3/users/lookup
   "name": "张三"  // 精确匹配姓名
 }
 
-# 返回
+# 回傳
 {
   "accountId": "user-account-id-123",
   "fullname": "张三",
@@ -1438,7 +1438,7 @@ POST /v3/departments/lookup
   "name": "销售部"  // 精确匹配部门名称
 }
 
-# 返回
+# 回傳
 {
   "success": true,
   "data": {
@@ -1454,7 +1454,7 @@ POST /v3/departments/lookup
 ```bash
 GET /v3/departments
 
-# 返回组织架构树
+# 回傳組織架構樹
 {
   "success": true,
   "data": [
@@ -1533,11 +1533,11 @@ GET /v3/departments
 
 **使用示例**:
 ```javascript
-// 1. 查找部门ID
+// 1. 查詢部門ID
 const dept = await findDepartment({ name: "销售部" });
 const deptId = dept.data.departmentId;
 
-// 2. 创建记录时设置部门
+// 2. 建立記錄時設定部門
 await createRecord({
   fields: [
     {
@@ -1547,7 +1547,7 @@ await createRecord({
   ]
 });
 
-// 3. 筛选某个部门的记录
+// 3. 篩選某個部門的記錄
 const records = await queryRecords({
   filter: {
     type: "group",
@@ -1595,7 +1595,7 @@ POST /v3/regions
   "search": "上海"
 }
 
-# 返回匹配的地区列表
+# 回傳匹配的地區清單
 {
   "success": true,
   "data": [
@@ -1622,7 +1622,7 @@ POST /v3/regions
   "id": "310000"  // 上海市的ID
 }
 
-# 返回上海市下的所有区县
+# 回傳上海市下的所有區縣
 {
   "success": true,
   "data": [
@@ -1713,11 +1713,11 @@ POST /v3/regions
 
 **使用示例**:
 ```javascript
-// 1. 搜索地区编码
+// 1. 搜尋地區編碼
 const regions = await getRegions({ search: "上海" });
 const regionCode = regions.data[0].id;  // "310000"
 
-// 2. 创建记录时设置地区
+// 2. 建立記錄時設定地區
 await createRecord({
   fields: [
     {
@@ -1727,7 +1727,7 @@ await createRecord({
   ]
 });
 
-// 3. 筛选某个地区的记录
+// 3. 篩選某個地區的記錄
 const records = await queryRecords({
   filter: {
     type: "group",
@@ -1741,11 +1741,11 @@ const records = await queryRecords({
   }
 });
 
-// 4. 按省统计客户分布
+// 4. 按省統計客戶分佈
 const pivotData = await getPivotData({
   rows: [{
     field: "region",
-    granularity: 1  // 按省统计
+    granularity: 1  // 按省統計
   }],
   values: [{
     field: "rowid",
@@ -1756,23 +1756,23 @@ const pivotData = await getPivotData({
 
 **地區資料層級結構示例**:
 ```
-中国
-  ├── 北京市 (110000) - 直辖市
-  │    └── 市辖区 (110100)
-  │         ├── 东城区 (110101)
-  │         ├── 西城区 (110102)
+中國
+  ├── 北京市 (110000) - 直轄市
+  │    └── 市轄區 (110100)
+  │         ├── 東城區 (110101)
+  │         ├── 西城區 (110102)
   │         └── ...
-  ├── 上海市 (310000) - 直辖市
-  │    └── 市辖区 (310100)
-  │         ├── 黄浦区 (310101)
-  │         ├── 徐汇区 (310104)
+  ├── 上海市 (310000) - 直轄市
+  │    └── 市轄區 (310100)
+  │         ├── 黃浦區 (310101)
+  │         ├── 徐彙區 (310104)
   │         └── ...
-  └── 广东省 (440000) - 省
-       ├── 广州市 (440100)
-       │    ├── 越秀区 (440103)
+  └── 廣東省 (440000) - 省
+       ├── 廣州市 (440100)
+       │    ├── 越秀區 (440103)
        │    └── ...
        ├── 深圳市 (440300)
-       │    ├── 罗湖区 (440303)
+       │    ├── 羅湖區 (440303)
        │    └── ...
        └── ...
 ```
@@ -1840,7 +1840,7 @@ const pivotData = await getPivotData({
 ```bash
 POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 
-# 返回完整关联记录详情
+# 回傳完整關聯記錄詳情
 {
   "data": {
     "rows": [
@@ -2171,7 +2171,7 @@ async function batchCreateRecords(allData, batchSize = 100) {
 
 **需要差異化更新時的解決方案**:
 ```javascript
-// 方案1: 单独更新每条记录
+// 方案1: 單獨更新每條記錄
 async function updateRecordsWithDifferentValues(updates) {
   const promises = updates.map(({rowId, fields}) =>
     updateRecord(worksheetId, rowId, { fields })
@@ -2290,22 +2290,22 @@ async function safeDeleteRecords(rowIds, options = {}) {
 
 ```javascript
 const BATCH_CONFIG = {
-  // 基础配置
-  CREATE_BATCH_SIZE: 100,      // 创建批次大小
+  // 基礎設定
+  CREATE_BATCH_SIZE: 100,      // 建立批次大小
   UPDATE_BATCH_SIZE: 100,      // 更新批次大小
-  DELETE_BATCH_SIZE: 100,      // 删除批次大小
+  DELETE_BATCH_SIZE: 100,      // 刪除批次大小
 
-  // 特殊场景配置
-  WITH_RELATION_SIZE: 50,      // 包含关联字段时
-  WITH_ATTACHMENT_SIZE: 20,    // 包含附件时
+  // 特殊場景設定
+  WITH_RELATION_SIZE: 50,      // 包含關聯欄位時
+  WITH_ATTACHMENT_SIZE: 20,    // 包含附件時
 
-  // 延迟配置
-  BATCH_DELAY: 1000,           // 批次间延迟(毫秒)
-  LARGE_BATCH_DELAY: 2000,     // 大批次延迟(>500条时)
+  // 延遲設定
+  BATCH_DELAY: 1000,           // 批次間延遲(毫秒)
+  LARGE_BATCH_DELAY: 2000,     // 大批次延遲(>500條時)
 
-  // 重试配置
-  MAX_RETRIES: 3,              // 最大重试次数
-  RETRY_DELAY: 3000            // 重试延迟
+  // 重試設定
+  MAX_RETRIES: 3,              // 最大重試次數
+  RETRY_DELAY: 3000            // 重試延遲
 };
 ```
 
@@ -2316,7 +2316,7 @@ const BATCH_CONFIG = {
 function calculateBatchSize(records) {
   let batchSize = BATCH_CONFIG.CREATE_BATCH_SIZE;
 
-  // 检查是否包含关联字段
+  // 檢查是否包含關聯欄位
   const hasRelation = records.some(r =>
     r.fields.some(f => f.type === 'Relation')
   );
@@ -2324,7 +2324,7 @@ function calculateBatchSize(records) {
     batchSize = Math.min(batchSize, BATCH_CONFIG.WITH_RELATION_SIZE);
   }
 
-  // 检查是否包含附件
+  // 檢查是否包含附件
   const hasAttachment = records.some(r =>
     r.fields.some(f => f.type === 'Attachment')
   );
@@ -2352,7 +2352,7 @@ async function batchProcessWithConcurrency(items, batchSize, maxConcurrency = 3)
     );
     results.push(...batchResults);
 
-    // 并发批次之间也要有延迟
+    // 併發批次之間也要有延遲
     if (i + maxConcurrency < batches.length) {
       await sleep(BATCH_CONFIG.BATCH_DELAY);
     }
@@ -2605,14 +2605,14 @@ async function retryOneByOne(records) {
 Filter = {
   type: 'group' | 'condition';
 
-  // type='group' 时的字段
+  // type='group' 時的欄位
   logic?: 'AND' | 'OR';
-  children?: Filter[];  // 子条件,最多两层嵌套
+  children?: Filter[];  // 子條件,最多兩層巢狀
 
-  // type='condition' 时的字段
-  field?: string;       // 字段ID或别名
-  operator?: string;    // 操作符
-  value?: any[];        // 值数组
+  // type='condition' 時的欄位
+  field?: string;       // 欄位ID或別名
+  operator?: string;    // 運算子
+  value?: any[];        // 值陣列
 }
 ```
 
@@ -2739,7 +2739,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/list
   "pageSize": 1
 }
 
-# 返回数据中包含选项key
+# 回傳資料中包含選項key
 {
   "customer_type": [
     {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客户"}
@@ -2751,7 +2751,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/list
 ```bash
 GET /v3/app/worksheets/{worksheet_id}
 
-# 返回字段定义,包含options的key
+# 回傳欄位定義,包含options的key
 {
   "fields": [
     {
@@ -3481,7 +3481,7 @@ POST /v3/app/worksheets/你的worksheetID/rows/list
   "pageSize": 1
 }
 
-# 返回
+# 回傳
 {
   "data": {
     "rows": [
@@ -3512,7 +3512,7 @@ POST /v3/app/worksheets/你的worksheetID2/rows
 ```bash
 GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
 
-# 返回
+# 回傳
 {
   "related_customer": [
     {
@@ -3533,10 +3533,10 @@ GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
 
 ```javascript
 {
-  "示例控件ID": [  // 关联字段ID
+  "示例控件ID": [  // 關聯欄位ID
     {
-      "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 关联记录的ID (等同于 rowid)
-      "name": "实木衣柜"  // 关联记录的标题字段值
+      "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 關聯記錄的ID (等同於 rowid)
+      "name": "实木衣柜"  // 關聯記錄的標題欄位值
     }
   ]
 }
@@ -3567,7 +3567,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
   "isReturnSystemFields": false
 }
 
-# 返回完整关联记录详情
+# 回傳完整關聯記錄詳情
 {
   "data": {
     "rows": [
@@ -3596,7 +3596,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 ```bash
 GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
 
-# 返回
+# 回傳
 {
   "related_customer": [
     {
@@ -3628,7 +3628,7 @@ POST /v3/app/worksheets/你的worksheetID/rows/list
   }
 }
 
-# 返回完整数据
+# 回傳完整資料
 {
   "data": {
     "rows": [
@@ -3657,15 +3657,15 @@ POST /v3/app/worksheets/你的worksheetID/rows/list
 **解決方案**: 批次收集所有分類 ID,一次性查詢所有分類
 
 ```javascript
-// Step 1: 获取产品列表
+// Step 1: 取得產品清單
 const products = await getRows('products-worksheet-id', {
   pageSize: 100
 });
 
-// Step 2: 收集所有产品的分类 ID (使用 Set 自动去重)
+// Step 2: 收集所有產品的分類 ID (使用 Set 自動去重)
 const categoryIds = new Set();
 products.rows.forEach(product => {
-  const categories = product['category_field_id'];  // 关联字段
+  const categories = product['category_field_id'];  // 關聯欄位
   if (Array.isArray(categories)) {
     categories.forEach(cat => {
       categoryIds.add(cat.sid);  // 收集 sid
@@ -3673,7 +3673,7 @@ products.rows.forEach(product => {
   }
 });
 
-// Step 3: 批量查询所有分类的完整数据 (1次请求!)
+// Step 3: 批次查詢所有分類的完整資料 (1次請求!)
 const categoriesData = await getRows('categories-worksheet-id', {
   filter: {
     type: 'group',
@@ -3682,18 +3682,18 @@ const categoriesData = await getRows('categories-worksheet-id', {
       type: 'condition',
       field: 'rowid',
       operator: 'in',
-      value: Array.from(categoryIds)  // 传入所有 sid 数组
+      value: Array.from(categoryIds)  // 傳入所有 sid 陣列
     }]
   }
 });
 
-// Step 4: 建立分类 ID → 分类数据的映射 (O(1) 查找)
+// Step 4: 建立分類 ID → 分類資料的對映 (O(1) 查詢)
 const categoryMap = {};
 categoriesData.rows.forEach(cat => {
   categoryMap[cat.rowid] = cat;
 });
 
-// Step 5: 渲染产品列表,直接从 map 中取分类数据
+// Step 5: 渲染產品清單,直接從 map 中取分類資料
 products.rows.forEach(product => {
   const categories = product['category_field_id'];
   const categoryData = categoryMap[categories[0].sid];
@@ -3752,11 +3752,11 @@ products.rows.forEach(product => {
 
 **多條關聯追加**: 需要先讀取原有ID,再合併
 ```bash
-# Step 1: 读取原有关联
+# Step 1: 讀取原有關聯
 GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}
-# 返回: {"related_projects": ["id1", "id2"]}
+# 回傳: {"related_projects": ["id1", "id2"]}
 
-# Step 2: 合并新ID并更新
+# Step 2: 合併新ID並更新
 POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
 {
   "fields": [
@@ -3779,18 +3779,18 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
 
 **關鍵理解**:
 ```javascript
-// 读取产品记录
+// 讀取產品記錄
 {
   "category_field": [
     {
-      "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 用于查询
-      "name": "实木衣柜"  // 用于显示
+      "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 用於查詢
+      "name": "实木衣柜"  // 用於顯示
     }
   ]
 }
 
-// 如果需要获取分类的图标、描述等其他信息,必须使用 sid 查询
-// sid === 目标表中的 rowid
+// 如果需要取得分類的圖示、描述等其他資訊,必須使用 sid 查詢
+// sid === 目標表中的 rowid
 ```
 
 **使用場景**:
@@ -3835,16 +3835,16 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
 
 **示例**:
 ```javascript
-// 关联字段返回的 sid
+// 關聯欄位回傳的 sid
 const categoryId = product.category[0].sid;  // "9dd9272b-..."
 
-// 查询目标表时,使用 rowid 字段匹配
+// 查詢目標表時,使用 rowid 欄位匹配
 {
   "filter": {
     "type": "condition",
-    "field": "rowid",  // 必须用 rowid
+    "field": "rowid",  // 必須用 rowid
     "operator": "in",
-    "value": [categoryId]  // 传入 sid
+    "value": [categoryId]  // 傳入 sid
   }
 }
 ```
@@ -3942,31 +3942,31 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 
 **錯誤示例**:
 ```javascript
-// 错误:尝试从关联字段直接获取目标表的其他字段
+// 錯誤:嘗試從關聯欄位直接取得目標表的其他欄位
 const categoryIcon = product.category[0].icon;  // ❌ undefined!
 ```
 
 **正確理解**:
 ```javascript
-// 关联字段只返回 sid 和 name
+// 關聯欄位只回傳 sid 和 name
 const category = product.category[0];
 console.log(category);
 // {
-//   "sid": "9dd9272b-...",  // 关联记录ID
-//   "name": "实木衣柜"      // 标题字段值
+//   "sid": "9dd9272b-...",  // 關聯記錄ID
+//   "name": "實木衣櫃"      // 標題欄位值
 // }
 
-// 如果需要 icon 等其他字段,必须查询目标表
+// 如果需要 icon 等其他欄位,必須查詢目標表
 const categoryData = await getRows('category-worksheet-id', {
   filter: {
     type: 'condition',
     field: 'rowid',
     operator: 'in',
-    value: [category.sid]  // 使用 sid 查询
+    value: [category.sid]  // 使用 sid 查詢
   }
 });
 
-console.log(categoryData.rows[0].icon);  // ✅ 正确获取
+console.log(categoryData.rows[0].icon);  // ✅ 正確取得
 ```
 
 ---
@@ -3975,22 +3975,22 @@ console.log(categoryData.rows[0].icon);  // ✅ 正确获取
 
 **錯誤示例**:
 ```javascript
-// ❌ 性能灾难:100个产品 = 1 + 100 = 101次请求
-const products = await getProductList();  // 1次请求
+// ❌ 效能災難:100個產品 = 1 + 100 = 101次請求
+const products = await getProductList();  // 1次請求
 
 for (const product of products) {
   const categoryId = product.category[0].sid;
-  const category = await getCategoryById(categoryId);  // 100次请求!
+  const category = await getCategoryById(categoryId);  // 100次請求!
   console.log(category.name);
 }
 ```
 
 **正確做法**: 批次查詢 (參見 Section 6.5.4)
 ```javascript
-// ✅ 性能优化:100个产品 = 1 + 1 = 2次请求
-const products = await getProductList();  // 1次请求
+// ✅ 效能最佳化:100個產品 = 1 + 1 = 2次請求
+const products = await getProductList();  // 1次請求
 
-// 收集所有分类ID
+// 收集所有分類ID
 const categoryIds = new Set();
 products.forEach(p => {
   if (p.category && p.category.length > 0) {
@@ -3998,7 +3998,7 @@ products.forEach(p => {
   }
 });
 
-// 批量查询所有分类
+// 批次查詢所有分類
 const categories = await getRows('category-worksheet-id', {
   filter: {
     type: 'condition',
@@ -4006,15 +4006,15 @@ const categories = await getRows('category-worksheet-id', {
     operator: 'in',
     value: Array.from(categoryIds)
   }
-});  // 1次请求
+});  // 1次請求
 
-// 建立映射
+// 建立對映
 const categoryMap = {};
 categories.rows.forEach(cat => {
   categoryMap[cat.rowid] = cat;
 });
 
-// O(1) 查找
+// O(1) 查詢
 products.forEach(p => {
   const category = categoryMap[p.category[0].sid];
   console.log(category.name, category.icon);
@@ -4031,7 +4031,7 @@ products.forEach(p => {
 
 **解決方案**:
 ```javascript
-// 上传附件
+// 上傳附件
 await updateRecord({
   fields: [{
     id: "attachments",
@@ -4043,9 +4043,9 @@ await updateRecord({
 // 等待5秒
 await sleep(5000);
 
-// 再读取记录
+// 再讀取記錄
 const record = await getRecord(rowId);
-console.log(record.attachments);  // 现在有数据了
+console.log(record.attachments);  // 現在有資料了
 ```
 
 **建議**: 使用niio內部URL,外部URL可能有跨域限制
@@ -4124,13 +4124,13 @@ console.log(record.attachments);  // 现在有数据了
 
 **正確做法**:
 ```bash
-# Step 1: 通过姓名查找用户ID
+# Step 1: 透過姓名查詢使用者ID
 POST /v3/users/lookup
 {"name": "张三"}
 
-# 返回: {"accountId": "user-123"}
+# 回傳: {"accountId": "user-123"}
 
-# Step 2: 使用用户ID筛选
+# Step 2: 使用使用者ID篩選
 {
   "field": "owner",
   "operator": "eq",
@@ -4200,10 +4200,10 @@ POST /v3/users/lookup
 
 **示例程式碼邏輯**:
 ```javascript
-// 1. 获取工作表结构
+// 1. 取得工作表結構
 const structure = await getWorksheetStructure(worksheetId);
 
-// 2. 提取选项字段映射
+// 2. 提取選項欄位對映
 const optionMaps = {};
 structure.fields.forEach(field => {
   if (field.type === 'SingleSelect' || field.type === 'MultipleSelect') {
@@ -4214,7 +4214,7 @@ structure.fields.forEach(field => {
   }
 });
 
-// 3. 使用时查找key
+// 3. 使用時查詢key
 const customerTypeKey = optionMaps['customer_type']['成交客户'];
 ```
 
@@ -4260,7 +4260,7 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 ### 10.1 建立工作表
 
 ```bash
-# 1. 创建客户表
+# 1. 建立客戶表
 POST /v3/app/worksheets
 {
   "name": "客户信息表",
@@ -4271,7 +4271,7 @@ POST /v3/app/worksheets
   ]
 }
 
-# 2. 创建机会表(关联客户)
+# 2. 建立機會表(關聯客戶)
 POST /v3/app/worksheets
 {
   "name": "销售机会表",
@@ -4292,7 +4292,7 @@ POST /v3/app/worksheets
 ### 10.2 建立資料
 
 ```bash
-# 1. 创建客户
+# 1. 建立客戶
 POST /v3/app/worksheets/{customer_table_id}/rows
 {
   "fields": [
@@ -4302,7 +4302,7 @@ POST /v3/app/worksheets/{customer_table_id}/rows
   ]
 }
 
-# 2. 创建机会(关联客户)
+# 2. 建立機會(關聯客戶)
 POST /v3/app/worksheets/{opportunity_table_id}/rows
 {
   "fields": [
@@ -4317,7 +4317,7 @@ POST /v3/app/worksheets/{opportunity_table_id}/rows
 ### 10.3 查詢分析
 
 ```bash
-# 1. 查询重点客户
+# 1. 查詢重點客戶
 POST /v3/app/worksheets/{customer_table_id}/rows/list
 {
   "filter": {
@@ -4330,7 +4330,7 @@ POST /v3/app/worksheets/{customer_table_id}/rows/list
   }
 }
 
-# 2. 按行业统计客户
+# 2. 按行業統計客戶
 POST /v3/app/worksheets/{customer_table_id}/rows/pivot
 {
   "rows": [{"field": "industry"}],

@@ -13,52 +13,52 @@
 ### 流程級
 
 ```bash
-# 列出一个应用下的工作流（app_id 是位置参数，不是 --app-id）
+# 列出一個應用下的工作流（app_id 是位置參數，不是 --app-id）
 hap workflow list <app_id> [-k 关键字] [--enabled|--disabled] [-n 50] [-p 1]
 
-# 查看流程详情 / 节点结构
+# 檢視流程詳情 / 節點結構
 hap --json workflow get <process_id>
 hap workflow structure <process_id>
 
-# 新建流程。--company-id 可以不传，组织由流程所属的应用决定
+# 新建流程。--company-id 可以不傳，組織由流程所屬的應用決定
 hap workflow create -n "流程名" -a <app_id> --type worksheet
 
-# 改名 / 描述 / 图标；--version-name 给当前已发布版本起名（版本列表里就不是日期编号了）
+# 改名 / 描述 / 圖示；--version-name 給當前已釋出版本起名（版本清單裡就不是日期編號了）
 hap workflow update <process_id> -n "新名" -d "描述" --icon-color "#2196F3"
-hap workflow update <process_id> --icon-name <图标名>          # 图标名见 hap icon list
+hap workflow update <process_id> --icon-name <图标名>          # 圖示名見 niio CLI icon list
 hap workflow update <process_id> --version-name "上线版"
 
-# 复制。⚠️ -n 传的是【后缀】，不是副本全名
+# 複製。⚠️ -n 傳的是【字尾】，不是副本全名
 hap workflow copy <process_id> -n "-2026版"       # 副本名 = 原名 + "-2026版"
-hap workflow copy <process_id> --sub-process      # 把副本转成子流程
+hap workflow copy <process_id> --sub-process      # 把副本轉成子流程
 
-# 删除是三步，不是一步
-hap workflow delete <process_id> -y     # 进回收站：停止运行但还在，可恢复
-hap workflow restore <process_id>       # 从回收站恢复
-hap workflow purge <process_id> -y      # 彻底删除，无法恢复
+# 刪除是三步，不是一步
+hap workflow delete <process_id> -y     # 進回收站：停止執行但還在，可恢復
+hap workflow restore <process_id>       # 從回收站恢復
+hap workflow purge <process_id> -y      # 徹底刪除，無法恢復
 
-# 发布（启用）/ 停用
+# 釋出（啟用）/ 停用
 hap workflow publish <process_id>
 hap workflow publish <process_id> --disable
 
-# 手动触发一次（-s 传源记录 rowId）
+# 手動觸發一次（-s 傳源記錄 rowId）
 hap workflow trigger <process_id> [-s <row_id>]
-hap workflow trigger <process_id> --fields '[...]'   # 「启动时要求填写」的流程
-hap workflow trigger <process_id> --debug '[...]'    # 待办/短信/邮件都改发给自己，验流程不惊动别人
+hap workflow trigger <process_id> --fields '[...]'   # 「啟動時要求填寫」的流程
+hap workflow trigger <process_id> --debug '[...]'    # 待辦/簡訊/郵件都改發給自己，驗流程不驚動別人
 
-# 版本与全局配置
+# 版本與全域設定
 hap workflow history <process_id>                       # 每行的 id 就是版本 id
-hap workflow rollback <process_id> --version-id <版本ID> # 回到该版本
-hap workflow rollback <process_id>                      # ⚠️ 不带版本 id = 丢弃未发布的草稿
+hap workflow rollback <process_id> --version-id <版本ID> # 回到該版本
+hap workflow rollback <process_id>                      # ⚠️ 不帶版本 id = 丟棄未釋出的草稿
 hap workflow config-get <process_id>
 hap workflow config-set <process_id> -c '{"allowRevoke": true}'
 
-# 分组（流程列表左边那一层）与跨应用移动
+# 分組（流程清單左邊那一層）與跨應用移動
 hap workflow groups <app_id>
 hap workflow create-group <app_id> -n "订单相关"
 hap workflow sort-groups <分组ID> <分组ID> <分组ID>
-hap workflow delete-group <分组ID> -y      # 分组里的流程不会被删
-hap workflow move <process_id> ...         # 移到别的应用，参数以 --help 为准
+hap workflow delete-group <分组ID> -y      # 分組裡的流程不會被刪
+hap workflow move <process_id> ...         # 移到別的應用，參數以 --help 為準
 ```
 
 坑位提示：
@@ -82,23 +82,23 @@ hap workflow move <process_id> ...         # 移到别的应用，参数以 --he
 ### 節點基礎（增 / 刪 / 改名 / 讀設定）
 
 ```bash
-# 列出全部节点（拿 nodeId、typeId、连接关系）
+# 列出全部節點（拿 nodeId、typeId、連線關係）
 hap --json workflow node list <process_id>
 
-# 读单个节点的完整配置（--type 传该节点的 typeId，来自 node list）
+# 讀單個節點的完整設定（--type 傳該節點的 typeId，來自 node list）
 hap --json workflow node get <process_id> <node_id> --type 6
 
-# 追加节点：--after 必填，传上游节点 ID（接在触发器后就传触发节点 ID）
+# 追加節點：--after 必填，傳上游節點 ID（接在觸發器後就傳觸發節點 ID）
 hap workflow node add <process_id> --type 6 -n "写入记录" --after <prev_node_id> \
   -a 1 --app-id <worksheet_id>
 
-# 改名 / 删除（删除后两侧自动重连）
+# 改名 / 刪除（刪除後兩側自動重連）
 hap workflow node rename <process_id> <node_id> -n "新名"
 hap workflow node delete <process_id> <node_id> -y
 
-# 节点类型枚举速查
-hap workflow node list-types    # 类型名 → 数字，就是 node add --type 认的值
-hap workflow node types         # 连同数据节点的动作号一起列
+# 節點型別列舉速查
+hap workflow node list-types    # 型別名 → 數字，就是 node add --type 認的值
+hap workflow node types         # 連同資料節點的動作號一起列
 ```
 
 坑位提示：
@@ -112,7 +112,7 @@ hap workflow node types         # 连同数据节点的动作号一起列
 `node batch-add` 一次完成「綁觸發器 + 按順序建多個節點並配好」。節點間用別名互相引用，物理 ID 自動解析：
 
 ```bash
-# 工作表触发：绑定触发表 + 事件，再顺序建两个节点
+# 工作表觸發：繫結觸發表 + 事件，再順序建兩個節點
 hap workflow node batch-add <process_id> \
   --trigger-worksheet <worksheet_id> --trigger-event create \
   --nodes '[
@@ -120,7 +120,7 @@ hap workflow node batch-add <process_id> \
     {"nodeAlias":"write", "nodeType":6, "config":{...}}
   ]'
 
-# 只配触发器、不建节点：--nodes 传空数组
+# 只配觸發器、不建節點：--nodes 傳空陣列
 hap workflow node batch-add <process_id> --nodes '[]' \
   --trigger-schedule '{"repeat":"day","interval":1,"start_time":"2026-06-11 08:00"}'
 ```
@@ -134,7 +134,7 @@ hap workflow node batch-add <process_id> --nodes '[]' \
 - `--trigger-pbp '{"inputs":[{name,type,required,alias,desc,default,options,children}]}'`（PBP/封装业务流程型：定義輸入參數。type 取 text/number/date/radio/checkbox/member/department/org_role/attachment/object/array/object_array，預設 text；radio 的 options 傳字串陣列；object_array 用 children 嵌一層子參數）。
 
 ```bash
-# PBP：定义两个输入参数（建流程时 --type pbp）
+# PBP：定義兩個輸入參數（建流程時 --type pbp）
 hap workflow node batch-add <process_id> --nodes '[]' \
   --trigger-pbp '{"inputs":[
     {"name":"订单号","type":"text","required":true},
@@ -171,7 +171,7 @@ hap workflow node batch-add <process_id> --nodes '[]' \
 #### 觸發 PBP：先問它要什麼，再傳
 
 ```bash
-hap workflow pbp-parameters <process_id>     # 这条流程要传哪些入参；每行给出的字段 ID 就是 controlId
+hap workflow pbp-parameters <process_id>     # 這條流程要傳哪些入參；每行給出的欄位 ID 就是 controlId
 hap workflow trigger-pbp <process_id> -a <app_id> --controls '[
   {"controlId": "<入参ID>", "value": "华东一区"},
   {"alias": "owner", "value": ["<成员accountId>"]}

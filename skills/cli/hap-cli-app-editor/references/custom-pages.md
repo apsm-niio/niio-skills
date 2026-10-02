@@ -3,22 +3,22 @@
 ## 呼叫正規化
 
 ```bash
-# 页面生命周期（第一个参数都是应用 id）
+# 頁面生命週期（第一個參數都是應用 id）
 hap custom-page create <appId> "数据看板" --section-id <sectionId> --icon chart
 hap custom-page rename <appId> <pageId> --section-id <sectionId> --name "新名字"
 hap custom-page copy   <appId> <pageId> --section-id <sectionId> -n "看板副本"
 hap custom-page delete <appId> <pageId> --section-id <sectionId> -y
 
-# 读页面布局 —— 注意：这里的参数填【页面 id】，不是应用 id
+# 讀頁面佈局 —— 注意：這裡的參數填【頁面 id】，不是應用 id
 hap custom-page info <pageId>
-# 🚨 传成应用 id 不会报错：它返回一个 version:0、components:[] 的空壳。
-#    别把这个空壳当成「页面没有组件」——照它整页写回会把真组件全清掉。
-#    读到 version 为 0 且 components 为空时，先确认自己传的是不是页面 id。
+# 🚨 傳成應用 id 不會報錯：它回傳一個 version:0、components:[] 的空殼。
+#    別把這個空殼當成「頁面沒有元件」——照它整頁寫回會把真元件全清掉。
+#    讀到 version 為 0 且 components 為空時，先確認自己傳的是不是頁面 id。
 
-# 组件类型对照表
+# 元件型別對照表
 hap custom-page component-types
 
-# 改页面描述/设置（参数也是页面 id）
+# 改頁面描述/設定（參數也是頁面 id）
 hap custom-page update-config <pageId> --desc "运营周报看板"
 ```
 
@@ -27,14 +27,14 @@ hap custom-page update-config <pageId> --desc "运营周报看板"
 圖表**不是**在頁面裡建的：先在工作表上建圖拿 `reportId`，再把它作為元件擺到頁面上。
 
 ```bash
-# 1) 建图。--page-id 让这张图归属该自定义页，而不是算进工作表自己的统计列表
+# 1) 建圖。--page-id 讓這張圖歸屬該自訂頁，而不是算進工作表自己的統計清單
 hap worksheet chart create <worksheetId> --name "各状态金额" --report-type 1 \
   --page-id <pageId> -j '{...图表规格...}'
 
-# 2) 读当前 version 和已有组件
+# 2) 讀當前 version 和已有元件
 hap --json custom-page info <pageId>
 
-# 3) 整页写回（把新组件追加进原有 components 一起提交）
+# 3) 整頁寫回（把新元件追加進原有 components 一起提交）
 hap custom-page save <pageId> --version <当前version> --components '[...]'
 ```
 
@@ -86,7 +86,7 @@ hap app-editor apply page-edit.json
 低層備選是 `hap custom-page save`，但它**要求傳完整 components 陣列**——漏掉的元件會被刪除：
 
 ```bash
-# 先 info 拿 version 和现有 components，改完整体写回
+# 先 info 拿 version 和現有 components，改完整體寫回
 hap custom-page save <pageId> --version <N> --components '[ ...全量组件... ]'
 ```
 

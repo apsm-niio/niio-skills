@@ -3,15 +3,15 @@
 ## 呼叫正規化
 
 ```bash
-# 读结构：应用信息（含分组、工作表、自定义页面）/ 我管理的应用列表
+# 讀結構：應用資訊（含分組、工作表、自訂頁面）/ 我管理的應用清單
 hap app info -a <appId>
 hap app list-managed -o <orgId>
 
-# 改应用名 / 描述 / 配色 / PC 导航样式
+# 改應用名 / 描述 / 配色 / PC 導航樣式
 hap app update <appId> -n "新名字" -d "新描述" \
   --icon-color "#2196F3" --nav-color "#1565C0" --pc-nav-style 1
 
-# 侧边栏分组（section）
+# 側邊欄分組（section）
 hap app add-section <appId> -n "运营"
 hap app edit-section <appId> <sectionId> -n "市场"
 hap app delete-section <appId> <sectionId> -y
@@ -27,17 +27,17 @@ hap app chatbot update-config <chatbotId> --welcome-text "欢迎咨询" \
   --preset-question "新问题一" --preset-question "新问题二"
 hap app chatbot delete <chatbotId> -a <appId> -y
 
-# 应用回收站：删掉的工作表 / 自定义页 / AI 助手，带删除人和时间
+# 應用回收站：刪掉的工作表 / 自訂頁 / AI 助手，帶刪除人和時間
 hap app trash -a <appId>
-hap app trash -a <appId> -k 订单            # 按名称过滤
+hap app trash -a <appId> -k 订单            # 按名稱過濾
 
-# 分组内工作表排序（按顺序传完整 ID 列表）
+# 分組內工作表排序（按順序傳完整 ID 清單）
 hap app sort-worksheets <appId> <sectionId> <wsId1> <wsId2> <wsId3>
 
-# 操作日志：定位「这个改动是谁什么时候做的」
+# 操作日誌：定位「這個改動是誰什麼時候做的」
 hap app logs <appId> --kind app --start "2026-09-01 00:00:00"
 hap app logs <appId> --kind record --ip <地址> --source-id <集成ID>
-hap app log-archives                      # 超出近期窗口的按时段归档
+hap app log-archives                      # 超出近期視窗的按時段歸檔
 hap app logs <appId> --archived-id <归档ID>
 ```
 

@@ -7,7 +7,7 @@
 ### 工作表
 
 ```bash
-# 新建（可一并铺好字段；--fields 即下文 FieldSpec 高层方言）
+# 新建（可一併鋪好欄位；--fields 即下文 FieldSpec 高層方言）
 hap worksheet create 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809 "客户" \
   --icon table --remark "客户主数据" \
   --fields '[{"type":"TEXT","name":"客户名称","required":true},
@@ -15,24 +15,24 @@ hap worksheet create 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809 "客户" \
              {"type":"DROP_DOWN","name":"等级","options":["VIP","普通"]}]' \
   --title-name 客户名称
 
-# 基本信息；表单布局与视图列表可以顺带取回，不必再发两条命令
+# 基本資訊；表單佈局與檢視清單可以順帶取回，不必再發兩條命令
 hap --json worksheet info 6845f0a1b2c3d4e5f6a7b8c9
 hap --json worksheet info 6845f0a1b2c3d4e5f6a7b8c9 --with-form --with-views
 
-# 改别名 / 描述；改侧边栏名称、图标或显示状态需要 --app-id
+# 改別名 / 描述；改側邊欄名稱、圖示或顯示狀態需要 --app-id
 hap worksheet update 6845f0a1b2c3d4e5f6a7b8c9 --alias customers --desc "客户主数据"
 hap worksheet update 6845f0a1b2c3d4e5f6a7b8c9 --name "客户（CRM）" \
   --app-id 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809
 
-# 从应用导航里隐藏（表本身照常可用、数据照常读写）
+# 從應用導航裡隱藏（表本身照常可用、資料照常讀寫）
 hap worksheet update 6845f0a1b2c3d4e5f6a7b8c9 --visibility hidden \
   --app-id 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809
 
-# 删除
+# 刪除
 hap worksheet delete 6845f0a1b2c3d4e5f6a7b8c9 --app-id 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809 -y
 
-# 字段清单。默认输出是高层归一形态；--raw 输出服务端原始控件（WireControl），
-# 任何「读改写」操作都以 --raw 为准
+# 欄位清單。預設輸出是高層歸一形態；--raw 輸出伺服器端原始控制元件（WireControl），
+# 任何「讀改寫」操作都以 --raw 為準
 hap --json worksheet fields 6845f0a1b2c3d4e5f6a7b8c9
 hap --json worksheet fields 6845f0a1b2c3d4e5f6a7b8c9 --raw
 ```
@@ -76,13 +76,13 @@ controlId 不必去「修」。
 #### 新增欄位（增量，安全）
 
 ```bash
-# 只追加传入的控件，已有列（含反向关联控件）一概不动
+# 只追加傳入的控制元件，已有列（含反向關聯控制元件）一概不動
 hap worksheet add-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls '[
   {"type": 2,  "controlName": "备注"},
   {"type": 15, "controlName": "签约日期"}
 ]'
 
-# 布局太长放不进命令行时从文件读（--controls / --fields 都支持 @文件名）
+# 佈局太長放不進命令列時從檔案讀（--controls / --fields 都支援 @檔名）
 hap worksheet add-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @new-controls.json
 ```
 
@@ -120,9 +120,9 @@ hap worksheet add-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @new-controls.json
 ```
 
 ```bash
-hap app-editor validate edit.json   # 本地校验，零网络
-hap app-editor plan     edit.json   # dry-run：读实时结构，预演每个 op
-hap app-editor apply    edit.json   # 逐 op 执行（--continue 失败不中断）
+hap app-editor validate edit.json   # 本地校驗，零網路
+hap app-editor plan     edit.json   # dry-run：讀即時結構，預演每個 op
+hap app-editor apply    edit.json   # 逐 op 執行（--continue 失敗不中斷）
 ```
 
 要點：
@@ -144,12 +144,12 @@ hap app-editor apply    edit.json   # 逐 op 执行（--continue 失败不中断
 反向關聯控制元件。僅兩種場景使用：
 
 ```bash
-# 保存前先干跑检查（一个字都不写），保存后默认自动回读比对
+# 儲存前先幹跑檢查（一個字都不寫），儲存後預設自動回讀比對
 hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --fields @layout.json --check
 hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --fields @layout.json
 hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --fields @layout.json --no-verify
 
-# 场景 A：刚建的空表一次铺设全部字段（高层方言 --fields）
+# 場景 A：剛建的空表一次鋪設全部欄位（高層方言 --fields）
 hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --title-name 客户名称 --fields '[
   {"type":"TEXT", "name":"客户名称", "required":true},
   {"type":"AUTO_ID", "name":"客户编号",
@@ -158,9 +158,9 @@ hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --title-name 客户名称 -
   {"type":"DROP_DOWN", "name":"等级", "options":["VIP","普通","潜在"]}
 ]'
 
-# 场景 B：完整读出 → 在真实结构上改 → 整表写回（--raw + --controls，这条路干净往返）
+# 場景 B：完整讀出 → 在真實結構上改 → 整表寫回（--raw + --controls，這條路乾淨往返）
 hap --json worksheet fields 6845f0a1b2c3d4e5f6a7b8c9 --raw > controls.json
-# ……编辑 controls.json：只动目标控件，其余键原样保留……
+# ……編輯 controls.json：只動目標控制元件，其餘鍵原樣保留……
 hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @controls.json --check
 hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @controls.json
 ```
@@ -221,9 +221,9 @@ hap worksheet add-fields <订单表ID> --controls '[
 建的時候沒開 `bidirectional`，事後要補，用 `pair-relation`，**不要去改佈局**：
 
 ```bash
-hap worksheet pair-relation <工作表ID> 客户                # FIELD 传列名或字段 ID
-hap worksheet pair-relation <工作表ID> 客户 --name 订单     # 指定对方表上那列的名字
-hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方表上的残留列
+hap worksheet pair-relation <工作表ID> 客户                # FIELD 傳列名或欄位 ID
+hap worksheet pair-relation <工作表ID> 客户 --name 订单     # 指定對方表上那列的名字
+hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆蓋對方表上的殘留列
 ```
 
 > 🚨 **不要用「佔位 `sourceControlId`」自己偽造反向端。** 那樣建出來的關聯伺服器端並沒有登記成
@@ -241,7 +241,7 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 
 ## 資料字典
 
-字典核對於 hap-cli 0.9.0；未覆蓋的鍵以讀命令（`hap --json worksheet fields <id> --raw`）回傳的實際結構為準。
+字典核對於 niio CLI 0.9.0；未覆蓋的鍵以讀命令（`hap --json worksheet fields <id> --raw`）回傳的實際結構為準。
 速查用 `hap worksheet field-types`（它是執行時生成的，與本表不一致時以它為準）。
 
 ### 1. 控制元件型別列舉（`type` 整數）
@@ -401,7 +401,7 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆盖对方�
 
 ```bash
 hap --json worksheet fields <工作表ID> > layout.json
-# 编辑 layout.json
+# 編輯 layout.json
 hap worksheet update-fields <工作表ID> --fields @layout.json --check
 hap worksheet update-fields <工作表ID> --fields @layout.json
 ```

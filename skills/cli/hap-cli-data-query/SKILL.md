@@ -1,7 +1,9 @@
 ---
 name: hap-cli-data-query
-description: 用 hap 命令列查詢/篩選/統計 niio 工作表裡的業務資料時用本 skill——尤其當篩選條件複雜、需要多條件 AND/OR、巢狀分組，或要做透視表聚合統計（求和/計數/平均/分組維度）。只要使用者說「查某張表裡滿足…條件的記錄」「按狀態/日期篩選資料」「這個篩選器怎麼寫」「統計每個月/每個分類的合計」「做個透視/彙總」，即使沒明說工具名也應觸發。不用於：寫入資料（增刪改記錄用 record 命令）。
+description: 用 niio CLI 命令列查詢/篩選/統計 niio 工作表裡的業務資料時用本 skill——尤其當篩選條件複雜、需要多條件 AND/OR、巢狀分組，或要做透視表聚合統計（求和/計數/平均/分組維度）。只要使用者說「查某張表裡滿足…條件的記錄」「按狀態/日期篩選資料」「這個篩選器怎麼寫」「統計每個月/每個分類的合計」「做個透視/彙總」，即使沒明說工具名也應觸發。不用於：寫入資料（增刪改記錄用 record 命令）。
 ---
+> **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
+
 
 # niio 資料查詢助手（篩選 · 透視 · 統計）
 
@@ -32,7 +34,7 @@ description: 用 hap 命令列查詢/篩選/統計 niio 工作表裡的業務資
 但透視的維度 `--rows-json` / `--columns-json` 和值 `--values-json` **只認欄位 ID 或別名**，寫列標題會被拒。先查出來：
 
 ```bash
-hap worksheet fields WORKSHEET_ID        # 列出每个字段的 controlId / 名称 / 类型
+hap worksheet fields WORKSHEET_ID        # 列出每個欄位的 controlId / 名稱 / 型別
 ```
 
 記下要篩選/分組/聚合的那幾個欄位的 controlId，後面 JSON 裡直接用。
@@ -51,7 +53,7 @@ hap worksheet fields WORKSHEET_ID        # 列出每个字段的 controlId / 名
     { "field": "<字段 ID、别名或列标题>",
       "op": "<比较方式>",
       "value": <标量 或 数组> },       // empty / not_empty 不需要 value
-    { "logic": "or", "items": [ ... ] }  // 某一项本身也可以是一个组
+    { "logic": "or", "items": [ ... ] }  // 某一項本身也可以是一個組
   ] }
 ```
 
@@ -187,9 +189,9 @@ hap worksheet record list WORKSHEET_ID --filter-json '{
 hap worksheet record list WORKSHEET_ID \
   --filter-json '<见上>' \
   --sorts-json '[{"field":"onboard_date","isAsc":false}]' \
-  --fields '["name","status","amount"]' \   # 只返回这几个字段，省 token
+  --fields '["name","status","amount"]' \   # 只回傳這幾個欄位，省 token
   --page-size 50 --page-index 1 \
-  --include-total-count                       # 想要总行数时加
+  --include-total-count                       # 想要總行數時加
 ```
 
 - `--page-size` / `--page-index` **都是必填**。
@@ -212,11 +214,11 @@ hap worksheet record list WORKSHEET_ID \
 ```bash
 hap worksheet record pivot WORKSHEET_ID \
   --view-id VIEW_ID \                                          # 必填
-  --rows-json '[{"field":"status"}]' \                         # 行维度（分组）
+  --rows-json '[{"field":"status"}]' \                         # 行維度（分組）
   --columns-json '[{"field":"create_date","granularity":3}]' \ # 列维度，可选
   --values-json '[{"field":"amount","aggregation":"SUM"}]' \   # 值（聚合），必填
-  --filter-json '<同 list 的筛选条件>' \                        # 可选
-  --include-summary                                            # 要总计行加
+  --filter-json '<同 list 的筛选条件>' \                        # 可選
+  --include-summary                                            # 要總計行加
 ```
 
 回傳結構是 `data.pivot`（一個陣列），每項形如：
