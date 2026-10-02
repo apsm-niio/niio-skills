@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""產生繁中技能；程式碼與技術識別名稱保留原樣。"""
+"""產生 niio 繁中技能；轉換顯示文字與可辨識註解，保留執行語法。"""
 import argparse
+import io
 import json
 import re
 import shutil
 import tempfile
+import tokenize
 import unicodedata
 from pathlib import Path
 from urllib.parse import unquote
@@ -21,10 +23,20 @@ TECH = re.compile(
     r"(?<![\w-])[A-Za-z][\w]*(?:[-_./][\w]+)+|"
     r"[\w./-]+\.(?:md|json|js|py|sh|template|png|jpg|svg)\b"
 )
+DISPLAY_LABELS = {"hap-cli": "niio CLI"}
+PUBLIC_POLICY = (
+    "> **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。"
+    "執行所需的技術名稱、套件、命令、API 參數與路徑請保留；"
+    "只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。\n\n"
+)
 
 
 def make_converter(config):
     rules = {
+        "hap": "niio CLI",
+        "Hap": "niio",
+        "hap-cli skills": "niio CLI 技能",
+        **DISPLAY_LABELS,
         **config.get("brandReplacements", {}),
         **config.get("termReplacements", {})
     }
@@ -107,7 +119,19 @@ def inline(text, convert, references=(), link=lambda value: value):
         ),
         text
     )
-    text = TECH.sub(lambda m: keep(m.group()), text)
+    def protect_technical(match):
+        value = match.group()
+        before = text[match.start() - 1:match.start()]
+        after = text[match.end():match.end() + 1]
+        if (
+            value in DISPLAY_LABELS
+            and before not in {"/", "\\"}
+            and after not in {"/", "\\", "."}
+        ):
+            return value
+        return keep(value)
+
+    text = TECH.sub(protect_technical, text)
     text = convert(text)
 
     for index in reversed(range(len(saved))):
@@ -134,6 +158,114 @@ def frontmatter(text):
     return data, text[match.end():]
 
 
+def comment_spans(text, language):
+    """只定位能確定是註解的文字；語法不明時保留整個區塊。"""
+    if language in {"python", "py"}:
+        lines = text.splitlines(keepends=True)
+        offsets, total = [], 0
+        for line in lines:
+            offsets.append(total)
+            total += len(line)
+        spans = []
+        try:
+            for token in tokenize.generate_tokens(io.StringIO(text).readline):
+                if token.type == tokenize.COMMENT:
+                    start = offsets[token.start[0] - 1] + token.start[1]
+                    end = offsets[token.end[0] - 1] + token.end[1]
+                    spans.append((start + 1, end))
+        except (tokenize.TokenError, IndentationError, SyntaxError):
+            return []
+        return spans
+
+    shell = language in {"bash", "sh", "shell", "zsh"}
+    javascript = language in {"javascript", "js", "typescript", "ts", "jsonc"}
+    if not (shell or javascript):
+        return []
+    if shell and any(marker in text for marker in ("<<", "$(", "`")):
+        return []
+
+    spans, index, word_start = [], 0, True
+    while index < len(text):
+        char = text[index]
+        if char in {"'", '"'}:
+            quote = char
+            index += 1
+            while index < len(text):
+                if text[index] == "\\" and (javascript or quote == '"'):
+                    index += 2
+                elif text[index] == quote:
+                    index += 1
+                    break
+                else:
+                    index += 1
+            else:
+                return []
+            word_start = False
+            continue
+        if char == "\\":
+            if index + 1 < len(text) and text[index + 1] != "\n":
+                word_start = False
+            index += 2
+            continue
+        if javascript and char == "`":
+            return []
+        if shell and char == "#" and word_start:
+            end = text.find("\n", index)
+            end = len(text) if end < 0 else end
+            spans.append((index + 1, end))
+            index = end
+            word_start = True
+            continue
+        if javascript and text.startswith("//", index):
+            end = text.find("\n", index)
+            end = len(text) if end < 0 else end
+            spans.append((index + 2, end))
+            index = end
+            continue
+        if javascript and text.startswith("/*", index):
+            end = text.find("*/", index + 2)
+            if end < 0:
+                return []
+            spans.append((index + 2, end))
+            index = end + 2
+            continue
+        if javascript and char == "/":
+            # 不猜測除法與正規表示式的語法。
+            return []
+        word_start = char.isspace() or char in ";|&()<>"
+        index += 1
+    return spans
+
+
+def translate_comments(text, language, convert):
+    for start, end in reversed(comment_spans(text, language)):
+        comment = text[start:end]
+        # 保留 shebang、工具指示與被註解掉的命令範例。
+        if re.match(
+            r"\s*(?:[!@]|(?:hap|pip|pip3|python|python3|npm|node|curl|git)\b)",
+            comment
+        ):
+            continue
+        replacement = "".join(
+            inline(line, convert)
+            for line in comment.splitlines(keepends=True)
+        )
+        text = text[:start] + replacement + text[end:]
+    return text
+
+
+def is_text_example(content, language):
+    if language in {"text", "plaintext"}:
+        return True
+    if language:
+        return False
+    beginning = content.lstrip()
+    return bool(
+        re.match(r"[\u3400-\u9fff]", beginning)
+        or re.search(r"[┌┐└┘├┤│─]", content)
+    )
+
+
 def map_body(body, convert, link=lambda value: value):
     env = {}
     tokens = MD.parse(body, env)
@@ -148,14 +280,14 @@ def map_body(body, convert, link=lambda value: value):
         start, end = token.map
 
         if token.type == "fence":
-            language = token.info.strip().lower()
+            language = token.info.strip().split(maxsplit=1)
+            language = language[0].lower() if language else ""
             opening = re.match(
                 r"^ {0,3}(`{3,}|~{3,})",
                 lines[start]
             )
 
-            # Markdown 範例可能是直接顯示給使用者的提示。
-            if language in {"markdown", "md"} and opening:
+            if opening:
                 marker = opening[1]
                 closing = re.fullmatch(
                     r" {0,3}" + re.escape(marker[0])
@@ -167,10 +299,22 @@ def map_body(body, convert, link=lambda value: value):
                     content = "".join(
                         lines[start + 1:end - 1]
                     )
+                    if language in {"markdown", "md"}:
+                        translated = map_body(content, convert, link)
+                    elif is_text_example(content, language):
+                        translated = "".join(
+                            line if re.match(
+                                r"\s*(?:hap|pip|pip3|python|python3|npm|node|curl|git)\b",
+                                line
+                            ) else inline(line, convert, (), link)
+                            for line in content.splitlines(keepends=True)
+                        )
+                    else:
+                        translated = translate_comments(content, language, convert)
                     replacements[start] = (
                         end,
                         lines[start]
-                        + map_body(content, convert, link)
+                        + translated
                         + lines[end - 1]
                     )
                     continue
@@ -371,7 +515,7 @@ def build(source, output, config):
 
             if path.name == "SKILL.md":
                 before, _ = frontmatter(old)
-                after, _ = frontmatter(new)
+                after, new_body = frontmatter(new)
 
                 if (
                     not before
@@ -389,6 +533,9 @@ def build(source, output, config):
                     raise ValueError(
                         "轉換修改了技能識別資料，停止發布"
                     )
+
+                prefix = new[:len(new) - len(new_body)]
+                new = prefix + PUBLIC_POLICY + new_body
 
             documents[path] = new
             anchors[path.resolve()] = mapping
