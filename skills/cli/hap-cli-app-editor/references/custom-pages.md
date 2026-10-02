@@ -4,7 +4,7 @@
 
 ```bash
 # 頁面生命週期（第一個參數都是應用 id）
-hap custom-page create <appId> "数据看板" --section-id <sectionId> --icon chart
+hap custom-page create <appId> "資料看板" --section-id <sectionId> --icon chart
 hap custom-page rename <appId> <pageId> --section-id <sectionId> --name "新名字"
 hap custom-page copy   <appId> <pageId> --section-id <sectionId> -n "看板副本"
 hap custom-page delete <appId> <pageId> --section-id <sectionId> -y
@@ -19,7 +19,7 @@ hap custom-page info <pageId>
 hap custom-page component-types
 
 # 改頁面描述/設定（參數也是頁面 id）
-hap custom-page update-config <pageId> --desc "运营周报看板"
+hap custom-page update-config <pageId> --desc "運營週報看板"
 ```
 
 ### 往頁面上放一張統計圖
@@ -28,22 +28,22 @@ hap custom-page update-config <pageId> --desc "运营周报看板"
 
 ```bash
 # 1) 建圖。--page-id 讓這張圖歸屬該自訂頁，而不是算進工作表自己的統計清單
-hap worksheet chart create <worksheetId> --name "各状态金额" --report-type 1 \
-  --page-id <pageId> -j '{...图表规格...}'
+hap worksheet chart create <worksheetId> --name "各狀態金額" --report-type 1 \
+  --page-id <pageId> -j '{...圖表規格...}'
 
 # 2) 讀當前 version 和已有元件
 hap --json custom-page info <pageId>
 
 # 3) 整頁寫回（把新元件追加進原有 components 一起提交）
-hap custom-page save <pageId> --version <当前version> --components '[...]'
+hap custom-page save <pageId> --version <當前version> --components '[...]'
 ```
 
 圖表元件的必備形狀：
 
 ```jsonc
 {"type": 1, "value": "<reportId>", "worksheetId": "<worksheetId>",
- "name": "各状态金额", "reportType": 1,
- "config": {"objectId": "<32位十六进制随机串>"},
+ "name": "各狀態金額", "reportType": 1,
+ "config": {"objectId": "<32位十六進位制隨機串>"},
  "web": {"title": "", "titleVisible": false, "visible": true,
          "layout": {"x": 0, "y": 0, "w": 24, "h": 10, "minW": 2, "minH": 4}},
  "mobile": {"title": "", "titleVisible": false, "visible": true, "layout": null}}
@@ -65,16 +65,16 @@ hap custom-page save <pageId> --version <当前version> --components '[...]'
 
 ```json
 {
-  "app": "<appId 或应用名>",
+  "app": "<appId 或應用名>",
   "ops": [
-    { "type": "component.add", "page": "数据看板",
-      "component": { "name": "公告", "type": "richText", "value": "<p>欢迎</p>",
+    { "type": "component.add", "page": "資料看板",
+      "component": { "name": "公告", "type": "richText", "value": "<p>歡迎</p>",
                      "layout": { "x": 0, "y": 0, "w": 48, "h": 5 } } },
-    { "type": "component.add", "page": "数据看板",
-      "component": { "name": "官网", "type": "embedUrl", "value": "https://example.com" } },
-    { "type": "component.update", "page": "数据看板", "component": "公告",
+    { "type": "component.add", "page": "資料看板",
+      "component": { "name": "官網", "type": "embedUrl", "value": "https://example.com" } },
+    { "type": "component.update", "page": "資料看板", "component": "公告",
       "set": { "value": "<p>已更新</p>" } },
-    { "type": "component.delete", "page": "数据看板", "component": "官网", "confirm": true }
+    { "type": "component.delete", "page": "資料看板", "component": "官網", "confirm": true }
   ]
 }
 ```
@@ -87,7 +87,7 @@ hap app-editor apply page-edit.json
 
 ```bash
 # 先 info 拿 version 和現有 components，改完整體寫回
-hap custom-page save <pageId> --version <N> --components '[ ...全量组件... ]'
+hap custom-page save <pageId> --version <N> --components '[ ...全量元件... ]'
 ```
 
 坑位提示：
@@ -96,7 +96,7 @@ hap custom-page save <pageId> --version <N> --components '[ ...全量组件... ]
 - `save` 必須帶 `info` 回傳的 `version`；`components` 是整頁佈局的全量替換，不是增量。
 - filter 元件（type=6）可以內聯高層 `filtersGroup`（含 `filters[]`），儲存時會先落成儲存物件再替換為 id；這條路徑需要 `--owner-app-id <appId>`（預設時會嘗試自動解析）。
 - 元件的顯示名存在 `web.title`，讀回的元件**沒有頂層 name**——按名字找元件要看 `web.title`。
-- richText 的 `value` 是 HTML 字串；embedUrl / image 的 `value` 是 URL。資料繫結型元件（chart 要 reportId、view 要 worksheetId/viewId、filter 要 filtersGroup）用 `raw:{<wire 键>}` 直接給 wire 物件（最後合併、優先生效）。
+- richText 的 `value` 是 HTML 字串；embedUrl / image 的 `value` 是 URL。資料繫結型元件（chart 要 reportId、view 要 worksheetId/viewId、filter 要 filtersGroup）用 `raw:{<wire 鍵>}` 直接給 wire 物件（最後合併、優先生效）。
 
 ## 資料字典
 

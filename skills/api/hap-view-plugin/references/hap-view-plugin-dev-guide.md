@@ -77,16 +77,16 @@ niio 提供多種外掛模板，透過 `--template` 參數選擇：
 # 你的worksheetID-你的檢視ID
 
 # 1. JavaScript 基礎模板（簡單展示）
-echo "view-plugin" | mdye init view --id <用户提供的ID> --template JavaScript
+echo "view-plugin" | mdye init view --id <使用者提供的ID> --template JavaScript
 
 # 2. React 模板（推薦，互動複雜場景）
-echo "view-plugin" | mdye init view --id <用户提供的ID> --template React
+echo "view-plugin" | mdye init view --id <使用者提供的ID> --template React
 
 # 3. React + Tailwind CSS 模板（需要快速樣式開發）
-echo "view-plugin" | mdye init view --id <用户提供的ID> --template React-Tailwind
+echo "view-plugin" | mdye init view --id <使用者提供的ID> --template React-Tailwind
 
 # 4. Vue 模板
-echo "view-plugin" | mdye init view --id <用户提供的ID> --template Vue
+echo "view-plugin" | mdye init view --id <使用者提供的ID> --template Vue
 ```
 
 **模板選擇建議：**
@@ -132,7 +132,7 @@ npm install dayjs
 | 使用者需求 | 需要安裝的依賴 |
 |---------|---------------|
 | 訂單看板/任務看板 | styled-components |
-| BI驾驶舱/数据分析 | recharts, styled-components |
+| BI駕駛艙/資料分析 | recharts, styled-components |
 | 日曆檢視 | dayjs, styled-components |
 | 地圖檢視 | (無額外依賴,使用外部地圖 SDK) |
 
@@ -183,7 +183,7 @@ export default function App() {
       });
       setRecords(result.data || []);
     } catch (err) {
-      console.error('加载失败:', err);
+      console.error('載入失敗:', err);
     } finally {
       setLoading(false);
     }
@@ -203,12 +203,12 @@ export default function App() {
   };
 
   if (loading) {
-    return <div>加载中...</div>;
+    return <div>載入中...</div>;
   }
 
   return (
     <Container>
-      {/* 根据用户需求渲染 UI */}
+      {/* 根據使用者需求渲染 UI */}
     </Container>
   );
 }
@@ -232,7 +232,7 @@ function parseSingleSelect(value, control) {
 }
 
 // 使用:
-const statusControl = controls.find(c => c.type === 9 && c.controlName?.includes('状态'));
+const statusControl = controls.find(c => c.type === 9 && c.controlName?.includes('狀態'));
 const status = parseSingleSelect(record[statusControl.controlId], statusControl);
 // status.text 就是顯示文字,如"已完成"
 ```
@@ -276,7 +276,7 @@ async function loadRelationData(worksheetId, controlId, rowId, fieldValue) {
 
 **核心程式碼:**
 ```javascript
-// 按状态分组
+// 按狀態分組
 const grouped = records.reduce((acc, record) => {
   const status = parseSingleSelect(record[statusFieldId], statusControl).text;
   if (!acc[status]) acc[status] = [];
@@ -284,7 +284,7 @@ const grouped = records.reduce((acc, record) => {
   return acc;
 }, {});
 
-// 渲染分组
+// 渲染分組
 return (
   <Container>
     {Object.entries(grouped).map(([status, items]) => (
@@ -293,7 +293,7 @@ return (
         <CardsGrid>
           {items.map(item => (
             <Card key={item.rowid} onClick={() => handleRecordClick(item.rowid)}>
-              {/* 渲染卡片内容 */}
+              {/* 渲染卡片內容 */}
             </Card>
           ))}
         </CardsGrid>
@@ -314,14 +314,14 @@ return (
 
 **核心程式碼:**
 ```javascript
-// 计算指标
+// 計算指標
 const metrics = {
   total: records.length,
   completed: records.filter(r => getStatus(r) === '已完成').length,
   revenue: records.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0)
 };
 
-// 准备图表数据
+// 準備圖表資料
 const chartData = Object.entries(grouped).map(([key, items]) => ({
   name: key,
   value: items.length,
@@ -331,16 +331,16 @@ const chartData = Object.entries(grouped).map(([key, items]) => ({
 // 渲染
 return (
   <Dashboard>
-    {/* 指标卡片 */}
+    {/* 指標卡片 */}
     <MetricsGrid>
       <MetricCard>
-        <h3>总数</h3>
+        <h3>總數</h3>
         <div className="value">{metrics.total}</div>
       </MetricCard>
-      {/* 更多指标... */}
+      {/* 更多指標... */}
     </MetricsGrid>
 
-    {/* 图表 */}
+    {/* 圖表 */}
     <ChartCard>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
@@ -453,26 +453,26 @@ new_string: "font-size: 24px;"
 mdye build
 
 # 第2步: 釋出
-mdye push -m "视图插件发布说明"
+mdye push -m "檢視外掛釋出說明"
 ```
 
 **釋出說明格式:**
 
 ```bash
-mdye push -m "订单看板视图首次发布
+mdye push -m "訂單看板檢視首次釋出
 
 功能特性:
-- 按订单状态分组展示(待付款/已付款/已发货/已完成)
-- 显示订单编号、客户名称、订单金额
-- 点击卡片打开明道云原生详情弹窗
-- 支持编辑订单并自动刷新列表
-- 响应式布局适配移动端
+- 按訂單狀態分組展示(待付款/已付款/已發貨/已完成)
+- 顯示訂單編號、客戶名稱、訂單金額
+- 點選卡片開啟niio原生詳情彈窗
+- 支援編輯訂單並自動重新整理清單
+- 響應式佈局適配移動端
 
-技术实现:
-- 使用 utils.openRecordInfo 原生交互
-- 正确处理单选字段(type 9)
-- 按状态分组并统计数量
-- 添加加载状态和错误处理"
+技術實現:
+- 使用 utils.openRecordInfo 原生互動
+- 正確處理單選欄位(type 9)
+- 按狀態分組並統計數量
+- 新增載入狀態和錯誤處理"
 ```
 
 **釋出成功後,簡單回覆:**
@@ -504,7 +504,7 @@ mdye push -m "订单看板视图首次发布
    - 使用 `utils.openRecordInfo` 開啟詳情
    - 響應式網格佈局
 
-### 場景2: CRM/销售驾驶舱
+### 場景2: CRM/銷售駕駛艙
 
 **使用者需求:** "建立 CRM 管理駕駛艙"
 
@@ -559,10 +559,10 @@ const field = controls.find(c => c.type === 9);
 **2. 多條關聯不能直接用,要調 API!**
 
 ```javascript
-// ❌ 错误: 显示 "2" 而不是实际关联记录
+// ❌ 錯誤: 顯示 "2" 而不是實際關聯記錄
 <div>{record.relationField}</div>
 
-// ✅ 正确: 判断是否为数字,然后调 API
+// ✅ 正確: 判斷是否為數字,然後調 API
 if (typeof record.relationField === 'number') {
   const relations = await api.getRowRelationRows({
     worksheetId,
@@ -765,7 +765,7 @@ async function addRecord(fieldsData) {
       {
         controlId: "fieldId1",
         type: 2,
-        value: "测试文本"
+        value: "測試文字"
       }
     ]
   });
@@ -836,28 +836,28 @@ const handleRecordClick = async (recordId) => {
 
     // 處理回傳結果
     if (result) {
-      console.log('操作结果:', result);
+      console.log('操作結果:', result);
 
       // 根據操作型別處理
       switch (result.action) {
         case 'update':
           // 記錄被更新,重新整理資料
-          console.log('记录已更新:', result.value);
+          console.log('記錄已更新:', result.value);
           loadRecords(); // 重新載入資料
           break;
         case 'delete':
           // 記錄被刪除,重新整理清單
-          console.log('记录已删除');
+          console.log('記錄已刪除');
           loadRecords(); // 重新載入資料
           break;
         case 'close':
           // 使用者關閉彈窗(無修改)
-          console.log('用户关闭了弹窗');
+          console.log('使用者關閉了彈窗');
           break;
       }
     }
   } catch (error) {
-    console.error('打开记录详情失败:', error);
+    console.error('開啟記錄詳情失敗:', error);
   }
 };
 ```
@@ -903,7 +903,7 @@ import { md_emitter } from "mdye";
 
 useEffect(() => {
   const handleFiltersUpdate = (newFilters) => {
-    console.log('筛选条件已更新:', newFilters);
+    console.log('篩選條件已更新:', newFilters);
     // 重新取得資料
   };
 
@@ -920,7 +920,7 @@ useEffect(() => {
 ```javascript
 useEffect(() => {
   const handleNewRecord = (newRecord) => {
-    console.log('新增记录:', newRecord);
+    console.log('新增記錄:', newRecord);
     setRecords(prev => [...prev, newRecord]);
   };
 
@@ -999,7 +999,7 @@ function parseSingleSelect(value, control) {
 
     return { key: selectedKey, text: selectedText };
   } catch (err) {
-    console.error("解析单选字段失败:", err);
+    console.error("解析單選欄位失敗:", err);
     return { key: "", text: "" };
   }
 }
@@ -1028,7 +1028,7 @@ function parseMultiSelect(value, control) {
 
     return result;
   } catch (err) {
-    console.error("解析多选字段失败:", err);
+    console.error("解析多選欄位失敗:", err);
     return [];
   }
 }
@@ -1068,7 +1068,7 @@ function parseRelationData(value) {
       ...item
     }));
   } catch (err) {
-    console.error("解析关联记录字段失败:", err);
+    console.error("解析關聯記錄欄位失敗:", err);
     return [];
   }
 }
@@ -1340,30 +1340,30 @@ class V3Api {
       if (data.success) {
         return data;
       } else {
-        throw new Error(data.error_msg || '请求失败');
+        throw new Error(data.error_msg || '請求失敗');
       }
     } catch (error) {
-      console.error('API请求错误:', error);
+      console.error('API請求錯誤:', error);
       throw error;
     }
   }
 
-  // GET 请求
+  // GET 請求
   async get(endpoint) {
     return await this.request(endpoint, 'GET');
   }
 
-  // POST 请求
+  // POST 請求
   async post(endpoint, body) {
     return await this.request(endpoint, 'POST', body);
   }
 
-  // PUT 请求
+  // PUT 請求
   async put(endpoint, body) {
     return await this.request(endpoint, 'PUT', body);
   }
 
-  // DELETE 请求
+  // DELETE 請求
   async delete(endpoint, body) {
     return await this.request(endpoint, 'DELETE', body);
   }
@@ -1378,7 +1378,7 @@ export default new V3Api(API_CONFIG);
 // api/worksheet.js
 import v3Api from '../utils/v3Api';
 
-// 获取工作表记录列表
+// 取得工作表記錄清單
 export async function getRecordList(worksheetId, options = {}) {
   const endpoint = `/v3/app/worksheets/${worksheetId}/rows/list`;
 
@@ -1396,21 +1396,21 @@ export async function getRecordList(worksheetId, options = {}) {
   return result.data || { rows: [], total: 0 };
 }
 
-// 获取工作表结构
+// 取得工作表結構
 export async function getWorksheetStructure(worksheetId) {
   const endpoint = `/v3/app/worksheets/${worksheetId}/structure`;
   const result = await v3Api.get(endpoint);
   return result.data;
 }
 
-// 获取透视表统计数据
+// 取得透視表統計資料
 export async function getPivotData(worksheetId, config) {
   const endpoint = `/v3/app/worksheets/${worksheetId}/rows/pivot`;
 
   const body = {
-    values: config.values,      // 统计字段配置
-    rows: config.rows || [],    // 行维度字段
-    columns: config.columns || [], // 列维度字段
+    values: config.values,      // 統計欄位設定
+    rows: config.rows || [],    // 行維度欄位
+    columns: config.columns || [], // 列維度欄位
     filter: config.filter || null,
     pageSize: config.pageSize || 1000,
     pageIndex: config.pageIndex || 1
@@ -1420,14 +1420,14 @@ export async function getPivotData(worksheetId, config) {
   return result.data;
 }
 
-// 获取选项集列表
+// 取得選項集清單
 export async function getOptionSets() {
   const endpoint = '/v3/app/optionsets';
   const result = await v3Api.get(endpoint);
   return result.data;
 }
 
-// 获取角色列表
+// 取得角色清單
 export async function getRoles() {
   const endpoint = '/v3/app/roles';
   const result = await v3Api.get(endpoint);
@@ -1467,42 +1467,42 @@ function MultiTableDashboard() {
     try {
       setLoading(true);
 
-      // 并行加载所有数据
+      // 並行載入所有資料
       const [
         customersData,
         ordersData,
         productsData,
         optionSets
       ] = await Promise.all([
-        // 1. 加载客户数据
+        // 1. 載入客戶資料
         getRecordList('CUSTOMER_WORKSHEET_ID', {
           pageSize: 10,
           sorts: [{ field: 'CREATE_TIME_FIELD_ID', isAsc: false }]
         }),
 
-        // 2. 加载订单统计（使用透视表API）
+        // 2. 載入訂單統計（使用透視表API）
         getPivotData('ORDER_WORKSHEET_ID', {
           values: [
             {
               field: 'rowid',
               aggregation: 'COUNT',
-              displayName: '订单数量'
+              displayName: '訂單數量'
             },
             {
               field: 'AMOUNT_FIELD_ID',
               aggregation: 'SUM',
-              displayName: '订单总额'
+              displayName: '訂單總額'
             }
           ],
           rows: [
             {
               field: 'STATUS_FIELD_ID',
-              displayName: '订单状态'
+              displayName: '訂單狀態'
             }
           ]
         }),
 
-        // 3. 加载热销产品
+        // 3. 載入熱銷產品
         getRecordList('PRODUCT_WORKSHEET_ID', {
           pageSize: 5,
           filter: {
@@ -1517,13 +1517,13 @@ function MultiTableDashboard() {
           }
         }),
 
-        // 4. 加载选项集
+        // 4. 載入選項集
         getOptionSets()
       ]);
 
-      // 处理选项集数据
+      // 處理選項集資料
       const statusOptionSet = optionSets.find(
-        opt => opt.name === '订单状态'
+        opt => opt.name === '訂單狀態'
       );
       if (statusOptionSet) {
         const optionsMap = {};
@@ -1537,35 +1537,35 @@ function MultiTableDashboard() {
       setOrderStats(ordersData);
       setProducts(productsData.rows);
     } catch (error) {
-      console.error('加载数据失败:', error);
+      console.error('載入資料失敗:', error);
     } finally {
       setLoading(false);
     }
   }
 
   if (loading) {
-    return <div className="loading">加载中...</div>;
+    return <div className="loading">載入中...</div>;
   }
 
   return (
     <div className="multi-table-dashboard">
-      {/* 订单统计卡片 */}
+      {/* 訂單統計卡片 */}
       <section className="stats-section">
-        <h2>订单统计</h2>
+        <h2>訂單統計</h2>
         <div className="stats-grid">
           {orderStats.rows?.map(row => (
             <div key={row.value} className="stat-card">
               <h3>{statusOptions[row.value] || row.value}</h3>
-              <p className="count">{row.COUNT}单</p>
+              <p className="count">{row.COUNT}單</p>
               <p className="amount">¥{row.SUM?.toLocaleString()}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 最新客户 */}
+      {/* 最新客戶 */}
       <section className="customers-section">
-        <h2>最新客户</h2>
+        <h2>最新客戶</h2>
         <div className="customer-list">
           {customers.map(customer => (
             <div key={customer.rowid} className="customer-card">
@@ -1576,9 +1576,9 @@ function MultiTableDashboard() {
         </div>
       </section>
 
-      {/* 热销产品 */}
+      {/* 熱銷產品 */}
       <section className="products-section">
-        <h2>热销产品</h2>
+        <h2>熱銷產品</h2>
         <div className="product-grid">
           {products.map(product => (
             <div key={product.rowid} className="product-card">
@@ -1596,7 +1596,7 @@ function MultiTableDashboard() {
   );
 }
 
-// 辅助函数：获取图片URL
+// 輔助函式：取得圖片URL
 function getImageUrl(attachments) {
   if (!attachments || attachments.length === 0) {
     return 'https://via.placeholder.com/200';
@@ -1665,12 +1665,12 @@ try {
   const data = await getRecordList(worksheetId, options);
   setRecords(data.rows);
 } catch (error) {
-  console.error('加载失败:', error);
+  console.error('載入失敗:', error);
   // 顯示友好錯誤提示
   if (error.message.includes('401')) {
-    alert('认证失败，请检查 API 密钥');
+    alert('認證失敗，請檢查 API 金鑰');
   } else {
-    alert('加载失败，请稍后重试');
+    alert('載入失敗，請稍後重試');
   }
 }
 ```
@@ -1726,12 +1726,12 @@ mdye build
 
 **建置輸出示例：**
 ```
-[21:20:33] 开始构建代码
+[21:20:33] 開始建置程式碼
 ℹ Compiling Webpack
 ✔ Webpack: Compiled successfully in 1.94s
 asset bundle.js 228 KiB [emitted] [minimized] (name: main)
 webpack 5.98.0 compiled successfully in 1947 ms
-[21:20:35] 构建代码完成
+[21:20:35] 建置程式碼完成
 ```
 
 #### 第2步：提交併釋出
@@ -1739,7 +1739,7 @@ webpack 5.98.0 compiled successfully in 1947 ms
 執行以下命令將本地專案提交併推送到線上：
 
 ```bash
-mdye push -m "提交说明"
+mdye push -m "提交說明"
 ```
 
 **提交說明編寫建議：**
@@ -1752,21 +1752,21 @@ mdye push -m "提交说明"
 **完整示例：**
 
 ```bash
-mdye push -m "订单状态视图插件首次发布
+mdye push -m "訂單狀態檢視外掛首次釋出
 
 功能特性:
-- 按订单状态分类展示(待付款/已付款/已发货/已完成/已取消)
-- 完整订单信息展示(订单编号/客户/联系人/日期/金额/负责人)
-- 多条关联产品信息展示(产品名称/编号/分类/单价)
-- 点击订单卡片打开原生行记录弹窗
-- 支持编辑/删除订单并自动刷新列表
-- 响应式网格布局和流畅动画效果
+- 按訂單狀態分類展示(待付款/已付款/已發貨/已完成/已取消)
+- 完整訂單資訊展示(訂單編號/客戶/聯絡人/日期/金額/負責人)
+- 多條關聯產品資訊展示(產品名稱/編號/分類/單價)
+- 點選訂單卡片開啟原生行記錄彈窗
+- 支援編輯/刪除訂單並自動重新整理清單
+- 響應式網格佈局和流暢動畫效果
 
-技术实现:
-- 正确处理单选字段(type 9)和关联记录字段(type 29)
-- 使用 getRowRelationRows API 处理多条关联
-- 使用 utils.openRecordInfo 实现原生交互
-- Promise.all 并行加载提升性能"
+技術實現:
+- 正確處理單選欄位(type 9)和關聯記錄欄位(type 29)
+- 使用 getRowRelationRows API 處理多條關聯
+- 使用 utils.openRecordInfo 實現原生互動
+- Promise.all 並行載入提升效能"
 ```
 
 #### 第3步：確認釋出成功
@@ -1820,7 +1820,7 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 當使用者要求建立 BI 駕駛艙時，按以下步驟思考：
 
 1. **分析業務場景**
-   - 這是什麼型別的應用？（CRM/ERP/项目管理等）
+   - 這是什麼型別的應用？（CRM/ERP/專案管理等）
    - 核心業務流程是什麼？
    - 管理層最關心哪些指標？
 
@@ -1859,58 +1859,58 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 ### 錯誤示例 ❌
 
 ```javascript
-// ❌ 错误：只显示数字，没有说明这个数字代表什么
+// ❌ 錯誤：只顯示數字，沒有說明這個數字代表什麼
 <div className="metric-card">
   <div className="value">128</div>
 </div>
 
-// ❌ 错误：指标名称模糊，不知道统计的是什么
+// ❌ 錯誤：指標名稱模糊，不知道統計的是什麼
 <div className="metric-card">
-  <div className="title">数量</div>
+  <div className="title">數量</div>
   <div className="value">128</div>
 </div>
 
-// ❌ 错误：统计口径不明确
+// ❌ 錯誤：統計口徑不明確
 <div className="metric-card">
-  <div className="title">订单</div>
+  <div className="title">訂單</div>
   <div className="value">128</div>
-  <div className="trend">+15%</div>  // 相比什么时间段？
+  <div className="trend">+15%</div>  // 相比什麼時間段？
 </div>
 ```
 
 ### 正確示例 ✅
 
 ```javascript
-// ✅ 正确：完整的指标定义
+// ✅ 正確：完整的指標定義
 <div className="metric-card">
-  <div className="title">本月新增客户数</div>
+  <div className="title">本月新增客戶數</div>
   <div className="value">128</div>
   <div className="description">
-    2025年1月1日-1月13日新建的客户记录数量
+    2025年1月1日-1月13日新建的客戶記錄數量
   </div>
   <div className="trend">
-    较上月同期（2024年12月1日-12月13日）增长 +15%
+    較上月同期（2024年12月1日-12月13日）增長 +15%
   </div>
 </div>
 
-// ✅ 正确：趋势分析有明确的时间对比
+// ✅ 正確：趨勢分析有明確的時間對比
 <div className="chart-card">
-  <h3>近7天订单趋势</h3>
+  <h3>近7天訂單趨勢</h3>
   <div className="description">
-    每日已完成状态的订单数量统计（2025-01-07 至 2025-01-13）
+    每日已完成狀態的訂單數量統計（2025-01-07 至 2025-01-13）
   </div>
   <LineChart data={dailyOrders} />
 </div>
 
-// ✅ 正确：转化率指标有明确的计算公式
+// ✅ 正確：轉化率指標有明確的計算公式
 <div className="metric-card">
-  <div className="title">客户转化率</div>
+  <div className="title">客戶轉化率</div>
   <div className="value">32.5%</div>
   <div className="formula">
-    已成交客户数 ÷ 潜在客户总数 = 41 ÷ 126
+    已成交客戶數 ÷ 潛在客戶總數 = 41 ÷ 126
   </div>
   <div className="benchmark">
-    行业平均：28% | 我们超出行业平均 +4.5%
+    行業平均：28% | 我們超出行業平均 +4.5%
   </div>
 </div>
 ```
@@ -1927,12 +1927,12 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 **示例：**
 ```javascript
 // ❌ 錯誤
-总数：1,234
+總數：1,234
 
 // ✅ 正確
-本月已完成订单总数：1,234
-统计范围：2025年1月1日-1月31日
-统计条件：订单状态 = "已完成"
+本月已完成訂單總數：1,234
+統計範圍：2025年1月1日-1月31日
+統計條件：訂單狀態 = "已完成"
 ```
 
 #### 2. 金額統計類指標
@@ -1945,13 +1945,13 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 **示例：**
 ```javascript
 // ❌ 錯誤
-销售额：¥1,234,567
+銷售額：¥1,234,567
 
 // ✅ 正確
-本月销售额：¥123.46 万元
-统计范围：2025年1月1日-1月31日
-统计口径：已完成订单的订单金额汇总
-目标达成率：82.3%（目标 ¥150 万元）
+本月銷售額：¥123.46 萬元
+統計範圍：2025年1月1日-1月31日
+統計口徑：已完成訂單的訂單金額彙總
+目標達成率：82.3%（目標 ¥150 萬元）
 ```
 
 #### 3. 比率/百分比類指標
@@ -1967,9 +1967,9 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 完成率：75%
 
 // ✅ 正確
-本月订单完成率：75%
-计算公式：已完成订单数 ÷ 总订单数 = 150 ÷ 200
-统计范围：2025年1月1日-1月31日
+本月訂單完成率：75%
+計算公式：已完成訂單數 ÷ 總訂單數 = 150 ÷ 200
+統計範圍：2025年1月1日-1月31日
 ```
 
 #### 4. 趨勢對比類指標
@@ -1982,14 +1982,14 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 **示例：**
 ```javascript
 // ❌ 錯誤
-订单数：150 ↑ +20%
+訂單數：150 ↑ +20%
 
 // ✅ 正確
-本月订单数：150
-对比上月：125（2024年12月）
-环比增长：+20% [（150-125）÷ 125]
-对比去年同期：130（2024年1月）
-同比增长：+15.4% [（150-130）÷ 130]
+本月訂單數：150
+對比上月：125（2024年12月）
+環比增長：+20% [（150-125）÷ 125]
+對比去年同期：130（2024年1月）
+同比增長：+15.4% [（150-130）÷ 130]
 ```
 
 #### 5. 排名/Top 類指標
@@ -2002,16 +2002,16 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 **示例：**
 ```javascript
 // ❌ 錯誤
-Top 5 产品
+Top 5 產品
 
 // ✅ 正確
-本月销售额 Top 5 产品
-排名依据：已完成订单的产品销售额汇总
-统计范围：2025年1月1日-1月31日
-总产品数：156 款
+本月銷售額 Top 5 產品
+排名依據：已完成訂單的產品銷售額彙總
+統計範圍：2025年1月1日-1月31日
+總產品數：156 款
 
-1. 产品A：¥45.2万元（占比 36.6%）
-2. 产品B：¥32.8万元（占比 26.6%）
+1. 產品A：¥45.2萬元（佔比 36.6%）
+2. 產品B：¥32.8萬元（佔比 26.6%）
 ...
 ```
 
@@ -2021,20 +2021,20 @@ Top 5 产品
 
 ```javascript
 function MetricCard({
-  title,              // 指标名称
-  value,              // 当前值
-  unit,               // 单位
-  description,        // 指标说明
-  compareValue,       // 对比值
-  compareLabel,       // 对比标签（如"上月"）
-  comparePercent,     // 对比百分比
-  formula,            // 计算公式（可选）
-  benchmark,          // 行业基准（可选）
-  period              // 统计周期
+  title,              // 指標名稱
+  value,              // 當前值
+  unit,               // 單位
+  description,        // 指標說明
+  compareValue,       // 對比值
+  compareLabel,       // 對比標籤（如"上月"）
+  comparePercent,     // 對比百分比
+  formula,            // 計算公式（可選）
+  benchmark,          // 行業基準（可選）
+  period              // 統計週期
 }) {
   return (
     <div className="metric-card">
-      {/* 指标标题 */}
+      {/* 指標標題 */}
       <div className="metric-header">
         <h3>{title}</h3>
         <Tooltip content={description}>
@@ -2042,18 +2042,18 @@ function MetricCard({
         </Tooltip>
       </div>
 
-      {/* 当前值 */}
+      {/* 當前值 */}
       <div className="metric-value">
         <span className="value">{value}</span>
         <span className="unit">{unit}</span>
       </div>
 
-      {/* 统计周期 */}
+      {/* 統計週期 */}
       <div className="metric-period">
         {period}
       </div>
 
-      {/* 对比信息 */}
+      {/* 對比資訊 */}
       {compareValue && (
         <div className="metric-compare">
           <span className="compare-label">{compareLabel}：</span>
@@ -2064,17 +2064,17 @@ function MetricCard({
         </div>
       )}
 
-      {/* 计算公式（可选） */}
+      {/* 計算公式（可選） */}
       {formula && (
         <div className="metric-formula">
           <small>{formula}</small>
         </div>
       )}
 
-      {/* 行业基准（可选） */}
+      {/* 行業基準（可選） */}
       {benchmark && (
         <div className="metric-benchmark">
-          <small>行业平均：{benchmark}</small>
+          <small>行業平均：{benchmark}</small>
         </div>
       )}
     </div>
@@ -2083,14 +2083,14 @@ function MetricCard({
 
 // 使用示例
 <MetricCard
-  title="本月客户转化率"
+  title="本月客戶轉化率"
   value="32.5"
   unit="%"
-  description="潜在客户转化为成交客户的比率，反映销售团队的转化能力"
+  description="潛在客戶轉化為成交客戶的比率，反映銷售團隊的轉化能力"
   compareValue="28.3"
   compareLabel="上月"
   comparePercent={14.8}
-  formula="已成交客户数 ÷ 潜在客户总数 = 41 ÷ 126"
+  formula="已成交客戶數 ÷ 潛在客戶總數 = 41 ÷ 126"
   benchmark="28%（超出 +4.5%）"
   period="2025年1月1日 - 1月13日"
 />
@@ -2108,20 +2108,20 @@ function ChartCard({ title, description, timeRange, data }) {
           {description}
         </div>
         <div className="chart-timerange">
-          统计周期：{timeRange}
+          統計週期：{timeRange}
         </div>
       </div>
 
       <div className="chart-content">
-        {/* 图表内容 */}
+        {/* 圖表內容 */}
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip
               formatter={(value, name) => [
-                `${value} 单`,
-                `订单数量`
+                `${value} 單`,
+                `訂單數量`
               ]}
             />
             <Bar dataKey="value" fill="#1890ff" />
@@ -2129,12 +2129,12 @@ function ChartCard({ title, description, timeRange, data }) {
         </ResponsiveContainer>
       </div>
 
-      {/* 数据说明 */}
+      {/* 資料說明 */}
       <div className="chart-footer">
         <small>
-          数据来源：订单工作表 |
-          统计条件：订单状态 = "已完成" |
-          更新时间：{new Date().toLocaleString()}
+          資料來源：訂單工作表 |
+          統計條件：訂單狀態 = "已完成" |
+          更新時間：{new Date().toLocaleString()}
         </small>
       </div>
     </div>
@@ -2143,8 +2143,8 @@ function ChartCard({ title, description, timeRange, data }) {
 
 // 使用示例
 <ChartCard
-  title="各地区销售额分布"
-  description="按客户所在省份统计已完成订单的销售额汇总，用于分析区域市场表现"
+  title="各地區銷售額分佈"
+  description="按客戶所在省份統計已完成訂單的銷售額彙總，用於分析區域市場表現"
   timeRange="2025年1月1日 - 1月13日"
   data={regionSalesData}
 />
@@ -2207,9 +2207,9 @@ mdye start
 
 **預期結果：**
 ```
-[21:20:33] 开始编译代码
+[21:20:33] 開始編譯程式碼
 ✔ Webpack: Compiled successfully in 1.94s
-[21:20:35] 编译完成，服务运行在：
+[21:20:35] 編譯完成，服務執行在：
 http://localhost:3000/bundle.js
 ```
 
@@ -2234,17 +2234,17 @@ kill -9 <PID>  # PID 是上一步查到的程序 ID
 # 編輯 mdye.config.js，修改埠號：
 {
   devServer: {
-    port: 3001  // 改为其他未占用的端口
+    port: 3001  // 改為其他未佔用的埠
   }
 }
 ```
 
 **Windows 排查：**
 ```cmd
-# 检查端口占用
+# 檢查埠占用
 netstat -ano | findstr :3000
 
-# 结束进程
+# 結束程序
 taskkill /PID <PID> /F
 ```
 
@@ -2278,18 +2278,18 @@ sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off
 **排查步驟：**
 
 ```bash
-# 查看开发服务器的控制台输出
-# 寻找以下关键词：
-# - "ERROR"：编译错误
-# - "WARNING"：警告信息
-# - "Syntax"：语法错误
-# - "Cannot find module"：模块缺失
+# 檢視開發伺服器的控制檯輸出
+# 尋找以下關鍵詞：
+# - "ERROR"：編譯錯誤
+# - "WARNING"：警告資訊
+# - "Syntax"：語法錯誤
+# - "Cannot find module"：模組缺失
 
-# 常见错误示例：
+# 常見錯誤示例：
 ✗ ERROR in ./src/App.js
 Module not found: Error: Can't resolve 'recharts' in '/path/to/project/src'
 
-# 解决方法：安装缺失的依赖
+# 解決方法：安裝缺失的依賴
 npm install recharts
 ```
 
@@ -2343,59 +2343,59 @@ npm install recharts
 
 ```bash
 #!/bin/bash
-echo "=== HAP 视图插件开发环境诊断 ==="
+echo "=== niio 檢視外掛開發環境診斷 ==="
 echo ""
 
 # 1. 檢查 Node.js 版本
 echo "1. Node.js 版本："
-node --version || echo "❌ Node.js 未安装"
+node --version || echo "❌ Node.js 未安裝"
 echo ""
 
 # 2. 檢查 mdye-cli 是否安裝
 echo "2. mdye-cli 版本："
-mdye --version || echo "❌ mdye-cli 未安装"
+mdye --version || echo "❌ mdye-cli 未安裝"
 echo ""
 
 # 3. 檢查當前目錄
-echo "3. 当前目录："
+echo "3. 當前目錄："
 pwd
 echo ""
 
 # 4. 檢查專案檔案
-echo "4. 项目文件检查："
+echo "4. 專案檔案檢查："
 if [ -f "package.json" ]; then
   echo "✓ package.json 存在"
 else
-  echo "❌ package.json 不存在，请在项目根目录执行"
+  echo "❌ package.json 不存在，請在專案根目錄執行"
 fi
 
 if [ -f "src/App.js" ] || [ -f "src/App.jsx" ]; then
-  echo "✓ App 文件存在"
+  echo "✓ App 檔案存在"
 else
-  echo "❌ App 文件不存在"
+  echo "❌ App 檔案不存在"
 fi
 echo ""
 
 # 5. 檢查埠占用
-echo "5. 检查 3000 端口："
+echo "5. 檢查 3000 埠："
 if lsof -i :3000 > /dev/null 2>&1; then
-  echo "⚠️  3000 端口已被占用："
+  echo "⚠️  3000 埠已被佔用："
   lsof -i :3000
 else
-  echo "✓ 3000 端口可用"
+  echo "✓ 3000 埠可用"
 fi
 echo ""
 
 # 6. 檢查開發伺服器
-echo "6. 检查开发服务器："
+echo "6. 檢查開發伺服器："
 if ps aux | grep -v grep | grep "mdye start" > /dev/null; then
-  echo "✓ 开发服务器正在运行"
+  echo "✓ 開發伺服器正在執行"
 else
-  echo "❌ 开发服务器未运行"
+  echo "❌ 開發伺服器未執行"
 fi
 echo ""
 
-echo "=== 诊断完成 ==="
+echo "=== 診斷完成 ==="
 ```
 
 **使用方法：**
@@ -2506,7 +2506,7 @@ function parseSingleSelect(value, control) {
 
     return { key: selectedKey, text: selectedText };
   } catch (err) {
-    console.error("解析单选字段失败:", err, value);
+    console.error("解析單選欄位失敗:", err, value);
     return { key: "", text: "" };
   }
 }
@@ -2525,13 +2525,13 @@ function parseSingleSelect(value, control) {
 ```javascript
 // ✅ 正確:包含所有選項欄位型別
 const selectField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('状态') &&
+  ctrl.controlName?.includes('狀態') &&
   (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
 );
 
 // ❌ 錯誤:會遺漏 type 9
 const selectField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('状态') &&
+  ctrl.controlName?.includes('狀態') &&
   (ctrl.type === 10 || ctrl.type === 11)
 );
 ```
@@ -2572,7 +2572,7 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
         relationData = result.data;
       }
     } catch (error) {
-      console.error('获取多条关联失败:', error);
+      console.error('取得多條關聯失敗:', error);
     }
   } else {
     // 單條關聯:直接解析

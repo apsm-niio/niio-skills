@@ -48,11 +48,11 @@
   },
   "examples": [
     {
-      "controlName": "订单状态",
+      "controlName": "訂單狀態",
       "type": 11,
       "required": true,
       "options": [
-        { "value": "进行中", "index": 0 },
+        { "value": "進行中", "index": 0 },
         { "value": "已完成", "index": 1 }
       ],
       "advancedSetting": { "checktype": "0" }

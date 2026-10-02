@@ -9,40 +9,40 @@
 ## 命令序列
 
 ```bash
-# 1. 盘点现状
-hap app-editor inspect <appId>          # 一眼看出缺哪些表/视图/角色/页面
-hap --json worksheet fields <ws_id>     # 逐表核对字段是否齐
+# 1. 盤點現狀
+hap app-editor inspect <appId>          # 一眼看出缺哪些表/檢視/角色/頁面
+hap --json worksheet fields <ws_id>     # 逐表核對欄位是否齊
 
-# 2. 补缺的表（单条命令）
-hap worksheet create <appId> "退货单" --section-id <section_id>
+# 2. 補缺的表（單條命令）
+hap worksheet create <appId> "退貨單" --section-id <section_id>
 
-# 3. 补缺的字段（edit-spec,可一份 spec 串多个 op,后面的能引用前面建的）
+# 3. 補缺的欄位（edit-spec,可一份 spec 串多個 op,後面的能引用前面建的）
 cat > fix-fields.edit.json <<'EOF'
 { "app": "<appId>", "ops": [
-  { "type": "field.add", "worksheet": "退货单",
-    "field": { "name": "退货原因", "type": "Text" } },
-  { "type": "field.add", "worksheet": "退货单",
-    "field": { "name": "状态", "type": "SingleSelect",
-               "options": ["待处理", "已完成"] } } ] }
+  { "type": "field.add", "worksheet": "退貨單",
+    "field": { "name": "退貨原因", "type": "Text" } },
+  { "type": "field.add", "worksheet": "退貨單",
+    "field": { "name": "狀態", "type": "SingleSelect",
+               "options": ["待處理", "已完成"] } } ] }
 EOF
 hap app-editor validate fix-fields.edit.json && hap app-editor apply fix-fields.edit.json
 
-# 4. 修错名的视图 / 补视图
-hap worksheet view update <ws_id> <view_id> --name "正确的名字"
-hap worksheet view create <ws_id> "按状态" --view-type board --group-control <statusCtrlId>
+# 4. 修錯名的檢視 / 補檢視
+hap worksheet view update <ws_id> <view_id> --name "正確的名字"
+hap worksheet view create <ws_id> "按狀態" --view-type board --group-control <statusCtrlId>
 
-# 5. 补角色与权限
+# 5. 補角色與權限
 hap app role list -a <appId>
-hap app role create -a <appId> --name "处理员" --description "处理退货" \
+hap app role create -a <appId> --name "處理員" --description "處理退貨" \
   --type 0 --permission-scope 20
 hap app role add-member <role_id> --user-ids <accountId> -a <appId>
 
-# 6. 工作流没发布的发布掉
-hap --json workflow list <appId>        # enabled=false 的逐个检查
+# 6. 工作流沒釋出的釋出掉
+hap --json workflow list <appId>        # enabled=false 的逐個檢查
 hap workflow publish <process_id>
 
-# 7. 终检
-hap app-editor inspect <appId>          # 结构齐了
+# 7. 終檢
+hap app-editor inspect <appId>          # 結構齊了
 ```
 
 ## 注意

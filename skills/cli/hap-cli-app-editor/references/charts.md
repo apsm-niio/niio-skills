@@ -9,7 +9,7 @@ hap worksheet chart list <worksheetId>                # 個人圖 + 共享圖，
 hap worksheet chart list <worksheetId> --owner-only   # 只看自己的個人圖
 hap --json worksheet chart get <reportId> --app-id <worksheetId>
 hap worksheet chart update <reportId> --app-id <worksheetId> --name "新名字" --report-type 1 \
-  -j '{"yaxisList":[{"controlId":"<金额字段>","controlType":6,"normType":4}]}'
+  -j '{"yaxisList":[{"controlId":"<金額欄位>","controlType":6,"normType":4}]}'
 hap worksheet chart delete <reportId> ...
 ```
 

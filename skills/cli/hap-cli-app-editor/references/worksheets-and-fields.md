@@ -8,20 +8,20 @@
 
 ```bash
 # 新建（可一併鋪好欄位；--fields 即下文 FieldSpec 高層方言）
-hap worksheet create 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809 "客户" \
-  --icon table --remark "客户主数据" \
-  --fields '[{"type":"TEXT","name":"客户名称","required":true},
-             {"type":"MOBILE_PHONE","name":"电话"},
-             {"type":"DROP_DOWN","name":"等级","options":["VIP","普通"]}]' \
-  --title-name 客户名称
+hap worksheet create 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809 "客戶" \
+  --icon table --remark "客戶主資料" \
+  --fields '[{"type":"TEXT","name":"客戶名稱","required":true},
+             {"type":"MOBILE_PHONE","name":"電話"},
+             {"type":"DROP_DOWN","name":"等級","options":["VIP","普通"]}]' \
+  --title-name 客戶名稱
 
 # 基本資訊；表單佈局與檢視清單可以順帶取回，不必再發兩條命令
 hap --json worksheet info 6845f0a1b2c3d4e5f6a7b8c9
 hap --json worksheet info 6845f0a1b2c3d4e5f6a7b8c9 --with-form --with-views
 
 # 改別名 / 描述；改側邊欄名稱、圖示或顯示狀態需要 --app-id
-hap worksheet update 6845f0a1b2c3d4e5f6a7b8c9 --alias customers --desc "客户主数据"
-hap worksheet update 6845f0a1b2c3d4e5f6a7b8c9 --name "客户（CRM）" \
+hap worksheet update 6845f0a1b2c3d4e5f6a7b8c9 --alias customers --desc "客戶主資料"
+hap worksheet update 6845f0a1b2c3d4e5f6a7b8c9 --name "客戶（CRM）" \
   --app-id 1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809
 
 # 從應用導航裡隱藏（表本身照常可用、資料照常讀寫）
@@ -52,8 +52,8 @@ hap --json worksheet fields <子表工作表ID> --parent <父表工作表ID>
 ### 🚨 複製工作表：沒點名的關聯列會變成純文字
 
 ```bash
-hap worksheet copy <工作表ID> "客户-副本" -a <应用ID> \
-  --keep-relation <关联字段ID> --keep-relation <子表字段ID>
+hap worksheet copy <工作表ID> "客戶-副本" -a <應用ID> \
+  --keep-relation <關聯欄位ID> --keep-relation <子表欄位ID>
 ```
 
 `--keep-relation` 要**逐個點名**（可重複）。**沒被點到的關聯記錄、子表、級聯選擇列，
@@ -78,8 +78,8 @@ controlId 不必去「修」。
 ```bash
 # 只追加傳入的控制元件，已有列（含反向關聯控制元件）一概不動
 hap worksheet add-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls '[
-  {"type": 2,  "controlName": "备注"},
-  {"type": 15, "controlName": "签约日期"}
+  {"type": 2,  "controlName": "備註"},
+  {"type": 15, "controlName": "簽約日期"}
 ]'
 
 # 佈局太長放不進命令列時從檔案讀（--controls / --fields 都支援 @檔名）
@@ -108,13 +108,13 @@ hap worksheet add-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @new-controls.json
 {
   "app": "1f2e3d4c-5b6a-7081-92a3-b4c5d6e7f809",
   "ops": [
-    { "type": "field.add",     "worksheet": "客户",
-      "field": { "name": "来源", "type": "SingleSelect", "options": ["展会", "转介绍"] } },
-    { "type": "field.update",  "worksheet": "客户",
-      "field": "电话", "rename": "联系电话", "set": { "required": true } },
-    { "type": "field.delete",  "worksheet": "客户", "field": "旧编号", "confirm": true },
-    { "type": "field.reorder", "worksheet": "客户",
-      "order": ["客户名称", "联系电话", "等级", "来源"] }
+    { "type": "field.add",     "worksheet": "客戶",
+      "field": { "name": "來源", "type": "SingleSelect", "options": ["展會", "轉介紹"] } },
+    { "type": "field.update",  "worksheet": "客戶",
+      "field": "電話", "rename": "聯絡電話", "set": { "required": true } },
+    { "type": "field.delete",  "worksheet": "客戶", "field": "舊編號", "confirm": true },
+    { "type": "field.reorder", "worksheet": "客戶",
+      "order": ["客戶名稱", "聯絡電話", "等級", "來源"] }
   ]
 }
 ```
@@ -133,7 +133,7 @@ hap app-editor apply    edit.json   # 逐 op 執行（--continue 失敗不中斷
   `formula` / `subtable` / `control`——跨表型別必須帶自己那個塊，寫法見
   [edit-spec.md](edit-spec.md) 的「field 的跨表塊」。詞表以外的鍵、塊放錯型別、塊內未知鍵
   一律**校驗報錯**，不會靜默建出指向為空的壞列。這份詞彙沒建模的形狀走
-  `control:{<WireControl 原始键>}` 逃生口（最後合併、優先生效）。
+  `control:{<WireControl 原始鍵>}` 逃生口（最後合併、優先生效）。
 - `field.update` 的 `set` 直接寫 WireControl 原始鍵（見 §2/§3）。
 - `field.reorder` 按 `order` 重排顯示順序（順序由控制元件 `row` 決定）；未列出的欄位接在後面。
 - 元素可用名稱或 id 引用，spec 內後面的 op 可引用前面剛建的元素。
@@ -150,12 +150,12 @@ hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --fields @layout.json
 hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --fields @layout.json --no-verify
 
 # 場景 A：剛建的空表一次鋪設全部欄位（高層方言 --fields）
-hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --title-name 客户名称 --fields '[
-  {"type":"TEXT", "name":"客户名称", "required":true},
-  {"type":"AUTO_ID", "name":"客户编号",
+hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --title-name 客戶名稱 --fields '[
+  {"type":"TEXT", "name":"客戶名稱", "required":true},
+  {"type":"AUTO_ID", "name":"客戶編號",
    "advanced_setting":{"increase":
      "[{\"type\":1,\"repeatType\":0,\"start\":1,\"length\":5,\"format\":\"C-\"}]"}},
-  {"type":"DROP_DOWN", "name":"等级", "options":["VIP","普通","潜在"]}
+  {"type":"DROP_DOWN", "name":"等級", "options":["VIP","普通","潛在"]}
 ]'
 
 # 場景 B：完整讀出 → 在真實結構上改 → 整表寫回（--raw + --controls，這條路乾淨往返）
@@ -176,7 +176,7 @@ hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @controls.json
 - **儲存成功 ≠ 儲存對了**：引用了已不存在的欄位、表單裡留下空行、同一列出現兩次，這些都能
   儲存成功而不報錯。`--check` 只報告問題不寫入，改結構前先跑一次；真正儲存後會**自動回讀**
   把這次留下的問題報出來（要關掉用 `--no-verify`）。看到報告別當噪音。
-- `--fields` 和 `--controls` 都接受 **`@文件名`**：真實整表佈局遠超一條命令列能承載的長度。
+- `--fields` 和 `--controls` 都接受 **`@檔名`**：真實整表佈局遠超一條命令列能承載的長度。
 
 ### 雙向關聯：一對列，不是一個開關
 
@@ -184,8 +184,8 @@ hap worksheet update-fields 6845f0a1b2c3d4e5f6a7b8c9 --controls @controls.json
 `bidirectional` 並給對方表上那一列起名，**一次建好兩側**：
 
 ```bash
-hap worksheet add-fields <订单表ID> --controls '[
-  {"type": 29, "controlName": "客户", "dataSource": "<客户表工作表ID>",
+hap worksheet add-fields <訂單表ID> --controls '[
+  {"type": 29, "controlName": "客戶", "dataSource": "<客戶表工作表ID>",
    "advancedSetting": {"bidirectional": "1", "showtype": "1"}}
 ]'
 ```
@@ -193,17 +193,17 @@ hap worksheet add-fields <订单表ID> --controls '[
 或走整表佈局的高層方言（`update-fields --fields` / `worksheet create --fields`）：
 
 ```json
-{"type":"RELATE_SHEET", "name":"客户", "dataSource":"<客户表工作表ID>",
- "config":{"bidirectional": true, "reverseName": "订单", "displayMode": "card"}}
+{"type":"RELATE_SHEET", "name":"客戶", "dataSource":"<客戶表工作表ID>",
+ "config":{"bidirectional": true, "reverseName": "訂單", "displayMode": "card"}}
 ```
 
 走 edit-spec 時用 `relation` 塊，目標表和展示列都可以寫名字：
 
 ```json
-{ "type": "field.add", "worksheet": "订单",
-  "field": { "name": "客户", "type": "RELATE_SHEET",
-             "relation": { "worksheet": "客户", "multiple": false,
-                           "showFields": ["客户名称", "等级"] } } }
+{ "type": "field.add", "worksheet": "訂單",
+  "field": { "name": "客戶", "type": "RELATE_SHEET",
+             "relation": { "worksheet": "客戶", "multiple": false,
+                           "showFields": ["客戶名稱", "等級"] } } }
 ```
 
 > `relation` 塊本身**不含 `bidirectional`**（塊內未知鍵會被校驗拒絕）。edit-spec 裡要雙向，
@@ -221,9 +221,9 @@ hap worksheet add-fields <订单表ID> --controls '[
 建的時候沒開 `bidirectional`，事後要補，用 `pair-relation`，**不要去改佈局**：
 
 ```bash
-hap worksheet pair-relation <工作表ID> 客户                # FIELD 傳列名或欄位 ID
-hap worksheet pair-relation <工作表ID> 客户 --name 订单     # 指定對方表上那列的名字
-hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆蓋對方表上的殘留列
+hap worksheet pair-relation <工作表ID> 客戶                # FIELD 傳列名或欄位 ID
+hap worksheet pair-relation <工作表ID> 客戶 --name 訂單     # 指定對方表上那列的名字
+hap worksheet pair-relation <工作表ID> 客戶 --repair       # 覆蓋對方表上的殘留列
 ```
 
 > 🚨 **不要用「佔位 `sourceControlId`」自己偽造反向端。** 那樣建出來的關聯伺服器端並沒有登記成
@@ -322,7 +322,7 @@ hap worksheet pair-relation <工作表ID> 客户 --repair       # 覆蓋對方�
 | `hint` | 輸入佔位提示 | string |
 | `options` | 選項清單（type 9/10/11） | 陣列 `[{key(uuid), value, isDeleted, index, checked, color}]` |
 | `advancedSetting` | 按型別的設定袋；**值全是字串**，JSON 結構序列化後放入 | 字串值的物件（見 §3） |
-| `dataSource` | 型別專屬橋接：RELATE_SHEET/SUB_LIST(掛載)=目標 worksheetId；SUB_LIST(內聯)=新 UUID；SHEET_FIELD/SUBTOTAL=`$<桥接controlId>$`；公式類=表示式字串 `$id$ * $id$` | string |
+| `dataSource` | 型別專屬橋接：RELATE_SHEET/SUB_LIST(掛載)=目標 worksheetId；SUB_LIST(內聯)=新 UUID；SHEET_FIELD/SUBTOTAL=`$<橋接controlId>$`；公式類=表示式字串 `$id$ * $id$` | string |
 | `sourceControlId` | SHEET_FIELD：目標表被對映列 id；SUBTOTAL：被聚合列 id | controlId 字串 |
 | `enumDefault` | 按型別的判別值：TEXT `1`=多行 `2`=單行；RELATE_SHEET `1`=單條 `2`=多條；ATTACHMENT `3`；SCORE `1`；SUBTOTAL=聚合方式 | int（按型別） |
 | `enumDefault2` | 次級判別值（如 MONEY=2、AREA_COUNTY=3） | int（按型別） |

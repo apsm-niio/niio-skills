@@ -41,13 +41,13 @@ niio niio (High-performance Application Platform) 是一個超級應用平台,�
 #### 自動化提取步驟
 
 1. **讀取已設定的 niio MCP 設定檔案**（以編輯器/客戶端的 MCP 設定為準，例如其全域 `settings.json`）
-   - **macOS**: `~/Library/Application Support/<编辑器>/User/settings.json`
-   - **Windows**: `%APPDATA%\<编辑器>\User\settings.json`
-   - **Linux**: `~/.config/<编辑器>/User/settings.json`
+   - **macOS**: `~/Library/Application Support/<編輯器>/User/settings.json`
+   - **Windows**: `%APPDATA%\<編輯器>\User\settings.json`
+   - **Linux**: `~/.config/<編輯器>/User/settings.json`
 
 2. **查詢 MCP 設定**
    - 在 `mcpServers` 物件中查詢 niio 的 MCP 伺服器設定（`url` 指向 `api.mingdao.com/mcp` 或 `api2.mingdao.com/mcp`）
-   - 常見命名：AppKey 身分驗證與授權多為 `hap-mcp-应用名`；個人身分驗證與授權多為 `hap_personal_mcp`
+   - 常見命名：AppKey 身分驗證與授權多為 `hap-mcp-應用名`；個人身分驗證與授權多為 `hap_personal_mcp`
 
 3. **識別身分驗證與授權型別並解析參數**
 
@@ -57,7 +57,7 @@ niio niio (High-performance Application Platform) 是一個超級應用平台,�
    ```json
    {
      "mcpServers": {
-       "hap-mcp-应用名": {
+       "hap-mcp-應用名": {
          "url": "https://api2.mingdao.com/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
        }
      }
@@ -86,8 +86,8 @@ niio niio (High-performance Application Platform) 是一個超級應用平台,�
 #### 程式碼示例（AI 助手操作）
 
 ```javascript
-// 1. 读取已配置的 HAP MCP 配置文件（路径取决于所用编辑器/客户端，下方以其全局 settings.json 为例）
-const editorDir = 'YourEditor'; // 替换为实际编辑器/客户端目录名
+// 1. 讀取已設定的 niio MCP 設定檔案（路徑取決於所用編輯器/客戶端，下方以其全域 settings.json 為例）
+const editorDir = 'YourEditor'; // 替換為實際編輯器/客戶端目錄名
 const settingsPath = process.platform === 'darwin' 
   ? `${process.env.HOME}/Library/Application Support/${editorDir}/User/settings.json`
   : process.platform === 'win32'
@@ -96,7 +96,7 @@ const settingsPath = process.platform === 'darwin'
 
 const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
 
-// 2. 查找 HAP MCP 配置（url 指向 api.mingdao.com/mcp 或 api2.mingdao.com/mcp）
+// 2. 查詢 niio MCP 設定（url 指向 api.mingdao.com/mcp 或 api2.mingdao.com/mcp）
 const mcpServers = settings.mcpServers || {};
 const hapMcpConfig = Object.entries(mcpServers).find(
   ([name, config]) => config.url && /api2?\.mingdao\.com\/mcp/.test(config.url)
@@ -106,7 +106,7 @@ if (hapMcpConfig) {
   const [, config] = hapMcpConfig;
   const url = new URL(config.url);
 
-  // 3. 识别鉴权类型并提取
+  // 3. 識別身分驗證與授權型別並提取
   let auth;
   if (url.searchParams.get('HAP-Appkey')) {
     // 格式一：AppKey + Sign
@@ -122,13 +122,13 @@ if (hapMcpConfig) {
     auth = {
       type: 'bearer',
       headers: {
-        'Authorization': config.headers.Authorization, // 原样使用 "Bearer ..."
-        // 'HAP-Appid': '应用ID',  // 应用级接口必填，按需补充
+        'Authorization': config.headers.Authorization, // 原樣使用 "Bearer ..."
+        // 'HAP-Appid': '應用ID',  // 應用級介面必填，按需補充
       },
     };
   }
 
-  // 4. 将 auth.headers 合并进 API 请求头即可
+  // 4. 將 auth.headers 合併進 API 請求頭即可
   console.log(auth);
 }
 ```
@@ -197,7 +197,7 @@ const headers = {
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer 你的access_token',
-  'HAP-Appid': '应用ID'   // 應用級介面必填
+  'HAP-Appid': '應用ID'   // 應用級介面必填
 };
 ```
 
@@ -209,7 +209,7 @@ const headers = {
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer 你的access_token',
-  'HAP-Appid': '应用ID'   // 應用級介面必填
+  'HAP-Appid': '應用ID'   // 應用級介面必填
 };
 ```
 
@@ -225,7 +225,7 @@ const headers = {
 
 ```json
 {
-  "应用 API - API 文档": {
+  "應用 API - API 文件": {
     "command": "npx",
     "args": [
       "-y",
@@ -267,11 +267,11 @@ GET /v3/app/info
 ```javascript
 POST /v3/app/worksheets
 {
-  "name": "客户信息表",
+  "name": "客戶資訊表",
   "alias": "customers",
   "fields": [
     {
-      "name": "客户名称",
+      "name": "客戶名稱",
       "alias": "customer_name",
       "type": "Text",
       "isTitle": true,
@@ -296,11 +296,11 @@ POST /v3/app/worksheets/{worksheet_id}/rows
   "fields": [
     {
       "id": "customer_name",
-      "value": "明道云科技有限公司"
+      "value": "niio科技有限公司"
     },
     {
       "id": "customer_type",
-      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ⚠️ 使用选项key
+      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ⚠️ 使用選項key
     }
   ],
   "triggerWorkflow": true
@@ -518,7 +518,7 @@ Filter = {
   "customer_type": [
     {
       "key": "74c7b607-864d-4cc4-b401-28acba2636e9",
-      "value": "成交客户"
+      "value": "成交客戶"
     }
   ]
 }
@@ -526,7 +526,7 @@ Filter = {
 
 **⚠️ 關鍵點:**
 - 即使是單選,也要用陣列 `["key"]`
-- 不能傳顯示文字 `["成交客户"]`,必須用 key
+- 不能傳顯示文字 `["成交客戶"]`,必須用 key
 - 篩選時必須使用 key,不能使用顯示文字
 
 #### 2. 附件欄位（Attachment）⭐
@@ -537,7 +537,7 @@ Filter = {
   "id": "attachments",
   "type": "0",  // 0=覆蓋, 1=追加
   "value": [{
-    "name": "产品宣传册.pdf",
+    "name": "產品宣傳冊.pdf",
     "url": "https://example.com/brochure.pdf"
   }]
 }
@@ -575,17 +575,17 @@ Filter = {
 {
   "related_customer": [{
     "sid": "945e6503-3823-4e91-9d84-a53f8bdd6fc5",
-    "name": "明道云科技有限公司"
+    "name": "niio科技有限公司"
   }]
 }
 ```
 
 **取得完整關聯資料:**
 ```javascript
-// 方法1: 使用专用 API
+// 方法1: 使用專用 API
 GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 
-// 方法2: 使用 sid 查询目标表
+// 方法2: 使用 sid 查詢目標表
 POST /v3/app/worksheets/{target_worksheet_id}/rows/list
 {
   "filter": {
@@ -593,9 +593,9 @@ POST /v3/app/worksheets/{target_worksheet_id}/rows/list
     "logic": "AND",
     "children": [{
       "type": "condition",
-      "field": "rowid",  // ⚠️ 使用系统字段 rowid
+      "field": "rowid",  // ⚠️ 使用系統欄位 rowid
       "operator": "in",
-      "value": ["sid1", "sid2"]  // 传入关联记录的 sid
+      "value": ["sid1", "sid2"]  // 傳入關聯記錄的 sid
     }]
   }
 }
@@ -617,7 +617,7 @@ POST /v3/app/worksheets/{target_worksheet_id}/rows/list
 ```javascript
 POST /v3/users/lookup
 {
-  "name": "张三"  // 精确匹配姓名
+  "name": "張三"  // 精確匹配姓名
 }
 ```
 
@@ -692,7 +692,7 @@ POST /v3/users/lookup
 {
   "field": "customer_type",
   "operator": "eq",
-  "value": ["成交客户"]  // ❌ 使用了顯示文字
+  "value": ["成交客戶"]  // ❌ 使用了顯示文字
 }
 ```
 
@@ -931,7 +931,7 @@ structure.fields.forEach(field => {
 });
 
 // 3. 使用時查詢key
-const customerTypeKey = optionMaps['customer_type']['成交客户'];
+const customerTypeKey = optionMaps['customer_type']['成交客戶'];
 ```
 
 ### 2. 查詢階段

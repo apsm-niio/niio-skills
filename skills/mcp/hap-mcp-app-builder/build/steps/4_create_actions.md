@@ -13,7 +13,7 @@
 對每張有自訂動作的工作表：
 
 1. 呼叫 `create_custom_actions` 批次建立該表的所有動作
-2. 記錄回傳的 `actionIdByName`（格式：`"工作表名/动作名" → actionId`）
+2. 記錄回傳的 `actionIdByName`（格式：`"工作表名/動作名" → actionId`）
 3. **關鍵**：`type=triggerWorkflow` 的動作，系統會自動建立工作流外殼並回傳 `processId`——必須記錄到 `customActionWorkflows[]`
 4. 更新 `hap-context.json`：寫入 `actionIdByName`、`customActionWorkflows`（不寫 `progress`，由排程器統一管理）
 
@@ -36,8 +36,8 @@
 plan 的 `description` 描述了"使用者填什麼"，build 階段從 worksheetFields 裡挑出對應欄位的 alias 清單。
 
 例：
-- plan: `"办理签到"` description "填寫實際到場時間、證件核驗情況、訪客證編號"
-- worksheetFields 含: `实际签到时间(alias=biz_check_in_time)` / `证件核验通过(alias=biz_id_verified)` / `访客证编号(alias=biz_badge_no)`
+- plan: `"辦理簽到"` description "填寫實際到場時間、證件核驗情況、訪客證編號"
+- worksheetFields 含: `實際簽到時間(alias=biz_check_in_time)` / `證件核驗透過(alias=biz_id_verified)` / `訪客證編號(alias=biz_badge_no)`
 - → `updateFields: ["biz_check_in_time", "biz_id_verified", "biz_badge_no"]`
 
 ### relationField 推斷
@@ -45,8 +45,8 @@ plan 的 `description` 描述了"使用者填什麼"，build 階段從 worksheet
 plan 的 `targetWorksheet` 告訴我們要建哪張表的關聯記錄。worksheetFields 裡找到 type=Relation 且 dataSource 指向 targetWorksheet 的欄位，取其 alias。
 
 例：
-- plan: `"登记异常"` type=createRelatedRecord, targetWorksheet="來訪異常"
-- worksheetFields 含: `相关异常(type=Relation, alias=biz_exception_relation, dataSource=来访异常的 ID)`
+- plan: `"登記異常"` type=createRelatedRecord, targetWorksheet="來訪異常"
+- worksheetFields 含: `相關異常(type=Relation, alias=biz_exception_relation, dataSource=來訪異常的 ID)`
 - → `relationField: "biz_exception_relation"`
 
 ## enableWhen（觸發條件）
@@ -64,7 +64,7 @@ plan 的 `targetWorksheet` 告訴我們要建哪張表的關聯記錄。workshee
   "type": "group",
   "logic": "AND",
   "children": [
-    { "type": "condition", "field": "status", "operator": "eq", "value": "在库" }
+    { "type": "condition", "field": "status", "operator": "eq", "value": "在庫" }
   ]
 }
 ```
@@ -101,10 +101,10 @@ plan 的 `targetWorksheet` 告訴我們要建哪張表的關聯記錄。workshee
 對 `type=triggerWorkflow` 的動作，還需記錄：
 ```json
 {
-  "name": "动作名称",
-  "processId": "系统返回的 processId",
-  "worksheetName": "所在工作表名称",
-  "intentHints": "来自 plan 的业务意图"
+  "name": "動作名稱",
+  "processId": "系統回傳的 processId",
+  "worksheetName": "所在工作表名稱",
+  "intentHints": "來自 plan 的業務意圖"
 }
 ```
 這些工作流在後續工作流階段需要填充節點，不需要重新呼叫 `create_process`。

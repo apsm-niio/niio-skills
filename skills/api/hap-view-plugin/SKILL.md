@@ -83,7 +83,7 @@ mdye --version
 
 **建立專案命令：**
 ```bash
-mdye init view --id 你的worksheetID-你的视图ID --template React
+mdye init view --id 你的worksheetID-你的檢視ID --template React
 ```
 
 **參數說明：**
@@ -92,7 +92,7 @@ mdye init view --id 你的worksheetID-你的视图ID --template React
 
 **專案結構：**
 ```
-mdye_view_你的视图ID/
+mdye_view_你的檢視ID/
 ├── package.json
 ├── mdye.json
 ├── src/
@@ -106,7 +106,7 @@ mdye_view_你的视图ID/
 
 **進入專案目錄：**
 ```bash
-cd mdye_view_你的视图ID
+cd mdye_view_你的檢視ID
 ```
 
 **安裝依賴：**
@@ -234,7 +234,7 @@ async function addRecord(fieldsData) {
       {
         controlId: "fieldId1",
         type: 2,
-        value: "测试文本"
+        value: "測試文字"
       }
     ]
   });
@@ -305,28 +305,28 @@ const handleRecordClick = async (recordId) => {
 
     // 處理回傳結果
     if (result) {
-      console.log('操作结果:', result);
+      console.log('操作結果:', result);
 
       // 根據操作型別處理
       switch (result.action) {
         case 'update':
           // 記錄被更新,重新整理資料
-          console.log('记录已更新:', result.value);
+          console.log('記錄已更新:', result.value);
           loadRecords(); // 重新載入資料
           break;
         case 'delete':
           // 記錄被刪除,重新整理清單
-          console.log('记录已删除');
+          console.log('記錄已刪除');
           loadRecords(); // 重新載入資料
           break;
         case 'close':
           // 使用者關閉彈窗(無修改)
-          console.log('用户关闭了弹窗');
+          console.log('使用者關閉了彈窗');
           break;
       }
     }
   } catch (error) {
-    console.error('打开记录详情失败:', error);
+    console.error('開啟記錄詳情失敗:', error);
   }
 };
 ```
@@ -351,7 +351,7 @@ function RecordsList() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 加载记录列表
+  // 載入記錄清單
   const loadRecords = async () => {
     try {
       setLoading(true);
@@ -363,13 +363,13 @@ function RecordsList() {
       });
       setRecords(result.data || []);
     } catch (error) {
-      console.error('加载记录失败:', error);
+      console.error('載入記錄失敗:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  // 打开记录详情
+  // 開啟記錄詳情
   const handleRecordClick = async (recordId) => {
     try {
       const result = await utils.openRecordInfo({
@@ -379,16 +379,16 @@ function RecordsList() {
         recordId
       });
 
-      // 自动刷新列表
+      // 自動重新整理清單
       if (result?.action === 'update' || result?.action === 'delete') {
-        loadRecords(); // 刷新数据
+        loadRecords(); // 重新整理資料
       }
     } catch (error) {
-      console.error('打开记录详情失败:', error);
+      console.error('開啟記錄詳情失敗:', error);
     }
   };
 
-  // 初始加载
+  // 初始載入
   useEffect(() => {
     loadRecords();
   }, []);
@@ -396,7 +396,7 @@ function RecordsList() {
   return (
     <div>
       {loading ? (
-        <div>加载中...</div>
+        <div>載入中...</div>
       ) : (
         <div>
           {records.map(record => (
@@ -507,7 +507,7 @@ import { md_emitter } from "mdye";
 
 useEffect(() => {
   const handleFiltersUpdate = (newFilters) => {
-    console.log('筛选条件已更新:', newFilters);
+    console.log('篩選條件已更新:', newFilters);
     // 重新取得資料
   };
 
@@ -524,7 +524,7 @@ useEffect(() => {
 ```javascript
 useEffect(() => {
   const handleNewRecord = (newRecord) => {
-    console.log('新增记录:', newRecord);
+    console.log('新增記錄:', newRecord);
     setRecords(prev => [...prev, newRecord]);
   };
 
@@ -598,7 +598,7 @@ useEffect(() => {
 ```javascript
 // 只查詢 type 10 和 11,會遺漏 type 9 的單選欄位
 const selectField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('状态') && (ctrl.type === 10 || ctrl.type === 11)
+  ctrl.controlName?.includes('狀態') && (ctrl.type === 10 || ctrl.type === 11)
 );
 ```
 
@@ -606,7 +606,7 @@ const selectField = controls?.find(ctrl =>
 ```javascript
 // 包含 type 9, 10, 11 所有選項欄位型別
 const selectField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('状态') && (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
+  ctrl.controlName?.includes('狀態') && (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
 );
 ```
 
@@ -633,7 +633,7 @@ function parseSingleSelect(value, control) {
 
     return { key: selectedKey, text: selectedText };
   } catch (err) {
-    console.error("解析单选字段失败:", err);
+    console.error("解析單選欄位失敗:", err);
     return { key: "", text: "" };
   }
 }
@@ -662,7 +662,7 @@ function parseMultiSelect(value, control) {
 
     return result;
   } catch (err) {
-    console.error("解析多选字段失败:", err);
+    console.error("解析多選欄位失敗:", err);
     return [];
   }
 }
@@ -715,7 +715,7 @@ function parseLocation(value) {
 
 1. **單條關聯** (enumDefault=1 或 subType=1)
    - 回傳格式: JSON 陣列字串
-   - 示例: `"[{\"sid\":\"...\",\"name\":\"客户名称\",\"sourcevalue\":\"...\"}]"`
+   - 示例: `"[{\"sid\":\"...\",\"name\":\"客戶名稱\",\"sourcevalue\":\"...\"}]"`
    - 處理方式: 直接解析 JSON 字串即可
 
 2. **多條關聯** (enumDefault=2 或 subType=2)
@@ -747,7 +747,7 @@ function parseRelationData(value) {
             ? JSON.parse(item.sourcevalue)
             : item.sourcevalue;
         } catch (e) {
-          console.error("解析sourcevalue失败:", e);
+          console.error("解析sourcevalue失敗:", e);
         }
       }
 
@@ -759,7 +759,7 @@ function parseRelationData(value) {
       };
     });
   } catch (err) {
-    console.error("解析关联记录字段失败:", err);
+    console.error("解析關聯記錄欄位失敗:", err);
     return [];
   }
 }
@@ -801,7 +801,7 @@ async function loadOrdersWithProducts() {
             }));
           }
         } catch (error) {
-          console.error('获取多条关联失败:', error);
+          console.error('取得多條關聯失敗:', error);
         }
       } else {
         // 單條關聯:直接解析
@@ -830,18 +830,18 @@ const relationControl = controls.find(ctrl => ctrl.controlId === 'relationFieldI
 
 // 單條關聯設定
 {
-  "controlId": "示例控件ID",
+  "controlId": "示例控制元件ID",
   "type": 29,
-  "controlName": "关联客户",
+  "controlName": "關聯客戶",
   "enumDefault": 1,  // 或 subType: 1
   // ... 其他屬性
 }
 
 // 多條關聯設定
 {
-  "controlId": "示例控件ID2",
+  "controlId": "示例控制元件ID2",
   "type": 29,
-  "controlName": "关联产品",
+  "controlName": "關聯產品",
   "enumDefault": 2,  // 或 subType: 2
   // ... 其他屬性
 }
@@ -953,7 +953,7 @@ mdye start
 mdye build
 
 # 提交外掛
-mdye push -m "提交说明"
+mdye push -m "提交說明"
 
 # 檢視當前使用者
 mdye whoami
@@ -986,12 +986,12 @@ mdye build
 
 **建置輸出示例：**
 ```
-[21:20:33] 开始构建代码
+[21:20:33] 開始建置程式碼
 ℹ Compiling Webpack
 ✔ Webpack: Compiled successfully in 1.94s
 asset bundle.js 228 KiB [emitted] [minimized] (name: main)
 webpack 5.98.0 compiled successfully in 1947 ms
-[21:20:35] 构建代码完成
+[21:20:35] 建置程式碼完成
 ```
 
 #### 第2步：提交併釋出
@@ -999,7 +999,7 @@ webpack 5.98.0 compiled successfully in 1947 ms
 執行以下命令將本地專案提交併推送到線上待發布外掛清單：
 
 ```bash
-mdye push -m "提交说明"
+mdye push -m "提交說明"
 ```
 
 **提交說明編寫建議：**
@@ -1012,21 +1012,21 @@ mdye push -m "提交说明"
 **完整示例：**
 
 ```bash
-mdye push -m "订单状态视图插件首次发布
+mdye push -m "訂單狀態檢視外掛首次釋出
 
 功能特性:
-- 按订单状态分类展示(待付款/已付款/已发货/已完成/已取消)
-- 完整订单信息展示(订单编号/客户/联系人/日期/金额/负责人)
-- 多条关联产品信息展示(产品名称/编号/分类/单价)
-- 点击订单卡片打开原生行记录弹窗
-- 支持编辑/删除订单并自动刷新列表
-- 响应式网格布局和流畅动画效果
+- 按訂單狀態分類展示(待付款/已付款/已發貨/已完成/已取消)
+- 完整訂單資訊展示(訂單編號/客戶/聯絡人/日期/金額/負責人)
+- 多條關聯產品資訊展示(產品名稱/編號/分類/單價)
+- 點選訂單卡片開啟原生行記錄彈窗
+- 支援編輯/刪除訂單並自動重新整理清單
+- 響應式網格佈局和流暢動畫效果
 
-技术实现:
-- 正确处理单选字段(type 9)和关联记录字段(type 29)
-- 使用 getRowRelationRows API 处理多条关联
-- 使用 utils.openRecordInfo 实现原生交互
-- Promise.all 并行加载提升性能"
+技術實現:
+- 正確處理單選欄位(type 9)和關聯記錄欄位(type 29)
+- 使用 getRowRelationRows API 處理多條關聯
+- 使用 utils.openRecordInfo 實現原生互動
+- Promise.all 並行載入提升效能"
 ```
 
 #### 第3步：登入認證
@@ -1159,7 +1159,7 @@ function parseSingleSelect(value, control) {
 
     return { key: selectedKey, text: selectedText };
   } catch (err) {
-    console.error("解析单选字段失败:", err, value);
+    console.error("解析單選欄位失敗:", err, value);
     return { key: "", text: "" };
   }
 }
@@ -1178,13 +1178,13 @@ function parseSingleSelect(value, control) {
 ```javascript
 // ✅ 正確:包含所有選項欄位型別
 const selectField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('状态') &&
+  ctrl.controlName?.includes('狀態') &&
   (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
 );
 
 // ❌ 錯誤:會遺漏 type 9
 const selectField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('状态') &&
+  ctrl.controlName?.includes('狀態') &&
   (ctrl.type === 10 || ctrl.type === 11)
 );
 ```
@@ -1229,7 +1229,7 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
         }));
       }
     } catch (error) {
-      console.error('获取多条关联失败:', error);
+      console.error('取得多條關聯失敗:', error);
     }
   } else {
     // 單條關聯:直接解析
@@ -1279,15 +1279,15 @@ const control = config.controls.find(ctrl => ctrl.controlId === 'relationFieldId
 if (control) {
   const isSingle = control.enumDefault === 1 || control.subType === 1;
   const isMultiple = control.enumDefault === 2 || control.subType === 2;
-  console.log('单条关联:', isSingle, '多条关联:', isMultiple);
+  console.log('單條關聯:', isSingle, '多條關聯:', isMultiple);
 }
 
 // 方法2: 根據回傳值型別判斷
 const value = row['relationFieldId'];
 if (typeof value === 'number' || !isNaN(value)) {
-  console.log('这是多条关联,需要调用 getRowRelationRows');
+  console.log('這是多條關聯,需要呼叫 getRowRelationRows');
 } else if (typeof value === 'string') {
-  console.log('这是单条关联,可以直接解析 JSON');
+  console.log('這是單條關聯,可以直接解析 JSON');
 }
 ```
 

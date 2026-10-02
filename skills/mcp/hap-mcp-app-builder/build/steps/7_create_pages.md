@@ -63,10 +63,10 @@
 
 推薦結構：
 ```
-section（核心指标）
-numberChart × 3~6    ← KPI 区
-section（数据分析）
-lineChart / columnChart / barChart / pieChart / rankingChart ...  ← 分析区
+section（核心指標）
+numberChart × 3~6    ← KPI 區
+section（資料分析）
+lineChart / columnChart / barChart / pieChart / rankingChart ...  ← 分析區
 ```
 
 - 必須包含 section 元件（2~3 個）
@@ -79,12 +79,12 @@ lineChart / columnChart / barChart / pieChart / rankingChart ...  ← 分析区
 
 推薦結構：
 ```
-section（操作说明）
-text / carousel（可选）        ← 辅助说明或轮播图
+section（操作說明）
+text / carousel（可選）        ← 輔助說明或輪播圖
 section（快捷入口）
-button（一组 4~6 个快捷按钮）  ← 快捷入口区
-section（我的待办 / 业务数据）
-view × 1～3                     ← 列表视图区
+button（一組 4~6 個快捷按鈕）  ← 快捷入口區
+section（我的待辦 / 業務資料）
+view × 1～3                     ← 清單檢視區
 ```
 
 - 頂部使用 `text` 或 `carousel` 進行操作說明

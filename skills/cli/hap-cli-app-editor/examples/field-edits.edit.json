@@ -1,10 +1,10 @@
 {
   "app": "<your-app-id-or-name>",
   "ops": [
-    { "type": "field.add", "worksheet": "订单", "field": { "name": "金额", "type": "Currency", "required": true } },
-    { "type": "field.add", "worksheet": "订单", "field": { "name": "状态", "type": "SingleSelect", "options": ["待付款", "已发货", "完成"] } },
-    { "type": "field.update", "worksheet": "订单", "field": "金额", "set": { "unique": true } },
-    { "type": "field.reorder", "worksheet": "订单", "order": ["状态", "金额"] },
-    { "type": "field.delete", "worksheet": "订单", "field": "状态", "confirm": true }
+    { "type": "field.add", "worksheet": "訂單", "field": { "name": "金額", "type": "Currency", "required": true } },
+    { "type": "field.add", "worksheet": "訂單", "field": { "name": "狀態", "type": "SingleSelect", "options": ["待付款", "已發貨", "完成"] } },
+    { "type": "field.update", "worksheet": "訂單", "field": "金額", "set": { "unique": true } },
+    { "type": "field.reorder", "worksheet": "訂單", "order": ["狀態", "金額"] },
+    { "type": "field.delete", "worksheet": "訂單", "field": "狀態", "confirm": true }
   ]
 }

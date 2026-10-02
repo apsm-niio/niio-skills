@@ -65,13 +65,13 @@ const result = await api.getFilterRows({
 當需要呼叫 mdye 未封裝的介面時:
 
 ```javascript
-// 配置鉴权信息 (从 MCP 配置中获取)
+// 設定身分驗證與授權資訊 (從 MCP 設定中取得)
 const API_CONFIG = {
   appkey: '你的Appkey',
   sign: '你的Sign'
 };
 
-// 封装请求函数
+// 封裝請求函式
 async function callV3API(endpoint, method = 'GET', body = null) {
   const headers = {
     'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ function OptionSetList() {
 
   return (
     <div>
-      <h2>选项集列表</h2>
+      <h2>選項集清單</h2>
       <ul>
         {optionSets.map(optionSet => (
           <li key={optionSet.optionSetId}>
@@ -215,14 +215,14 @@ async function getWorksheetData(worksheetId) {
     'HAP-Sign': API_CONFIG.sign
   };
 
-  // 获取工作表结构
+  // 取得工作表結構
   const structureResponse = await fetch(
     `https://api.mingdao.com/v3/app/worksheets/${worksheetId}`,
     { method: 'GET', headers }
   );
   const structure = await structureResponse.json();
 
-  // 获取记录列表
+  // 取得記錄清單
   const rowsResponse = await fetch(
     `https://api.mingdao.com/v3/app/worksheets/${worksheetId}/rows/list`,
     {
@@ -265,7 +265,7 @@ async function getWorksheetData(worksheetId) {
 
 ```json
 {
-  "HAP-应用API文档": {
+  "HAP-應用API文件": {
     "command": "npx -y apifox-mcp-server@latest --site-id=5442569",
     "args": [],
     "env": {},

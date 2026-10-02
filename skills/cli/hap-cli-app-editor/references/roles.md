@@ -8,11 +8,11 @@ hap app role list -a <appId>
 hap app role permissions <roleId> -a <appId>
 
 # 粗粒度建立（permission-scope > 0，按整體範圍授權）
-hap app role create -a <appId> --name "运营" --description "运营人员" \
+hap app role create -a <appId> --name "運營" --description "運營人員" \
   --type 0 --permission-scope 20
 
 # 細粒度建立（permission-scope 0 的推薦入口：逐表宣告意圖，未寫到的部分自動補全為允許）
-hap app role create-fine <appId> -n "区域经理" -d "只能看和改自己的记录" \
+hap app role create-fine <appId> -n "區域經理" -d "只能看和改自己的記錄" \
   --worksheet-permissions '[{"worksheetId":"<wsId>",
     "recordDataScope":{"read":20,"edit":20,"delete":0}}]' \
   --page-permissions '[{"pageId":"<pageId>","enable":true}]'

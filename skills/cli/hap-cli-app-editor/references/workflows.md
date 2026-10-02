@@ -14,7 +14,7 @@
 
 ```bash
 # 列出一個應用下的工作流（app_id 是位置參數，不是 --app-id）
-hap workflow list <app_id> [-k 关键字] [--enabled|--disabled] [-n 50] [-p 1]
+hap workflow list <app_id> [-k 關鍵字] [--enabled|--disabled] [-n 50] [-p 1]
 
 # 檢視流程詳情 / 節點結構
 hap --json workflow get <process_id>
@@ -25,8 +25,8 @@ hap workflow create -n "流程名" -a <app_id> --type worksheet
 
 # 改名 / 描述 / 圖示；--version-name 給當前已釋出版本起名（版本清單裡就不是日期編號了）
 hap workflow update <process_id> -n "新名" -d "描述" --icon-color "#2196F3"
-hap workflow update <process_id> --icon-name <图标名>          # 圖示名見 niio CLI icon list
-hap workflow update <process_id> --version-name "上线版"
+hap workflow update <process_id> --icon-name <圖示名>          # 圖示名見 niio CLI icon list
+hap workflow update <process_id> --version-name "上線版"
 
 # 複製。⚠️ -n 傳的是【字尾】，不是副本全名
 hap workflow copy <process_id> -n "-2026版"       # 副本名 = 原名 + "-2026版"
@@ -55,9 +55,9 @@ hap workflow config-set <process_id> -c '{"allowRevoke": true}'
 
 # 分組（流程清單左邊那一層）與跨應用移動
 hap workflow groups <app_id>
-hap workflow create-group <app_id> -n "订单相关"
-hap workflow sort-groups <分组ID> <分组ID> <分组ID>
-hap workflow delete-group <分组ID> -y      # 分組裡的流程不會被刪
+hap workflow create-group <app_id> -n "訂單相關"
+hap workflow sort-groups <分組ID> <分組ID> <分組ID>
+hap workflow delete-group <分組ID> -y      # 分組裡的流程不會被刪
 hap workflow move <process_id> ...         # 移到別的應用，參數以 --help 為準
 ```
 
@@ -89,7 +89,7 @@ hap --json workflow node list <process_id>
 hap --json workflow node get <process_id> <node_id> --type 6
 
 # 追加節點：--after 必填，傳上游節點 ID（接在觸發器後就傳觸發節點 ID）
-hap workflow node add <process_id> --type 6 -n "写入记录" --after <prev_node_id> \
+hap workflow node add <process_id> --type 6 -n "寫入記錄" --after <prev_node_id> \
   -a 1 --app-id <worksheet_id>
 
 # 改名 / 刪除（刪除後兩側自動重連）
@@ -127,18 +127,18 @@ hap workflow node batch-add <process_id> --nodes '[]' \
 
 觸發器相關選項按流程型別選用其一：
 
-- `--trigger-worksheet` + `--trigger-event create|update|create_or_update|delete`（工作表事件型）；`--trigger-fields f1,f2` 把 update 觸發收窄到指定欄位；`--trigger-filter '<条件组JSON>'` 只放行滿足條件的記錄，條件結構 → [OperateCondition](../scripts/types/operate-condition.schema.json)。
+- `--trigger-worksheet` + `--trigger-event create|update|create_or_update|delete`（工作表事件型）；`--trigger-fields f1,f2` 把 update 觸發收窄到指定欄位；`--trigger-filter '<條件組JSON>'` 只放行滿足條件的記錄，條件結構 → [OperateCondition](../scripts/types/operate-condition.schema.json)。
 - `--trigger-schedule '{repeat,interval,week_days,start_time,end_time,config}'`（定時型）。
 - `--trigger-date '{worksheet,date_field_id,offset_type,offset_number,offset_unit,time,repeat}'`（按日期欄位型）。
 - `--trigger-webhook '{"sample":{...}}'`（Webhook 型：用樣例請求體推匯入參結構）。
-- `--trigger-pbp '{"inputs":[{name,type,required,alias,desc,default,options,children}]}'`（PBP/封装业务流程型：定義輸入參數。type 取 text/number/date/radio/checkbox/member/department/org_role/attachment/object/array/object_array，預設 text；radio 的 options 傳字串陣列；object_array 用 children 嵌一層子參數）。
+- `--trigger-pbp '{"inputs":[{name,type,required,alias,desc,default,options,children}]}'`（PBP/封裝業務流程型：定義輸入參數。type 取 text/number/date/radio/checkbox/member/department/org_role/attachment/object/array/object_array，預設 text；radio 的 options 傳字串陣列；object_array 用 children 嵌一層子參數）。
 
 ```bash
 # PBP：定義兩個輸入參數（建流程時 --type pbp）
 hap workflow node batch-add <process_id> --nodes '[]' \
   --trigger-pbp '{"inputs":[
-    {"name":"订单号","type":"text","required":true},
-    {"name":"数量","type":"number"}
+    {"name":"訂單號","type":"text","required":true},
+    {"name":"數量","type":"number"}
   ]}'
 ```
 
@@ -173,8 +173,8 @@ hap workflow node batch-add <process_id> --nodes '[]' \
 ```bash
 hap workflow pbp-parameters <process_id>     # 這條流程要傳哪些入參；每行給出的欄位 ID 就是 controlId
 hap workflow trigger-pbp <process_id> -a <app_id> --controls '[
-  {"controlId": "<入参ID>", "value": "华东一区"},
-  {"alias": "owner", "value": ["<成员accountId>"]}
+  {"controlId": "<入參ID>", "value": "華東一區"},
+  {"alias": "owner", "value": ["<成員accountId>"]}
 ]'
 ```
 

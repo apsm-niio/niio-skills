@@ -6,8 +6,8 @@
 
 ```json
 {
-  "app": "<appId 或 应用名>",
-  "org": "<组织 id，可选；默认当前会话组织>",
+  "app": "<appId 或 應用名>",
+  "org": "<組織 id，可選；預設當前會話組織>",
   "ops": [ { "type": "...", "...": "..." } ]
 }
 ```
@@ -19,7 +19,7 @@
 
 | 欄位 | 說明 |
 |---|---|
-| `type` | 必填，`<元素>.<动作>`，決定用哪份模組 schema 校驗。 |
+| `type` | 必填，`<元素>.<動作>`，決定用哪份模組 schema 校驗。 |
 | `confirm` | 破壞性 op（`field.delete` / `component.delete`）必填且必須為 `true`，否則拒絕執行。 |
 | `label` | 可選，plan/apply 輸出裡顯示的人類標籤。 |
 
@@ -29,10 +29,10 @@
 niio 即時讀取結構來解析。
 
 **二級分組裡的工作表現在也解析得到。** 應用的分組樹會被整棵拍平（子分組一併納入），所以
-`"worksheet": "<放在子分组里的表名>"` 不會再答「worksheet not found」，`inspect` 也會把它列出來。
+`"worksheet": "<放在子分組裡的表名>"` 不會再答「worksheet not found」，`inspect` 也會把它列出來。
 
 - 工作表：`"worksheet"` 可以寫表名，也可以寫 **worksheetId**——名字在兩個分組裡重名時用 id 最穩。
-- 分組：除了名字和 id，還可以寫**路徑** `"组/子组"` 來區分同名分組。
+- 分組：除了名字和 id，還可以寫**路徑** `"組/子組"` 來區分同名分組。
 
 ## op 總表
 
@@ -60,7 +60,7 @@ niio 即時讀取結構來解析。
 hap app-editor validate <edit-spec.json>                 # 本地校驗，零網路
 hap app-editor plan     <edit-spec.json> [--app <id>]    # dry-run 預演
 hap app-editor apply    <edit-spec.json> [--app <id>] [--continue]  # 執行
-hap app-editor inspect  <appId|名称> [--org-id <org>]    # 列印即時 名→id 結構
+hap app-editor inspect  <appId|名稱> [--org-id <org>]    # 列印即時 名→id 結構
 ```
 
 `inspect` 回傳 `app_id` / `org_id` / `name` / `sections` / `worksheets` / `pages_and_chatbots` /
@@ -82,22 +82,22 @@ hap app-editor inspect  <appId|名称> [--org-id <org>]    # 列印即時 名→
 | `subtable` | 子表（SUB_LIST / 34） | `{fields: [...]}` 新建，或 `{worksheet, showFields?}` 掛載——二選一 |
 
 ```json
-{ "type": "field.add", "worksheet": "订单",
-  "field": { "name": "客户", "type": "RELATE_SHEET",
-             "relation": { "worksheet": "客户", "multiple": true,
-                           "showFields": ["客户名称", "等级"] } } }
+{ "type": "field.add", "worksheet": "訂單",
+  "field": { "name": "客戶", "type": "RELATE_SHEET",
+             "relation": { "worksheet": "客戶", "multiple": true,
+                           "showFields": ["客戶名稱", "等級"] } } }
 
-{ "type": "field.add", "worksheet": "订单",
-  "field": { "name": "客户等级", "type": "SHEET_FIELD",
-             "lookup": { "via": "客户", "field": "等级" } } }
+{ "type": "field.add", "worksheet": "訂單",
+  "field": { "name": "客戶等級", "type": "SHEET_FIELD",
+             "lookup": { "via": "客戶", "field": "等級" } } }
 
-{ "type": "field.add", "worksheet": "客户",
-  "field": { "name": "订单总额", "type": "SUBTOTAL",
-             "rollup": { "via": "订单", "field": "金额" } } }
+{ "type": "field.add", "worksheet": "客戶",
+  "field": { "name": "訂單總額", "type": "SUBTOTAL",
+             "rollup": { "via": "訂單", "field": "金額" } } }
 
-{ "type": "field.add", "worksheet": "订单",
-  "field": { "name": "含税金额", "type": "FORMULA_NUMBER",
-             "formula": "$<金额字段id>$ * 1.06" } }
+{ "type": "field.add", "worksheet": "訂單",
+  "field": { "name": "含稅金額", "type": "FORMULA_NUMBER",
+             "formula": "$<金額欄位id>$ * 1.06" } }
 ```
 
 ### 名字都能寫，由引擎解析成 id
@@ -151,26 +151,26 @@ hap app-editor inspect  <appId|名称> [--org-id <org>]    # 列印即時 名→
 ### 子表有兩種模式，必須二選一
 
 ```json
-// 模式一：新建一张子表，直接写它的列
-{ "type": "field.add", "worksheet": "订单",
-  "field": { "name": "订单明细", "type": "SUB_LIST",
+// 模式一：新建一張子表，直接寫它的列
+{ "type": "field.add", "worksheet": "訂單",
+  "field": { "name": "訂單明細", "type": "SUB_LIST",
              "subtable": { "fields": [
                { "name": "商品", "type": "Text", "required": true },
-               { "name": "数量", "type": "Number" },
-               { "name": "所属客户", "type": "RELATE_SHEET",
-                 "relation": { "worksheet": "客户" } }
+               { "name": "數量", "type": "Number" },
+               { "name": "所屬客戶", "type": "RELATE_SHEET",
+                 "relation": { "worksheet": "客戶" } }
              ] } } }
 
-// 模式二：把一张已存在的表挂成子表
-{ "type": "field.add", "worksheet": "订单",
-  "field": { "name": "维修记录", "type": "SUB_LIST",
-             "subtable": { "worksheet": "维修单",
-                           "showFields": ["故障描述", "处理人"] } } }
+// 模式二：把一張已存在的表掛成子表
+{ "type": "field.add", "worksheet": "訂單",
+  "field": { "name": "維修記錄", "type": "SUB_LIST",
+             "subtable": { "worksheet": "維修單",
+                           "showFields": ["故障描述", "處理人"] } } }
 ```
 
 - **子欄位用與頂層 field 完全相同的 clean 形**——`name` / `type` / `required` / `unique` /
   `options`，而且**子欄位裡還能再寫 `relation` / `lookup` / `rollup` / `formula` 塊**，名字解析
-  照樣生效（上例裡子欄位的 `relation.worksheet: "客户"` 會被解析成客戶表的 id）。不必學第二套詞彙。
+  照樣生效（上例裡子欄位的 `relation.worksheet: "客戶"` 會被解析成客戶表的 id）。不必學第二套詞彙。
 - **`showFields` 只能用在掛載模式**：內聯模式下那些列還不存在，內聯清單顯示的就是你正在建的這些列。
   寫在內聯模式裡會被明確拒絕。掛載模式下 `showFields` 寫子表上那些列的名字或 id，不給就是全部可見列。
 - `subtable.worksheet` 同樣接名字或 id。
@@ -209,13 +209,13 @@ hap app-editor inspect  <appId|名称> [--org-id <org>]    # 列印即時 名→
 {
   "app": "myAppId",
   "ops": [
-    { "type": "field.add", "worksheet": "订单",
-      "field": { "name": "优先级", "type": "SingleSelect", "options": ["高", "中", "低"] } },
-    { "type": "field.update", "worksheet": "订单", "field": "金额",
+    { "type": "field.add", "worksheet": "訂單",
+      "field": { "name": "優先順序", "type": "SingleSelect", "options": ["高", "中", "低"] } },
+    { "type": "field.update", "worksheet": "訂單", "field": "金額",
       "set": { "required": true } },
-    { "type": "field.delete", "worksheet": "订单", "field": "废弃备注", "confirm": true },
-    { "type": "component.add", "page": "首页",
-      "component": { "name": "公告", "type": "richText", "value": "<p>本周盘点</p>" } }
+    { "type": "field.delete", "worksheet": "訂單", "field": "廢棄備註", "confirm": true },
+    { "type": "component.add", "page": "首頁",
+      "component": { "name": "公告", "type": "richText", "value": "<p>本週盤點</p>" } }
   ]
 }
 ```

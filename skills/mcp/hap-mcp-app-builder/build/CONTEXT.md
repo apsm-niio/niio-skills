@@ -9,27 +9,27 @@
   "appId": "string",
   "appName": "string",
   "org_id": "string",
-  "progress": "string (见 PROGRESS.md)",
+  "progress": "string (見 PROGRESS.md)",
 
-  "cliAvailable": "boolean (CLI 自检写入：本机 hap 是否已安装且已登录；未登录会在自检阶段自动浏览器登录。组织校正与设当前应用由 Step 12 处理)",
+  "cliAvailable": "boolean (CLI 自檢寫入：本機 niio CLI 是否已安裝且已登入；未登入會在自檢階段自動瀏覽器登入。組織校正與設當前應用由 Step 12 處理)",
 
   "sectionIdByName": {
-    "分组名称": "sectionId"
+    "分組名稱": "sectionId"
   },
   "worksheetIdByName": {
-    "工作表名称": "worksheetId"
+    "工作表名稱": "worksheetId"
   },
   "actionIdByName": {
-    "动作名称": "actionId"
+    "動作名稱": "actionId"
   },
   "viewIdByName": {
-    "工作表名称-视图名称": "viewId"
+    "工作表名稱-檢視名稱": "viewId"
   },
   "customPageIdByName": {
-    "页面名称": "pageId"
+    "頁面名稱": "pageId"
   },
   "chatbotIdByName": {
-    "助手名称": "chatbotId"
+    "助手名稱": "chatbotId"
   },
   "roleContext": [
     {

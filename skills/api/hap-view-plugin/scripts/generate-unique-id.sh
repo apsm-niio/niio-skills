@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# 生成唯一的项目ID后缀
-# 用法: ./generate-unique-id.sh [前缀]
+# 生成唯一的專案ID字尾
+# 用法: ./generate-unique-id.sh [字首]
 
-# 前缀应为你自己的 worksheet/应用 ID（从明道云获取），通过参数传入
+# 字首應為你自己的 worksheet/應用 ID（從niio取得），透過參數傳入
 PREFIX="${1:-你的worksheetID}"
 TIMESTAMP=$(date +%s)
 RANDOM_SUFFIX=$(openssl rand -hex 4 2>/dev/null || echo $RANDOM)
 
-# 组合生成唯一ID
+# 組合生成唯一ID
 UNIQUE_ID="${PREFIX}-${TIMESTAMP}-${RANDOM_SUFFIX}"
 
-echo "生成的唯一插件ID: $UNIQUE_ID"
-echo "建议的项目目录名: mdye_view_${TIMESTAMP}_${RANDOM_SUFFIX}"
+echo "生成的唯一外掛ID: $UNIQUE_ID"
+echo "建議的專案目錄名: mdye_view_${TIMESTAMP}_${RANDOM_SUFFIX}"

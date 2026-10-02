@@ -1,6 +1,6 @@
 # 檢視（view）— 命令參考與資料字典
 
-檢視命令都掛在 `hap worksheet view <动词>` 下。機器可讀輸出在 `hap` 後加全域 `--json`。
+檢視命令都掛在 `hap worksheet view <動詞>` 下。機器可讀輸出在 `hap` 後加全域 `--json`。
 
 > **全域規則：改複雜值前先用讀命令匯出現狀，在真實結構上改，再寫回。**
 
@@ -25,35 +25,35 @@ hap --json worksheet view info 6845f0a1b2c3d4e5f6a7b8c9 64a1b2c3d4e5f60123456789
 ### 建立：create
 
 ```bash
-# 默认表格视图
-hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "全部订单"
+# 預設表格檢視
+hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "全部訂單"
 
-# 看板：按某个选项/关联字段分组
-hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "按状态" \
+# 看板：按某個選項/關聯欄位分組
+hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "按狀態" \
   --view-type board --group-control ctrl_status_24hex
 
-# 画廊：附件字段做卡片封面
-hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "产品图册" \
+# 畫廊：附件欄位做卡片封面
+hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "產品圖冊" \
   --view-type gallery --cover-control ctrl_photo_24hex --cover-type 0
 
-# 日历 / 甘特
+# 日曆 / 甘特
 hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "排期" \
   --view-type gantt --begin-date ctrl_start_24hex --end-date ctrl_end_24hex
 
-# 层级：单表自关联树
-hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "任务树" \
+# 層級：單表自關聯樹
+hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "任務樹" \
   --view-type structure --child-type 1 --group-control ctrl_parent_24hex
 
-# 过滤表格（每个状态一张表）
-hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "进行中" \
+# 過濾表格（每個狀態一張表）
+hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "進行中" \
   --view-type sheet --filter-json '{"logic":"and","items":[{"field":"ctrl_status_24hex","op":"eq","value":"opt_key_1"}]}'
-# ↑ 筛选条件用统一写法，见 `hap guide record filter`；旧的 wire 扁平数组（[{"controlId","dataType","spliceType","filterType","values"}]）仍然可用
+# ↑ 篩選條件用統一寫法，見 `hap guide record filter`；舊的 wire 扁平陣列（[{"controlId","dataType","spliceType","filterType","values"}]）仍然可用
 
-# 一次成型整视图（分组/封面/过滤/快筛/筛选列表/行色/按钮）用 --view-spec，见 §0
-hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "总览" --view-spec @view.json
+# 一次成型整檢視（分組/封面/過濾/快篩/篩選清單/行色/按鈕）用 --view-spec，見 §0
+hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "總覽" --view-spec @view.json
 
-# 其它创建期参数（advancedSetting 等）走逃生口
-hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "紧凑表" \
+# 其他建立期參數（advancedSetting 等）走逃生口
+hap worksheet view create 6845f0a1b2c3d4e5f6a7b8c9 "緊湊表" \
   --config-json '{"advancedSetting":{"alternatecolor":"1"}}'
 ```
 
@@ -127,19 +127,19 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
   "viewType": "gallery",
   "config": {"mode": "all"},                 // 詳情檢視：all 常規多條 / first 只看第一條
   "card": {
-    "titleField": "<字段ID>",
-    "coverField": "<附件字段ID>",
+    "titleField": "<欄位ID>",
+    "coverField": "<附件欄位ID>",
     "coverDirection": "top",                 // top | left | right
     "coverDisplayMode": "rectangle"          // rectangle | circle | full（square 是 rectangle 的舊寫法）
   },
-  "sort": [{"fieldId": "<字段ID>", "sortType": 1}],   // 1 升序 / 2 降序
-  "quickFilters": ["<字段ID>"],
-  "filterList": ["<字段ID>"],                 // 左側導航分類，只能給一個欄位
-  "color": "<单选字段ID>",
-  "tableFields": ["<字段ID>", "..."],
+  "sort": [{"fieldId": "<欄位ID>", "sortType": 1}],   // 1 升序 / 2 降序
+  "quickFilters": ["<欄位ID>"],
+  "filterList": ["<欄位ID>"],                 // 左側導航分類，只能給一個欄位
+  "color": "<單選欄位ID>",
+  "tableFields": ["<欄位ID>", "..."],
   "rowHeight": 0,                             // 0 緊湊 / 1 中等 / 2 高 / 3 超高
   "filter": {"logic":"and", "items":[
-    {"field":"<状态字段ID>", "op":"eq", "value":"<选项key>"}
+    {"field":"<狀態列位ID>", "op":"eq", "value":"<選項key>"}
   ]}
 }
 ```
@@ -155,8 +155,8 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 - **表格 / 畫廊**：分組是**顯示方式**（把行按某欄位收攏成一段段），寫在**頂層 `groupBy`**。
 
 ```jsonc
-{"viewType": "kanban", "config": {"groupField": "<状态字段ID>"}}                      // 看板
-{"viewType": "sheet", "groupBy": {"fieldId": "<负责人字段ID>", "ascending": true}}    // 表格
+{"viewType": "kanban", "config": {"groupField": "<狀態列位ID>"}}                      // 看板
+{"viewType": "sheet", "groupBy": {"fieldId": "<負責人欄位ID>", "ascending": true}}    // 表格
 ```
 
 `groupBy` 只能用在表格和畫廊上，用在看板上會報錯讓你改用它自己的分組欄位。
@@ -185,7 +185,7 @@ wire 層鍵名不是一回事：高層方言由 CLI 翻譯成 `editAttrs` + `adv
 #### 外掛檢視與多表層級
 
 ```jsonc
-{"viewType": "plugin", "plugin": {"id": "<插件ID>", "name": "甘特增强"}}
+{"viewType": "plugin", "plugin": {"id": "<外掛ID>", "name": "甘特增強"}}
 
 {"viewType": "hierarchy", "config": {"childType": 2},
  "viewControls": [{"worksheetId": "<表ID>", "worksheetName": "..."}]}

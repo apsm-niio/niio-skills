@@ -15,7 +15,7 @@
 2. 欄位引用優先使用 `alias`，無 alias 時用欄位 ID
 3. 只使用 `worksheetContext` 中提供的欄位，不猜測
 4. 檢視中引用 `actionId` 時，從 `actionIdByName` 查詢
-5. 記錄 `viewIdByName`（格式：`"工作表名/视图名" → viewId`）
+5. 記錄 `viewIdByName`（格式：`"工作表名/檢視名" → viewId`）
 6. 更新 `hap-context.json`：寫入 `viewIdByName`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`viewIdByName` 條目數 = plan 中全部檢視總數。
@@ -84,7 +84,7 @@
   "type": "group",
   "logic": "AND",
   "children": [
-    { "type": "condition", "field": "status", "operator": "eq", "value": ["进行中"] }
+    { "type": "condition", "field": "status", "operator": "eq", "value": ["進行中"] }
   ]
 }
 ```
@@ -108,9 +108,9 @@
 Collaborator 欄位動態值（使用 `eq` 運算子 + 直傳字串）：`user-self`，表示當前使用者
 
 ```json
-// 示例 — 筛选本月数据：
+// 示例 — 篩選本月資料：
 { "type": "condition", "field": "date_field_alias", "operator": "eq", "value": "thisMonth" }
-// 示例 — 筛选当前用户的数据：
+// 示例 — 篩選當前使用者的資料：
 { "type": "condition", "field": "owner_field_alias", "operator": "eq", "value": "user-self" }
 ```
 

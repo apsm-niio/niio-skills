@@ -12,13 +12,13 @@ hap worksheet custom-actions <worksheetId> --record-id <rowid>  # 這條記錄�
 
 # 模式一：--action-spec 高層宣告（推薦）
 hap worksheet create-custom-action <worksheetId> -a <appId> --action-spec '{
-  "name": "标记完成",
+  "name": "標記完成",
   "type": "updateCurrentRecord",
   "updateFields": ["<controlId>"],
   "confirm": true,
-  "confirmMsg": "确认标记为完成吗？",
+  "confirmMsg": "確認標記為完成嗎？",
   "enableWhen": {"logic":"and","items":[
-    {"field":"<状态列>","op":"ne","value":"<已完成选项key>"}]}
+    {"field":"<狀態列>","op":"ne","value":"<已完成選項key>"}]}
 }'
 
 # 模式二：--config 原始 wire 設定，原樣下發
@@ -44,7 +44,7 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
   在按鈕表單上也必填，其餘是選填，本來就不能填寫的型別（附件、公式、備註…）只讀展示。不需要、
   也不應該自己去指定檔位。
 - **`enableWhen` 一給，按鈕就自動變成「滿足條件才可用」**，不用再手工設別的開關。篩選門檻二選一：
-  `enableWhen` 用統一篩選寫法（推薦，如 `{"logic":"and","items":[{"field":"<状态列>","op":"ne","value":"<已完成选项key>"}]}`），
+  `enableWhen` 用統一篩選寫法（推薦，如 `{"logic":"and","items":[{"field":"<狀態列>","op":"ne","value":"<已完成選項key>"}]}`），
   或 `filters` 直接給 wire 形態陣列。寫法與按鈕上可用的比較方式見 `hap guide record filter`（3.2 那張表的
   「檢視/規則/按鈕/圖表」一列）。
 - **`confirm` 一給，按鈕就真的彈二次確認框**；`confirmMsg` 是框裡的文案，不給用預設文案（按當前

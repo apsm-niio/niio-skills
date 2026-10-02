@@ -50,9 +50,9 @@ hap worksheet fields WORKSHEET_ID        # 列出每個欄位的 controlId / 名
 ```jsonc
 { "logic": "and",                     // and | or
   "items": [
-    { "field": "<字段 ID、别名或列标题>",
-      "op": "<比较方式>",
-      "value": <标量 或 数组> },       // empty / not_empty 不需要 value
+    { "field": "<欄位 ID、別名或列標題>",
+      "op": "<比較方式>",
+      "value": <標量 或 陣列> },       // empty / not_empty 不需要 value
     { "logic": "or", "items": [ ... ] }  // 某一項本身也可以是一個組
   ] }
 ```
@@ -107,13 +107,13 @@ empty not_empty
 關聯欄位（如「任務」表裡的「版本」「專案」「客戶」）在**回傳資料里長這樣**——一個陣列，每項帶 `sid`（關聯記錄的 rowid）和 `name`（顯示標題）：
 
 ```json
-"版本字段": [ { "sid": "ITERATION_ROW_ID", "name": "迭代A" } ]
+"版本欄位": [ { "sid": "ITERATION_ROW_ID", "name": "迭代A" } ]
 ```
 
 篩選時 value 要用那個 `sid`。**最直接的辦法是讓命令替你列**：
 
 ```bash
-hap --json worksheet record relations <本表WS_ID> <本条记录rowid> <关联字段ID>
+hap --json worksheet record relations <本表WS_ID> <本條記錄rowid> <關聯欄位ID>
 ```
 
 它順著這條記錄的關聯欄位把被關聯的記錄列出來，並附帶它們的來源工作表資訊——省掉下面兩步手工反查。
@@ -129,7 +129,7 @@ hap --json worksheet record relations <本表WS_ID> <本条记录rowid> <关联�
 ```bash
 hap worksheet record list TASK_WS_ID --filter-json '{
   "logic":"and",
-  "items":[{"field":"<版本字段ID>","op":"in","value":["ITERATION_ROW_ID"]}]
+  "items":[{"field":"<版本欄位ID>","op":"in","value":["ITERATION_ROW_ID"]}]
 }' -p 1 -n 100
 ```
 
@@ -142,11 +142,11 @@ hap worksheet record list TASK_WS_ID --filter-json '{
 ```bash
 hap worksheet record list <子表WS_ID> --use-field-id-as-key -p 1 -n 100 \
   --filter-json '{"logic":"and","items":[
-    {"field":"<反向关联字段ID>","op":"in","value":["<父记录rowid>"]}]}' \
-  --sorts-json '[{"field":"<明细编号等排序字段ID>","isAsc":true}]'
+    {"field":"<反向關聯欄位ID>","op":"in","value":["<父記錄rowid>"]}]}' \
+  --sorts-json '[{"field":"<明細編號等排序欄位ID>","isAsc":true}]'
 ```
 
-- `<反向关联字段ID>`：在父表 `worksheet fields` 裡，找 SubTable 欄位的 `sourceField`。
+- `<反向關聯欄位ID>`：在父表 `worksheet fields` 裡，找 SubTable 欄位的 `sourceField`。
 - value 是**父記錄的 rowid**（不是父記錄標題文字），用 `in`。
 - 子錶行的"第幾行"由排序決定，通常按 AutoNumber 明細編號升序，與表單裡看到的順序一致；
   務必帶 `--sorts-json`，否則預設順序不保證穩定，"數第 N 行"會數錯。
@@ -161,7 +161,7 @@ hap worksheet record list WORKSHEET_ID --filter-json '{
   "logic": "or",
   "items": [
     { "logic": "and", "items": [
-      { "field": "name",         "op": "starts_with", "value": "张" },
+      { "field": "name",         "op": "starts_with", "value": "張" },
       { "field": "onboard_date", "op": "between",     "value": ["2025-01-01","2025-01-31"] }
     ]},
     { "logic": "or", "items": [
@@ -187,7 +187,7 @@ hap worksheet record list WORKSHEET_ID --filter-json '{
 
 ```bash
 hap worksheet record list WORKSHEET_ID \
-  --filter-json '<见上>' \
+  --filter-json '<見上>' \
   --sorts-json '[{"field":"onboard_date","isAsc":false}]' \
   --fields '["name","status","amount"]' \   # 只回傳這幾個欄位，省 token
   --page-size 50 --page-index 1 \
@@ -215,18 +215,18 @@ hap worksheet record list WORKSHEET_ID \
 hap worksheet record pivot WORKSHEET_ID \
   --view-id VIEW_ID \                                          # 必填
   --rows-json '[{"field":"status"}]' \                         # 行維度（分組）
-  --columns-json '[{"field":"create_date","granularity":3}]' \ # 列维度，可选
+  --columns-json '[{"field":"create_date","granularity":3}]' \ # 列維度，可選
   --values-json '[{"field":"amount","aggregation":"SUM"}]' \   # 值（聚合），必填
-  --filter-json '<同 list 的筛选条件>' \                        # 可選
+  --filter-json '<同 list 的篩選條件>' \                        # 可選
   --include-summary                                            # 要總計行加
 ```
 
 回傳結構是 `data.pivot`（一個陣列），每項形如：
 
 ```json
-{ "rows":    { "<行维度字段ID>": "进行中" },
+{ "rows":    { "<行維度欄位ID>": "進行中" },
   "columns": { },
-  "values":  { "<值字段ID>": 190000.0 } }
+  "values":  { "<值欄位ID>": 190000.0 } }
 ```
 
 解析時按欄位 ID 從 `rows`/`values` 裡取值；要排名就把 `pivot` 陣列按某個 value 排序後取前 N（透視本身不保證按值排序）。
@@ -263,7 +263,7 @@ hap worksheet record pivot WORKSHEET_ID \
 
 ### 維度（rows / columns）
 
-每項 `{"field":"<controlId 或别名>", "displayName":"可选", "granularity":<整数>, "includeEmpty":false}`：
+每項 `{"field":"<controlId 或別名>", "displayName":"可選", "granularity":<整數>, "includeEmpty":false}`：
 
 - `granularity` 僅對**日期/地區**欄位有意義：
   - 日期：`1`=日，`2`=周，`3`=月
@@ -272,7 +272,7 @@ hap worksheet record pivot WORKSHEET_ID \
 
 ### 值（values）
 
-每項 `{"field":"<controlId 或别名>", "aggregation":"<聚合>", "displayName":"可选"}`：
+每項 `{"field":"<controlId 或別名>", "aggregation":"<聚合>", "displayName":"可選"}`：
 
 - `aggregation`（不區分大小寫）：`COUNT` 計數、`DISTINCTCOUNT` 去重計數、`SUM` 求和、`MIN` 最小、`MAX` 最大、`AVG` 平均。
 - **只想數行數**（不針對某欄位）：`field` 填特殊值 `record_count`，配 `COUNT`。

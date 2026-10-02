@@ -14,7 +14,7 @@ description: 用 niio CLI 命令列工具（CLI）修改一個已存在的 niio 
 **預設入口是裸 `hap` 命令** —— 絕大多數元素編輯就是一條命令：
 
 ```bash
-hap worksheet view update <ws_id> <view_id> --name "进行中的订单"
+hap worksheet view update <ws_id> <view_id> --name "進行中的訂單"
 hap workflow publish <process_id>
 hap app role add-member <role_id> --user-ids <account_id> -a <app_id>
 ```
@@ -37,7 +37,7 @@ hap app role add-member <role_id> --user-ids <account_id> -a <app_id>
 
 ## 通用工作流（4 步）
 
-1. **Inspect**：`hap app-editor inspect <appId或应用名>` 列印應用的「邏輯名 → id」全結構（工作表、檢視、角色、工作流、頁面、分組…）。後續命令要的各種 id 都從這裡拿；更細的 id 用各模組的 list/info 命令。
+1. **Inspect**：`hap app-editor inspect <appId或應用名>` 列印應用的「邏輯名 → id」全結構（工作表、檢視、角色、工作流、頁面、分組…）。後續命令要的各種 id 都從這裡拿；更細的 id 用各模組的 list/info 命令。
 2. **Read**（改複雜值前必做）：**先用讀命令匯出現狀，在真實結構上改，再寫回**。
    - 檢視：`hap --json worksheet view info <ws_id> <view_id>`
    - 節點：`hap --json workflow node get <process_id> <node_id>`
@@ -63,8 +63,8 @@ niio 的寫介面大量存在「照樣回傳成功、資料卻是錯的」，所
 ## 值形態約定（讀字典表時）
 
 各模組字典表的「值形態」列分三檔：
-- **標量/列舉**：可取值直接寫在格內，如 `"1"=显示 "2"=隐藏`；
-- **簡單結構**：一行描述，如 `controlId 的 JSON 数组`；
+- **標量/列舉**：可取值直接寫在格內，如 `"1"=顯示 "2"=隱藏`；
+- **簡單結構**：一行描述，如 `controlId 的 JSON 陣列`；
 - **複雜結構**：連結到 [scripts/types/](scripts/types/) 下的型別定義（schema + 可直接套用的示例），全 skill 每個結構只定義一次：
 
 | 型別 | 用在哪 |

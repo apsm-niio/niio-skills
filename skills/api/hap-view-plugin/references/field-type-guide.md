@@ -48,13 +48,13 @@
 **問題現象:**
 - 程式碼查詢行業欄位時回傳 `undefined`
 - 所有客戶都被歸入"未分類"
-- 控制檯顯示 `行业字段: undefined`
+- 控制檯顯示 `行業欄位: undefined`
 
 **錯誤程式碼:**
 ```javascript
 // ❌ 只查詢 type 10 和 11,遺漏了 type 9
 const industryField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('行业') && (ctrl.type === 10 || ctrl.type === 11)
+  ctrl.controlName?.includes('行業') && (ctrl.type === 10 || ctrl.type === 11)
 );
 ```
 
@@ -62,7 +62,7 @@ const industryField = controls?.find(ctrl =>
 ```javascript
 // ✅ 包含 type 9, 10, 11 所有選項欄位
 const industryField = controls?.find(ctrl =>
-  ctrl.controlName?.includes('行业') && (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
+  ctrl.controlName?.includes('行業') && (ctrl.type === 9 || ctrl.type === 10 || ctrl.type === 11)
 );
 ```
 
@@ -116,7 +116,7 @@ function parseSingleSelect(value, control) {
 
     return { key: selectedKey, text: selectedText };
   } catch (err) {
-    console.error("解析单选字段失败:", err, value);
+    console.error("解析單選欄位失敗:", err, value);
     return { key: "", text: "" };
   }
 }
@@ -198,9 +198,9 @@ function getFieldValue(fieldId, record, controls) {
 
 ```javascript
 useEffect(() => {
-  console.log('=== 所有字段详细信息 ===');
+  console.log('=== 所有欄位詳細資訊 ===');
   controls?.forEach((ctrl, index) => {
-    console.log(`字段${index}:`, {
+    console.log(`欄位${index}:`, {
       id: ctrl.controlId,
       name: ctrl.controlName,
       type: ctrl.type,
@@ -208,10 +208,10 @@ useEffect(() => {
       optionsCount: ctrl.options?.length || 0
     });
     if (ctrl.options && ctrl.options.length > 0) {
-      console.log(`  选项:`, ctrl.options);
+      console.log(`  選項:`, ctrl.options);
     }
   });
-  console.log('=== 字段信息结束 ===');
+  console.log('=== 欄位資訊結束 ===');
 }, [controls]);
 ```
 
@@ -228,7 +228,7 @@ console.log('解析值:', parsedValue);
 
 // 最終顯示值
 const displayValue = parsedValue?.text || parsedValue;
-console.log('显示值:', displayValue);
+console.log('顯示值:', displayValue);
 ```
 
 ## ✅ 最佳實踐

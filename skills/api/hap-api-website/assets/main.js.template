@@ -1,15 +1,15 @@
 /**
- * 主应用逻辑
+ * 主應用邏輯
  * 
- * 依赖：config.js, api.js
+ * 依賴：config.js, api.js
  */
 
 const App = {
     /**
-     * 初始化应用
+     * 初始化應用
      */
     async init() {
-        // 等待 DOM 加载完成
+        // 等待 DOM 載入完成
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.start());
         } else {
@@ -18,45 +18,45 @@ const App = {
     },
 
     /**
-     * 启动应用
+     * 啟動應用
      */
     async start() {
         try {
-            // 加载数据
+            // 載入資料
             await this.loadData();
         } catch (error) {
-            console.error('应用启动失败:', error);
-            this.showError('页面加载失败，请刷新重试');
+            console.error('應用啟動失敗:', error);
+            this.showError('頁面載入失敗，請重新整理重試');
         }
     },
 
     /**
-     * 加载数据
+     * 載入資料
      */
     async loadData() {
         this.showLoading();
 
         try {
-            // 并行加载多个数据源
+            // 並行載入多個資料源
             const [products, news] = await Promise.all([
                 this.loadProducts(),
                 this.loadNews()
             ]);
 
-            // 渲染数据
+            // 渲染資料
             this.renderProducts(products);
             this.renderNews(news);
 
         } catch (error) {
-            console.error('数据加载失败:', error);
-            this.showError('数据加载失败，请刷新重试');
+            console.error('資料載入失敗:', error);
+            this.showError('資料載入失敗，請重新整理重試');
         } finally {
             this.hideLoading();
         }
     },
 
     /**
-     * 加载产品数据
+     * 載入產品資料
      */
     async loadProducts() {
         const data = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
@@ -81,7 +81,7 @@ const App = {
     },
 
     /**
-     * 加载新闻数据
+     * 載入新聞資料
      */
     async loadNews() {
         const data = await API.getRows(CONFIG.WORKSHEETS.NEWS, {
@@ -106,14 +106,14 @@ const App = {
     },
 
     /**
-     * 渲染产品列表
+     * 渲染產品清單
      */
     renderProducts(products) {
         const container = document.getElementById('products-container');
         if (!container) return;
 
         if (products.length === 0) {
-            container.innerHTML = '<p class="empty-message">暂无产品数据</p>';
+            container.innerHTML = '<p class="empty-message">暫無產品資料</p>';
             return;
         }
 
@@ -135,14 +135,14 @@ const App = {
     },
 
     /**
-     * 渲染新闻列表
+     * 渲染新聞清單
      */
     renderNews(news) {
         const container = document.getElementById('news-container');
         if (!container) return;
 
         if (news.length === 0) {
-            container.innerHTML = '<p class="empty-message">暂无新闻数据</p>';
+            container.innerHTML = '<p class="empty-message">暫無新聞資料</p>';
             return;
         }
 
@@ -166,7 +166,7 @@ const App = {
     },
 
     /**
-     * 显示加载状态
+     * 顯示載入狀態
      */
     showLoading() {
         const loading = document.getElementById('loading');
@@ -174,7 +174,7 @@ const App = {
     },
 
     /**
-     * 隐藏加载状态
+     * 隱藏載入狀態
      */
     hideLoading() {
         const loading = document.getElementById('loading');
@@ -182,7 +182,7 @@ const App = {
     },
 
     /**
-     * 显示错误消息
+     * 顯示錯誤訊息
      */
     showError(message) {
         const errorDiv = document.createElement('div');
@@ -193,5 +193,5 @@ const App = {
     }
 };
 
-// 启动应用
+// 啟動應用
 App.init();

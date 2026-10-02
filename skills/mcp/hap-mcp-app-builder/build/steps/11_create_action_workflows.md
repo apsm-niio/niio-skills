@@ -34,9 +34,9 @@
 2. **必須且首先**物理呼叫 `get_workflow_structure`，傳入參數 `workflow_id`（即 `processId`）**以及 `appId`（必傳，否則可能報 401 帳號失效錯誤）**。
 3. 從 API 回傳的流程樹形結構中，解析並提取其**觸發節點的真實物理 `nodeId`**。
 4. 後續所有節點中：
-   - `prevNode`（緊隨觸發器的第一個節點）使用 `{ "nodeId": "<实际nodeId>" }`
-   - `config.target.node`、`ValueRef.node` 等所有引用觸發記錄的位置，一律使用 `{ "nodeId": "<实际nodeId>" }`
-   - 公式/模板佔位符使用 `$<实际nodeId>-fieldId$`
+   - `prevNode`（緊隨觸發器的第一個節點）使用 `{ "nodeId": "<實際nodeId>" }`
+   - `config.target.node`、`ValueRef.node` 等所有引用觸發記錄的位置，一律使用 `{ "nodeId": "<實際nodeId>" }`
+   - 公式/模板佔位符使用 `$<實際nodeId>-fieldId$`
    - **絕對嚴禁**使用任何別名字串（如 `{ nodeAlias: "trigger" }`），否則引擎無法解析，直接丟擲 `StartNodeControlsIsNull` 致命錯誤
 
 ### 步驟 2：建立主流程節點

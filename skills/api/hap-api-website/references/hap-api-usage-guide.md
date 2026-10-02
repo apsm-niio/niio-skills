@@ -16,7 +16,7 @@
 ```json
 {
   "mcpServers": {
-    "应用 API - API 文档": {
+    "應用 API - API 文件": {
       "command": "npx",
       "args": [
         "-y",
@@ -186,31 +186,31 @@ GET /v3/app/info
 **Step 4: 建立工作表**
 
 ```javascript
-// 示例: 创建客户信息表
+// 示例: 建立客戶資訊表
 POST /v3/app/worksheets
 {
-  "name": "客户信息表",
+  "name": "客戶資訊表",
   "alias": "customers",
   "fields": [
     {
-      "name": "客户名称",
+      "name": "客戶名稱",
       "alias": "customer_name",
       "type": "Text",
       "isTitle": true,
       "required": true
     },
     {
-      "name": "客户类型",
+      "name": "客戶型別",
       "alias": "customer_type",
       "type": "SingleSelect",
       "options": [
-        {"value": "潜在客户", "index": 1},
-        {"value": "意向客户", "index": 2},
-        {"value": "成交客户", "index": 3}
+        {"value": "潛在客戶", "index": 1},
+        {"value": "意向客戶", "index": 2},
+        {"value": "成交客戶", "index": 3}
       ]
     },
     {
-      "name": "年度预算",
+      "name": "年度預算",
       "alias": "annual_budget",
       "type": "Number",
       "precision": 2
@@ -218,7 +218,7 @@ POST /v3/app/worksheets
   ]
 }
 
-// 返回: { "worksheet_id": "你的worksheetID" }
+// 回傳: { "worksheet_id": "你的worksheetID" }
 ```
 
 **關鍵點**:
@@ -233,18 +233,18 @@ POST /v3/app/worksheets
 如果需要關聯其他工作表:
 
 ```javascript
-// 先创建目标表(如上一步)
-// 然后创建关联字段
+// 先建立目標表(如上一步)
+// 然後建立關聯欄位
 
 POST /v3/app/worksheets/{worksheet_id}
 {
   "addFields": [
     {
-      "name": "关联客户",
+      "name": "關聯客戶",
       "alias": "related_customer",
       "type": "Relation",
-      "subType": "1",  // 单条关联
-      "dataSource": "你的worksheetID",  // 客户表ID
+      "subType": "1",  // 單條關聯
+      "dataSource": "你的worksheetID",  // 客戶表ID
       "relation": {
         "bidirectional": false,
         "showFields": ["customer_name", "customer_type"]
@@ -263,27 +263,27 @@ POST /v3/app/worksheets/{worksheet_id}
 對於單選/多選欄位,需要先取得選項的 key:
 
 ```javascript
-// 方法1: 查询工作表结构
+// 方法1: 查詢工作表結構
 GET /v3/app/worksheets/{worksheet_id}
 
-// 从返回的 fields 中找到 options:
+// 從回傳的 fields 中找到 options:
 {
   "fields": [
     {
       "id": "customer_type",
       "type": "SingleSelect",
       "options": [
-        {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客户"},
-        {"key": "f488d4db-5046-4b10-978f-7869c4c70a71", "value": "意向客户"}
+        {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客戶"},
+        {"key": "f488d4db-5046-4b10-978f-7869c4c70a71", "value": "意向客戶"}
       ]
     }
   ]
 }
 
-// 建立映射表
+// 建立對映表
 const optionMap = {
-  "成交客户": "74c7b607-864d-4cc4-b401-28acba2636e9",
-  "意向客户": "f488d4db-5046-4b10-978f-7869c4c70a71"
+  "成交客戶": "74c7b607-864d-4cc4-b401-28acba2636e9",
+  "意向客戶": "f488d4db-5046-4b10-978f-7869c4c70a71"
 };
 ```
 
@@ -297,21 +297,21 @@ POST /v3/app/worksheets/{worksheet_id}/rows
   "fields": [
     {
       "id": "customer_name",
-      "value": "明道云科技有限公司"
+      "value": "niio科技有限公司"
     },
     {
       "id": "customer_type",
-      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 使用选项key
+      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 使用選項key
     },
     {
       "id": "annual_budget",
       "value": 1000000.50
     }
   ],
-  "triggerWorkflow": true  // 是否触发工作流
+  "triggerWorkflow": true  // 是否觸發工作流
 }
 
-// 返回: { "row_id": "c74a29f0-f694-4501-9ba0-936e259daa9d" }
+// 回傳: { "row_id": "c74a29f0-f694-4501-9ba0-936e259daa9d" }
 ```
 
 **關鍵點**:
@@ -329,13 +329,13 @@ POST /v3/app/worksheets/{worksheet_id}/rows/batch
   "rows": [
     {
       "fields": [
-        {"id": "customer_name", "value": "客户A"},
+        {"id": "customer_name", "value": "客戶A"},
         {"id": "customer_type", "value": ["key1"]}
       ]
     },
     {
       "fields": [
-        {"id": "customer_name", "value": "客户B"},
+        {"id": "customer_name", "value": "客戶B"},
         {"id": "customer_type", "value": ["key2"]}
       ]
     }
@@ -363,13 +363,13 @@ POST /v3/app/worksheets/{worksheet_id}/rows/list
         "type": "condition",
         "field": "customer_type",
         "operator": "eq",
-        "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 成交客户
+        "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 成交客戶
       },
       {
         "type": "condition",
         "field": "annual_budget",
         "operator": "gte",
-        "value": ["500000"]  // 预算>=50万
+        "value": ["500000"]  // 預算>=50萬
       }
     ]
   },
@@ -394,19 +394,19 @@ POST /v3/app/worksheets/{worksheet_id}/rows/pivot
   "rows": [
     {
       "field": "customer_type",
-      "displayName": "客户类型"
+      "displayName": "客戶型別"
     }
   ],
   "values": [
     {
       "field": "rowid",
       "aggregation": "COUNT",
-      "displayName": "客户数量"
+      "displayName": "客戶數量"
     },
     {
       "field": "annual_budget",
       "aggregation": "SUM",
-      "displayName": "预算总额"
+      "displayName": "預算總額"
     }
   ],
   "includeSummary": true
@@ -425,11 +425,11 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
   "fields": [
     {
       "id": "customer_type",
-      "value": ["new-option-key"]  // 更改客户类型
+      "value": ["new-option-key"]  // 更改客戶型別
     },
     {
       "id": "annual_budget",
-      "value": 1500000  // 更新预算
+      "value": 1500000  // 更新預算
     }
   ],
   "triggerWorkflow": true
@@ -441,14 +441,14 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
 **Step 12: 刪除記錄**
 
 ```javascript
-// 单条删除
+// 單條刪除
 DELETE /v3/app/worksheets/{worksheet_id}/rows/{row_id}
 {
-  "permanent": false,  // false=逻辑删除(可恢复), true=永久删除
+  "permanent": false,  // false=邏輯刪除(可恢復), true=永久刪除
   "triggerWorkflow": true
 }
 
-// 批量删除
+// 批次刪除
 DELETE /v3/app/worksheets/{worksheet_id}/rows/batch
 {
   "rowIds": ["row-id-1", "row-id-2"],
@@ -563,11 +563,11 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 **基本結構**:
 ```json
 {
-  "name": "工作表名称",
-  "alias": "worksheet_alias",  // 可选,建议使用英文别名
-  "sectionId": "group-id",     // 可选,指定分组
+  "name": "工作表名稱",
+  "alias": "worksheet_alias",  // 可選,建議使用英文別名
+  "sectionId": "group-id",     // 可選,指定分組
   "fields": [
-    // 字段定义数组
+    // 欄位定義陣列
   ]
 }
 ```
@@ -575,21 +575,21 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 **示例 - 建立客戶資訊表**:
 ```json
 {
-  "name": "客户信息表",
+  "name": "客戶資訊表",
   "alias": "customers",
   "fields": [
     {
-      "name": "客户名称",
+      "name": "客戶名稱",
       "alias": "customer_name",
       "type": "Text",
-      "isTitle": true,      // 标题字段
+      "isTitle": true,      // 標題欄位
       "required": true      // 必填
     },
     {
-      "name": "客户评级",
+      "name": "客戶評級",
       "alias": "rating",
       "type": "Rating",
-      "max": 5,             // 最大等级0-10
+      "max": 5,             // 最大等級0-10
       "required": false
     }
   ]
@@ -606,13 +606,13 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ```json
 {
-  "name": "客户类型",
+  "name": "客戶型別",
   "alias": "customer_type",
   "type": "SingleSelect",
   "options": [
-    {"value": "潜在客户", "index": 1},
-    {"value": "意向客户", "index": 2},
-    {"value": "成交客户", "index": 3}
+    {"value": "潛在客戶", "index": 1},
+    {"value": "意向客戶", "index": 2},
+    {"value": "成交客戶", "index": 3}
   ],
   "required": false
 }
@@ -642,14 +642,14 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 **示例 - 建立單條關聯欄位**:
 ```json
 {
-  "name": "关联客户",
+  "name": "關聯客戶",
   "alias": "related_customer",
   "type": "Relation",
-  "subType": "1",                          // 单条记录
-  "dataSource": "你的worksheetID", // 目标表ID
+  "subType": "1",                          // 單條記錄
+  "dataSource": "你的worksheetID", // 目標表ID
   "relation": {
-    "bidirectional": false,                // 单向关联
-    "showFields": [                        // 显示字段
+    "bidirectional": false,                // 單向關聯
+    "showFields": [                        // 顯示欄位
       "customer_name",
       "customer_type"
     ]
@@ -661,13 +661,13 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 **示例 - 建立多條關聯欄位**:
 ```json
 {
-  "name": "关联项目",
+  "name": "關聯專案",
   "alias": "related_projects",
   "type": "Relation",
-  "subType": "2",                          // 多条记录
+  "subType": "2",                          // 多條記錄
   "dataSource": "你的worksheetID2",
   "relation": {
-    "bidirectional": true,                 // 双向关联
+    "bidirectional": true,                 // 雙向關聯
     "showFields": ["project_name", "project_status"]
   },
   "required": false
@@ -688,10 +688,10 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ```json
 {
-  "name": "负责人",
+  "name": "負責人",
   "alias": "owner",
   "type": "Collaborator",
-  "subType": "0",  // 0=单选, 1=多选
+  "subType": "0",  // 0=單選, 1=多選
   "required": false
 }
 ```
@@ -707,7 +707,7 @@ for (const [alias, structure] of Object.entries(worksheets)) {
   "name": "成立日期",
   "alias": "founded_date",
   "type": "Date",
-  "subType": "3",  // 5=年, 4=年月, 3=年月日, 2=年月日时, 1=年月日时分, 6=年月日时分秒
+  "subType": "3",  // 5=年, 4=年月, 3=年月日, 2=年月日時, 1=年月日時分, 6=年月日時分秒
   "required": false
 }
 ```
@@ -715,10 +715,10 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 **Time欄位**:
 ```json
 {
-  "name": "工作时间",
+  "name": "工作時間",
   "alias": "work_time",
   "type": "Time",
-  "subType": "1",  // 1=时:分, 6=时:分:秒
+  "subType": "1",  // 1=時:分, 6=時:分:秒
   "required": false
 }
 ```
@@ -729,10 +729,10 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ```json
 {
-  "name": "年度预算",
+  "name": "年度預算",
   "alias": "annual_budget",
   "type": "Number",
-  "precision": 2,  // 小数位数 0-14
+  "precision": 2,  // 小數位數 0-14
   "required": false
 }
 ```
@@ -743,10 +743,10 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ```json
 {
-  "name": "客户评级",
+  "name": "客戶評級",
   "alias": "customer_rating",
   "type": "Rating",
-  "max": 5,  // 最大等级 0-10
+  "max": 5,  // 最大等級 0-10
   "required": false
 }
 ```
@@ -774,22 +774,22 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 
 ```json
 {
-  "name": "销售机会表",
+  "name": "銷售機會表",
   "alias": "opportunities",
   "fields": [
     {
-      "name": "机会名称",
+      "name": "機會名稱",
       "alias": "opportunity_name",
       "type": "Text",
       "isTitle": true,
       "required": true
     },
     {
-      "name": "关联客户",
+      "name": "關聯客戶",
       "alias": "related_customer",
       "type": "Relation",
       "subType": "1",
-      "dataSource": "你的worksheetID",  // 客户表ID
+      "dataSource": "你的worksheetID",  // 客戶表ID
       "relation": {
         "bidirectional": false,
         "showFields": ["customer_name", "customer_type"]
@@ -797,34 +797,34 @@ for (const [alias, structure] of Object.entries(worksheets)) {
       "required": true
     },
     {
-      "name": "销售阶段",
+      "name": "銷售階段",
       "alias": "stage",
       "type": "SingleSelect",
       "options": [
-        {"value": "初次接触", "index": 1},
-        {"value": "需求确认", "index": 2},
-        {"value": "方案报价", "index": 3},
-        {"value": "商务谈判", "index": 4},
-        {"value": "赢单", "index": 5}
+        {"value": "初次接觸", "index": 1},
+        {"value": "需求確認", "index": 2},
+        {"value": "方案報價", "index": 3},
+        {"value": "商務談判", "index": 4},
+        {"value": "贏單", "index": 5}
       ],
       "required": false
     },
     {
-      "name": "预计金额",
+      "name": "預計金額",
       "alias": "expected_amount",
       "type": "Number",
       "precision": 2,
       "required": false
     },
     {
-      "name": "预计成交日期",
+      "name": "預計成交日期",
       "alias": "close_date",
       "type": "Date",
       "subType": "3",
       "required": false
     },
     {
-      "name": "成单概率",
+      "name": "成單機率",
       "alias": "win_probability",
       "type": "SingleSelect",
       "options": [
@@ -910,9 +910,9 @@ for (const [alias, structure] of Object.entries(worksheets)) {
 ```json
 {
   "fields": [
-    {"id": "field_id_or_alias", "value": "对应值"}
+    {"id": "field_id_or_alias", "value": "對應值"}
   ],
-  "triggerWorkflow": true  // 是否触发工作流,默认true
+  "triggerWorkflow": true  // 是否觸發工作流,預設true
 }
 ```
 
@@ -1063,12 +1063,12 @@ async function createRecordWithWorkflow(fields) {
 
     // API成功不代表工作流執行成功
     // 工作流異常不會影響記錄建立
-    console.log('记录创建成功:', result.row_id);
+    console.log('記錄建立成功:', result.row_id);
 
     // 如需確認工作流執行結果,需檢視工作流執行日誌
 
   } catch (error) {
-    console.error('记录创建失败:', error);
+    console.error('記錄建立失敗:', error);
   }
 }
 ```
@@ -1128,7 +1128,7 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 ```json
 {
   "id": "customer_name",
-  "value": "明道云科技有限公司"
+  "value": "niio科技有限公司"
 }
 ```
 
@@ -1161,7 +1161,7 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 ```json
 {
   "id": "customer_type",
-  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 选项key
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 選項key
 }
 ```
 
@@ -1171,7 +1171,7 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
   "customer_type": [
     {
       "key": "74c7b607-864d-4cc4-b401-28acba2636e9",
-      "value": "成交客户"
+      "value": "成交客戶"
     }
   ]
 }
@@ -1179,15 +1179,15 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 
 **⚠️ 關鍵點**:
 1. 即使是單選,也要用陣列 `["key"]`
-2. 不能傳顯示文字 `["成交客户"]`,必須用key
+2. 不能傳顯示文字 `["成交客戶"]`,必須用key
 3. 新增選項時可設定 `type` 參數
 
 **支援的type參數**:
 ```json
 {
   "id": "customer_type",
-  "type": "2",  // 1=不允许新增选项(默认), 2=允许新增选项
-  "value": ["新选项名称"]
+  "type": "2",  // 1=不允許新增選項(預設), 2=允許新增選項
+  "value": ["新選項名稱"]
 }
 ```
 
@@ -1200,9 +1200,9 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 {
   "id": "customer_tags",
   "value": [
-    "705de83e-b929-43e4-82ff-fff2f7dd6888",  // 重点客户
+    "705de83e-b929-43e4-82ff-fff2f7dd6888",  // 重點客戶
     "422b4e56-263f-4bfa-bc88-77c09811080e",  // VIP
-    "a2ef7406-a9b1-4fc8-ba02-33aa172998d0"   // 长期合作
+    "a2ef7406-a9b1-4fc8-ba02-33aa172998d0"   // 長期合作
   ]
 }
 ```
@@ -1211,9 +1211,9 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 ```json
 {
   "customer_tags": [
-    {"key": "705de83e-b929-43e4-82ff-fff2f7dd6888", "value": "重点客户"},
+    {"key": "705de83e-b929-43e4-82ff-fff2f7dd6888", "value": "重點客戶"},
     {"key": "422b4e56-263f-4bfa-bc88-77c09811080e", "value": "VIP"},
-    {"key": "a2ef7406-a9b1-4fc8-ba02-33aa172998d0", "value": "长期合作"}
+    {"key": "a2ef7406-a9b1-4fc8-ba02-33aa172998d0", "value": "長期合作"}
   ]
 }
 ```
@@ -1264,7 +1264,7 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 ```json
 {
   "id": "customer_rating",
-  "value": "5"  // 字符串格式
+  "value": "5"  // 字串格式
 }
 ```
 
@@ -1283,7 +1283,7 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 ```json
 {
   "id": "owner",
-  "value": ["user-account-id-123"]  // 用户ID,不是用户名
+  "value": ["user-account-id-123"]  // 使用者ID,不是使用者名稱
 }
 ```
 
@@ -1291,13 +1291,13 @@ await smartCreateRecord(fields);                          // 正常操作,觸發
 ```bash
 POST /v3/users/lookup
 {
-  "name": "张三"  // 精确匹配姓名
+  "name": "張三"  // 精確匹配姓名
 }
 
 # 回傳
 {
   "accountId": "user-account-id-123",
-  "fullname": "张三",
+  "fullname": "張三",
   "email": "zhangsan@example.com"
 }
 ```
@@ -1307,7 +1307,7 @@ POST /v3/users/lookup
 {
   "owner": {
     "accountId": "user-account-id-123",
-    "fullname": "张三",
+    "fullname": "張三",
     "avatar": "https://...",
     "email": "zhangsan@example.com",
     "status": 1
@@ -1324,10 +1324,10 @@ POST /v3/users/lookup
 **欄位建立**:
 ```json
 {
-  "name": "所属部门",
+  "name": "所屬部門",
   "alias": "department",
   "type": "Department",
-  "subType": "0",  // 0=单选, 1=多选
+  "subType": "0",  // 0=單選, 1=多選
   "required": false
 }
 ```
@@ -1336,7 +1336,7 @@ POST /v3/users/lookup
 ```json
 {
   "id": "department",
-  "value": ["department-id-123"]  // 部门ID,不是部门名称
+  "value": ["department-id-123"]  // 部門ID,不是部門名稱
 }
 ```
 
@@ -1357,7 +1357,7 @@ POST /v3/users/lookup
 ```bash
 POST /v3/departments/lookup
 {
-  "name": "销售部"  // 精确匹配部门名称
+  "name": "銷售部"  // 精確匹配部門名稱
 }
 
 # 回傳
@@ -1365,7 +1365,7 @@ POST /v3/departments/lookup
   "success": true,
   "data": {
     "departmentId": "department-id-123",
-    "departmentName": "销售部",
+    "departmentName": "銷售部",
     "parentId": "parent-dept-id",
     "level": 2
   }
@@ -1382,7 +1382,7 @@ GET /v3/departments
   "data": [
     {
       "departmentId": "dept-001",
-      "departmentName": "总裁办",
+      "departmentName": "總裁辦",
       "children": [
         {
           "departmentId": "dept-002",
@@ -1392,11 +1392,11 @@ GET /v3/departments
     },
     {
       "departmentId": "dept-003",
-      "departmentName": "销售中心",
+      "departmentName": "銷售中心",
       "children": [
         {
           "departmentId": "dept-004",
-          "departmentName": "华东区销售部"
+          "departmentName": "華東區銷售部"
         }
       ]
     }
@@ -1409,7 +1409,7 @@ GET /v3/departments
 {
   "department": {
     "departmentId": "department-id-123",
-    "departmentName": "销售部"
+    "departmentName": "銷售部"
   }
 }
 ```
@@ -1420,11 +1420,11 @@ GET /v3/departments
   "departments": [
     {
       "departmentId": "department-id-123",
-      "departmentName": "销售部"
+      "departmentName": "銷售部"
     },
     {
       "departmentId": "department-id-456",
-      "departmentName": "市场部"
+      "departmentName": "市場部"
     }
   ]
 }
@@ -1440,7 +1440,7 @@ GET /v3/departments
       "type": "condition",
       "field": "department",
       "operator": "eq",
-      "value": ["department-id-123"]  // 使用部门ID
+      "value": ["department-id-123"]  // 使用部門ID
     }
   ]
 }
@@ -1456,7 +1456,7 @@ GET /v3/departments
 **使用示例**:
 ```javascript
 // 1. 查詢部門ID
-const dept = await findDepartment({ name: "销售部" });
+const dept = await findDepartment({ name: "銷售部" });
 const deptId = dept.data.departmentId;
 
 // 2. 建立記錄時設定部門
@@ -1493,7 +1493,7 @@ const records = await queryRecords({
 **欄位建立**:
 ```json
 {
-  "name": "所在地区",
+  "name": "所在地區",
   "alias": "region",
   "type": "Region",
   "required": false
@@ -1504,7 +1504,7 @@ const records = await queryRecords({
 ```json
 {
   "id": "region",
-  "value": "310100"  // 上海市市辖区的地区编码
+  "value": "310100"  // 上海市市轄區的地區編碼
 }
 ```
 
@@ -1525,11 +1525,11 @@ POST /v3/regions
       "id": "310000",
       "name": "上海市",
       "parentId": null,
-      "level": 1  // 1=省, 2=市, 3=区县
+      "level": 1  // 1=省, 2=市, 3=區縣
     },
     {
       "id": "310100",
-      "name": "市辖区",
+      "name": "市轄區",
       "parentId": "310000",
       "level": 2
     }
@@ -1550,19 +1550,19 @@ POST /v3/regions
   "data": [
     {
       "id": "310100",
-      "name": "市辖区",
+      "name": "市轄區",
       "parentId": "310000",
       "level": 2
     },
     {
       "id": "310101",
-      "name": "黄浦区",
+      "name": "黃浦區",
       "parentId": "310100",
       "level": 3
     },
     {
       "id": "310104",
-      "name": "徐汇区",
+      "name": "徐彙區",
       "parentId": "310100",
       "level": 3
     }
@@ -1575,7 +1575,7 @@ POST /v3/regions
 {
   "region": {
     "id": "310100",
-    "name": "上海市-市辖区",
+    "name": "上海市-市轄區",
     "code": "310100"
   }
 }
@@ -1591,7 +1591,7 @@ POST /v3/regions
       "type": "condition",
       "field": "region",
       "operator": "eq",
-      "value": ["310100"]  // 使用地区编码
+      "value": ["310100"]  // 使用地區編碼
     }
   ]
 }
@@ -1606,8 +1606,8 @@ POST /v3/regions
   "rows": [
     {
       "field": "region",
-      "displayName": "所在地区",
-      "granularity": 1,  // 1=省, 2=省/市, 3=省/市/区县
+      "displayName": "所在地區",
+      "granularity": 1,  // 1=省, 2=省/市, 3=省/市/區縣
       "includeEmpty": false
     }
   ],
@@ -1615,7 +1615,7 @@ POST /v3/regions
     {
       "field": "rowid",
       "aggregation": "COUNT",
-      "displayName": "客户数量"
+      "displayName": "客戶數量"
     }
   ]
 }
@@ -1719,7 +1719,7 @@ const pivotData = await getPivotData({
 ```json
 {
   "id": "related_customer",
-  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 客户记录ID
+  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 客戶記錄ID
 }
 ```
 
@@ -1741,7 +1741,7 @@ const pivotData = await getPivotData({
   "related_customer": [
     {
       "sid": "945e6503-3823-4e91-9d84-a53f8bdd6fc5",
-      "name": "明道云科技有限公司"
+      "name": "niio科技有限公司"
     }
   ]
 }
@@ -1768,8 +1768,8 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
     "rows": [
       {
         "rowid": "945e6503-3823-4e91-9d84-a53f8bdd6fc5",
-        "customer_name": "明道云科技有限公司",
-        "customer_type": "成交客户",
+        "customer_name": "niio科技有限公司",
+        "customer_type": "成交客戶",
         "annual_budget": "1000000.00"
       }
     ],
@@ -1786,14 +1786,14 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
 ```json
 {
   "id": "attachments",
-  "type": "0",  // 0=覆盖已有附件, 1=追加新附件
+  "type": "0",  // 0=覆蓋已有附件, 1=追加新附件
   "value": [
     {
-      "name": "产品宣传册.pdf",
+      "name": "產品宣傳冊.pdf",
       "url": "https://example.com/brochure.pdf"
     },
     {
-      "name": "公司介绍.png",
+      "name": "公司介紹.png",
       "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
     }
   ]
@@ -1811,7 +1811,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
     {
       "file_id": "7b866bd5-8541-40b7-976f-276081bdddcd",
       "file_name": "70f9836904834c3eb44c75c587c3fcac.pdf",
-      "original_file_name": "产品宣传册.pdf",
+      "original_file_name": "產品宣傳冊.pdf",
       "file_size": 2048576,
       "file_type": 4,
       "DownloadUrl": "https://p1.mingdaoyun.cn/doc/20260111/xxx.pdf",
@@ -1839,7 +1839,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
   "fields": [
     {
       "id": "opportunity_name",
-      "value": "明道云-企业版年度续费"
+      "value": "niio-企業版年度續費"
     },
     {
       "id": "related_customer",
@@ -1847,7 +1847,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
     },
     {
       "id": "stage",
-      "value": ["a9ac7988-7603-4f03-86d5-985bd1f0cb66"]  // 商务谈判
+      "value": ["a9ac7988-7603-4f03-86d5-985bd1f0cb66"]  // 商務談判
     },
     {
       "id": "expected_amount",
@@ -1867,7 +1867,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
     },
     {
       "id": "description",
-      "value": "年度续约项目,增购100个账户"
+      "value": "年度續約專案,增購100個賬戶"
     }
   ],
   "triggerWorkflow": true
@@ -1914,21 +1914,21 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
   "rows": [
     {
       "fields": [
-        {"id": "customer_name", "value": "客户A"},
+        {"id": "customer_name", "value": "客戶A"},
         {"id": "customer_type", "value": ["option-key-1"]},
         {"id": "annual_budget", "value": 500000}
       ]
     },
     {
       "fields": [
-        {"id": "customer_name", "value": "客户B"},
+        {"id": "customer_name", "value": "客戶B"},
         {"id": "customer_type", "value": ["option-key-2"]},
         {"id": "annual_budget", "value": 800000}
       ]
     },
     {
       "fields": [
-        {"id": "customer_name", "value": "客户C"},
+        {"id": "customer_name", "value": "客戶C"},
         {"id": "customer_type", "value": ["option-key-1"]},
         {"id": "annual_budget", "value": 1200000}
       ]
@@ -1973,7 +1973,7 @@ async function batchCreateRecords(allData, batchSize = 100) {
   const results = [];
   const errors = [];
 
-  // 分批处理
+  // 分批處理
   for (let i = 0; i < allData.length; i += batchSize) {
     const batch = allData.slice(i, i + batchSize);
 
@@ -1985,7 +1985,7 @@ async function batchCreateRecords(allData, batchSize = 100) {
 
       results.push(...response.data.rows);
 
-      // 记录失败的记录
+      // 記錄失敗的記錄
       if (response.data.failCount > 0) {
         errors.push({
           batchIndex: i / batchSize,
@@ -1993,7 +1993,7 @@ async function batchCreateRecords(allData, batchSize = 100) {
         });
       }
 
-      // 批次间延迟
+      // 批次間延遲
       if (i + batchSize < allData.length) {
         await sleep(1000);  // 等待1秒
       }
@@ -2073,7 +2073,7 @@ async function batchCreateRecords(allData, batchSize = 100) {
   "fields": [
     {
       "id": "owner",
-      "value": ["user-account-id-123"]  // 将3条记录的负责人都改为同一人
+      "value": ["user-account-id-123"]  // 將3條記錄的負責人都改為同一人
     }
   ]
 }
@@ -2081,12 +2081,12 @@ async function batchCreateRecords(allData, batchSize = 100) {
 
 **錯誤示例 - 嘗試差異化更新**:
 ```json
-// ❌ 这样不行!批量更新不支持为每条记录设置不同值
+// ❌ 這樣不行!批次更新不支援為每條記錄設定不同值
 {
   "rowIds": ["id1", "id2"],
   "fields": [
-    {"id": "rating", "value": "5"},   // id1和id2都会被设为5
-    {"id": "rating", "value": "3"}    // 后面的值会被忽略或覆盖前面的
+    {"id": "rating", "value": "5"},   // id1和id2都會被設為5
+    {"id": "rating", "value": "3"}    // 後面的值會被忽略或覆蓋前面的
   ]
 }
 ```
@@ -2122,7 +2122,7 @@ await updateRecordsWithDifferentValues([
     "c74a29f0-f694-4501-9ba0-936e259daa9d",
     "945e6503-3823-4e91-9d84-a53f8bdd6fc5"
   ],
-  "permanent": false,  // false=逻辑删除(可恢复), true=物理删除(不可恢复)
+  "permanent": false,  // false=邏輯刪除(可恢復), true=物理刪除(不可恢復)
   "triggerWorkflow": true
 }
 ```
@@ -2148,11 +2148,11 @@ await updateRecordsWithDifferentValues([
 
 **⚠️ 嚴重警告**:
 ```javascript
-// 🚨 危险操作!永久删除无法恢复!
+// 🚨 危險操作!永久刪除無法恢復!
 DELETE /v3/app/worksheets/{worksheet_id}/rows/batch
 {
   "rowIds": ["id1", "id2"],
-  "permanent": true,  // ⚠️ 永久删除!
+  "permanent": true,  // ⚠️ 永久刪除!
   "triggerWorkflow": true
 }
 ```
@@ -2166,24 +2166,24 @@ async function safeDeleteRecords(rowIds, options = {}) {
     backupFirst = true
   } = options;
 
-  // 1. 永久删除需要二次确认
+  // 1. 永久刪除需要二次確認
   if (permanent) {
     const confirmed = confirmCallback
       ? await confirmCallback(rowIds.length)
-      : confirm(`确定要永久删除 ${rowIds.length} 条记录吗?此操作不可恢复!`);
+      : confirm(`確定要永久刪除 ${rowIds.length} 條記錄嗎?此操作不可恢復!`);
 
     if (!confirmed) {
       return { cancelled: true };
     }
   }
 
-  // 2. 可选:删除前备份数据
+  // 2. 可選:刪除前備份資料
   if (backupFirst) {
     const records = await getRecords({ rowIds });
-    await saveBackup(records);  // 保存到本地或备份库
+    await saveBackup(records);  // 儲存到本地或備份庫
   }
 
-  // 3. 执行删除
+  // 3. 執行刪除
   return await deleteBatch({
     rowIds,
     permanent,
@@ -2313,7 +2313,7 @@ async function batchCreateWithProgress(records, onProgress) {
 
 // 使用
 await batchCreateWithProgress(records, (progress) => {
-  console.log(`进度: ${progress.percentage}% (${progress.current}/${progress.total})`);
+  console.log(`進度: ${progress.percentage}% (${progress.current}/${progress.total})`);
 });
 ```
 
@@ -2328,7 +2328,7 @@ await batchCreateWithProgress(records, (progress) => {
 | `10` | 參數錯誤 | 檢查欄位ID、值格式 |
 | `4` | 權限不足 | 檢查API權限設定 |
 | `-1` | 通用失敗 | 檢視error_msg詳情 |
-| `超时` | 請求超時 | 減少批次大小,重試 |
+| `超時` | 請求超時 | 減少批次大小,重試 |
 
 **健壯的批次處理實現**:
 ```javascript
@@ -2373,7 +2373,7 @@ async function robustBatchCreate(records, options = {}) {
         };
 
         if (retries >= maxRetries) {
-          // 达到最大重试次数
+          // 達到最大重試次數
           results.failed.push(...batch);
           results.errors.push(errorInfo);
 
@@ -2385,14 +2385,14 @@ async function robustBatchCreate(records, options = {}) {
             throw new Error(`Batch ${i / batchSize} failed after ${maxRetries} retries`);
           }
         } else {
-          // 等待后重试
+          // 等待後重試
           console.log(`Batch ${i / batchSize} failed, retrying (${retries}/${maxRetries})...`);
           await sleep(BATCH_CONFIG.RETRY_DELAY * retries);
         }
       }
     }
 
-    // 批次间延迟
+    // 批次間延遲
     if (i + batchSize < records.length) {
       await sleep(BATCH_CONFIG.BATCH_DELAY);
     }
@@ -2407,16 +2407,16 @@ const result = await robustBatchCreate(records, {
   maxRetries: 3,
   continueOnError: true,
   onError: async (errorInfo) => {
-    // 记录错误日志
+    // 記錄錯誤日誌
     await logError(errorInfo);
-    // 发送通知
-    await notifyAdmin(`批次 ${errorInfo.batchIndex} 失败`);
+    // 傳送通知
+    await notifyAdmin(`批次 ${errorInfo.batchIndex} 失敗`);
   }
 });
 
-console.log(`成功: ${result.success.length}, 失败: ${result.failed.length}`);
+console.log(`成功: ${result.success.length}, 失敗: ${result.failed.length}`);
 if (result.failed.length > 0) {
-  // 导出失败记录
+  // 匯出失敗記錄
   await exportFailedRecords(result.failed);
 }
 ```
@@ -2424,10 +2424,10 @@ if (result.failed.length > 0) {
 **失敗記錄重試策略**:
 ```javascript
 async function retryFailedRecords(failedRecords, originalBatchSize) {
-  // 策略1: 减小批次大小
+  // 策略1: 減小批次大小
   const smallerBatchSize = Math.max(10, Math.floor(originalBatchSize / 2));
 
-  // 策略2: 逐条重试
+  // 策略2: 逐條重試
   if (failedRecords.length <= 10) {
     return await retryOneByOne(failedRecords);
   }
@@ -2506,15 +2506,15 @@ async function retryOneByOne(records) {
 **基本請求體**:
 ```json
 {
-  "filter": {},           // 筛选条件,见下文
-  "sorts": [],            // 排序,见下文
-  "fields": [],           // 返回字段ID数组,可选
-  "search": "",           // 关键词搜索,可选
-  "pageIndex": 1,         // 页码
-  "pageSize": 100,        // 每页数量,最大1000
-  "viewId": "",           // 视图ID,可选
-  "includeSystemFields": false,  // 是否返回系统字段
-  "useFieldIdAsKey": false       // 返回数据key用字段ID还是别名
+  "filter": {},           // 篩選條件,見下文
+  "sorts": [],            // 排序,見下文
+  "fields": [],           // 回傳欄位ID陣列,可選
+  "search": "",           // 關鍵詞搜尋,可選
+  "pageIndex": 1,         // 頁碼
+  "pageSize": 100,        // 每頁數量,最大1000
+  "viewId": "",           // 檢視ID,可選
+  "includeSystemFields": false,  // 是否回傳系統欄位
+  "useFieldIdAsKey": false       // 回傳資料key用欄位ID還是別名
 }
 ```
 
@@ -2565,7 +2565,7 @@ Filter = {
 | `between` | 介於之間 | ✅ | `["最小值", "最大值"]` | Number, Date |
 | `isempty` | 為空 | ❌ | 不需要 | 所有型別 |
 | `isnotempty` | 不為空 | ❌ | 不需要 | 所有型別 |
-| `belongsto` | 屬於 | ✅ | `["部门ID1", "部门ID2"]` | 部門(Department) |
+| `belongsto` | 屬於 | ✅ | `["部門ID1", "部門ID2"]` | 部門(Department) |
 | `in` | 在...中 | ✅ | `["值1", "值2"]` | 所有型別（關聯欄位 Relation 用此，value = rowid 陣列） |
 | `concurrent` | 同時包含 | ✅ | `["值1", "值2"]` | MultipleSelect |
 
@@ -2611,7 +2611,7 @@ Filter = {
   "type": "condition",
   "field": "annual_budget",
   "operator": "between",
-  "value": ["500000", "2000000"]  // ⚠️ 必须是字符串数组
+  "value": ["500000", "2000000"]  // ⚠️ 必須是字串陣列
 }
 ```
 
@@ -2621,7 +2621,7 @@ Filter = {
   "type": "condition",
   "field": "expected_amount",
   "operator": "gt",
-  "value": ["1000000"]  // ⚠️ 字符串格式
+  "value": ["1000000"]  // ⚠️ 字串格式
 }
 ```
 
@@ -2637,7 +2637,7 @@ Filter = {
   "type": "condition",
   "field": "customer_type",
   "operator": "eq",
-  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ⚠️ 必须用选项key
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ⚠️ 必須用選項key
 }
 ```
 
@@ -2647,7 +2647,7 @@ Filter = {
   "type": "condition",
   "field": "customer_type",
   "operator": "eq",
-  "value": ["成交客户"]  // ❌ 不能用显示文本!
+  "value": ["成交客戶"]  // ❌ 不能用顯示文字!
 }
 ```
 
@@ -2664,7 +2664,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/list
 # 回傳資料中包含選項key
 {
   "customer_type": [
-    {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客户"}
+    {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客戶"}
   ]
 }
 ```
@@ -2680,8 +2680,8 @@ GET /v3/app/worksheets/{worksheet_id}
       "id": "customer_type",
       "type": "SingleSelect",
       "options": [
-        {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客户"},
-        {"key": "f488d4db-5046-4b10-978f-7869c4c70a71", "value": "意向客户"}
+        {"key": "74c7b607-864d-4cc4-b401-28acba2636e9", "value": "成交客戶"},
+        {"key": "f488d4db-5046-4b10-978f-7869c4c70a71", "value": "意向客戶"}
       ]
     }
   ]
@@ -2700,7 +2700,7 @@ GET /v3/app/worksheets/{worksheet_id}
   "type": "condition",
   "field": "customer_tags",
   "operator": "contains",
-  "value": ["705de83e-b929-43e4-82ff-fff2f7dd6888"]  // 重点客户的key
+  "value": ["705de83e-b929-43e4-82ff-fff2f7dd6888"]  // 重點客戶的key
 }
 ```
 
@@ -2711,7 +2711,7 @@ GET /v3/app/worksheets/{worksheet_id}
   "field": "customer_tags",
   "operator": "concurrent",
   "value": [
-    "705de83e-b929-43e4-82ff-fff2f7dd6888",  // 重点客户
+    "705de83e-b929-43e4-82ff-fff2f7dd6888",  // 重點客戶
     "422b4e56-263f-4bfa-bc88-77c09811080e"   // VIP
   ]
 }
@@ -2752,8 +2752,8 @@ GET /v3/app/worksheets/{worksheet_id}
 {
   "type": "condition",
   "field": "related_customer",
-  "operator": "eq",  // 关联字段用 in 或 eq + rowid 数组
-  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 客户记录的 rowid
+  "operator": "eq",  // 關聯欄位用 in 或 eq + rowid 陣列
+  "value": ["945e6503-3823-4e91-9d84-a53f8bdd6fc5"]  // 客戶記錄的 rowid
 }
 ```
 
@@ -2784,7 +2784,7 @@ GET /v3/app/worksheets/{worksheet_id}
   "type": "condition",
   "field": "owner",
   "operator": "eq",
-  "value": ["user-account-id-123"]  // 用户ID,不是姓名
+  "value": ["user-account-id-123"]  // 使用者ID,不是姓名
 }
 ```
 
@@ -2797,7 +2797,7 @@ GET /v3/app/worksheets/{worksheet_id}
   "type": "condition",
   "field": "customer_rating",
   "operator": "gte",
-  "value": ["4"]  // 字符串格式
+  "value": ["4"]  // 字串格式
 }
 ```
 
@@ -2911,13 +2911,13 @@ GET /v3/app/worksheets/{worksheet_id}
       "type": "condition",
       "field": "industry",
       "operator": "eq",
-      "value": ["4f28cae6-6a76-4b0b-b6e8-62cc724c677d"]  // 互联网
+      "value": ["4f28cae6-6a76-4b0b-b6e8-62cc724c677d"]  // 網際網路
     },
     {
       "type": "condition",
       "field": "customer_type",
       "operator": "eq",
-      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 成交客户
+      "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // 成交客戶
     },
     {
       "type": "group",
@@ -3019,12 +3019,12 @@ GET /v3/app/worksheets/{worksheet_id}
 **基本請求體**:
 ```json
 {
-  "rows": [],       // 行维度
-  "columns": [],    // 列维度(可选)
-  "values": [],     // 值/指标
-  "filter": {},     // 筛选条件(可选)
-  "sorts": [],      // 排序(可选)
-  "includeSummary": true,  // 是否包含汇总
+  "rows": [],       // 行維度
+  "columns": [],    // 列維度(可選)
+  "values": [],     // 值/指標
+  "filter": {},     // 篩選條件(可選)
+  "sorts": [],      // 排序(可選)
+  "includeSummary": true,  // 是否包含彙總
   "pageIndex": 1,
   "pageSize": 1000
 }
@@ -3037,9 +3037,9 @@ GET /v3/app/worksheets/{worksheet_id}
 **行/列維度結構**:
 ```json
 {
-  "field": "industry",          // 字段ID或别名
-  "displayName": "所属行业",    // 显示名称(可选)
-  "granularity": 1,             // 粒度(日期/地区字段)
+  "field": "industry",          // 欄位ID或別名
+  "displayName": "所屬行業",    // 顯示名稱(可選)
+  "granularity": 1,             // 粒度(日期/地區欄位)
   "includeEmpty": false         // 是否包含空值
 }
 ```
@@ -3063,9 +3063,9 @@ GET /v3/app/worksheets/{worksheet_id}
 **值設定結構**:
 ```json
 {
-  "field": "annual_budget",     // 字段ID或别名
-  "aggregation": "SUM",         // 聚合函数
-  "displayName": "预算总额",    // 显示名称(可选)
+  "field": "annual_budget",     // 欄位ID或別名
+  "aggregation": "SUM",         // 聚合函式
+  "displayName": "預算總額",    // 顯示名稱(可選)
   "includeEmpty": false         // 是否包含空值
 }
 ```
@@ -3098,7 +3098,7 @@ GET /v3/app/worksheets/{worksheet_id}
   "rows": [
     {
       "field": "industry",
-      "displayName": "所属行业",
+      "displayName": "所屬行業",
       "includeEmpty": false
     }
   ],
@@ -3106,12 +3106,12 @@ GET /v3/app/worksheets/{worksheet_id}
     {
       "field": "rowid",
       "aggregation": "COUNT",
-      "displayName": "客户数量"
+      "displayName": "客戶數量"
     },
     {
       "field": "annual_budget",
       "aggregation": "SUM",
-      "displayName": "预算总额"
+      "displayName": "預算總額"
     }
   ],
   "includeSummary": true,
@@ -3126,7 +3126,7 @@ GET /v3/app/worksheets/{worksheet_id}
   "data": {
     "pivot": [
       {
-        "rows": {"industry": "互联网"},
+        "rows": {"industry": "網際網路"},
         "values": {"rowid": 4.0, "annual_budget": 2150000.0}
       },
       {
@@ -3153,24 +3153,24 @@ GET /v3/app/worksheets/{worksheet_id}
   "rows": [
     {
       "field": "opportunity_stage",
-      "displayName": "销售阶段"
+      "displayName": "銷售階段"
     }
   ],
   "values": [
     {
       "field": "rowid",
       "aggregation": "COUNT",
-      "displayName": "机会数量"
+      "displayName": "機會數量"
     },
     {
       "field": "expected_amount",
       "aggregation": "SUM",
-      "displayName": "金额总计"
+      "displayName": "金額總計"
     },
     {
       "field": "expected_amount",
       "aggregation": "AVG",
-      "displayName": "平均金额"
+      "displayName": "平均金額"
     }
   ],
   "includeSummary": true
@@ -3183,7 +3183,7 @@ GET /v3/app/worksheets/{worksheet_id}
   "data": {
     "pivot": [
       {
-        "rows": {"opportunity_stage": "商务谈判"},
+        "rows": {"opportunity_stage": "商務談判"},
         "values": {
           "rowid": 3.0,
           "expected_amount": 2710000.0,
@@ -3211,18 +3211,18 @@ GET /v3/app/worksheets/{worksheet_id}
   "rows": [
     {
       "field": "customer_type",
-      "displayName": "客户类型"
+      "displayName": "客戶型別"
     },
     {
       "field": "industry",
-      "displayName": "所属行业"
+      "displayName": "所屬行業"
     }
   ],
   "values": [
     {
       "field": "rowid",
       "aggregation": "COUNT",
-      "displayName": "客户数"
+      "displayName": "客戶數"
     }
   ],
   "includeSummary": true
@@ -3236,15 +3236,15 @@ GET /v3/app/worksheets/{worksheet_id}
     "pivot": [
       {
         "rows": {
-          "customer_type": "成交客户",
-          "industry": "互联网"
+          "customer_type": "成交客戶",
+          "industry": "網際網路"
         },
         "values": {"rowid": 3.0}
       },
       {
         "rows": {
-          "customer_type": "意向客户",
-          "industry": "制造业"
+          "customer_type": "意向客戶",
+          "industry": "製造業"
         },
         "values": {"rowid": 2.0}
       }
@@ -3277,19 +3277,19 @@ GET /v3/app/worksheets/{worksheet_id}
   "rows": [
     {
       "field": "opportunity_stage",
-      "displayName": "销售阶段"
+      "displayName": "銷售階段"
     }
   ],
   "values": [
     {
       "field": "rowid",
       "aggregation": "COUNT",
-      "displayName": "机会数量"
+      "displayName": "機會數量"
     },
     {
       "field": "expected_amount",
       "aggregation": "SUM",
-      "displayName": "金额总计"
+      "displayName": "金額總計"
     }
   ],
   "includeSummary": true
@@ -3315,28 +3315,28 @@ GET /v3/app/worksheets/{worksheet_id}
 **Step 1**: 建立目標工作表(如客戶表)
 ```json
 {
-  "name": "客户信息表",
+  "name": "客戶資訊表",
   "fields": [
-    {"name": "客户名称", "type": "Text", "isTitle": true},
-    {"name": "客户类型", "type": "SingleSelect", "options": [...]}
+    {"name": "客戶名稱", "type": "Text", "isTitle": true},
+    {"name": "客戶型別", "type": "SingleSelect", "options": [...]}
   ]
 }
 
-// 返回: {"worksheet_id": "你的worksheetID"}
+// 回傳: {"worksheet_id": "你的worksheetID"}
 ```
 
 **Step 2**: 在源工作表建立關聯欄位(如機會表)
 ```json
 {
-  "name": "销售机会表",
+  "name": "銷售機會表",
   "fields": [
-    {"name": "机会名称", "type": "Text", "isTitle": true},
+    {"name": "機會名稱", "type": "Text", "isTitle": true},
     {
-      "name": "关联客户",
+      "name": "關聯客戶",
       "alias": "related_customer",
       "type": "Relation",
-      "subType": "1",  // 单条关联
-      "dataSource": "你的worksheetID",  // 客户表ID
+      "subType": "1",  // 單條關聯
+      "dataSource": "你的worksheetID",  // 客戶表ID
       "relation": {
         "bidirectional": false,
         "showFields": ["customer_name", "customer_type"]
@@ -3363,12 +3363,12 @@ GET /v3/app/worksheets/{worksheet_id}
 **示例 - 雙向關聯**:
 ```json
 {
-  "name": "关联项目",
+  "name": "關聯專案",
   "type": "Relation",
-  "subType": "2",  // 多条关联
+  "subType": "2",  // 多條關聯
   "dataSource": "project-table-id",
   "relation": {
-    "bidirectional": true,  // 双向
+    "bidirectional": true,  // 雙向
     "showFields": ["project_name", "project_status"]
   }
 }
@@ -3396,7 +3396,7 @@ POST /v3/app/worksheets/你的worksheetID/rows/list
         "type": "condition",
         "field": "customer_name",
         "operator": "contains",
-        "value": ["明道云"]
+        "value": ["niio"]
       }
     ]
   },
@@ -3420,11 +3420,11 @@ POST /v3/app/worksheets/你的worksheetID2/rows
   "fields": [
     {
       "id": "opportunity_name",
-      "value": "明道云-年度续费"
+      "value": "niio-年度續費"
     },
     {
       "id": "related_customer",
-      "value": ["c74a29f0-f694-4501-9ba0-936e259daa9d"]  // 客户rowid
+      "value": ["c74a29f0-f694-4501-9ba0-936e259daa9d"]  // 客戶rowid
     }
   ]
 }
@@ -3439,7 +3439,7 @@ GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
   "related_customer": [
     {
       "sid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
-      "name": "明道云科技有限公司"
+      "name": "niio科技有限公司"
     }
   ]
 }
@@ -3455,10 +3455,10 @@ GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
 
 ```javascript
 {
-  "示例控件ID": [  // 關聯欄位ID
+  "示例控制元件ID": [  // 關聯欄位ID
     {
       "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 關聯記錄的ID (等同於 rowid)
-      "name": "实木衣柜"  // 關聯記錄的標題欄位值
+      "name": "實木衣櫃"  // 關聯記錄的標題欄位值
     }
   ]
 }
@@ -3495,8 +3495,8 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
     "rows": [
       {
         "rowid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
-        "customer_name": "明道云科技有限公司",
-        "customer_type": [{"key": "...", "value": "成交客户"}],
+        "customer_name": "niio科技有限公司",
+        "customer_type": [{"key": "...", "value": "成交客戶"}],
         "annual_budget": "1000000.00",
         "customer_rating": "5"
       }
@@ -3523,7 +3523,7 @@ GET /v3/app/worksheets/你的worksheetID2/rows/{row_id}
   "related_customer": [
     {
       "sid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
-      "name": "明道云科技有限公司"
+      "name": "niio科技有限公司"
     }
   ]
 }
@@ -3542,9 +3542,9 @@ POST /v3/app/worksheets/你的worksheetID/rows/list
     "children": [
       {
         "type": "condition",
-        "field": "rowid",  // ⚠️ 使用系统字段 rowid
-        "operator": "in",  // ⚠️ 使用 in 操作符
-        "value": ["c74a29f0-f694-4501-9ba0-936e259daa9d"]  // 传入 sid 值
+        "field": "rowid",  // ⚠️ 使用系統欄位 rowid
+        "operator": "in",  // ⚠️ 使用 in 運算子
+        "value": ["c74a29f0-f694-4501-9ba0-936e259daa9d"]  // 傳入 sid 值
       }
     ]
   }
@@ -3556,12 +3556,12 @@ POST /v3/app/worksheets/你的worksheetID/rows/list
     "rows": [
       {
         "rowid": "c74a29f0-f694-4501-9ba0-936e259daa9d",
-        "customer_name": "明道云科技有限公司",
-        "customer_type": [{"key": "...", "value": "成交客户"}],
+        "customer_name": "niio科技有限公司",
+        "customer_type": [{"key": "...", "value": "成交客戶"}],
         "customer_logo": [{"downloadUrl": "https://..."}],
         "annual_budget": "1000000.00",
         "customer_rating": "5",
-        "customer_address": "上海市徐汇区"
+        "customer_address": "上海市徐彙區"
       }
     ]
   }
@@ -3654,7 +3654,7 @@ products.rows.forEach(product => {
   "fields": [
     {
       "id": "related_customer",
-      "value": ["new-customer-id"]  // 覆盖原有关联
+      "value": ["new-customer-id"]  // 覆蓋原有關聯
     }
   ]
 }
@@ -3666,7 +3666,7 @@ products.rows.forEach(product => {
   "fields": [
     {
       "id": "related_customer",
-      "value": []  // 空数组=清空关联
+      "value": []  // 空陣列=清空關聯
     }
   ]
 }
@@ -3706,7 +3706,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}
   "category_field": [
     {
       "sid": "9dd9272b-e7e5-40d5-8a6d-d2403d1e45c2",  // 用於查詢
-      "name": "实木衣柜"  // 用於顯示
+      "name": "實木衣櫃"  // 用於顯示
     }
   ]
 }
@@ -3784,7 +3784,7 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 {
   "field": "customer_type",
   "operator": "eq",
-  "value": ["成交客户"]  // ❌ 使用了显示文本
+  "value": ["成交客戶"]  // ❌ 使用了顯示文字
 }
 ```
 
@@ -3793,7 +3793,7 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 {
   "field": "customer_type",
   "operator": "eq",
-  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ✅ 使用选项key
+  "value": ["74c7b607-864d-4cc4-b401-28acba2636e9"]  // ✅ 使用選項key
 }
 ```
 
@@ -3813,7 +3813,7 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 {
   "field": "annual_budget",
   "operator": "gt",
-  "value": [1000000]  // ❌ 数字类型
+  "value": [1000000]  // ❌ 數字型別
 }
 ```
 
@@ -3822,7 +3822,7 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 {
   "field": "annual_budget",
   "operator": "gt",
-  "value": ["1000000"]  // ✅ 字符串数组
+  "value": ["1000000"]  // ✅ 字串陣列
 }
 ```
 
@@ -3838,8 +3838,8 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 ```json
 {
   "field": "related_customer",
-  "operator": "contains",  // ❌ 关联字段不要用 contains，也不要用 belongsto（belongsto 是部门字段专用）
-  "value": ["客户名称"]  // ❌ 也不要用关联显示的标题文本去匹配
+  "operator": "contains",  // ❌ 關聯欄位不要用 contains，也不要用 belongsto（belongsto 是部門欄位專用）
+  "value": ["客戶名稱"]  // ❌ 也不要用關聯顯示的標題文字去匹配
 }
 ```
 
@@ -3847,8 +3847,8 @@ const categoryId = product.category[0].sid;  // "9dd9272b-..."
 ```json
 {
   "field": "related_customer",
-  "operator": "in",  // ✅ 关联字段用 in 或 eq + rowid 数组
-  "value": ["customer-id"]  // 传入关联记录的 rowid (即 sid)
+  "operator": "in",  // ✅ 關聯欄位用 in 或 eq + rowid 陣列
+  "value": ["customer-id"]  // 傳入關聯記錄的 rowid (即 sid)
 }
 ```
 
@@ -3981,20 +3981,20 @@ console.log(record.attachments);  // 現在有資料了
 
 **示例**:
 ```json
-// 创建字段
+// 建立欄位
 {
   "type": "Date",
   "subType": "3"  // 年月日
 }
 
-// 写入
+// 寫入
 {
   "value": "2025-01-11 14:30:00"
 }
 
-// 读取返回
+// 讀取回傳
 {
-  "date_field": "2025-01-11"  // 时间被截断
+  "date_field": "2025-01-11"  // 時間被截斷
 }
 ```
 
@@ -4015,7 +4015,7 @@ console.log(record.attachments);  // 現在有資料了
       "type": "group",
       "children": [
         {
-          "type": "group",  // ❌ 第三层嵌套
+          "type": "group",  // ❌ 第三層巢狀
           "children": [...]
         }
       ]
@@ -4039,7 +4039,7 @@ console.log(record.attachments);  // 現在有資料了
 {
   "field": "owner",
   "operator": "eq",
-  "value": ["张三"]  // ❌ 姓名无效
+  "value": ["張三"]  // ❌ 姓名無效
 }
 ```
 
@@ -4047,7 +4047,7 @@ console.log(record.attachments);  // 現在有資料了
 ```bash
 # Step 1: 透過姓名查詢使用者ID
 POST /v3/users/lookup
-{"name": "张三"}
+{"name": "張三"}
 
 # 回傳: {"accountId": "user-123"}
 
@@ -4055,7 +4055,7 @@ POST /v3/users/lookup
 {
   "field": "owner",
   "operator": "eq",
-  "value": ["user-123"]  // ✅ 用户ID
+  "value": ["user-123"]  // ✅ 使用者ID
 }
 ```
 
@@ -4072,7 +4072,7 @@ POST /v3/users/lookup
 {
   "rowIds": ["id1", "id2", "id3"],
   "fields": [
-    {"id": "rating", "value": "5"}  // ❌ 所有记录都变成5星
+    {"id": "rating", "value": "5"}  // ❌ 所有記錄都變成5星
   ]
 }
 ```
@@ -4136,7 +4136,7 @@ structure.fields.forEach(field => {
 });
 
 // 3. 使用時查詢key
-const customerTypeKey = optionMaps['customer_type']['成交客户'];
+const customerTypeKey = optionMaps['customer_type']['成交客戶'];
 ```
 
 ---
@@ -4184,22 +4184,22 @@ const customerTypeKey = optionMaps['customer_type']['成交客户'];
 # 1. 建立客戶表
 POST /v3/app/worksheets
 {
-  "name": "客户信息表",
+  "name": "客戶資訊表",
   "fields": [
-    {"name": "客户名称", "type": "Text", "isTitle": true},
-    {"name": "客户类型", "type": "SingleSelect", "options": [...]},
-    {"name": "年度预算", "type": "Number", "precision": 2}
+    {"name": "客戶名稱", "type": "Text", "isTitle": true},
+    {"name": "客戶型別", "type": "SingleSelect", "options": [...]},
+    {"name": "年度預算", "type": "Number", "precision": 2}
   ]
 }
 
 # 2. 建立機會表(關聯客戶)
 POST /v3/app/worksheets
 {
-  "name": "销售机会表",
+  "name": "銷售機會表",
   "fields": [
-    {"name": "机会名称", "type": "Text", "isTitle": true},
+    {"name": "機會名稱", "type": "Text", "isTitle": true},
     {
-      "name": "关联客户",
+      "name": "關聯客戶",
       "type": "Relation",
       "subType": "1",
       "dataSource": "{customer_table_id}"
@@ -4217,8 +4217,8 @@ POST /v3/app/worksheets
 POST /v3/app/worksheets/{customer_table_id}/rows
 {
   "fields": [
-    {"id": "customer_name", "value": "明道云科技"},
-    {"id": "customer_type", "value": ["{成交客户key}"]},
+    {"id": "customer_name", "value": "niio科技"},
+    {"id": "customer_type", "value": ["{成交客戶key}"]},
     {"id": "annual_budget", "value": 1000000}
   ]
 }
@@ -4227,7 +4227,7 @@ POST /v3/app/worksheets/{customer_table_id}/rows
 POST /v3/app/worksheets/{opportunity_table_id}/rows
 {
   "fields": [
-    {"id": "opportunity_name", "value": "年度续费"},
+    {"id": "opportunity_name", "value": "年度續費"},
     {"id": "related_customer", "value": ["{customer_rowid}"]}
   ]
 }

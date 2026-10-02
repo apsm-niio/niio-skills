@@ -6,7 +6,7 @@
 > **MCP 列**來自本建置工具各 step 實際呼叫的工具（builder 用到即證明該工具存在，是 MCP 表面的可靠下界）。
 > **CLI 列**來自 `hap` 命令表面（細粒度編輯能力，對應 app 編輯相關命令族）。
 >
-> ⚠️ **校準須知**：標 `🔶待校准` 的格子，需用niio MCP server 的真實工具 schema 複核
+> ⚠️ **校準須知**：標 `🔶待校準` 的格子，需用niio MCP server 的真實工具 schema 複核
 > （例如 `create_view` 的 payload 到底能不能表達某設定項）。在拿到真實 schema 前，這些按
 > 「MCP 可能做不到 → 暫列為硬缺口候選」從嚴處理，寧可 Step 12 多查一次，也不要漏。
 
@@ -15,7 +15,7 @@
 - `MCP` —— MCP 工具能做，建構走 MCP，Step 12 不介入
 - `CLI-only` —— MCP 做不到的**硬缺口**，進入 Step 12 `cliGaps[]` 由 CLI 回填
 - `both` —— 兩邊都能做；預設走 MCP，不雙寫
-- `🔶待校准` —— 歸屬取決於 MCP 真實 schema，暫從嚴當硬缺口候選
+- `🔶待校準` —— 歸屬取決於 MCP 真實 schema，暫從嚴當硬缺口候選
 
 ---
 
@@ -119,4 +119,4 @@
 - `batch_create_process_nodes` 的節點設定欄位全集 → 決定 §8 節點深設定缺口。
 - `create_role` / `update_custom_page` / `create_custom_actions` 的 payload 全集 → 決定 §3/§5/§7 缺口。
 
-> 校準方式：拿到 MCP server 工具 schema 後，逐項把 `🔶待校准` 改判為 `MCP`（能表達）或 `CLI-only`（確為硬缺口），並據此精簡上面的硬缺口清單。
+> 校準方式：拿到 MCP server 工具 schema 後，逐項把 `🔶待校準` 改判為 `MCP`（能表達）或 `CLI-only`（確為硬缺口），並據此精簡上面的硬缺口清單。

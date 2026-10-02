@@ -10,10 +10,10 @@
 
 ```json
 {
-  "org_id": "来自 Step 0 选择的组织 ID",
-  "appName": "应用名称",
-  "appIcon": "图标名称，如 0_lego",
-  "appColor": "主题色，如 #2196F3",
+  "org_id": "來自 Step 0 選擇的組織 ID",
+  "appName": "應用名稱",
+  "appIcon": "圖示名稱，如 0_lego",
+  "appColor": "主題色，如 #2196F3",
   "navLayout": "group | tree | top | card",
   "navColor": "appColor | white | gray | black",
   "enableExternalPortal": true,
@@ -47,10 +47,10 @@
 
 ### 基本格式
 
-1. 每個欄位用緊湊格式：`"字段名(Type)"`，如 `"任务标题(Text)"`、`"负责人(Collaborator)"`
-2. 關聯欄位：`"字段名(Relation:目标工作表名)"`，如 `"关联图书(Relation:图书)"`
-3. 自關聯：`"字段名(selfRelation)"`，如 `"上级分类(selfRelation)"`
-4. **SingleSelect / MultipleSelect / Dropdown 必須攜帶選項值**，用 `/` 分隔：`"状态(SingleSelect:待处理/处理中/已完成/已逾期)"`。禁止只寫 `"状态(SingleSelect)"` 而不列選項
+1. 每個欄位用緊湊格式：`"欄位名(Type)"`，如 `"任務標題(Text)"`、`"負責人(Collaborator)"`
+2. 關聯欄位：`"欄位名(Relation:目標工作表名)"`，如 `"關聯圖書(Relation:圖書)"`
+3. 自關聯：`"欄位名(selfRelation)"`，如 `"上級分類(selfRelation)"`
+4. **SingleSelect / MultipleSelect / Dropdown 必須攜帶選項值**，用 `/` 分隔：`"狀態(SingleSelect:待處理/處理中/已完成/已逾期)"`。禁止只寫 `"狀態(SingleSelect)"` 而不列選項
 5. 必須充分利用專屬欄位型別：座標/定位 → `Location`，行政區劃 → `Region`，流水號 → `AutoNumber`，人員 → `Collaborator`，部門 → `Department`，手機號 → `PhoneNumber`，郵箱 → `Email`，金額/價格 → `Currency`，日期計算 → `DateFormula`（如"應還日期(DateFormula)"）。**嚴禁將這些欄位降級為 `Text` 或 `Number`**
 
 ### 欄位豐富度要求（核心）
@@ -70,12 +70,12 @@
 - 哪些 SingleSelect 欄位的哪些選項值支撐哪些檢視的篩選條件
 - 哪些欄位會被工作流讀取或更新
 - 自訂動作的前後狀態變化
-- 示例：`"状态字段的已逾期选项用于超期事项视图筛选；点击处理按钮时状态须为待处理，工作流执行后更新为处理中；超期检查工作流自动将状态更新为已逾期"`
+- 示例：`"狀態列位的已逾期選項用於超期事項檢視篩選；點選處理按鈕時狀態須為待處理，工作流執行後更新為處理中；超期檢查工作流自動將狀態更新為已逾期"`
 
 ## 二、`worksheetViews`（獨立頂層陣列）
 
 1. 每項包含 `worksheet`（工作表名稱）和 `views`（緊湊字串陣列）
-2. 檢視格式：`"视图名(Type)"`，如 `"列表视图(Table)"`、`"看板视图(Kanban)"`
+2. 檢視格式：`"檢視名(Type)"`，如 `"清單檢視(Table)"`、`"看板檢視(Kanban)"`
 3. 為每張表優先生成 1～4 個最有業務價值的核心檢視
 4. **檢視-欄位-工作流三方閉環**：所有檢視篩選條件和時效性狀態必須透過閉環檢查後才能提交
 
@@ -87,7 +87,7 @@
    - `description`：由誰在什麼場景下點選，以及需要填寫什麼
    - `type`：`"updateCurrentRecord"` / `"createRelatedRecord"` / `"triggerWorkflow"`
    - `targetWorksheet`：僅 `type="createRelatedRecord"` 時填目標工作表名
-   - `relateFieldName`：僅 `type="createRelatedRecord"` 時填，表示源工作表中用於物理關聯目標表的關聯欄位名稱（例如當前工作表中存在 `"关联商机(Relation:销售机会)"` 欄位，此處則必須填寫 `"关联商机"`）
+   - `relateFieldName`：僅 `type="createRelatedRecord"` 時填，表示源工作表中用於物理關聯目標表的關聯欄位名稱（例如當前工作表中存在 `"關聯商機(Relation:銷售機會)"` 欄位，此處則必須填寫 `"關聯商機"`）
    - `enableCondition`（可選）：按鈕的前置狀態條件，自然語言描述。有前置狀態要求的動作必填
    - `intentHints`：`type="triggerWorkflow"` 時必須填寫業務效果與約束陣列（`[{label}]`）
 
@@ -105,12 +105,12 @@
 1. 必須指定 `pageType`：`"dashboard"`（資料統計）或 `"workspace"`（工作臺）
 2. `description`：一句話說明該頁面的業務目的與目標使用者（如「面向管理層的借閱資料全域統計看板」）
 3. **圖示固定**：`dashboard` 固定使用 `"sys_control-panel_traffic"`，`workspace` 固定使用 `"2_3_statistics"`。無需從 icon guide 挑選
-4. 元件格式：`"组件名(Type)"`
+4. 元件格式：`"元件名(Type)"`
 5. **命名規範**：元件名稱必須具體反映業務含義，嚴禁使用"按鈕1"、"業務分析"等模糊命名
 
 **dashboard 頁面要求：**
 - 固定包含 4 或 6 個 `NumberChart`，2～6 個業務圖表，1～2 個 `PivotTable`
-- 每個圖表標註資料源：`"组件名(ChartType:工作表名)"`
+- 每個圖表標註資料源：`"元件名(ChartType:工作表名)"`
 - 禁止用維度表（分類表）作資料源，必須用事實表（訂單表）
 
 **workspace 頁面要求：**
@@ -123,12 +123,12 @@
 1. `description`：一句話說明該工作流的業務目標（如「借閱到期前 1 天自動提醒借閱人歸還」）
 2. `trigger.type`：`worksheet_event` / `schedule` / `date_field`
 2. `trigger.label`：觸發節點展示文字，如「借閱記錄新增時」
-3. `trigger.source`：`worksheet_event` → 工作表名稱；`date_field` → `工作表名称（日期字段名）`；`schedule` → `""`
+3. `trigger.source`：`worksheet_event` → 工作表名稱；`date_field` → `工作表名稱（日期欄位名）`；`schedule` → `""`
 4. `intentHints` 是**業務效果與約束**陣列，不要寫成節點步驟：
-   - ✅ `"通知内容应包含图书名称、作者、分类等关键信息"`
-   - ❌ `"获取图书的书名、作者、分类信息"`
-   - ✅ `"仅处理状态为借阅中的记录"`
-   - ❌ `"查询所有借阅中的记录"`
+   - ✅ `"通知內容應包含圖書名稱、作者、分類等關鍵資訊"`
+   - ❌ `"取得圖書的書名、作者、分類資訊"`
+   - ✅ `"僅處理狀態為借閱中的記錄"`
+   - ❌ `"查詢所有借閱中的記錄"`
    - **禁止引用具體欄位選項值**（如「全部借出」），只描述業務目標
 5. **不輸出** `CustomAction` 觸發型別的工作流到此處，它們已內嵌在 `worksheetCustomActions` 的 `intentHints` 中
 
@@ -139,7 +139,7 @@
 - `name`：角色名稱
 - `description`：一句話說明該角色的職責定位與權限範圍（如「負責日常借閱登記與歸還操作的前臺工作人員」）
 - `roleScope`：角色型別。`"general"` = 組織內部角色（預設）；`"externalPortal"` = 外部門戶角色
-- `permissions`：緊湊字串陣列，格式 `"名称(类型)"`，如 `"图书(worksheet)"`、`"运营看板(customPage)"`
+- `permissions`：緊湊字串陣列，格式 `"名稱(型別)"`，如 `"圖書(worksheet)"`、`"運營看板(customPage)"`
 
 ## 七、`aiAssistants`
 
@@ -150,7 +150,7 @@
 
 ## 八、`navGroups`
 
-1. 每個分組的 `items` 用緊湊格式：`"名称(worksheet)"`、`"名称(customPage)"`、`"名称(aiAssistant)"`
+1. 每個分組的 `items` 用緊湊格式：`"名稱(worksheet)"`、`"名稱(customPage)"`、`"名稱(aiAssistant)"`
 2. 所有工作表、儀表盤、AI 助手必須全部出現在某個分組中，**不遺漏**
 3. 名稱必須與方案中定義的名稱**完全一致**
 

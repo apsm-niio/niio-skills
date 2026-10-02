@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-scan_apps.py — 扫描 apps/ 目录，输出每个应用的名称和搭建状态。
-               同时检查 GitHub 远程版本是否有更新（2 秒超时，失败静默跳过）。
+scan_apps.py — 掃描 apps/ 目錄，輸出每個應用的名稱和建置狀態。
+               同時檢查 GitHub 遠端版本是否有更新（2 秒超時，失敗靜默跳過）。
 
 用法：python scan_apps.py <projectRoot>
 示例：python scan_apps.py /Users/user/应用搭建测试
-输出：JSON 对象 { apps: [...], update?: { available, local, remote, notes } }
+輸出：JSON 物件 { apps: [...], update?: { available, local, remote, notes } }
 """
 
 import json
@@ -16,7 +16,7 @@ import urllib.request
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 优先从命令行参数获取项目根目录，否则 fallback 到脚本目录向上 4 级
+# 優先從命令列參數取得專案根目錄，否則 fallback 到指令碼目錄向上 4 級
 project_root = (
     os.path.abspath(sys.argv[1])
     if len(sys.argv) > 1
@@ -26,8 +26,8 @@ apps_dir = os.path.join(project_root, "apps")
 
 
 def find_version_file(start_dir):
-    """向上逐级搜索版本文件（兼容完整仓库和仅 skills/ 目录两种安装方式）
-    优先查找 plugin.json，其次 version.json"""
+    """向上逐級搜尋版本檔案（相容完整倉庫和僅 skills/ 目錄兩種安裝方式）
+    優先查詢 plugin.json，其次 version.json"""
     d = start_dir
     for _ in range(6):
         for name in ("plugin.json", "version.json"):
@@ -42,7 +42,7 @@ def find_version_file(start_dir):
 
 
 def scan_apps():
-    """扫描 apps/ 目录下的应用"""
+    """掃描 apps/ 目錄下的應用"""
     results = []
     if not os.path.isdir(apps_dir):
         return results
@@ -56,7 +56,7 @@ def scan_apps():
         if not os.path.isfile(plan_path):
             continue
 
-        # 读取应用名
+        # 讀取應用名
         app_name = entry
         try:
             with open(plan_path, "r", encoding="utf-8") as f:
@@ -66,7 +66,7 @@ def scan_apps():
         except Exception:
             pass
 
-        # 读取搭建进度
+        # 讀取建置進度
         ctx_path = os.path.join(entry_path, "hap-context.json")
         progress = None
         status = "planned"
@@ -86,7 +86,7 @@ def scan_apps():
 
 
 def find_git_root(start_dir):
-    """向上查找 .git 目录，返回仓库根目录路径，找不到返回 None"""
+    """向上查詢 .git 目錄，回傳倉庫根目錄路徑，找不到回傳 None"""
     d = start_dir
     for _ in range(10):
         if os.path.isdir(os.path.join(d, ".git")):
@@ -99,7 +99,7 @@ def find_git_root(start_dir):
 
 
 def check_update():
-    """检查 GitHub 远程版本（2 秒超时，失败静默跳过）"""
+    """檢查 GitHub 遠端版本（2 秒超時，失敗靜默跳過）"""
     plugin_path = find_version_file(SCRIPT_DIR)
     if not plugin_path:
         return None
@@ -121,12 +121,12 @@ def check_update():
     if not match:
         return None
 
-    # 计算版本文件在仓库中的相对路径
+    # 計算版本檔案在倉庫中的相對路徑
     git_root = find_git_root(os.path.dirname(plugin_path))
     if git_root:
         remote_file = os.path.relpath(plugin_path, git_root)
     else:
-        # 非 git 安装方式，用 skillPath 拼接路径
+        # 非 git 安裝方式，用 skillPath 拼接路徑
         if skill_path:
             remote_file = f"{skill_path}/{os.path.basename(plugin_path)}"
         else:

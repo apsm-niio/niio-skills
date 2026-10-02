@@ -1,175 +1,175 @@
 #!/bin/bash
 
-# HAP视图插件项目初始化脚本
-# 用法: ./init-hap-view-project.sh [项目名称]
+# niio檢視外掛專案初始化指令碼
+# 用法: ./init-hap-view-project.sh [專案名稱]
 
 set -e
 
-echo "=== HAP视图插件项目初始化 ==="
+echo "=== niio檢視外掛專案初始化 ==="
 echo ""
 
-# 检查Node.js版本
-echo "1. 检查Node.js版本..."
+# 檢查Node.js版本
+echo "1. 檢查Node.js版本..."
 NODE_VERSION=$(node --version 2>/dev/null | cut -d'v' -f2)
 if [ -z "$NODE_VERSION" ]; then
-    echo "❌ 未检测到Node.js，请先安装Node.js 16.20或更高版本"
+    echo "❌ 未檢測到Node.js，請先安裝Node.js 16.20或更高版本"
     exit 1
 fi
 
 REQUIRED_VERSION="16.20"
 if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$NODE_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
-    echo "❌ Node.js版本过低，当前版本: $NODE_VERSION，需要版本: $REQUIRED_VERSION 或更高"
+    echo "❌ Node.js版本過低，當前版本: $NODE_VERSION，需要版本: $REQUIRED_VERSION 或更高"
     exit 1
 fi
-echo "✅ Node.js版本检查通过: $NODE_VERSION"
+echo "✅ Node.js版本檢查透過: $NODE_VERSION"
 
-# 检查mdye-cli是否安装
+# 檢查mdye-cli是否安裝
 echo ""
-echo "2. 检查mdye-cli工具..."
+echo "2. 檢查mdye-cli工具..."
 if command -v mdye &> /dev/null; then
-    # 已安装，显示版本
+    # 已安裝，顯示版本
     MDYE_VERSION=$(mdye --version 2>/dev/null || echo "未知版本")
-    echo "✅ mdye-cli已安装，版本: $MDYE_VERSION"
+    echo "✅ mdye-cli已安裝，版本: $MDYE_VERSION"
 else
-    # 未安装，询问用户是否安装
-    echo "❌ mdye-cli未安装"
+    # 未安裝，詢問使用者是否安裝
+    echo "❌ mdye-cli未安裝"
     echo ""
-    echo "要安装mdye-cli，请执行以下命令："
+    echo "要安裝mdye-cli，請執行以下命令："
     echo ""
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "  # macOS系统"
+        echo "  # macOS系統"
         echo "  sudo npm install -g mdye-cli"
     else
-        echo "  # Windows/Linux系统"
+        echo "  # Windows/Linux系統"
         echo "  npm install -g mdye-cli"
     fi
 
     echo ""
-    echo "安装完成后，请重新运行此脚本。"
+    echo "安裝完成後，請重新執行此指令碼。"
     echo ""
-    echo "或者，您希望我现在为您安装吗？(y/N)"
+    echo "或者，您希望我現在為您安裝嗎？(y/N)"
     read -r INSTALL_CHOICE
 
     if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
-        echo "开始安装mdye-cli..."
+        echo "開始安裝mdye-cli..."
 
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            echo "检测到macOS系统，使用sudo安装..."
+            echo "檢測到macOS系統，使用sudo安裝..."
             sudo npm install -g mdye-cli
         else
-            echo "检测到其他系统，直接安装..."
+            echo "檢測到其他系統，直接安裝..."
             npm install -g mdye-cli
         fi
 
-        # 验证安装
+        # 驗證安裝
         if command -v mdye &> /dev/null; then
             MDYE_VERSION=$(mdye --version 2>/dev/null || echo "未知版本")
-            echo "✅ mdye-cli安装成功，版本: $MDYE_VERSION"
+            echo "✅ mdye-cli安裝成功，版本: $MDYE_VERSION"
         else
-            echo "❌ mdye-cli安装失败"
-            echo "请手动安装: npm install -g mdye-cli"
+            echo "❌ mdye-cli安裝失敗"
+            echo "請手動安裝: npm install -g mdye-cli"
             exit 1
         fi
     else
-        echo "请先安装mdye-cli，然后重新运行此脚本。"
+        echo "請先安裝mdye-cli，然後重新執行此指令碼。"
         exit 1
     fi
 fi
 
-# 生成项目名称
+# 生成專案名稱
 echo ""
-echo "3. 生成项目配置..."
+echo "3. 生成專案設定..."
 if [ -n "$1" ]; then
     PROJECT_NAME="$1"
-    echo "使用自定义项目名称: $PROJECT_NAME"
+    echo "使用自訂專案名稱: $PROJECT_NAME"
 else
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
     RANDOM_SUFFIX=$(openssl rand -hex 3 2>/dev/null || echo $RANDOM)
     PROJECT_NAME="hap_view_${TIMESTAMP}_${RANDOM_SUFFIX}"
-    echo "生成项目名称: $PROJECT_NAME"
+    echo "生成專案名稱: $PROJECT_NAME"
 fi
 
-# 生成插件ID（PREFIX 请替换为你自己的 worksheet/应用 ID，可由环境变量传入）
+# 生成外掛ID（PREFIX 請替換為你自己的 worksheet/應用 ID，可由環境變數傳入）
 PREFIX="${PREFIX:-你的worksheetID}"
 PLUGIN_ID="${PREFIX}-$(date +%s)-$(openssl rand -hex 4 2>/dev/null || echo $RANDOM)"
-echo "生成插件ID: $PLUGIN_ID"
+echo "生成外掛ID: $PLUGIN_ID"
 
-# 创建项目
+# 建立專案
 echo ""
-echo "4. 创建项目..."
-echo "执行命令: mdye init view --id $PLUGIN_ID --template React"
+echo "4. 建立專案..."
+echo "執行命令: mdye init view --id $PLUGIN_ID --template React"
 mdye init view --id "$PLUGIN_ID" --template React
 
-# 检查项目是否创建成功
+# 檢查專案是否建立成功
 if [ ! -d "mdye_view_${PLUGIN_ID##*-}" ]; then
-    echo "❌ 项目创建失败"
+    echo "❌ 專案建立失敗"
     exit 1
 fi
 
 PROJECT_DIR="mdye_view_${PLUGIN_ID##*-}"
-echo "✅ 项目创建成功，目录: $PROJECT_DIR"
+echo "✅ 專案建立成功，目錄: $PROJECT_DIR"
 
-# 进入项目目录
+# 進入專案目錄
 echo ""
-echo "5. 进入项目目录..."
+echo "5. 進入專案目錄..."
 cd "$PROJECT_DIR" || {
-    echo "❌ 无法进入项目目录"
+    echo "❌ 無法進入專案目錄"
     exit 1
 }
-echo "当前目录: $(pwd)"
+echo "當前目錄: $(pwd)"
 
-# 安装依赖
+# 安裝依賴
 echo ""
-echo "6. 安装项目依赖..."
-echo "执行命令: npm i"
+echo "6. 安裝專案依賴..."
+echo "執行命令: npm i"
 npm i
 
 if [ $? -ne 0 ]; then
-    echo "⚠️  依赖安装可能存在问题，请检查网络或npm配置"
-    echo "建议:"
-    echo "  1. 检查网络连接"
-    echo "  2. 清理npm缓存: npm cache clean --force"
-    echo "  3. 使用淘宝镜像: npm config set registry https://registry.npmmirror.com"
+    echo "⚠️  依賴安裝可能存在問題，請檢查網路或npm設定"
+    echo "建議:"
+    echo "  1. 檢查網路連線"
+    echo "  2. 清理npm快取: npm cache clean --force"
+    echo "  3. 使用淘寶映象: npm config set registry https://registry.npmmirror.com"
 fi
 
-# 显示项目信息
+# 顯示專案資訊
 echo ""
-echo "=== 项目初始化完成 ==="
+echo "=== 專案初始化完成 ==="
 echo ""
-echo "📁 项目信息:"
-echo "  项目名称: $PROJECT_NAME"
-echo "  插件ID: $PLUGIN_ID"
-echo "  项目目录: $PROJECT_DIR"
-echo "  模板类型: React基础示例"
+echo "📁 專案資訊:"
+echo "  專案名稱: $PROJECT_NAME"
+echo "  外掛ID: $PLUGIN_ID"
+echo "  專案目錄: $PROJECT_DIR"
+echo "  模板型別: React基礎示例"
 echo ""
-echo "🚀 启动项目:"
+echo "🚀 啟動專案:"
 echo "  cd $PROJECT_DIR"
 echo "  mdye start"
 echo ""
 echo "🔧 常用命令:"
-echo "  mdye start          # 启动开发服务器"
-echo "  mdye build          # 构建项目"
-echo "  npm run lint        # 代码检查"
-echo "  npm test           # 运行测试"
+echo "  mdye start          # 啟動開發伺服器"
+echo "  mdye build          # 建置專案"
+echo "  npm run lint        # 程式碼檢查"
+echo "  npm test           # 執行測試"
 echo ""
-echo "📚 项目结构:"
-echo "  src/               # 源代码目录"
-echo "    index.jsx        # 插件入口"
-echo "    App.jsx          # 主组件"
-echo "    styles.css       # 样式文件"
-echo "  public/            # 静态资源"
-echo "  package.json       # 项目配置"
+echo "📚 專案結構:"
+echo "  src/               # 原始碼目錄"
+echo "    index.jsx        # 外掛入口"
+echo "    App.jsx          # 主元件"
+echo "    styles.css       # 樣式檔案"
+echo "  public/            # 靜態資源"
+echo "  package.json       # 專案設定"
 echo ""
 echo "💡 下一步:"
-echo "  1. 进入项目目录: cd $PROJECT_DIR"
-echo "  2. 启动开发服务器: mdye start"
-echo "  3. 在浏览器中访问开发服务器地址"
-echo "  4. 开始开发你的HAP视图插件"
+echo "  1. 進入專案目錄: cd $PROJECT_DIR"
+echo "  2. 啟動開發伺服器: mdye start"
+echo "  3. 在瀏覽器中訪問開發伺服器地址"
+echo "  4. 開始開發你的niio檢視外掛"
 echo ""
-echo "⚠️  注意事项:"
-echo "  - 确保使用唯一的插件ID"
-echo "  - 开发前请阅读明道云插件开发文档"
-echo "  - 定期备份重要代码"
+echo "⚠️  注意事項:"
+echo "  - 確保使用唯一的外掛ID"
+echo "  - 開發前請閱讀niio外掛開發文件"
+echo "  - 定期備份重要程式碼"
 echo ""
-echo "🎉 祝你开发顺利！"
+echo "🎉 祝你開發順利！"

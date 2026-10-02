@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Step 3 全脚本方案：直接调用明道云 REST API 获取工作表结构并生成 worksheetContext.json。
+Step 3 全指令碼方案：直接呼叫niio REST API 取得工作表結構並生成 worksheetContext.json。
 
 用法:
   python3 refresh_fields.py --token "md_pss_id xxx" ./apps/图书借阅/hap-context.json
 
-输入:
-  --token     明道云认证 token（Authorization header 值）
-  context     hap-context.json 的路径（从中读取 appId 和 worksheetIdByName）
+輸入:
+  --token     niio認證 token（Authorization header 值）
+  context     hap-context.json 的路徑（從中讀取 appId 和 worksheetIdByName）
 
-输出:
-  与 hap-context.json 同目录下的 worksheetContext.json
+輸出:
+  與 hap-context.json 同目錄下的 worksheetContext.json
 """
 
 import argparse
@@ -24,7 +24,7 @@ API_BASE = "https://api2.mingdao.com"
 
 
 def fetch_worksheet_structure(worksheet_id, token, app_id):
-    """调用 REST API 获取单张工作表结构。"""
+    """呼叫 REST API 取得單張工作表結構。"""
     url = f"{API_BASE}/v3/app/worksheets/{worksheet_id}"
     headers = {
         "Authorization": token,
@@ -39,12 +39,12 @@ def fetch_worksheet_structure(worksheet_id, token, app_id):
         print(f"  ❌ HTTP {e.code}: {body[:200]}", file=sys.stderr)
         return None
     except URLError as e:
-        print(f"  ❌ 网络错误: {e.reason}", file=sys.stderr)
+        print(f"  ❌ 網路錯誤: {e.reason}", file=sys.stderr)
         return None
 
 
 def extract_fields(raw_data):
-    """从 API 响应中提取字段列表。"""
+    """從 API 響應中提取欄位清單。"""
     if not isinstance(raw_data, dict):
         return []
     data = raw_data.get("data", raw_data)
@@ -54,7 +54,7 @@ def extract_fields(raw_data):
 
 
 def normalize_field(field):
-    """标准化单个字段为 worksheetContext 格式。"""
+    """標準化單個欄位為 worksheetContext 格式。"""
     result = {
         "id": field.get("id", field.get("controlId", "")),
         "alias": field.get("alias", ""),
@@ -62,7 +62,7 @@ def normalize_field(field):
         "type": field.get("type", ""),
     }
 
-    # 选项字段
+    # 選項欄位
     options = field.get("options", [])
     if options:
         result["options"] = [
@@ -71,12 +71,12 @@ def normalize_field(field):
             if not opt.get("isDelete", False)
         ]
 
-    # 关联字段
+    # 關聯欄位
     data_source = field.get("dataSource", "")
     if data_source:
         result["dataSource"] = data_source
 
-    # 来源字段（反向关联）
+    # 來源欄位（反向關聯）
     source_field = field.get("sourceField", "")
     if source_field:
         result["sourceField"] = source_field
@@ -85,14 +85,14 @@ def normalize_field(field):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="刷新工作表字段结构")
-    parser.add_argument("--token", required=True, help="明道云认证 token（如 md_pss_id xxx）")
-    parser.add_argument("context", help="hap-context.json 文件路径")
+    parser = argparse.ArgumentParser(description="重新整理工作表欄位結構")
+    parser.add_argument("--token", required=True, help="niio認證 token（如 md_pss_id xxx）")
+    parser.add_argument("context", help="hap-context.json 檔案路徑")
     args = parser.parse_args()
 
     context_path = Path(args.context)
     if not context_path.exists():
-        print(f"❌ 文件不存在: {context_path}", file=sys.stderr)
+        print(f"❌ 檔案不存在: {context_path}", file=sys.stderr)
         sys.exit(1)
 
     with open(context_path, "r", encoding="utf-8") as f:
@@ -108,7 +108,7 @@ def main():
         print("❌ hap-context.json 中缺少 worksheetIdByName", file=sys.stderr)
         sys.exit(1)
 
-    print(f"📋 开始刷新字段结构（共 {len(worksheet_id_by_name)} 张表）", file=sys.stderr)
+    print(f"📋 開始重新整理欄位結構（共 {len(worksheet_id_by_name)} 張表）", file=sys.stderr)
 
     worksheet_context = []
     errors = []
@@ -128,24 +128,24 @@ def main():
             "worksheetName": ws_name,
             "fields": normalized,
         })
-        print(f" ✅ {len(normalized)} 个字段", file=sys.stderr)
+        print(f" ✅ {len(normalized)} 個欄位", file=sys.stderr)
 
-    # 写入输出
+    # 寫入輸出
     output_path = context_path.parent / "worksheetContext.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(worksheet_context, f, ensure_ascii=False, indent=2)
 
     # 摘要
     print(f"\n{'=' * 40}", file=sys.stderr)
-    print(f"✅ worksheetContext 构建完成（{len(worksheet_context)}/{len(worksheet_id_by_name)} 张表）", file=sys.stderr)
+    print(f"✅ worksheetContext 建置完成（{len(worksheet_context)}/{len(worksheet_id_by_name)} 張表）", file=sys.stderr)
     for ws in worksheet_context:
-        print(f"  • {ws['worksheetName']}: {len(ws['fields'])} 个字段", file=sys.stderr)
+        print(f"  • {ws['worksheetName']}: {len(ws['fields'])} 個欄位", file=sys.stderr)
 
     if errors:
-        print(f"\n⚠️ 失败 {len(errors)} 张: {', '.join(errors)}", file=sys.stderr)
+        print(f"\n⚠️ 失敗 {len(errors)} 張: {', '.join(errors)}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"\n📁 输出: {output_path}", file=sys.stderr)
+    print(f"\n📁 輸出: {output_path}", file=sys.stderr)
 
 
 if __name__ == "__main__":

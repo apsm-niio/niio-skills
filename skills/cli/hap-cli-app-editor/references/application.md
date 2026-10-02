@@ -12,33 +12,33 @@ hap app update <appId> -n "新名字" -d "新描述" \
   --icon-color "#2196F3" --nav-color "#1565C0" --pc-nav-style 1
 
 # 側邊欄分組（section）
-hap app add-section <appId> -n "运营"
-hap app edit-section <appId> <sectionId> -n "市场"
+hap app add-section <appId> -n "運營"
+hap app edit-section <appId> <sectionId> -n "市場"
 hap app delete-section <appId> <sectionId> -y
 hap app sort-sections <appId> <sectionId1> <sectionId2> <sectionId3>
 
 # AI 助手（chatbot）
 hap app chatbot create <appId> "客服助手" --section-id <sectionId> \
-  --prompt "你是售后客服" --welcome-text "你好，有什么可以帮你？" \
-  --preset-question "如何退货" --preset-question "查订单状态"
+  --prompt "你是售後客服" --welcome-text "你好，有什麼可以幫你？" \
+  --preset-question "如何退貨" --preset-question "查訂單狀態"
 hap app chatbot get <chatbotId>
-hap app chatbot rename <appId> <chatbotId> --section-id <sectionId> --name "售后助手"
-hap app chatbot update-config <chatbotId> --welcome-text "欢迎咨询" \
-  --preset-question "新问题一" --preset-question "新问题二"
+hap app chatbot rename <appId> <chatbotId> --section-id <sectionId> --name "售後助手"
+hap app chatbot update-config <chatbotId> --welcome-text "歡迎諮詢" \
+  --preset-question "新問題一" --preset-question "新問題二"
 hap app chatbot delete <chatbotId> -a <appId> -y
 
 # 應用回收站：刪掉的工作表 / 自訂頁 / AI 助手，帶刪除人和時間
 hap app trash -a <appId>
-hap app trash -a <appId> -k 订单            # 按名稱過濾
+hap app trash -a <appId> -k 訂單            # 按名稱過濾
 
 # 分組內工作表排序（按順序傳完整 ID 清單）
 hap app sort-worksheets <appId> <sectionId> <wsId1> <wsId2> <wsId3>
 
 # 操作日誌：定位「這個改動是誰什麼時候做的」
 hap app logs <appId> --kind app --start "2026-09-01 00:00:00"
-hap app logs <appId> --kind record --ip <地址> --source-id <集成ID>
+hap app logs <appId> --kind record --ip <地址> --source-id <整合ID>
 hap app log-archives                      # 超出近期視窗的按時段歸檔
-hap app logs <appId> --archived-id <归档ID>
+hap app logs <appId> --archived-id <歸檔ID>
 ```
 
 坑位提示：
@@ -48,7 +48,7 @@ hap app logs <appId> --archived-id <归档ID>
 - 改 `--pc-nav-style` 時圖示顯示預設隨樣式聯動；要精確控制用 `--display-icon`（3 位開關串，如 `011`）。
 - 整應用從零建立不在本 skill 範圍（用 hap-mcp-app-builder）；這裡只編輯已存在的應用。
 - chatbot 的 `--preset-question` 可重複傳，`update-config` 時是**整組替換**而非追加。
-- 想讓 AI 起草助手設定，先 `hap app chatbot generate <appId> "<一句话描述>"` 拿到建議的名字/圖示/開場白/提示詞，再餵給 `create`。
+- 想讓 AI 起草助手設定，先 `hap app chatbot generate <appId> "<一句話描述>"` 拿到建議的名字/圖示/開場白/提示詞，再餵給 `create`。
 - `app logs` 不指定 `--start/--end` 時預設**最近 30 天**；更早的要先 `app log-archives` 拿歸檔 id
   再用 `--archived-id` 查。`--kind` 取 `all|app|record|user`。
 - **備份、角色改名這類操作失敗不再被當成功**：以前伺服器端用裸狀態碼錶示「超限額」「重名」，CLI 照樣

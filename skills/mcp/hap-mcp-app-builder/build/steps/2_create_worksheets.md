@@ -147,11 +147,11 @@ Formula 的 `expression` 中引用其他欄位必須用 `$alias$` 包裹，不�
 
 ### 選項值解析規則
 
-Plan 中的 SingleSelect / MultipleSelect 欄位攜帶選項值，格式為 `"字段名(SingleSelect:选项1/选项2/选项3)"`。建表時：
+Plan 中的 SingleSelect / MultipleSelect 欄位攜帶選項值，格式為 `"欄位名(SingleSelect:選項1/選項2/選項3)"`。建表時：
 
 1. **必須使用 Plan 中指定的選項值**，不要自行增減或改名——檢視篩選和工作流依賴這些確切的選項名
-2. 解析示例：`"状态(SingleSelect:待处理/处理中/已完成/已逾期)"` → options: `[{value:"待处理"}, {value:"处理中"}, {value:"已完成"}, {value:"已逾期"}]`
-3. 如果 Plan 中未攜帶選項值（只寫了 `"状态(SingleSelect)"`），則根據業務語義自行補全
+2. 解析示例：`"狀態(SingleSelect:待處理/處理中/已完成/已逾期)"` → options: `[{value:"待處理"}, {value:"處理中"}, {value:"已完成"}, {value:"已逾期"}]`
+3. 如果 Plan 中未攜帶選項值（只寫了 `"狀態(SingleSelect)"`），則根據業務語義自行補全
 
 ### 四、Divider 分段規範
 
@@ -162,11 +162,11 @@ Plan 中的 SingleSelect / MultipleSelect 欄位攜帶選項值，格式為 `"�
 - 每張表建議 2～5 個 Divider，每組建議 3～8 個欄位
 - 附件、備註、說明、歸檔類內容放最後
 
-禁止使用空泛模板名：`基本信息`、`归属与协作`、`计划与进度`、`审批与治理`、`备注与附件`
+禁止使用空泛模板名：`基本資訊`、`歸屬與協作`、`計劃與進度`、`審批與治理`、`備註與附件`
 
 應根據業務內容自然命名：
-- 客戶表：`客户资料`、`联系信息`、`跟进情况`
-- 合同表：`合同主体`、`签约安排`、`履约信息`
+- 客戶表：`客戶資料`、`聯絡資訊`、`跟進情況`
+- 合同表：`合同主體`、`簽約安排`、`履約資訊`
 
 Divider 固定屬性：`required: false`，`layout: { rowIndex: N, span: 12 }`（N 按當前行號遞增）
 
@@ -192,17 +192,17 @@ Divider 固定屬性：`required: false`，`layout: { rowIndex: N, span: 12 }`�
 #### rowIndex 分配示例
 
 ```json
-// Divider 独占一行
+// Divider 獨佔一行
 { "alias": "div_basic", "type": "Divider", "layout": { "rowIndex": 0, "span": 12 } }
-// 两个字段并排
+// 兩個欄位並排
 { "alias": "biz_name",   "layout": { "rowIndex": 1, "span": 6 } }
 { "alias": "biz_code",   "layout": { "rowIndex": 1, "span": 6 } }
-// 四个字段同行
+// 四個欄位同行
 { "alias": "biz_phone",  "layout": { "rowIndex": 2, "span": 3 } }
 { "alias": "biz_email",  "layout": { "rowIndex": 2, "span": 3 } }
 { "alias": "biz_date",   "layout": { "rowIndex": 2, "span": 3 } }
 { "alias": "biz_number", "layout": { "rowIndex": 2, "span": 3 } }
-// 独占一行
+// 獨佔一行
 { "alias": "biz_remark", "layout": { "rowIndex": 3, "span": 12 } }
 ```
 
@@ -256,10 +256,10 @@ span:6 示例（語義成對）：
 
 | displayMode | 適用場景 | 對應表型別 | 備註 |
 |---|---|---|---|
-| `dropdown` | 關聯目標是**字典/分類/標籤表**（資料源表），僅選擇引用、無需展示詳情 | 如 `图书类型`、`客户级别`、`任务状态` | 條目少、結構簡單 |
-| `card` | 關聯目標是**核心業務表**（實體表），需展示關鍵欄位（**預設推薦**） | 如 `图书清单`、`订单`、`客户`、`项目` | 可設 coverField |
-| `inlineTable` | 多條記錄、需直接檢視/操作 | 子表式業務明細（如 `订单明细`） | 適合子表式展示 |
-| `tabTable` | 大量記錄、需獨立管理 | 一對多且量大（如 `操作日志`） | 放在表單最末尾 |
+| `dropdown` | 關聯目標是**字典/分類/標籤表**（資料源表），僅選擇引用、無需展示詳情 | 如 `圖書型別`、`客戶級別`、`任務狀態` | 條目少、結構簡單 |
+| `card` | 關聯目標是**核心業務表**（實體表），需展示關鍵欄位（**預設推薦**） | 如 `圖書清單`、`訂單`、`客戶`、`專案` | 可設 coverField |
+| `inlineTable` | 多條記錄、需直接檢視/操作 | 子表式業務明細（如 `訂單明細`） | 適合子表式展示 |
+| `tabTable` | 大量記錄、需獨立管理 | 一對多且量大（如 `操作日誌`） | 放在表單最末尾 |
 
 - **`config.showFields`**（條件必填）
 
@@ -284,13 +284,13 @@ span:6 示例（語義成對）：
 #### Relation dataSource 取得流程
 
 ```
-plan 字段有 targetWorksheet（目标表名）
+plan 欄位有 targetWorksheet（目標表名）
   ↓
 targetWorksheet == "selfRelation"
   ↓ 是 → dataSource = "selfRelation"
   ↓ 否 → 查 worksheetIdByName[targetWorksheet]
-            ↓ 找到 → 填入 dataSource，设 bidirectional: true
-            ↓ 未找到 → 跳过该 Relation 字段
+            ↓ 找到 → 填入 dataSource，設 bidirectional: true
+            ↓ 未找到 → 跳過該 Relation 欄位
 ```
 
 ### 八、預設值（defaultValue）規範
@@ -305,7 +305,7 @@ targetWorksheet == "selfRelation"
 |---|---|
 | 負責人欄位 → 預設為當前操作使用者 | `source: "system", value: "currentUser"` |
 | 建立日期 → 預設為今天 | `source: "system", value: "now"` |
-| 狀態列位 → 有明確的初始狀態（如"待處理"） | `source: "static", value: "待处理"` |
+| 狀態列位 → 有明確的初始狀態（如"待處理"） | `source: "static", value: "待處理"` |
 | 同一表單中的欄位值 → 預設取當前表單內其他欄位的值 | `source: "field", field: "startTime"` 示例：結束時間 → 預設為開始時間；收貨地址 → 預設為定位欄位；發貨數量 → 預設為採購數量 |
 | 選擇關聯記錄後 → 自動帶出該關聯記錄中的欄位值 | `source: "relation", relationField: "customer", field: "phone"` 示例：選擇"客戶"後，自動帶出該客戶的"聯絡電話"填入當前表單；選擇"主任務"後，預設帶出"主任務"的"負責人"、"截止日期"等 |
 

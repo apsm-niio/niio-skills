@@ -72,7 +72,7 @@ license: MIT
    mcp__hap_mcp____get_worksheet_structure({
        worksheet_id: '工作表ID',
        responseFormat: 'md',
-       ai_description: '工作表: <工作表名称>'
+       ai_description: '工作表: <工作表名稱>'
    })
    ```
 
@@ -109,21 +109,21 @@ license: MIT
 ```javascript
 AskUserQuestion({
     questions: [{
-        question: "根据业务需求分析，当前应用缺少「新闻资讯」相关数据表。是否允许创建新的工作表？",
+        question: "根據業務需求分析，當前應用缺少「新聞資訊」相關資料表。是否允許建立新的工作表？",
         header: "新增工作表",
         multiSelect: false,
         options: [
             {
-                label: "同意创建(推荐)",
-                description: "创建「新闻资讯」工作表，包含标题、封面图、发布时间、内容等字段，并添加 5 条示例数据"
+                label: "同意建立(推薦)",
+                description: "建立「新聞資訊」工作表，包含標題、封面圖、釋出時間、內容等欄位，並新增 5 條示例資料"
             },
             {
-                label: "仅创建表结构",
-                description: "只创建工作表和字段，不添加示例数据。前端页面可能显示为空"
+                label: "僅建立表結構",
+                description: "只建立工作表和欄位，不新增示例資料。前端頁面可能顯示為空"
             },
             {
-                label: "暂不创建",
-                description: "跳过此工作表，使用现有数据完成开发。新闻模块将无法展示"
+                label: "暫不建立",
+                description: "跳過此工作表，使用現有資料完成開發。新聞模組將無法展示"
             }
         ]
     }]
@@ -146,28 +146,28 @@ AskUserQuestion({
 1. **建立新工作表**（如使用者同意）
    ```javascript
    mcp__hap_mcp____create_worksheet({
-       name: '新闻资讯',
+       name: '新聞資訊',
        alias: 'news',
        fields: [
-           { name: '标题', type: 'Text', isTitle: true, required: true },
-           { name: '封面图', type: 'Attachment', required: false },
-           { name: '发布时间', type: 'Date', required: false },
-           { name: '内容', type: 'Text', required: false },
-           { name: '是否发布', type: 'Checkbox', required: false }
+           { name: '標題', type: 'Text', isTitle: true, required: true },
+           { name: '封面圖', type: 'Attachment', required: false },
+           { name: '釋出時間', type: 'Date', required: false },
+           { name: '內容', type: 'Text', required: false },
+           { name: '是否釋出', type: 'Checkbox', required: false }
        ],
-       ai_description: '工作表: 新闻资讯'
+       ai_description: '工作表: 新聞資訊'
    })
    ```
 
 2. **補充欄位到現有工作表**（如使用者同意）
    ```javascript
    mcp__hap_mcp____update_worksheet({
-       worksheet_id: '现有工作表ID',
+       worksheet_id: '現有工作表ID',
        addFields: [
-           { name: '封面图', type: 'Attachment' },
-           { name: '详情', type: 'Text' }
+           { name: '封面圖', type: 'Attachment' },
+           { name: '詳情', type: 'Text' }
        ],
-       ai_description: '工作表: <工作表名称>'
+       ai_description: '工作表: <工作表名稱>'
    })
    ```
 
@@ -179,20 +179,20 @@ AskUserQuestion({
        rows: [
            {
                fields: [
-                   { id: '标题字段ID', value: '示例新闻标题' },
-                   { id: '封面图字段ID', value: [{
+                   { id: '標題欄位ID', value: '示例新聞標題' },
+                   { id: '封面圖欄位ID', value: [{
                        name: 'news.jpg',
                        url: 'https://你的图片URL/示例.png'
                    }] },
-                   { id: '发布时间字段ID', value: '2024-12-01' },
-                   { id: '内容字段ID', value: '新闻内容...' },
-                   { id: '是否发布字段ID', value: '1' }
+                   { id: '釋出時間欄位ID', value: '2024-12-01' },
+                   { id: '內容欄位ID', value: '新聞內容...' },
+                   { id: '是否釋出欄位ID', value: '1' }
                ]
            }
            // ... 至少 5 條示例資料
        ],
        triggerWorkflow: false,
-       ai_description: '工作表: 新闻资讯'
+       ai_description: '工作表: 新聞資訊'
    })
    ```
 
@@ -215,7 +215,7 @@ AskUserQuestion({
 ```json
 {
   "mcpServers": {
-    "hap-mcp-应用名": {
+    "hap-mcp-應用名": {
       "url": "https://api.mingdao.com/mcp?HAP-Appkey=xxx&HAP-Sign=xxx"
     }
   }
@@ -264,13 +264,13 @@ const CONFIG = {
     HAP_APPKEY: '你的HAP_APPKEY',
     HAP_SIGN: '你的HAP_SIGN',
     WORKSHEETS: {
-        PRODUCTS: '产品表ID',
-        NEWS: '新闻表ID'
+        PRODUCTS: '產品表ID',
+        NEWS: '新聞表ID'
     },
     PRODUCT_FIELDS: {
-        NAME: '产品名称字段ID',
-        IMAGE: '产品图片字段ID',
-        PRICE: '参考价格字段ID'
+        NAME: '產品名稱欄位ID',
+        IMAGE: '產品圖片欄位ID',
+        PRICE: '參考價格欄位ID'
     }
 };
 ```
@@ -370,7 +370,7 @@ async loadProducts() {
         });
         this.renderProducts(data.rows);
     } catch (error) {
-        this.showError('加载失败，请刷新重试');
+        this.showError('載入失敗，請重新整理重試');
     } finally {
         this.hideLoading();
     }
@@ -407,10 +407,10 @@ async loadProducts() {
 
 **輸出示例：**
 ```
-✅ 项目搭建完成！
-🚀 本地服务器已启动
-📍 访问地址: http://localhost:8000
-💡 提示: 在浏览器中打开上述地址即可预览网站
+✅ 專案建置完成！
+🚀 本地伺服器已啟動
+📍 訪問地址: http://localhost:8000
+💡 提示: 在瀏覽器中開啟上述地址即可預覽網站
 ```
 
 ---
@@ -459,7 +459,7 @@ async loadProducts() {
 
 ```javascript
 // ❌ 錯誤：使用顯示文字
-value: ['现代简约']  // 篩選失敗！
+value: ['現代簡約']  // 篩選失敗！
 
 // ✅ 正確：使用 key
 value: ['a1b2c3d4-e5f6-7890-abcd-ef1234567890']  // 篩選成功
@@ -501,14 +501,14 @@ fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/structure', {
 ### Q2: 附件欄位如何處理？
 
 ```javascript
-// 附件字段返回格式
+// 附件欄位回傳格式
 const attachments = row[fieldId]; // Array
-// [{downloadUrl: 'https://...', fileName: '图片.jpg'}]
+// [{downloadUrl: 'https://...', fileName: '圖片.jpg'}]
 
-// 获取第一个附件 URL
+// 取得第一個附件 URL
 const imageUrl = attachments[0]?.downloadUrl || '';
 
-// 使用 HAP CDN 参数优化
+// 使用 niio CDN 參數最佳化
 const thumbnailUrl = `${imageUrl}?imageView2/2/w/300`;
 ```
 

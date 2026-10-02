@@ -20,7 +20,7 @@ hap workflow node save <process_id> <notice_node_id> \
 # 2. 在審批節點之後插入「更新記錄」節點
 #    --app-id 這裡傳的是目標工作表 id,且必須在建立時就給(事後補不上)
 hap workflow node add <process_id> --type 6 --action-id 2 \
-  --name "更新订单状态" --after <approval_node_id> --app-id <ws_id>
+  --name "更新訂單狀態" --after <approval_node_id> --app-id <ws_id>
 
 # 3. 設定新節點寫哪些欄位（FieldWrite 結構,$模板取觸發記錄的值）
 hap workflow node save-action <process_id> <new_node_id> \
@@ -39,13 +39,13 @@ hap workflow publish <process_id>
 hap --json workflow node list <process_id> | jq '.flowNodeMap["<gatewayId>"] | {flowIds, gatewayType}'
 
 # 1. 建分支項（自動追加到閘道器 flowIds 末尾，即排在空條件預設分支之後）
-hap workflow node add <process_id> --type 2 -n "高优先级" --after <gatewayId>   # 記下 <newId>
+hap workflow node add <process_id> --type 2 -n "高優先順序" --after <gatewayId>   # 記下 <newId>
 # 2. 回寫閘道器調整順序：具體條件靠前、空條件預設分支放最後（排他閘道器 gatewayType=2 按序求值）
 hap workflow node save <process_id> <gatewayId> --type 1 -c '{"flowIds":["<newId>","<existingId>","<defaultId>"]}'
 # 3. 寫新分支項條件（寫鍵是 operateCondition；node get 讀出來叫 conditions）
 hap workflow node save <process_id> <newId> --type 2 -c '{"operateCondition":[[{"filedId":"<fid>","filedTypeId":6,"conditionId":"9","conditionValues":[{"value":"0"}]}]]}'
 # 4. 分支項後接動作節點
-hap workflow node add <process_id> --type 6 -n "处理" --after <newId> -a 1 --app-id <ws_id>
+hap workflow node add <process_id> --type 6 -n "處理" --after <newId> -a 1 --app-id <ws_id>
 ```
 
 ## 注意

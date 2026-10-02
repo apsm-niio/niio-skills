@@ -16,7 +16,7 @@
 對每個自訂頁面，呼叫 `create_app_items` 建立空白自訂頁面項（掛在指定導航分組下），獲得頁面 ID：
 - `icon`：根據 `pageType` 設定——`dashboard` 傳 `"sys_control-panel_traffic"`，`workspace` 傳 `"2_3_statistics"`
 
-記錄 `customPageIdByName`（格式：`"页面名称" → pageId`）。
+記錄 `customPageIdByName`（格式：`"頁面名稱" → pageId`）。
 
 **⛔ 驗證斷言**：`customPageIdByName` 條目數 = plan 中自訂頁面數量。
 
@@ -30,7 +30,7 @@
    - `presetQuestions`：根據業務場景生成高頻預設問題，**必須少於 5 個**
    - `icon`：固定使用 `17_6_reddit`
    - `sectionId`：從 `sectionIdByName` 查詢所在導航分組 ID
-3. 記錄 `chatbotIdByName`（格式：`"助手名称" → chatbotId`）
+3. 記錄 `chatbotIdByName`（格式：`"助手名稱" → chatbotId`）
 
 **⛔ 驗證斷言**：若 plan 有 AI 助手，則 `chatbotIdByName` 條目數匹配。若 plan 無 AI 助手，直接跳過。
 

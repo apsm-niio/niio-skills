@@ -10,8 +10,8 @@
 
 | 工作流型別 | 如何取得觸發節點引用 | `node` 傳值格式 | 公式/模板佔位符格式 |
 | :--- | :--- | :--- | :--- |
-| **普通工作流**（`create_process` 新建） | **優先**從 `create_process` 回傳的 `triggerAlias` 欄位（與 `processId` 同級）直接取觸發節點別名；僅當該欄位缺失時才回退調 `get_workflow_structure` 取 `trigger.nodeAlias`——**不要在已拿到 `triggerAlias` 後再多讀一次**（重複往返） | `{ "nodeAlias": "<实际别名>" }` | `$<实际别名>-fieldId$` |
-| **自訂動作工作流**（方案自帶 `processId`） | 呼叫 `get_workflow_structure` 後，從回傳結果中提取觸發節點的物理 `nodeId` | `{ "nodeId": "<实际nodeId>" }` | `$<实际nodeId>-fieldId$` |
+| **普通工作流**（`create_process` 新建） | **優先**從 `create_process` 回傳的 `triggerAlias` 欄位（與 `processId` 同級）直接取觸發節點別名；僅當該欄位缺失時才回退調 `get_workflow_structure` 取 `trigger.nodeAlias`——**不要在已拿到 `triggerAlias` 後再多讀一次**（重複往返） | `{ "nodeAlias": "<實際別名>" }` | `$<實際別名>-fieldId$` |
+| **自訂動作工作流**（方案自帶 `processId`） | 呼叫 `get_workflow_structure` 後，從回傳結果中提取觸發節點的物理 `nodeId` | `{ "nodeId": "<實際nodeId>" }` | `$<實際nodeId>-fieldId$` |
 
 > ⚠️ **絕對禁止假設觸發節點的別名是固定字串（如 `"trigger"`）。** 觸發節點的別名由系統分配，不同工作流各不相同。自訂動作工作流的觸發節點甚至沒有可用的別名，只能使用物理 `nodeId`。如果使用了錯誤的別名，釋出校驗將丟擲 `StartNodeControlsIsNull` 致命錯誤。
 
@@ -23,7 +23,7 @@
 - **欄位名稱** → `worksheetContext[].fields[].name` → 取 `id`
 - **選項值名稱** → `worksheetContext[].fields[].options[].value` → 取 `key`
 - **角色名稱** → `roleContext[].name` → 取 `id`
-- **檢視名稱** → `viewIdByName["工作表名/视图名"]` → 取 viewId
+- **檢視名稱** → `viewIdByName["工作表名/檢視名"]` → 取 viewId
 
 > 🚫 **fieldId 必須使用欄位的真實 `id`，嚴禁使用欄位的 `alias`。** 工作流 API 不識別 alias。
 
@@ -103,7 +103,7 @@ Condition 結構為 `{ left, op, right }`。其中 `left` 屬於 `FieldValueRef`
   
   *完整串聯示例*：
   ```json
-  // 1. 创建 rollup(count) 节点
+  // 1. 建立 rollup(count) 節點
   {
     "nodeAlias": "count_overdue",
     "nodeType": "rollup",
@@ -112,7 +112,7 @@ Condition 結構為 `{ left, op, right }`。其中 `left` 屬於 `FieldValueRef`
       "target": { "kind": "record", "node": { "nodeAlias": "find_overdue_records" } }
     }
   }
-  // 2. 分支判断 rollup 输出（固定字段 number_fx_id）
+  // 2. 分支判斷 rollup 輸出（固定欄位 number_fx_id）
   {
     "left": { "kind": "field", "node": { "nodeAlias": "count_overdue" }, "fieldId": "number_fx_id" },
     "op": "gt",
@@ -157,10 +157,10 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
   *HTML 郵件高模擬示例*（假設觸發節點別名為 `start`）：
   ```json
   {
-    "subject": { "kind": "template", "value": "借阅超时告警：$start-674046935a63abb6377d23a1$ 已经超期" },
+    "subject": { "kind": "template", "value": "借閱超時告警：$start-674046935a63abb6377d23a1$ 已經超期" },
     "body": {
       "kind": "template",
-      "value": "<h3>图书超期未归还温馨提醒</h3><p><b>借阅人：</b>$start-674046935a63abb6377d23b2$</p><p><b>图书名称：</b>$start-674046935a63abb6377d23a1$</p><p><b>应还日期：</b>$start-674046935a63abb6377d23c5$</p><p>请尽快将图书归还至服务台，谢谢您的配合！</p>"
+      "value": "<h3>圖書超期未歸還溫馨提醒</h3><p><b>借閱人：</b>$start-674046935a63abb6377d23b2$</p><p><b>圖書名稱：</b>$start-674046935a63abb6377d23a1$</p><p><b>應還日期：</b>$start-674046935a63abb6377d23c5$</p><p>請儘快將圖書歸還至服務檯，謝謝您的配合！</p>"
     },
     "bodyType": "html"
   }
@@ -190,7 +190,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 | **`code`** | 程式碼塊 | `code` + `inputs` + `outputs` | **自訂輸出名 `name`** | `$nodeAlias-outputName$` |
 
 #### ⚠️ dateOffset 型別的日期偏移計算語法極其嚴格：
-- 偏移量表示式 `offsetExpression` 必須包含正負號和單位（例如 `"+30d"`、`"+3d"`、`"-1d"`），大小寫敏感。如果只寫數字或不帶單位，在釋出校驗階段會直接報 `INVALID_NODE offsetExpression 格式不正确` 致命錯誤。
+- 偏移量表示式 `offsetExpression` 必須包含正負號和單位（例如 `"+30d"`、`"+3d"`、`"-1d"`），大小寫敏感。如果只寫數字或不帶單位，在釋出校驗階段會直接報 `INVALID_NODE offsetExpression 格式不正確` 致命錯誤。
 - 它的物理輸出欄位 ID 固定為 `date_fx_id`，下游節點引用其結果時必須使用 `$nodeAlias-date_fx_id$` 的形式。
 
 ---
@@ -240,7 +240,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
     "initiators": [{ "kind": "field", "node": "<triggerNodeRef>", "fieldId": "ownerid" }],
     "process": {
       "mode": "create",
-      "name": "审批流程"
+      "name": "審批流程"
     }
   }
 }
@@ -248,9 +248,9 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 
 **第二步：建立內部節點**——從第一步 `batch_create_process_nodes` 回傳值的 `createdNodes` 中，找到該審批塊節點，提取其內部 `processId`，再調一次 `batch_create_process_nodes`（傳內部 `processId`）建立審批內部節點。
 
-> ⚠️ **`initiators` 是必填項**：審批塊必須顯式指定發起人。常見做法是繫結觸發記錄的擁有者：`{ "kind": "field", "node": <triggerNodeRef>, "fieldId": "ownerid" }`。不傳此欄位會導致 `config.initiators: 不能为空` 致命校驗錯誤。
+> ⚠️ **`initiators` 是必填項**：審批塊必須顯式指定發起人。常見做法是繫結觸發記錄的擁有者：`{ "kind": "field", "node": <triggerNodeRef>, "fieldId": "ownerid" }`。不傳此欄位會導致 `config.initiators: 不能為空` 致命校驗錯誤。
 
-> ⚠️ 審批內部節點引用記錄時，使用 `{ nodeAlias: "approval_start" }`（固定別名）。**絕對不能**使用外部主流程的觸發節點別名（如 `trigger`、`start` 等），因為審批子流程無法跨作用域識別外部別名，會導致 `找不到节点别名` 致命報錯。
+> ⚠️ 審批內部節點引用記錄時，使用 `{ nodeAlias: "approval_start" }`（固定別名）。**絕對不能**使用外部主流程的觸發節點別名（如 `trigger`、`start` 等），因為審批子流程無法跨作用域識別外部別名，會導致 `找不到節點別名` 致命報錯。
 
 > 🚫 **審批塊物理名稱空間隔離（極易踩坑）**：
 > `approval_block` 內部與外部主流程是**完全隔離的執行上下文**：
@@ -258,7 +258,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 > - 外部主流程的節點 `prevNode` **不能**指向內部節點
 > - 內部節點引用被審批的記錄時，**只能**使用固定別名 `{ nodeAlias: "approval_start" }`，不能使用外部觸發節點的別名
 >
-> 違反上述任一規則，均會觸發 `prevNode 找不到` 或 `找不到节点别名` 的致命校驗錯誤。
+> 違反上述任一規則，均會觸發 `prevNode 找不到` 或 `找不到節點別名` 的致命校驗錯誤。
 
 > ⚠️ **審批結果分兩層**（必須明確區分放置位置）：
 > - **審批內部**（第二步建立的內部節點中）：在 `approve` 節點之後新增 `branchType: "approval_result"` 分支，用於寫入審批人（`executorid`）、審批意見（`opinionSummary`）等審批詳細資訊到記錄中
@@ -277,15 +277,15 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
   "config": {
     "process": {
       "mode": 1,
-      "name": "逐条处理XX",
+      "name": "逐條處理XX",
       "start": {
         "inputFields": [
           {
             "fieldId": "child_message",
-            "name": "通知内容",
+            "name": "通知內容",
             "type": "text",
             "required": true,
-            "description": "从父流程传入的通知文本"
+            "description": "從父流程傳入的通知文字"
           }
         ]
       }
@@ -429,7 +429,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 `batch_create_process_nodes` 是**原子操作**——任一節點校驗失敗，整批都不會建立。
 
 **`batch_create_process_nodes` 失敗時**：
-1. 分析 `error.message` 定位出錯節點和原因（格式：`nodes[nodeAlias].config.xxx: 错误描述`）
+1. 分析 `error.message` 定位出錯節點和原因（格式：`nodes[nodeAlias].config.xxx: 錯誤描述`）
 2. 重新閱讀本 skill 定位違反的約束，修正該節點參數
 3. 修正後**重新提交整批節點**
 

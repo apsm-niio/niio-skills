@@ -29,7 +29,7 @@
   "examples": [
     [
       { "fieldId": "statusCtrlId", "type": 11, "fieldValue": "optKeyDone" },
-      { "fieldId": "remarkCtrlId", "type": 2, "fieldValue": "审批通过：$startNodeId-titleCtrlId$" }
+      { "fieldId": "remarkCtrlId", "type": 2, "fieldValue": "審批透過：$startNodeId-titleCtrlId$" }
     ]
   ]
 }

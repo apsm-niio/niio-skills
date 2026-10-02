@@ -1,49 +1,49 @@
 /**
- * HAP API 配置文件模板
+ * niio API 設定檔案模板
  * 
- * 使用说明：
- * 1. 将文件重命名为 config.js
- * 2. 替换 HAP_APPKEY 和 HAP_SIGN 为您的实际 API 凭证
- * 3. 替换 WORKSHEETS 中的工作表 ID
- * 4. 替换字段 ID 映射
+ * 使用說明：
+ * 1. 將檔案重新命名為 config.js
+ * 2. 替換 HAP_APPKEY 和 HAP_SIGN 為您的實際 API 憑證
+ * 3. 替換 WORKSHEETS 中的工作表 ID
+ * 4. 替換欄位 ID 對映
  */
 
 const CONFIG = {
-    // HAP 应用公开 API V3 基础 URL
+    // niio 應用公開 API V3 基礎 URL
     API_BASE_URL: 'https://api.mingdao.com',
 
-    // HAP 应用认证信息（从 HAP 后台获取）
-    // 获取方式：登录明道云 → 应用设置 → API 密钥
+    // niio 應用認證資訊（從 niio 後臺取得）
+    // 取得方式：登入niio → 應用設定 → API 金鑰
     HAP_APPKEY: '你的HAP_APPKEY',
     HAP_SIGN: '你的HAP_SIGN',
 
-    // 工作表 ID（从 HAP 后台或 MCP 获取）
+    // 工作表 ID（從 niio 後臺或 MCP 取得）
     WORKSHEETS: {
-        PRODUCTS: '你的产品表ID',
-        NEWS: '你的新闻表ID',
+        PRODUCTS: '你的產品表ID',
+        NEWS: '你的新聞表ID',
         CASES: '你的案例表ID'
     },
 
-    // 字段 ID 映射（从 HAP 后台或 MCP 获取）
+    // 欄位 ID 對映（從 niio 後臺或 MCP 取得）
     PRODUCT_FIELDS: {
-        NAME: '产品名称字段ID',
-        IMAGE: '产品图片字段ID',
-        PRICE: '参考价格字段ID',
-        DESC: '产品描述字段ID',
-        CATEGORY: '产品分类字段ID',
-        PUBLISHED: '是否上架字段ID',
-        RECOMMENDED: '是否推荐字段ID',
-        SORT: '排序字段ID'
+        NAME: '產品名稱欄位ID',
+        IMAGE: '產品圖片欄位ID',
+        PRICE: '參考價格欄位ID',
+        DESC: '產品描述欄位ID',
+        CATEGORY: '產品分類欄位ID',
+        PUBLISHED: '是否上架欄位ID',
+        RECOMMENDED: '是否推薦欄位ID',
+        SORT: '排序欄位ID'
     },
 
     NEWS_FIELDS: {
-        TITLE: '标题字段ID',
-        SUMMARY: '摘要字段ID',
-        CONTENT: '内容字段ID',
-        COVER_IMAGE: '封面图字段ID',
-        PUBLISH_DATE: '发布时间字段ID',
-        CATEGORY: '分类字段ID',
-        IS_TOP: '是否置顶字段ID',
-        IS_PUBLISHED: '是否发布字段ID'
+        TITLE: '標題欄位ID',
+        SUMMARY: '摘要欄位ID',
+        CONTENT: '內容欄位ID',
+        COVER_IMAGE: '封面圖欄位ID',
+        PUBLISH_DATE: '釋出時間欄位ID',
+        CATEGORY: '分類欄位ID',
+        IS_TOP: '是否置頂欄位ID',
+        IS_PUBLISHED: '是否釋出欄位ID'
     }
 };

@@ -1,13 +1,13 @@
 /**
- * HAP API V3 封装
- * 提供统一的数据获取接口
+ * niio API V3 封裝
+ * 提供統一的資料取得介面
  * 
- * 依赖：config.js
+ * 依賴：config.js
  */
 
 const API = {
     /**
-     * 通用请求方法
+     * 通用請求方法
      */
     async request(endpoint, options = {}) {
         const url = `${CONFIG.API_BASE_URL}${endpoint}`;
@@ -29,26 +29,26 @@ const API = {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('HTTP 错误:', response.status, errorText);
+                console.error('HTTP 錯誤:', response.status, errorText);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
 
             if (!data.success) {
-                console.error('API 错误:', data.error_code, data.error_msg);
-                throw new Error(data.error_msg || 'API 请求失败');
+                console.error('API 錯誤:', data.error_code, data.error_msg);
+                throw new Error(data.error_msg || 'API 請求失敗');
             }
 
             return data;
         } catch (error) {
-            console.error('API 请求失败:', error);
+            console.error('API 請求失敗:', error);
             throw error;
         }
     },
 
     /**
-     * 获取工作表记录列表
+     * 取得工作表記錄清單
      */
     async getRows(worksheetId, params = {}) {
         const {
@@ -84,7 +84,7 @@ const API = {
     },
 
     /**
-     * 获取单条记录详情
+     * 取得單條記錄詳情
      */
     async getRecord(worksheetId, rowId) {
         const endpoint = `/v3/app/worksheets/${worksheetId}/rows/${rowId}`;
@@ -96,8 +96,8 @@ const API = {
     },
 
     /**
-     * 通用字段值解析函数
-     * 支持所有 HAP 字段类型
+     * 通用欄位值解析函式
+     * 支援所有 niio 欄位型別
      */
     getFieldValue(row, fieldId, options = {}) {
         if (!row || !fieldId) return '';
@@ -105,12 +105,12 @@ const API = {
         const value = row[fieldId];
         if (value === undefined || value === null) return '';
 
-        // 基本类型：字符串、数字、布尔值
+        // 基本型別：字串、數字、布林值
         if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
             return value;
         }
 
-        // 数组类型
+        // 陣列型別
         if (Array.isArray(value)) {
             if (value.length === 0) return '';
 
@@ -119,7 +119,7 @@ const API = {
                 return value.join(', ');
             }
 
-            // 附件字段：使用 downloadUrl
+            // 附件欄位：使用 downloadUrl
             if (firstItem.downloadUrl) {
                 const url = firstItem.downloadUrl;
                 if (options.imageWidth) {
@@ -128,18 +128,18 @@ const API = {
                 return url;
             }
 
-            // 旧版附件字段：使用 url
+            // 舊版附件欄位：使用 url
             if (firstItem.url) {
                 return firstItem.url;
             }
 
-            // 选项字段：提取 value
+            // 選項欄位：提取 value
             if (firstItem.value !== undefined) {
                 const values = value.map(item => item.value);
                 return options.separator ? values.join(options.separator) : values.join(', ');
             }
 
-            // 关联记录/成员字段：提取 name
+            // 關聯記錄/成員欄位：提取 name
             if (firstItem.name || firstItem.fullname) {
                 const names = value.map(item => item.name || item.fullname);
                 return names.join(', ');
@@ -148,7 +148,7 @@ const API = {
             return value.join(', ');
         }
 
-        // 对象类型
+        // 物件型別
         if (typeof value === 'object') {
             if (value.name) return value.name;
             if (value.value !== undefined) return value.value;
@@ -158,14 +158,14 @@ const API = {
     },
 
     /**
-     * 获取图片 URL（带缩略图优化）
+     * 取得圖片 URL（帶縮圖最佳化）
      */
     getImageUrl(row, fieldId, width = 800) {
         return this.getFieldValue(row, fieldId, { imageWidth: width });
     },
 
     /**
-     * 检查框字段判断
+     * 檢查框欄位判斷
      */
     isChecked(row, fieldId) {
         return row[fieldId] === '1';
