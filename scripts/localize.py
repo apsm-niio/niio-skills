@@ -700,16 +700,22 @@ def prepare_names(stage):
     """來源目錄維持原樣；只在待發布副本更名，並同步所有本機引用。"""
     names = {}
     for path in stage.rglob('*'):
-        if 'hap-' in path.name:
-            names[path.name] = path.name.replace('hap-', 'niio-')
+        if re.search('hap-', path.name, re.IGNORECASE):
+            names[path.name] = re.sub('hap-', 'niio-', path.name, flags=re.IGNORECASE)
     # hap-cli 同時也是實際套件名稱，只能在技能名稱及目錄語境中修改。
-    ordinary = {k: v for k, v in names.items() if k != 'hap-cli'}
+    ordinary = {}
+    for key, value in names.items():
+        if key.casefold() == 'hap-cli':
+            continue
+        if key.casefold() in ordinary and ordinary[key.casefold()] != value:
+            raise ValueError(f'來源名稱只有大小寫不同，無法安全對應：{key}')
+        ordinary[key.casefold()] = value
     ordinary['hap_personal_mcp'] = 'niio_personal_mcp'
     ordinary['hap-builder'] = 'niio-builder'
     ordinary['hap-update'] = 'niio-update'
     pattern = re.compile(r'(?<![A-Za-z0-9_-])(?:' + '|'.join(
         re.escape(k) for k in sorted(ordinary, key=len, reverse=True)
-    ) + r')(?![A-Za-z0-9_-])')
+    ) + r')(?![A-Za-z0-9_-])', re.IGNORECASE)
 
     def rewrite(text):
         # 遠端網址不是本機路徑；不可把上游網址改成不存在的網址。
@@ -717,12 +723,12 @@ def prepare_names(stage):
         def keep_url(match):
             value = match.group()
             if value.startswith('https://github.com/apsm-niio/niio-skills/'):
-                value = pattern.sub(lambda m: ordinary[m.group()], value)
+                value = pattern.sub(lambda m: ordinary[m.group().casefold()], value)
                 value = value.replace('/hap-cli/', '/niio-cli/')
             urls.append(value)
             return f'\ue020{len(urls)-1}\ue021'
         text = re.sub(r'https?://[^\s<>\"\'`]+', keep_url, text)
-        text = pattern.sub(lambda m: ordinary[m.group()], text)
+        text = pattern.sub(lambda m: ordinary[m.group().casefold()], text)
         text = re.sub(r'(?<![A-Za-z0-9_-])hap-mcp-(?!app-builder)', 'niio-mcp-', text)
         text = re.sub(r'(?m)^(name:\s*)hap-cli\s*$', r'\1niio-cli', text)
         text = re.sub(r'(?<=[/\\])hap-cli(?=[/\\]|[\s`\"\')]|$)', 'niio-cli', text)
@@ -760,6 +766,27 @@ def prepare_names(stage):
             renamed_paths.append({'from': 'skills/' + old.as_posix(), 'to': 'skills/' + new.as_posix()})
     AUDIT['renamedPaths'] = sorted(renamed_paths, key=lambda item: item['from'])
     AUDIT['connectionNames'] = {'hap_personal_mcp': 'niio_personal_mcp'}
+    return pattern
+
+
+def audit_renamed_references(stage, pattern):
+    """發布前攔截已更名項目的舊引用，包含不同大小寫寫法。"""
+    global CURRENT_FILE
+    for path in sorted(stage.rglob('*')):
+        if not path.is_file() or path.stem.upper() in {'LICENSE','LICENCE','COPYING','NOTICE'}:
+            continue
+        CURRENT_FILE = 'skills/' + path.relative_to(stage).as_posix()
+        try:
+            text = path.read_bytes().decode('utf-8')
+        except UnicodeDecodeError:
+            continue
+        for number, line in enumerate(text.splitlines(), 1):
+            def external_url(match):
+                value = match.group()
+                return value if value.startswith('https://github.com/apsm-niio/niio-skills/') else ''
+            local = re.sub(r'https?://[^\s<>"\x27`]+', external_url, line)
+            for match in pattern.finditer(local):
+                record_issue('殘留已更名的舊引用：' + match.group(), line, number)
 
 
 def build(source, output, config):
@@ -808,7 +835,7 @@ def build(source, output, config):
     ) as tmp:
         stage = Path(tmp) / "skills"
         shutil.copytree(source / "skills", stage)
-        prepare_names(stage)
+        renamed_pattern = prepare_names(stage)
         documents, anchors = {}, {}
 
         for path in sorted(stage.rglob("*.md")):
@@ -880,6 +907,7 @@ def build(source, output, config):
                 path.write_bytes(new.encode("utf-8"))
 
         audit_locale(stage)
+        audit_renamed_references(stage, renamed_pattern)
         write_audit(output, sum(path.is_file() for path in stage.rglob("*")))
 
         license_stage = Path(tmp) / "THIRD_PARTY_LICENSE.txt"
