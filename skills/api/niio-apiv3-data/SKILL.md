@@ -1,6 +1,6 @@
 ---
 name: niio-apiv3-data
-description: 使用niio niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。如果使用者已設定 niio MCP，AI 應該自動從 MCP 設定中提取身分驗證與授權金鑰。
+description: 使用niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。如果使用者已設定 niio MCP，AI 應該自動從 MCP 設定中提取身分驗證與授權金鑰。
 license: MIT
 ---
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
@@ -8,11 +8,11 @@ license: MIT
 
 # niio V3 API 使用技能
 
-此技能提供使用niio niio V3 介面建置頁面、即時取得資料和操作資料的完整指南。
+此技能提供使用niio V3 介面建置頁面、即時取得資料和操作資料的完整指南。
 
 ## Overview
 
-niio niio (High-performance Application Platform) 是一個超級應用平台,透過這個基座可以建置很多應用。透過 niio V3 介面,您可以:
+niio (High-performance Application Platform) 是一個超級應用平台,透過這個基座可以建置很多應用。透過 niio V3 介面,您可以:
 
 1. **在自訂檢視外掛中**呼叫 V3 介面操作資料
 2. **在獨立前端頁面中**使用 V3 介面編排業務邏輯

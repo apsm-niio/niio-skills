@@ -1210,7 +1210,7 @@ function getFieldTypeByControlType(controlType) {
 
 ### 資料操作方式對比
 
-niio niio 檢視外掛支援兩種資料操作方式:
+niio 檢視外掛支援兩種資料操作方式:
 
 #### 1. 使用外掛內部函式和元件 (mdye API)
 
@@ -2667,6 +2667,6 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
 **注意：** 此文件是 niio 檢視外掛開發 Agent 的完整技能包，包含了從專案建立到釋出的全流程指導。實際開發中請根據具體需求調整設定和程式碼。
 
 **版權資訊：**
-- 文件基於niio niio V3 API
+- 文件基於niio V3 API
 - 適用於 mdye-cli beta-0.0.37+
 - 更新時間：2026-01-12
