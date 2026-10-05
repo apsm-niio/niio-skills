@@ -2054,7 +2054,7 @@ const CONFIG = {
 
 **重要提示：** 關於 niio API V3 的詳細使用方法，請參考：
 
-📖 **[HAP-API-Usage-Guide.md](HAP-API-Usage-Guide.md)** - niio API V3 完整使用指南
+📖 **[niio-api-usage-guide.md](niio-api-usage-guide.md)** - niio API V3 完整使用指南
 
 該文件包含：
 - ✅ API 端點和身分驗證與授權設定

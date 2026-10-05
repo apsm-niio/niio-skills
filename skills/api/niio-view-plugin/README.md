@@ -145,7 +145,7 @@ niio-view-plugin/
 ## 更新日誌
 
 ### v2.0.0 (2026-01-12)
-- ✅ 根據 `HAP-View-Plugin-Dev-Guide.md` 完善技能文件
+- ✅ 根據 `niio-view-plugin-dev-guide.md` 完善技能文件
 - ✅ 更新使用者反饋規則（強調靜默執行）
 - ✅ 新增完整的7步工作流程
 - ✅ 新增模板選擇指南
