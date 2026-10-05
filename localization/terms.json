@@ -5,7 +5,22 @@
     "明道雲": "niio",
     "MingDAO": "niio",
     "Mingdao": "niio",
-    "HAP": "niio"
+    "HAP": "niio",
+    "明道": "niio",
+    "nocoly": "niio",
+    "Nocoly": "niio",
+    "NoColy": "niio",
+    "NOCOLY": "niio",
+    "mingdao": "niio",
+    "MingDao": "niio",
+    "MINGDAO": "niio",
+    "mingdaoyun": "niio",
+    "Mingdaoyun": "niio",
+    "MingDaoYun": "niio",
+    "MINGDAOYUN": "niio",
+    "mingo": "niio",
+    "Mingo": "niio",
+    "MINGO": "niio"
   },
   "termReplacements": {
     "字段": "欄位",
@@ -39,6 +54,10 @@
     "服务端": "伺服器端",
     "命令行": "命令列",
     "其它": "其他",
-    "niio（niio）": "niio"
+    "niio（niio）": "niio",
+    "当前": "目前",
+    "登录地址": "登入網址",
+    "域名": "網域",
+    "整个终端会话默认用某个环境/账号": "僅這次命令使用指定的環境／帳號"
   }
 }
