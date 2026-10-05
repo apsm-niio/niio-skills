@@ -94,6 +94,9 @@ def make_converter(config):
 
 
 def inline(text, convert, references=(), link=lambda value: value):
+    # 只調整一般說明；完整命令與程式碼區塊仍使用真正的執行檔名稱。
+    text = re.sub(r'`hap`(?=\s*命令(?:列|行))', 'niio CLI', text)
+    text = re.sub(r'`hap-cli`(?=\s*(?:主\s*[Ss]kill|及其))', '`niio-cli`', text)
     saved = []
 
     def keep(value):
@@ -169,6 +172,9 @@ def inline(text, convert, references=(), link=lambda value: value):
 def localized_inline_code(match, convert):
     raw, marker = match.group(), match[1]
     content = raw[len(marker):-len(marker)]
+    if content == 'hap-cli':
+        return 'niio CLI'
+    content = re.sub(r'(安[裝装][並并]登[入录]\s*)hap-cli', r'\1niio CLI', content)
     if not HAN.search(content):
         return raw
     try:
@@ -685,6 +691,72 @@ def rewrite_links(text, current, anchors):
     return text[:len(text) - len(body)] + new_body
 
 
+def prepare_names(stage):
+    """來源目錄維持原樣；只在待發布副本更名，並同步所有本機引用。"""
+    names = {}
+    for path in stage.rglob('*'):
+        if 'hap-' in path.name:
+            names[path.name] = path.name.replace('hap-', 'niio-')
+    # hap-cli 同時也是實際套件名稱，只能在技能名稱及目錄語境中修改。
+    ordinary = {k: v for k, v in names.items() if k != 'hap-cli'}
+    ordinary['hap_personal_mcp'] = 'niio_personal_mcp'
+    ordinary['hap-builder'] = 'niio-builder'
+    ordinary['hap-update'] = 'niio-update'
+    pattern = re.compile(r'(?<![A-Za-z0-9_-])(?:' + '|'.join(
+        re.escape(k) for k in sorted(ordinary, key=len, reverse=True)
+    ) + r')(?![A-Za-z0-9_-])')
+
+    def rewrite(text):
+        # 遠端網址不是本機路徑；不可把上游網址改成不存在的網址。
+        urls = []
+        def keep_url(match):
+            value = match.group()
+            if value.startswith('https://github.com/apsm-niio/niio-skills/'):
+                value = pattern.sub(lambda m: ordinary[m.group()], value)
+                value = value.replace('/hap-cli/', '/niio-cli/')
+            urls.append(value)
+            return f'\ue020{len(urls)-1}\ue021'
+        text = re.sub(r'https?://[^\s<>\"\'`]+', keep_url, text)
+        text = pattern.sub(lambda m: ordinary[m.group()], text)
+        text = re.sub(r'(?<![A-Za-z0-9_-])hap-mcp-(?!app-builder)', 'niio-mcp-', text)
+        text = re.sub(r'(?m)^(name:\s*)hap-cli\s*$', r'\1niio-cli', text)
+        text = re.sub(r'(?<=[/\\])hap-cli(?=[/\\]|[\s`\"\')]|$)', 'niio-cli', text)
+        text = re.sub(r'(?<![A-Za-z0-9_-])hap-cli(?=/)', 'niio-cli', text)
+        for i, url in enumerate(urls):
+            text = text.replace(f'\ue020{i}\ue021', url)
+        return text
+
+    paths = sorted(stage.rglob('*'))
+    targets = {}
+    for path in paths:
+        relative = path.relative_to(stage)
+        target = Path(*(names.get(part, part) for part in relative.parts))
+        if target in targets and targets[target] != relative:
+            raise ValueError(f'更名後路徑衝突：{relative}、{targets[target]}')
+        targets[target] = relative
+    for path in paths:
+        if not path.is_file() or path.stem.upper() in {'LICENSE','LICENCE','COPYING','NOTICE'}:
+            continue
+        try:
+            text = path.read_bytes().decode('utf-8')
+        except UnicodeDecodeError:
+            continue
+        new = rewrite(text)
+        if new != text:
+            path.write_bytes(new.encode('utf-8'))
+            renamed = Path(*(names.get(part, part) for part in path.relative_to(stage).parts))
+            AUDIT['changedFiles'].append('skills/' + renamed.as_posix())
+    renamed_paths = []
+    for path in sorted(paths, key=lambda p: len(p.parts), reverse=True):
+        if path.name in names:
+            old = path.relative_to(stage)
+            new = Path(*(names.get(part, part) for part in old.parts))
+            path.rename(path.with_name(names[path.name]))
+            renamed_paths.append({'from': 'skills/' + old.as_posix(), 'to': 'skills/' + new.as_posix()})
+    AUDIT['renamedPaths'] = sorted(renamed_paths, key=lambda item: item['from'])
+    AUDIT['connectionNames'] = {'hap_personal_mcp': 'niio_personal_mcp'}
+
+
 def build(source, output, config):
     global CURRENT_FILE
     for key in AUDIT:
@@ -731,6 +803,7 @@ def build(source, output, config):
     ) as tmp:
         stage = Path(tmp) / "skills"
         shutil.copytree(source / "skills", stage)
+        prepare_names(stage)
         documents, anchors = {}, {}
 
         for path in sorted(stage.rglob("*.md")):
@@ -766,6 +839,11 @@ def build(source, output, config):
 
                 prefix = new[:len(new) - len(new_body)]
                 new = prefix + PUBLIC_POLICY + new_body
+                if after['name'] == 'niio-cli':
+                    note = ('> **執行相容性**：niio CLI 目前使用 `hap` 執行命令、'
+                            '`pip install hap-cli` 安裝套件及 `python -m hap_cli` 呼叫模組；'
+                            '下方可執行範例保留這些必要名稱。\n\n')
+                    new = prefix + PUBLIC_POLICY + note + new_body
 
             documents[path] = new
             anchors[path.resolve()] = mapping
