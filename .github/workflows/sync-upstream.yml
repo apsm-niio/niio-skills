@@ -76,7 +76,10 @@ jobs:
           import os
           from pathlib import Path
 
-          path = Path("skills/mcp/hap-mcp-app-builder/version.json")
+          path = Path("skills/mcp/niio-mcp-app-builder/version.json")
+          # 相容先更新 workflow、後更新轉換腳本的過渡期間。
+          if not path.exists():
+              path = Path("skills/mcp/hap-mcp-app-builder/version.json")
           metadata = json.loads(path.read_text(encoding="utf-8"))
           metadata["repository"] = (
               "https://github.com/" + os.environ["TARGET_REPOSITORY"]
