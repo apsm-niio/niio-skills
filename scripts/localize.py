@@ -85,9 +85,14 @@ def make_converter(config):
         if pattern:
             text = pattern.sub(lambda m: rules[m.group()], text)
         text = CC.convert(text)
-        return (
+        text = (
             pattern.sub(lambda m: rules[m.group()], text)
             if pattern else text
+        )
+        # 品牌替換完成後才合併重複字詞；不跨行、不修改技術識別字。
+        return re.sub(
+            r'(?<![A-Za-z0-9_./-])niio(?:[^\S\r\n]+niio)+(?![A-Za-z0-9_./-])',
+            'niio', text
         )
 
     return convert
