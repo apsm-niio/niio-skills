@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "releaseNotes": "初始版本：方案設計 + 11 步實際建置全流程",
+  "repository": "https://github.com/apsm-niio/niio-skills",
+  "branch": "main",
+  "skillPath": "skills/mcp/niio-mcp-app-builder"
+}
