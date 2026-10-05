@@ -31,11 +31,11 @@ hap custom-page update-config <pageId> --desc "運營週報看板"
 hap worksheet chart create <worksheetId> --name "各狀態金額" --report-type 1 \
   --page-id <pageId> -j '{...圖表規格...}'
 
-# 2) 讀當前 version 和已有元件
+# 2) 讀目前 version 和已有元件
 hap --json custom-page info <pageId>
 
 # 3) 整頁寫回（把新元件追加進原有 components 一起提交）
-hap custom-page save <pageId> --version <當前version> --components '[...]'
+hap custom-page save <pageId> --version <目前version> --components '[...]'
 ```
 
 圖表元件的必備形狀：
@@ -52,7 +52,7 @@ hap custom-page save <pageId> --version <當前version> --components '[...]'
 - 圖表元件 `type` 是 **1**，`value` 放 `reportId`，還**必須**帶 `worksheetId` 和 `reportType`。
 - `config.objectId` 每個元件一個唯一 32 位十六進位制串（聯動篩選靠它定位）。
 - 佈局是 **48 柵格**：`w` 最大 48，一行放兩張圖各 `w:24`。
-- `--version` 必須等於頁面當前 version，否則報「自訂頁面儲存失敗」；存成功後 version +1。
+- `--version` 必須等於頁面目前 version，否則報「自訂頁面儲存失敗」；存成功後 version +1。
 - 篩選元件（`type=6`）可以內聯攜帶 `filtersGroup: {filters:[…]}`，CLI 會先存篩選組再把生成的 id
   替換進元件。這時需要 `--owner-app-id`（省略時自動從頁面的工作表元資料解析）。
 

@@ -105,12 +105,12 @@
 > **同一欄位匹配多個值 = 單個 `in` condition + value 陣列。嚴禁拆成多個 condition 用 AND 組合（邏輯上永遠不成立）。**
 
 日期欄位動態值（使用 `eq` 運算子 + 直傳字串）：`today`, `yesterday`, `tomorrow`, `last7Day`, `last30Day`, `thisMonth`, `lastMonth`, `nextMonth`, `thisYear`, `lastYear`, `nextYear`
-Collaborator 欄位動態值（使用 `eq` 運算子 + 直傳字串）：`user-self`，表示當前使用者
+Collaborator 欄位動態值（使用 `eq` 運算子 + 直傳字串）：`user-self`，表示目前使用者
 
 ```json
 // 示例 — 篩選本月資料：
 { "type": "condition", "field": "date_field_alias", "operator": "eq", "value": "thisMonth" }
-// 示例 — 篩選當前使用者的資料：
+// 示例 — 篩選目前使用者的資料：
 { "type": "condition", "field": "owner_field_alias", "operator": "eq", "value": "user-self" }
 ```
 

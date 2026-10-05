@@ -109,7 +109,7 @@ license: MIT
 ```javascript
 AskUserQuestion({
     questions: [{
-        question: "根據業務需求分析，當前應用缺少「新聞資訊」相關資料表。是否允許建立新的工作表？",
+        question: "根據業務需求分析，目前應用缺少「新聞資訊」相關資料表。是否允許建立新的工作表？",
         header: "新增工作表",
         multiSelect: false,
         options: [

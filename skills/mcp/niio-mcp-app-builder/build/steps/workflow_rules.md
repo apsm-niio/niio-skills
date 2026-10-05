@@ -57,7 +57,7 @@ niio 工作流物理引擎在解析節點邏輯時**完全不識別欄位的 ali
 
 Condition 結構為 `{ left, op, right }`。其中 `left` 屬於 `FieldValueRef`，**`node` 屬性絕對不能預設**（即使是查詢節點自身的內部過濾條件）。
 
-- **查詢節點自身的 filter（如 `get_single` / `get_multiple`）**：`left.node` **必須且只能引用當前查詢節點自身**；`right` 引用上游節點（如觸發節點或更早的查詢節點）以提供動態過濾值。
+- **查詢節點自身的 filter（如 `get_single` / `get_multiple`）**：`left.node` **必須且只能引用目前查詢節點自身**；`right` 引用上游節點（如觸發節點或更早的查詢節點）以提供動態過濾值。
   
   *示例*（查詢節點 `find_book` 的 filter 中，`left.node` 指向 `find_book` 自身，`right.node` 指向上游節點）：
   ```json
@@ -206,7 +206,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 ## description 必填
 
 - **流程 description**：呼叫 `create_process` 時，`description` 欄位**必須填寫**，用一句話概括該工作流的整體業務目的（如"當合同狀態變更為已簽署時自動通知相關人員並更新回款計劃"）。
-- **節點 description**：每個節點的 `description` 欄位**必須填寫**，用一句話描述該節點的業務意圖（如"查詢當前使用者名稱下所有未完成的訂單"、"將狀態更新為已審批並記錄審批時間"）。description 不是 name 的復讀，而是對**為什麼需要這個節點、它在流程中的作用**的補充說明。
+- **節點 description**：每個節點的 `description` 欄位**必須填寫**，用一句話描述該節點的業務意圖（如"查詢目前使用者名稱下所有未完成的訂單"、"將狀態更新為已審批並記錄審批時間"）。description 不是 name 的復讀，而是對**為什麼需要這個節點、它在流程中的作用**的補充說明。
 
 ---
 
@@ -309,8 +309,8 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 **第二步：建立內部節點**——從第一步 `batch_create_process_nodes` 回傳值的 `createdNodes` 中，找到該子流程節點，提取其內部 `processId`，再調一次 `batch_create_process_nodes`（傳內部 `processId`）建立子流程內部節點。
 
 > ⚠️ **子流程內部資料作用域**：
-> - 子流程開始節點固定別名 `sub_trigger`，代表當前正在處理的那條記錄
-> - 子流程內部節點引用當前記錄時，使用 `{ nodeAlias: "sub_trigger" }`
+> - 子流程開始節點固定別名 `sub_trigger`，代表目前正在處理的那條記錄
+> - 子流程內部節點引用目前記錄時，使用 `{ nodeAlias: "sub_trigger" }`
 > - 子流程參數在內部用 `$process_variable-fieldId$`（template kind）引用，**不要用 `$sub_trigger-fieldId$` 引用參數**；`sub_trigger` 只代表記錄資料源
 > - 不使用 `inputFields` 時，**子流程無法跨作用域引用主流程節點**
 > - 子流程內部可以有自己的查詢節點，後續節點可引用內部查詢節點的 alias
@@ -355,7 +355,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 
 | fieldId | 含義 | 常見用途 |
 |---|---|---|
-| `nowTime` | 節點執行時的當前時間 | compute 日期差/偏移的 startTime/endTime、delay until_time |
+| `nowTime` | 節點執行時的目前時間 | compute 日期差/偏移的 startTime/endTime、delay until_time |
 | `triggertime` | 工作流觸發時間 | 記錄觸發時刻（與 nowTime 不同，延遲節點後兩者會有差異） |
 | `triggeraid` | 觸發人帳號 ID | FieldPatch 中寫入發起人（注意：PersonRef 中用 `kind: "triggerUser"`，FieldPatch.value 中用 `kind: "systemField", fieldId: "triggeraid"`） |
 
@@ -373,10 +373,10 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 
 ### 各作用域下的記錄引用
 
-| 作用域 | 引用當前記錄的 node | 說明 |
+| 作用域 | 引用目前記錄的 node | 說明 |
 |---|---|---|
 | 主流程 | 按「觸發節點引用約定」取得的實際別名或 nodeId | 詳見文件頂部 |
-| 子流程內部 | `{ nodeAlias: "sub_trigger" }` | 固定別名，代表當前遍歷的那條記錄 |
+| 子流程內部 | `{ nodeAlias: "sub_trigger" }` | 固定別名，代表目前遍歷的那條記錄 |
 | 審批塊內部 | `{ nodeAlias: "approval_start" }` | 固定別名，代表被審批的記錄 |
 
 - **觸發記錄**：`{ kind: "record", node: <triggerNodeRef> }`
@@ -390,7 +390,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 
 **作用域可見性矩陣**（✅ 可引用 / ❌ 不可引用）：
 
-| 當前位置 \ 引用目標 | 主流程節點 | 子流程內部節點 | 審批塊內部節點 | systemField |
+| 目前位置 \ 引用目標 | 主流程節點 | 子流程內部節點 | 審批塊內部節點 | systemField |
 |---|---|---|---|---|
 | **在主流程中** | ✅ | ❌ | ❌ | ✅ |
 | **在子流程中** | ❌ | ✅（含 `sub_trigger`） | ❌ | ✅ |

@@ -38,7 +38,7 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
 | 12 | 工作流已設計 | `hap-plan.json` 中每條 workflow 和 customActionWorkflow 的 `nodes[]` 非空 | `hap-plan.json` |
 | 13 | 系統工作流已釋出 | 每個系統工作流 processId 已 publish | Step 10 完成 |
 | 14 | 自訂動作工作流已釋出 | `customActionWorkflows[]` 每條均已 publish | Step 11 完成 |
-| 15 | CLI 建後精修已對賬 | CLI 可用→已校正組織+設當前應用+回填 `cliGaps[]`；niio CLI 未安裝→已輸出待補清單且未中斷 | Step 12 完成 |
+| 15 | CLI 建後精修已對賬 | CLI 可用→已校正組織+設目前應用+回填 `cliGaps[]`；niio CLI 未安裝→已輸出待補清單且未中斷 | Step 12 完成 |
 
 ---
 
@@ -75,8 +75,8 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
      （這**不是**「未安裝」，不要據此把 `cliAvailable` 記為 false；在使用者完成授權前 Step 12 無法回填）。
 3. **寫入 context**：把 `cliAvailable` 寫入 `hap-context.json`（不寫 `progress`）。
 
-> **組織一致性與「設為當前應用」不在本步處理**——它們需要 appId（Step 1 之後才有），由 Step 12 完成：
-> `cliAvailable = true` 時，Step 12 會先自動把當前組織切到本應用所在組織、並把在建應用設為當前應用，再回填。
+> **組織一致性與「設為目前應用」不在本步處理**——它們需要 appId（Step 1 之後才有），由 Step 12 完成：
+> `cliAvailable = true` 時，Step 12 會先自動把目前組織切到本應用所在組織、並把在建應用設為目前應用，再回填。
 > 詳見 `build/steps/12_cli_refinement.md`。
 
 ---
@@ -88,7 +88,7 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
 > [!IMPORTANT]
 > **本建置流程的執行即代表使用者已明確要求使用 sub agent。** 不得因平台預設規則（如"只有使用者明確要求時才能使用 sub agent"）而跳過 sub agent 呼叫。**嚴禁退回內聯執行**。
 
-1. **探測子 agent 功能**：嘗試檢測當前平台是否支援子 agent。各平台的子 agent 工具名稱不同（Antigravity: `invoke_subagent`；Claude Code: `Task`；Codex: `multi_agent_v1.spawn_agent`），子 agent 工具可能不會出現在初始工具清單中，必須先透過工具發現查詢，不得僅因初始工具清單未顯示就判定子 agent 不可用。
+1. **探測子 agent 功能**：嘗試檢測目前平台是否支援子 agent。各平台的子 agent 工具名稱不同（Antigravity: `invoke_subagent`；Claude Code: `Task`；Codex: `multi_agent_v1.spawn_agent`），子 agent 工具可能不會出現在初始工具清單中，必須先透過工具發現查詢，不得僅因初始工具清單未顯示就判定子 agent 不可用。
 2. **根據檢測結果分流**：
    - **子 agent 可用** → 靜默透過，繼續執行
    - **子 agent 可用但必須使用者同意** → 執行下方授權提示流程
@@ -96,13 +96,13 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
 
 #### 授權提示流程
 
-如果檢測到當前平台需要使用者授權才能使用子 agent，在建置開始前向使用者輸出以下說明：
+如果檢測到目前平台需要使用者授權才能使用子 agent，在建置開始前向使用者輸出以下說明：
 
 ```
 ℹ️ 子 agent 授權說明
 
 本次建置從 Step 4 開始將使用子 agent（子代理）來隔離執行各步驟。
-當前平台需要您授權後才能使用此功能。
+目前平台需要您授權後才能使用此功能。
 
 子 agent 的作用：將複雜步驟委派給獨立的子代理執行，避免主對話上下文過載，提高建置質量。
 

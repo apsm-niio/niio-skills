@@ -9,7 +9,7 @@ echo "=== niio檢視外掛快速啟動 ==="
 echo ""
 
 if [ -z "$1" ]; then
-    # 如果沒有指定專案目錄，查詢當前目錄下的專案
+    # 如果沒有指定專案目錄，查詢目前目錄下的專案
     PROJECT_DIR=$(find . -maxdepth 1 -type d -name "mdye_view_*" | head -1)
 
     if [ -z "$PROJECT_DIR" ]; then

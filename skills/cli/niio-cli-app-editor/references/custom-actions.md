@@ -47,7 +47,7 @@ hap worksheet delete-custom-action <worksheetId> <btnId> --view-id <viewId> --pl
   `enableWhen` 用統一篩選寫法（推薦，如 `{"logic":"and","items":[{"field":"<狀態列>","op":"ne","value":"<已完成選項key>"}]}`），
   或 `filters` 直接給 wire 形態陣列。寫法與按鈕上可用的比較方式見 `hap guide record filter`（3.2 那張表的
   「檢視/規則/按鈕/圖表」一列）。
-- **`confirm` 一給，按鈕就真的彈二次確認框**；`confirmMsg` 是框裡的文案，不給用預設文案（按當前
+- **`confirm` 一給，按鈕就真的彈二次確認框**；`confirmMsg` 是框裡的文案，不給用預設文案（按目前
   CLI 語言寫入按鈕）。任何 type 都能疊加。
 - **`--view-id` 撤下按鈕只對「限定了顯示檢視」的按鈕有效**。按鈕設成「所有檢視都顯示」時沒有
   「某個檢視的成員資格」可撤，命令會直接報錯讓你先限定顯示檢視，而不是假裝撤下了。

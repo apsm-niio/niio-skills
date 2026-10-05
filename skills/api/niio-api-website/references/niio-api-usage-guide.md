@@ -2585,7 +2585,7 @@ Filter = {
       "type": "condition",
       "field": "customer_name",
       "operator": "contains",
-      "value": ["明道"]
+      "value": ["niio"]
     }
   ]
 }

@@ -32,7 +32,7 @@ hap app role add-member <role_id> --user-ids <account_id> -a <app_id>
 ## 前置條件
 
 1. **登入**：`hap auth whoami` 確認已登入且選好組織；未登入讓使用者先 `hap auth login`。
-2. **管理員權限（硬性前提）**：編輯應用元素要求當前使用者對該應用有管理權限。動手前用 `hap app list-managed` 確認目標 app 在清單裡；不在則**不要硬試**，告知使用者需要管理員授權或換帳號登入。
+2. **管理員權限（硬性前提）**：編輯應用元素要求目前使用者對該應用有管理權限。動手前用 `hap app list-managed` 確認目標 app 在清單裡；不在則**不要硬試**，告知使用者需要管理員授權或換帳號登入。
 3. 上下文中沒有 appId 時，讓使用者提供應用名或 appId。
 
 ## 通用工作流（4 步）

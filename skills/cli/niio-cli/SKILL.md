@@ -33,7 +33,7 @@ pip install hap-cli
 
 ```bash
 hap auth login          # niio SaaS，會開啟瀏覽器
-hap auth whoami         # 確認登入成功、當前組織正確
+hap auth whoami         # 確認登入成功、目前組織正確
 ```
 
 私有部署、多環境多帳號、組織與預設應用的設定，見下一步的 `hap guide setup`。
@@ -44,7 +44,7 @@ hap auth whoami         # 確認登入成功、當前組織正確
 hap guide
 ```
 
-它會給出**當前這臺機器上這一版 niio CLI** 的完整命令地圖、可用的細分主題，以及最常踩的坑。
+它會給出**目前這臺機器上這一版 niio CLI** 的完整命令地圖、可用的細分主題，以及最常踩的坑。
 命令地圖是現場生成的，永遠和實際能跑的命令一致。
 
 需要具體某方面的細節，按 `hap guide` 輸出裡列出的主題深入，例如寫記錄的取值格式、

@@ -1221,14 +1221,14 @@ niio niio 檢視外掛支援兩種資料操作方式:
 - ✅ 自動處理權限和上下文
 - ✅ 提供完整的 TypeScript 型別定義
 - ✅ 與niio原生 UI 元件整合
-- ⚠️ 僅限當前工作表和檢視的資料操作
+- ⚠️ 僅限目前工作表和檢視的資料操作
 - ⚠️ 部分高階功能未封裝
 
 **推薦使用的內部函式:**
 ```javascript
 import { api, utils, config, md_emitter } from 'mdye';
 
-// 取得當前檢視資料
+// 取得目前檢視資料
 api.getFilterRows({ worksheetId, viewId });
 
 // 開啟原生記錄詳情彈窗
@@ -1258,7 +1258,7 @@ config.controls; // 欄位清單
 
 ### 在檢視外掛中使用 V3 介面建置複雜頁面
 
-#### 方案1: 使用 mdye 封裝的 api（推薦用於當前表操作）
+#### 方案1: 使用 mdye 封裝的 api（推薦用於目前表操作）
 
 ```javascript
 import { api, config } from 'mdye';
@@ -1274,7 +1274,7 @@ const result = await api.getFilterRows({
 ```
 
 **侷限性:**
-- 僅限當前工作表和檢視
+- 僅限目前工作表和檢視
 - 無法訪問其他工作表資料
 - 部分高階功能（選項集、角色、聚合查詢）未封裝
 
@@ -1804,7 +1804,7 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 ### BI 駕駛艙 vs 普通檢視的區別
 
 **❌ 錯誤的駕駛艙設計（普通檢視思維）：**
-- 只顯示當前工作表的記錄清單
+- 只顯示目前工作表的記錄清單
 - 簡單統計總數、今日新增
 - 沒有業務邏輯，只是資料展示
 
@@ -1975,7 +1975,7 @@ BI 駕駛艙（Business Intelligence Dashboard）是從**業務分析師視角**
 #### 4. 趨勢對比類指標
 
 **必須說明：**
-- 當前值是什麼？
+- 目前值是什麼？
 - 對比基準是什麼？（上月/去年同期/上週）
 - 增長率的計算方式
 
@@ -2022,7 +2022,7 @@ Top 5 產品
 ```javascript
 function MetricCard({
   title,              // 指標名稱
-  value,              // 當前值
+  value,              // 目前值
   unit,               // 單位
   description,        // 指標說明
   compareValue,       // 對比值
@@ -2042,7 +2042,7 @@ function MetricCard({
         </Tooltip>
       </div>
 
-      {/* 當前值 */}
+      {/* 目前值 */}
       <div className="metric-value">
         <span className="value">{value}</span>
         <span className="unit">{unit}</span>
@@ -2356,8 +2356,8 @@ echo "2. mdye-cli 版本："
 mdye --version || echo "❌ mdye-cli 未安裝"
 echo ""
 
-# 3. 檢查當前目錄
-echo "3. 當前目錄："
+# 3. 檢查目前目錄
+echo "3. 目前目錄："
 pwd
 echo ""
 

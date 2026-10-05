@@ -25,7 +25,7 @@
 
 | type | 說明 | 必填額外參數 |
 |---|---|---|
-| `updateCurrentRecord` | 允許使用者填寫當前記錄的指定欄位 | `updateFields`（欄位 alias 或 ID 清單）|
+| `updateCurrentRecord` | 允許使用者填寫目前記錄的指定欄位 | `updateFields`（欄位 alias 或 ID 清單）|
 | `createRelatedRecord` | 在關聯表中新建一條關聯記錄 | `relationField`（關聯欄位 alias 或 ID）|
 | `triggerWorkflow` | 直接觸發繫結的工作流 | 無 |
 

@@ -42,7 +42,7 @@
 ### 高層保留別名
 
 **四個別名是保留字，不能用作 `nodeAlias`**：`trigger`、`sub_trigger`、`approval_trigger`、
-`approval_start`——它們分別指觸發記錄、子流程當前遍歷到的那條記錄、審批區塊內部的發起記錄。
+`approval_start`——它們分別指觸發記錄、子流程目前遍歷到的那條記錄、審批區塊內部的發起記錄。
 佔用了它們，後面所有引用都會指到錯的節點上；CLI 在動手建之前就會拒絕，不會留半截流程。
 
 `nodeAlias` 是你給節點起的短名，後面的節點用它引用前面的節點；觸發記錄本身固定用 `trigger` 引用。
@@ -95,7 +95,7 @@
     存、`node code-templates` 找，**按語言和歸屬兩項找**（`--scope mine` / 不加 `--scope` 是內建示例）。
   - **AI 節點**：`node test-ai` 試跑，`--kind` 說明它做什麼（`text` 寫文字 / `object` 填結構化結果，
     這時必須配 `--outputs` 描述要填哪些欄位 / `agent` 執行助手）。`--model` 要的是本組織已設定的
-    **某個模型的 ID**，不是 `gpt-4` 這樣的名稱——用 `node get` 讀節點能看到它當前用哪一個。
+    **某個模型的 ID**，不是 `gpt-4` 這樣的名稱——用 `node get` 讀節點能看到它目前用哪一個。
   - **站內通知(27)** 有兩個易漏點：收件人寫「觸發者」用 `accounts:[{"type":6,"roleId":"triggeraid"}]`；且設定裡**必須保留 `flowNodeMap["106"]` 推送子塊**（read-modify-write 時原樣帶回，刪了釋出會報錯）。無現成模板時可先 `node get` 一個同流程已有的 27 節點照形改寫。
 
 ### 輔助命令（讀結構、查可選項）

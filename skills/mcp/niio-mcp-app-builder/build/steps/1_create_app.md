@@ -78,14 +78,14 @@
 
 ## 寫入應用訪問連結
 
-根據當前使用的 MCP 服務地址，確定前端域名：
+根據目前使用的 MCP 服務地址，確定前端網域：
 
-| MCP 服務地址 | 前端域名 |
+| MCP 服務地址 | 前端網域 |
 |---|---|
 | `api.mingdao.com/mcp` | `www.mingdao.com` |
 | `<非*.mingdao.com的host>/mcp` | `<非*.mingdao.com的host>` |
 
-> 不是 *.mingdao.com 的MCP服務地址，就使用該域名作為前端域名
+> 不是 *.mingdao.com 的MCP服務地址，就使用該網域作為前端網域
 
 拼接應用連結 `https://{前端域名}/app/{appId}`，在 `{PROJECT_ROOT}/apps/{appName}/overview.md` 檔案的最頂端（第 1 行）追加寫入連結卡片：
 

@@ -18,7 +18,7 @@ fi
 
 REQUIRED_VERSION="16.20"
 if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$NODE_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
-    echo "❌ Node.js版本過低，當前版本: $NODE_VERSION，需要版本: $REQUIRED_VERSION 或更高"
+    echo "❌ Node.js版本過低，目前版本: $NODE_VERSION，需要版本: $REQUIRED_VERSION 或更高"
     exit 1
 fi
 echo "✅ Node.js版本檢查透過: $NODE_VERSION"
@@ -117,7 +117,7 @@ cd "$PROJECT_DIR" || {
     echo "❌ 無法進入專案目錄"
     exit 1
 }
-echo "當前目錄: $(pwd)"
+echo "目前目錄: $(pwd)"
 
 # 安裝依賴
 echo ""

@@ -9,7 +9,7 @@
 
 ## 執行流程
 
-1. 從當前平台的 MCP 設定檔案中提取認證 token（URL 中 `Authorization=` 後的值，`%20` 還原為空格）：
+1. 從目前平台的 MCP 設定檔案中提取認證 token（URL 中 `Authorization=` 後的值，`%20` 還原為空格）：
    - Antigravity：`~/.gemini/config/mcp_config.json`
    - Claude Code：`~/.mcp.json`
    - Codex：`~/.codex/config.toml`

@@ -17,7 +17,7 @@ description: 全自動一站式 niio 應用建置工具。從業務方案設計�
 
 ### 1. MCP 服務自檢（硬性阻斷點）
 
-1. **識別可用的niio MCP 服務**：在當前已設定的 MCP 服務中，查詢提供 `get_org_list` 工具的服務
+1. **識別可用的niio MCP 服務**：在目前已設定的 MCP 服務中，查詢提供 `get_org_list` 工具的服務
 2. **選擇服務**：
    - 找到 1 個 → 直接使用
    - 找到多個 → 讓使用者選擇使用哪個
@@ -37,7 +37,7 @@ description: 全自動一站式 niio 應用建置工具。從業務方案設計�
 
 連通性驗證成功後，立即為該 MCP 服務請求一次性全域權限，避免後續每次工具呼叫都需要使用者確認。
 
-如果當前平台提供權限請求機制（如 Antigravity 的 `ask_permission`），則呼叫：
+如果目前平台提供權限請求機制（如 Antigravity 的 `ask_permission`），則呼叫：
 - Action: `mcp`
 - Target: `{MCP_SERVER_NAME}/*`
 - Reason: "niio 應用建置需要批次呼叫niio MCP 工具，請求一次性授權以避免逐次確認"
@@ -46,7 +46,7 @@ description: 全自動一站式 niio 應用建置工具。從業務方案設計�
 
 ### 3. 確定專案根目錄（PROJECT_ROOT）
 
-從使用者當前活動的 **workspace URI** 提取專案根目錄，記為 `PROJECT_ROOT`。
+從使用者目前活動的 **workspace URI** 提取專案根目錄，記為 `PROJECT_ROOT`。
 
 > [!CAUTION]
 > **後續所有檔案操作必須使用 `{PROJECT_ROOT}/apps/{appName}/...` 的絕對路徑。** 嚴禁使用相對路徑 `apps/{appName}`，否則檔案可能被建立到錯誤位置。
@@ -64,7 +64,7 @@ python3 {SKILL_DIR}/plan/scripts/scan_apps.py {PROJECT_ROOT}
 指令碼輸出 JSON 物件 `{ apps: [...], update?: {...} }`：
 - `apps`：已有應用清單，用於下方路由判斷
 - `update`：版本檢查結果（網路超時則不存在）。若 `update.available` 為 `true`，向使用者提示：
-  > 🔄 niio 應用建置工具有新版本（當前 {local} → 最新 {remote}）
+  > 🔄 niio 應用建置工具有新版本（目前 {local} → 最新 {remote}）
   > 📋 更新說明：{notes}
   > 是否立即更新？
 
@@ -88,7 +88,7 @@ python3 {SKILL_DIR}/plan/scripts/scan_apps.py {PROJECT_ROOT}
 
 > [!CAUTION]
 > **⛔ STOP — 必須先詢問使用者，嚴禁自動繼續建置。**
-> 向使用者展示已有應用的名稱和當前進度，然後詢問：
+> 向使用者展示已有應用的名稱和目前進度，然後詢問：
 > 1. **繼續建置** → 讀取 `build/SKILL.md` 從斷點恢復（不用選擇組織，org_id 已經儲存在hap-plan.json中）
 > 2. **新建獨立應用** → 進入下方「選擇組織」流程
 
@@ -106,7 +106,7 @@ python3 {SKILL_DIR}/plan/scripts/scan_apps.py {PROJECT_ROOT}
 
 使用前置檢查第 1 步中已快取的組織清單（無需再次呼叫 `get_org_list`）：
 
-1. 若只有一個組織 → 跳過使用者確認，自動選擇當前組織並開始方案設計
+1. 若只有一個組織 → 跳過使用者確認，自動選擇目前組織並開始方案設計
 2. 若有多個 → 列出所有組織讓使用者選擇
 
 > [!CAUTION]

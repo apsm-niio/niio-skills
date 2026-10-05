@@ -23,7 +23,7 @@ hap workflow structure <process_id>
 # 新建流程。--company-id 可以不傳，組織由流程所屬的應用決定
 hap workflow create -n "流程名" -a <app_id> --type worksheet
 
-# 改名 / 描述 / 圖示；--version-name 給當前已釋出版本起名（版本清單裡就不是日期編號了）
+# 改名 / 描述 / 圖示；--version-name 給目前已釋出版本起名（版本清單裡就不是日期編號了）
 hap workflow update <process_id> -n "新名" -d "描述" --icon-color "#2196F3"
 hap workflow update <process_id> --icon-name <圖示名>          # 圖示名見 niio CLI icon list
 hap workflow update <process_id> --version-name "上線版"
@@ -72,7 +72,7 @@ hap workflow move <process_id> ...         # 移到別的應用，參數以 --he
   觸發器沒綁（見下文「觸發器設定」）、`fill_in` 節點一個可編輯欄位都沒有（`config.formProperties`
   全是 `readonly`/`hidden`）。收件人寫錯則是當場報錯，見 [nodes.md](nodes.md) 的 accounts 一節。
 - **三處和字面意思不同**：`copy --name` 是追加在原名後的**字尾**；`copy --sub-process` 是把副本
-  **變成**子流程（不是連同子流程一起復制）；`rollback` 不帶 `--version-id` 是**丟棄當前草稿**，
+  **變成**子流程（不是連同子流程一起復制）；`rollback` 不帶 `--version-id` 是**丟棄目前草稿**，
   不是回到上一個版本。
 - `delete` 是**可撤銷**的（進回收站，用 `restore` 拿回來），只有 `purge` 是真的刪掉。
 - `config-set` **只需要寫要改的項**，沒提到的設定保持原樣。注意 `triggerView` 是布林（觸發流程的人

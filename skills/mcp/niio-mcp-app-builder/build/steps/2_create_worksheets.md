@@ -168,7 +168,7 @@ Plan 中的 SingleSelect / MultipleSelect 欄位攜帶選項值，格式為 `"�
 - 客戶表：`客戶資料`、`聯絡資訊`、`跟進情況`
 - 合同表：`合同主體`、`簽約安排`、`履約資訊`
 
-Divider 固定屬性：`required: false`，`layout: { rowIndex: N, span: 12 }`（N 按當前行號遞增）
+Divider 固定屬性：`required: false`，`layout: { rowIndex: N, span: 12 }`（N 按目前行號遞增）
 
 ### 五、Layout 佈局規則
 
@@ -303,16 +303,16 @@ targetWorksheet == "selfRelation"
 
 | 場景 | 做法 |
 |---|---|
-| 負責人欄位 → 預設為當前操作使用者 | `source: "system", value: "currentUser"` |
+| 負責人欄位 → 預設為目前操作使用者 | `source: "system", value: "currentUser"` |
 | 建立日期 → 預設為今天 | `source: "system", value: "now"` |
 | 狀態列位 → 有明確的初始狀態（如"待處理"） | `source: "static", value: "待處理"` |
-| 同一表單中的欄位值 → 預設取當前表單內其他欄位的值 | `source: "field", field: "startTime"` 示例：結束時間 → 預設為開始時間；收貨地址 → 預設為定位欄位；發貨數量 → 預設為採購數量 |
-| 選擇關聯記錄後 → 自動帶出該關聯記錄中的欄位值 | `source: "relation", relationField: "customer", field: "phone"` 示例：選擇"客戶"後，自動帶出該客戶的"聯絡電話"填入當前表單；選擇"主任務"後，預設帶出"主任務"的"負責人"、"截止日期"等 |
+| 同一表單中的欄位值 → 預設取目前表單內其他欄位的值 | `source: "field", field: "startTime"` 示例：結束時間 → 預設為開始時間；收貨地址 → 預設為定位欄位；發貨數量 → 預設為採購數量 |
+| 選擇關聯記錄後 → 自動帶出該關聯記錄中的欄位值 | `source: "relation", relationField: "customer", field: "phone"` 示例：選擇"客戶"後，自動帶出該客戶的"聯絡電話"填入目前表單；選擇"主任務"後，預設帶出"主任務"的"負責人"、"截止日期"等 |
 
 #### 使用規則
-- system：用於系統內建值，如當前使用者、當前時間
+- system：用於系統內建值，如目前使用者、目前時間
 - static：用於固定值，如狀態預設"待處理"
-- field：用於當前表單內其他欄位的值
+- field：用於目前表單內其他欄位的值
 - relation：用於已選關聯記錄中的欄位值
 
 #### 原則

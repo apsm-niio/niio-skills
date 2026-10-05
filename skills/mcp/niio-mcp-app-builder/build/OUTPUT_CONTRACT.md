@@ -8,7 +8,7 @@
 
 ### 成功
 
-1. 將 `progress` 欄位更新為當前步驟對應的完成狀態（見 `PROGRESS.md`）
+1. 將 `progress` 欄位更新為目前步驟對應的完成狀態（見 `PROGRESS.md`）
 2. 寫入該步驟負責的 ID 對映欄位（見 `CONTEXT.md`）
 3. 透過 ⛔ 驗證斷言
 
@@ -22,7 +22,7 @@
 排程器在每步完成後，讀取 `hap-context.json` 檢查：
 
 ```
-if context.progress == 當前步驟的預期完成狀態:
+if context.progress == 目前步驟的預期完成狀態:
     ✅ 步驟成功，繼續下一步
 else:
     ❌ 步驟失敗，報告錯誤並停止

@@ -87,7 +87,7 @@
    - `description`：由誰在什麼場景下點選，以及需要填寫什麼
    - `type`：`"updateCurrentRecord"` / `"createRelatedRecord"` / `"triggerWorkflow"`
    - `targetWorksheet`：僅 `type="createRelatedRecord"` 時填目標工作表名
-   - `relateFieldName`：僅 `type="createRelatedRecord"` 時填，表示源工作表中用於物理關聯目標表的關聯欄位名稱（例如當前工作表中存在 `"關聯商機(Relation:銷售機會)"` 欄位，此處則必須填寫 `"關聯商機"`）
+   - `relateFieldName`：僅 `type="createRelatedRecord"` 時填，表示源工作表中用於物理關聯目標表的關聯欄位名稱（例如目前工作表中存在 `"關聯商機(Relation:銷售機會)"` 欄位，此處則必須填寫 `"關聯商機"`）
    - `enableCondition`（可選）：按鈕的前置狀態條件，自然語言描述。有前置狀態要求的動作必填
    - `intentHints`：`type="triggerWorkflow"` 時必須填寫業務效果與約束陣列（`[{label}]`）
 

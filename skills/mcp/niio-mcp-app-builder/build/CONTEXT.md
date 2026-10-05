@@ -11,7 +11,7 @@
   "org_id": "string",
   "progress": "string (見 PROGRESS.md)",
 
-  "cliAvailable": "boolean (CLI 自檢寫入：本機 niio CLI 是否已安裝且已登入；未登入會在自檢階段自動瀏覽器登入。組織校正與設當前應用由 Step 12 處理)",
+  "cliAvailable": "boolean (CLI 自檢寫入：本機 niio CLI 是否已安裝且已登入；未登入會在自檢階段自動瀏覽器登入。組織校正與設目前應用由 Step 12 處理)",
 
   "sectionIdByName": {
     "分組名稱": "sectionId"
