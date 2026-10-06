@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """產生 niio 繁中技能，涵蓋 Markdown、JSON 與程式顯示文字，檢查後才發布。"""
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -869,7 +870,7 @@ class NoRedirect(HTTPRedirectHandler):
     return text
 
 
-def apply_customer_policy(stage):
+def apply_customer_policy(stage, output):
     base = stage / 'mcp/niio-mcp-app-builder'
     refresh = base / 'build/scripts/refresh_fields.py'
     if not refresh.is_file():
@@ -936,14 +937,34 @@ python3 {SKILL_DIR}/build/scripts/refresh_fields.py \\
             text = text.replace('https://{前端域名}', '{NIIO_WEB_BASE_URL}')
         elif relative.endswith('/build/resources/sample_images.json'):
             catalog = json.loads(text)
-            removed = 0
+            manifest_path = output / 'localization/image-catalog.json'
+            manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+            if manifest.get('version') != 1:
+                raise ValueError('圖片對照表版本不支援。')
+            lookup = {item['sourceUrlSha256']: item for item in manifest['images']}
+            if len(lookup) != len(manifest['images']):
+                raise ValueError('圖片對照表有重複來源。')
+            count = 0
+            repository = os.environ.get('GITHUB_REPOSITORY', 'apsm-niio/niio-skills')
             for category, entries in catalog.items():
                 if not isinstance(entries, list):
                     raise ValueError('圖片目錄結構已變更，請檢查素材政策。')
-                clean = [entry for entry in entries if not FORBIDDEN_BRAND.search(json.dumps(entry, ensure_ascii=False))]
-                removed += len(entries) - len(clean)
-                catalog[category] = clean
-            AUDIT['removedExternalSampleImages'] = removed
+                for entry in entries:
+                    source_key = hashlib.sha256(entry['url'].encode('utf-8')).hexdigest()
+                    asset = lookup.get(source_key)
+                    if not asset or asset.get('reviewed') is not True:
+                        raise ValueError(f'新圖片尚未審查：{category}/{entry.get("keyword", "")}，來源識別 {source_key}；保留上一版技能。')
+                    filename = asset['file']
+                    if not re.fullmatch(r'[a-z0-9-]+\.jpg', filename):
+                        raise ValueError('圖片檔名格式錯誤。')
+                    image_path = output / 'assets/sample-images' / filename
+                    if image_path.is_symlink() or not image_path.is_file():
+                        raise ValueError(f'圖片檔案不存在或不安全：{filename}')
+                    if hashlib.sha256(image_path.read_bytes()).hexdigest() != asset['sha256']:
+                        raise ValueError(f'圖片內容變更，需重新審查：{filename}')
+                    entry['url'] = f'https://raw.githubusercontent.com/{repository}/main/assets/sample-images/{filename}'
+                    count += 1
+            AUDIT['mirroredSampleImages'] = count
             text = json.dumps(catalog, ensure_ascii=False, indent=2) + '\n'
         elif relative.endswith('/build/steps/6_create_sample_data.md'):
             heading = '## 4. 系統內建預設附件清單 (Attachment)'
@@ -955,7 +976,7 @@ python3 {SKILL_DIR}/build/scripts/refresh_fields.py \\
             text = text[:start] + '''## 4. 圖片與附件素材 (Attachment)
 
 只使用使用者提供、部署環境管理或已確認授權的素材網址。不得自行猜測下載網址。
-可先讀取 `build/resources/sample_images.json`；分類清單可能為空，不能對空清單隨機取值。
+優先讀取 `build/resources/sample_images.json`，使用其中本儲存庫已審查的圖片直接網址，按關鍵字挑選符合情境的素材。分類清單可能為空，不能對空清單隨機取值。
 沒有合適素材時，非必填附件欄位可留空；必填欄位須先向使用者取得素材再繼續該筆資料。
 不得為了填滿欄位而下載未知來源的圖片或使用範例佔位網址。
 使用平台支援的附件結構 `[{"name": "檔名", "url": "使用者提供的實際素材網址"}]`。
@@ -1149,7 +1170,7 @@ def build(source, output, config):
                 AUDIT['changedFiles'].append(CURRENT_FILE)
                 path.write_bytes(new.encode("utf-8"))
 
-        apply_customer_policy(stage)
+        apply_customer_policy(stage, output)
         audit_customer_policy(stage)
         audit_locale(stage)
         audit_renamed_references(stage, renamed_pattern)
@@ -1208,3 +1229,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

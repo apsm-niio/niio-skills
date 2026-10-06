@@ -1,0 +1,887 @@
+{
+  "version": 1,
+  "images": [
+    {
+      "sourceUrlSha256": "e7d6d102f6234b54077c49c604e0907c0c9c333a18be90b3188ba4d616c53c0f",
+      "file": "product-001.jpg",
+      "sha256": "e588d049c660b84370312f5d42a0fbe1b400bb10699519678de8b5f526ad89e2",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "667461a09e884d3931044801cb9786c055696c1541c200857dec7e578a504334",
+      "file": "product-002.jpg",
+      "sha256": "7a452f26ef95a221eab6364abffc761ef641ccb0bdedbbeba3977195997c45d9",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "84fb8554278919ac3129b1aa819079ccdc698e85eef3dd04aca13e42713d1494",
+      "file": "product-003.jpg",
+      "sha256": "9b5a55b889f74b25f525cb33469d95446845d3088f1806a2baa7dcd5f02ae43f",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "26b846460d1c490181e23463d4b56d938452d58072c6b4c01835a5a566243f78",
+      "file": "product-004.jpg",
+      "sha256": "98f94f04c18ab040e66813b0f947da29b5e57143c5d35f3f47f8ac0e01602541",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "856d3817affc985f992aaae1bdef1d784ef482a002eb383b75abdcde4a4c6789",
+      "file": "product-005.jpg",
+      "sha256": "131f875d2402d04db8b307f3c80b205f564a80dc27d8bda83e3ba98e43f8624a",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "31481a1615553c057167b12a24028ee9e44424e504ebab41bb1e81b3473a54b3",
+      "file": "product-006.jpg",
+      "sha256": "19d11ae3be83fe9e46c0163c8ee4e6363e98990c6c718d5e2b7f765f06d731c9",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "02b8a4dfb45865f85d7c941862f991542e1b1dbe367af9a46e39293825a46a6e",
+      "file": "product-007.jpg",
+      "sha256": "bee747892dc6d285b74e577e7b7c074b5a3468a6be0605cfe1959fc734749ad9",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "4c17d7ef673c9a567a67b332036a55b3b77285c240cca035f90c7c4c4cc21248",
+      "file": "product-008.jpg",
+      "sha256": "3890e11e8b4c8f990f53a84b8855e4c605d02a861b9cdbca92cf78e73cbaa99c",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "9101c33f488d941c61e28cf1ce700603410210087eba9a5de32c37f692c20fa2",
+      "file": "product-009.jpg",
+      "sha256": "756cd170e8cc061b44547a12657890b17434e2b98b3e6491c29296d65decbbfd",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "6045bdd8f854489face23d730fc22590a0722918badbfee5543f3a27ed75063e",
+      "file": "product-010.jpg",
+      "sha256": "018b9b3d2d635a07873e209349d97eb15119f62a0a9a983b015330de745d31a4",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "6eb1830002f726da02fd4c8cafc93c2ae90efd7c125b567e8e9dc2e3d663a3f3",
+      "file": "product-011.jpg",
+      "sha256": "fb59cfa3edd86ca78324c8a6f3fc22db38acd4c99ea9626cfc32b2afb4f1ba88",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "914bdcdda40f208e6ef39402ec946f7cc47d00661b83a1582246c176b612df5d",
+      "file": "product-012.jpg",
+      "sha256": "244ac5bed54103e48c4b4cc271cb3407437a5f4129af689b4387aebe9887c4b7",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "a2220f452f13bccc843714b4e397ea4858cc29fb72f659f4da1e5b12b5753156",
+      "file": "product-013.jpg",
+      "sha256": "ee5c87bac9be028fd5bc0e4de2fd34d230e92bf901535dd4775984a2acdd671b",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "6c2f37bc5062e0dadfd58c19e215e6256b5eb39cd66d06db0e76a8a8ab6bd641",
+      "file": "product-014.jpg",
+      "sha256": "b06c078e3096c8c51c879fd4689ae39eba42ae04f2c359aa2a6fda658f0adaf7",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "ac4d554786cc92f087c7011c8beefe821caab1b8acfe084fd0bd16e1da77c63b",
+      "file": "product-015.jpg",
+      "sha256": "ccc503ce4f2764c45b9c90d205d70642f55d70bef86597e138d20a8b589071e3",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "afdea8af2632ddb47737304855ac9eeb809773e822b115dffaae46137b9db4f5",
+      "file": "product-016.jpg",
+      "sha256": "00160add16f2913207f3c13abfd091c9f21a7280f60a8e6e4f1811ad5fcc007c",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "59ebb0a891d95f9de2f909e7729b05c9eb7f969f45ff1e168a6912ed3f81e68b",
+      "file": "product-017.jpg",
+      "sha256": "b1e04da4c1a0ea8a8c268908e23b2923e4e5ea525ea1e5d8d943f7c9f24f713f",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "4e9d7c588ac545f6e877c0fd8c4cdac4c2244e3cd89c1e178ce84536dce63cdb",
+      "file": "product-018.jpg",
+      "sha256": "df73434335b7753de415e8513cb6cb303fe629f4917ebc90dc4d2b101640c1b3",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "78ca3643226ed5398525e78c7b26696962ee369d6d8aa58000225856bfab166b",
+      "file": "product-019.jpg",
+      "sha256": "f6538be3f2cbeb7b576a331ec17263aee85b1ec2f6fae846624b174a01b1d2ca",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "8fe94465b43d74c97097df5065215b68dbf58093e128123bb0a47576bb5b7102",
+      "file": "product-020.jpg",
+      "sha256": "1403e3d5ad443a2599448630725ee72a6906ff6788ad02f73fd38b3e6cec5c4b",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "6430be8bf90eb4df480f25c355b2e9a90020a9e64dc6226d25d79842fba55cf7",
+      "file": "product-021.jpg",
+      "sha256": "723962561f54e9b89741baa90d910257d248265e5f007d040b9cad4790255314",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "314530fe042e1cb857d7f74c0a94a7136f06d1008f33b005e977b6c868b76ec1",
+      "file": "product-022.jpg",
+      "sha256": "98f94f04c18ab040e66813b0f947da29b5e57143c5d35f3f47f8ac0e01602541",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "79bee77eae6bcaec1e681b42661c3c7d07cac9bfd7bb029fdce055eddb28d2fd",
+      "file": "product-023.jpg",
+      "sha256": "353c06996357b57654e62f7e2a4753e2f587ee8fdd13d4f0a07217b2bf06d671",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "455f180a23c69dcb0d2eddcb6fee5d6281c659b18327fe4eae14b7b15cb7615a",
+      "file": "product-024.jpg",
+      "sha256": "25306684618537ba871c2d03649fcbb7c6af83fdd0f698c3f08032c2ced3a2be",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "de7da6cd434df8151e8d3b68aed62870366bdfcdaa47de322184325849047951",
+      "file": "product-025.jpg",
+      "sha256": "d797ffaee68cda5f8897a9dab5d875aeda4c265bcfeb99bffda9b54b8bc32628",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "7274edcc1e7baf56fd62c1a61b6060db5574c3605a7b9baab483b7c7fb19f820",
+      "file": "product-026.jpg",
+      "sha256": "adeb7c57a153297e871dc49e02adb3cf9c300837a51ce4c6840aa8ffb5d13f4a",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "587faccf1602db6afa1fe5823a611f0d0d4fa3bd09cfc9b090bc7a83d279dc0b",
+      "file": "product-027.jpg",
+      "sha256": "c41cf07e1d50d91ad4e0287dfb9f9767d2ac904f382f08c5af64cab7f6d9ad33",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "ffa3f4c800fe1e4a331906b96c1b988c47110497a3f3a0df3816c0631e5b9957",
+      "file": "product-028.jpg",
+      "sha256": "ca6ac1de3668873525dde5c38d1ecb707ecbf5a36b5396cce92f3d7925cafb86",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "9231d9551d2cf5ca13381ed0acd62aea323579d3d89cc31b87a03cf1f95e267c",
+      "file": "product-029.jpg",
+      "sha256": "9ff15963d6a4f61fd1d4dfd8812efea18dc74837a0b96d60b7a40d139ac6eea8",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "db961cdd93fc92e9b5bdea3fd1a81d7066079699d82bfa359f0f68476caa5ffe",
+      "file": "product-030.jpg",
+      "sha256": "f534c68f3e8f9a67b4e3159611c38d3e578563496fcd7935a47feee52d5ed566",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "c54e49d329eea1b81988e3976b36e713722dfdd842280d6936641bcc670fe974",
+      "file": "product-031.jpg",
+      "sha256": "eab6cee07d82e07e2d939320f9f01d14c9781ddc7439fd940cfe1a7bd128a6e2",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "d6c3498227a3f23828efa6c6dfc2373e3ea72dc6e68a090dbca366eba6f6df35",
+      "file": "product-032.jpg",
+      "sha256": "bfb71ce06b6af03fe758160be31a4e227ab54cc1158f56db228fc88dfca6a914",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "57843f7c04c045a5b64d1506dbf2da338b38faeb904a174a8ce4948cbc3f47d9",
+      "file": "product-033.jpg",
+      "sha256": "3ccc26f9622108494b5016fe00a05c22f8717ceb2096044747c9350b791afa23",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "e87c230a9f29ac6b790d57577122f66b26fb6f8d35b27cecd01ada3a42c08676",
+      "file": "product-034.jpg",
+      "sha256": "7e2251847862086a795320e26f3909beffcab725810e5c9ae77f14a005fdc591",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "43b4d8d3302c8bb25cf90634a1789ca6dd4cf422b39242c5b96fc131e051e836",
+      "file": "product-035.jpg",
+      "sha256": "2751caa835cc06ecfd2db11897d8582e33eeb258bb2fc621b748b343f030fd68",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "e4cb692d3b4753c11c7c2bbeecd751928352ca2b0fb6d7880c189092218ed201",
+      "file": "product-036.jpg",
+      "sha256": "509b5abd94885f728ab6b87d62f5eced97afe10bfce6b12698e61da8048f90d8",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "690095b1990d826b458682bee664466178b8398d844a852e6a69defdb550ff0b",
+      "file": "product-037.jpg",
+      "sha256": "39e22d5507fb9022fbacb8f6813026153e4c8a6f417a26847834b9d6ba58e22e",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "80e00dbd155d8499beaaf5d5f5be3c9c6925477bc304b005a27708aaa4b937b3",
+      "file": "product-038.jpg",
+      "sha256": "06cb8525c8d1344e289ea488e74e46b90ea500207e90a9c8db684af2c5b0e0e6",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "18cfa7f1370526665831b39fa1b15f8d888980808104eeaebe38197be8a9a126",
+      "file": "product-039.jpg",
+      "sha256": "dfb3be173986559bf779bf99780844bb51fe005809f1ed0eed6cc2afe5b49bbe",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "c6d21d82e05cf5358c2d2a05c51f3c6500bc37db7dd3865a9b532dd3c301f9cd",
+      "file": "product-040.jpg",
+      "sha256": "60f6212e15dd967229825ff072f36e13e03f877ad33db6c6f44e53ec684b937c",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "402cf314b6694e9a5988ceb199f69c786d9f34f8d957dd9284046e826a53b3ff",
+      "file": "product-041.jpg",
+      "sha256": "23d531084de31ef116de5e3b5403b4082df882ec8fb1bacec7e317819c252031",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "2b0e721b303d359713a3b12dccd5a798b8eff98a2cd34afbb51abc3eb8ab3b9d",
+      "file": "product-042.jpg",
+      "sha256": "e987a3db4aec648a07d35426904dc27c130921ddc806d84e20288faac68d8afc",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "1736bac144444cd1bcf841eb8e889bc6fe060c4d741db8396f1f63c0a7384c7a",
+      "file": "product-043.jpg",
+      "sha256": "1652dec61924ae5aa88e640f7f5528715b7f46f3efb3df5aea2609d03a5b8308",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "1d5c292370af8247c4957b436d0f772579924a2ab7e9d95b427cdc0d3ac6cb65",
+      "file": "product-044.jpg",
+      "sha256": "c97fe065bcd5c14b33018c40321ad25f926f26e8a2b3b00d4bafab0246920975",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "09fe88a55f38482749b3c9e1c82c762b97e22108b2e55fe006a98cbd8acdbb43",
+      "file": "product-045.jpg",
+      "sha256": "f474feedbab84787e3787ee4a0a5213439fff99b7de3afaa624f6c4d4da2974f",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "cdc0a035a44974a83d321ec660dc4a7c5f2f4f7bd2f8fc520153515210a95474",
+      "file": "product-046.jpg",
+      "sha256": "847bf0e105fce2bdd0f1114e4e223661a71a29a7090bdaa836b0f9dfc9ffbe11",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "6f4a75b13b7a8bb912df44cceb82709c181d74f61464885b2f55e1200da5829e",
+      "file": "product-047.jpg",
+      "sha256": "ea046e3f9390d0278ae2556b4eb2fce27ca58fef0c9d255f489977a4363ca4b1",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "6d1b02c4446e90cbe843676e5365f2721057147e3863a689c5c05796a4359c3f",
+      "file": "product-048.jpg",
+      "sha256": "d54e451ec6d64f6126cf467f295730809e0b02de5505975ac955e005f15010b5",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "ecea5add1f86d2a42f0aab5d41cdada96df98dd1552642267757e3764ce100a5",
+      "file": "product-049.jpg",
+      "sha256": "f74e486475596212595fab8cf3b30e3b75862562588e84e47f5154f1d50370f7",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "aa85fa7792cb8c64249ed6fafd094e0ac913e4bb18d5319d5b22a36a9e9810a2",
+      "file": "product-050.jpg",
+      "sha256": "d0fc1ebefcceced26bec7f528ceb9eef54b88b23744847684dae36070d19e1ca",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "30e8c7ffec9fde3c3f6e2dc52b242c5b219f960ece93b68253e146de7e4136ff",
+      "file": "product-051.jpg",
+      "sha256": "13a45c16046c0fcb121bc84a0fcfe921ba42aafe844afde2a1cc523b423bb97b",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "8d653cb4499a703299ecf86c4865b029b43a7243edebe195e1787327a99118c7",
+      "file": "product-052.jpg",
+      "sha256": "69c2aa072d91fcf3005d48bb0085b3f2b5cc6c8f39ac95a81af1027e896d6947",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "95df1f956608e03cf608f1cffbda9cb5bcb0530d838bc28123b9f32868cf9340",
+      "file": "product-053.jpg",
+      "sha256": "a5b9f66ec1cf9c101337972b2c6d804cb9a6f7275ffe369271bea2888ea5e91a",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "68661b4b79298f172ed0e22610609aeac2d8f887a8ce892695a9202b0b4c324b",
+      "file": "product-054.jpg",
+      "sha256": "3244dad817786bfcc581c78650a0a4b845dabaf0d9a8a557a44c03104d85670e",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "158f16632b0275d550d088389136cbb3b7df14499f2d7e0938679d77d3c1ba4f",
+      "file": "product-055.jpg",
+      "sha256": "c72d5c5557b24056aedfda932f5c5314a33b0a8245034781bd6f776f4a2d2bc9",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "ae370b6b94e0c025e9485b8ee3140cbe1828570378b88328c85e55c559169ffc",
+      "file": "product-056.jpg",
+      "sha256": "cf27975d8531729902a154a72317bb318e8dc8329d3ddc052d56c80f2be20132",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "4dd430b7849e99a0b752ca6d9b54bcac427ee7d0e86ef4bdcd6368dd976ee670",
+      "file": "product-057.jpg",
+      "sha256": "4f1c0461d1d881495dbd66c0b9a8ca03794b7e368d62a37ec42b4e34f3e6e6af",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "e286ab83352ad13edb7f3c28491a73340783e771bc90d11f1146a13c960ab195",
+      "file": "product-058.jpg",
+      "sha256": "20f446f2ef9e1d5acda0a4270421a4ca9c9d86a67da4dadbd843b788d175dd61",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "a8973c4a19a518d34fbf286d18ffc71855e25541087b3191b527382f2de7fd58",
+      "file": "product-059.jpg",
+      "sha256": "4a66a22af92bba761736715cbae117d00d26db0dd07a9a514095da0db8e8b418",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "862044f78ba618e2a0508aad571a04aa4eb8940452ffe55a7fd97cba11d6999a",
+      "file": "product-060.jpg",
+      "sha256": "b541ed2b011079e971d49173cc9aedd6f184173b0ce1aceb78d0565a7da50680",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "79a472eba9fc60d3645cefec6415b699cd5d6a09521d43cdb8276a4c9791ebe7",
+      "file": "product-061.jpg",
+      "sha256": "306d0a1be7401e13460189338ab3ff38e892656df54038507e163d17d50a7ee8",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "750cbe6f09a1652140830225e89bec3b83705f1cbaa64f76034d89ea8b67739e",
+      "file": "product-062.jpg",
+      "sha256": "2a56b2e97c119fce2c3a757922e26f5d794efd2c10baf5ccebd73a391e51ffa2",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "db85c8c4c91806eff520156f974df51185c4383b63e984be1c9d11153671089e",
+      "file": "product-063.jpg",
+      "sha256": "8f52a07f11a84f056f5caae41d307e33bdab71e8ff2d95b181d25551f1bc7afc",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "0d742523c85bf323ce9f9b5c6a8d6bd50abe6336dbcf96acf6a1a4e93ff0375f",
+      "file": "asset-001.jpg",
+      "sha256": "fcc75322417a704bce620958e6e3654485b079390a3a0697f7e61742f589b297",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "7a0d1f47c4148aa1c625dc63b5860aab7d4334b60995ac386f8f86c6323ae5fe",
+      "file": "asset-002.jpg",
+      "sha256": "1fa8f3ef072f8aeaa75f6dfc4830b5b1fdd241e87a10c5e1b043b653dfb9ac2b",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "9bbc77c26ec1163e0882d0b0516005c7e488891dbdd7a6de6aebf9101f51f1b5",
+      "file": "asset-003.jpg",
+      "sha256": "c1d3df0de767f4bfdfb61a598987f453a2ce4cd0cd3b217f94c1f6ccf0ca5ea3",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "11c0438862bcf4855c8d124308a9be84e8de6a3a02d7d59daa35f61c398855a2",
+      "file": "asset-004.jpg",
+      "sha256": "8f52a07f11a84f056f5caae41d307e33bdab71e8ff2d95b181d25551f1bc7afc",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "e2f685ae1353942885851305578fb89ff97144353932ff2ad9b8b2b9c88d8428",
+      "file": "asset-005.jpg",
+      "sha256": "23bac12368857d25f045d8a5174e005e990525d395f512cb29a5207e7017a7fc",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "16e99fd3248ac11ec7fbf5f18be99f3e5b54fa499ca854c28a8b4ebc3e9dbce6",
+      "file": "asset-006.jpg",
+      "sha256": "956a6db7e3d583af18f3bccc84757f969540ded40d157a1074bc025d9ceafff3",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "9c8541af3b6950fed735ae50a3239f51d4cbf958815e23467d78606355314ada",
+      "file": "asset-007.jpg",
+      "sha256": "4344197cd10fc95f3ce185c490de8e639fa5e692dfc179cb1359a10d929c9d4b",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "14ebe037cf58f75502f2eccc7b4ab9184c76eeecd8441cd09f7c38eeeacda99f",
+      "file": "asset-008.jpg",
+      "sha256": "f44d00bca1983773d7c14bfad38237c5e76638e41ed96e7d3182555044559f89",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "d7c72049291d21c9ed073c7549d934e394cd06b8956dc6449d010e770924e382",
+      "file": "asset-009.jpg",
+      "sha256": "15c86644848185db74e0436a648468c2ca01ccf5e08a86fff9732e7b3cb0c47e",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "e6d3c4b34a82c188e4aca8691a3dda08934b13531b73440e8c8adcfa1744e9fe",
+      "file": "asset-010.jpg",
+      "sha256": "1d3588cbdb3eed9ffe3cdd3f3acbcdb4df8e694d1aba3e7914d5a1e0f6bd9058",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "cf2f3d209aa10b7a7942e17d6b1c6bdf3524fb56215fddb6e42a86abbf94581f",
+      "file": "asset-011.jpg",
+      "sha256": "f12b8dbe4980b2b7e4582b191453d8e84e825e9d7b9ab49245e5f9d8119f5af1",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "e44bd9b52287f6a3babc951995745eeb5fcbc85364f4617853448c0995d72ade",
+      "file": "asset-012.jpg",
+      "sha256": "1b05aed568746e16e55d28a1469c9fc6550e5480e1d6ff8b070288e340c91f68",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "b6c4db20481052ad1fc249f0efaecebf243afc94c0014f1d98a6fdf5307638ba",
+      "file": "asset-013.jpg",
+      "sha256": "9bf002e8c4b295dac99905967c962c64d64b2a1f8bcc7463215c4aeb820f3f34",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "d6ae26cbc05b8765e557bc0b401ccd83d974a5e078f56e455229d4d71ffd2fc8",
+      "file": "asset-014.jpg",
+      "sha256": "93863f1ee1ee19fa51dcefac628281c5e14214f0722397cc587adcc0779f7e76",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "112c444e36a45629ae2b6f98dac05a7bca41171bd7a59c3aa65984fefb8d24bf",
+      "file": "asset-015.jpg",
+      "sha256": "b9c46a138b0f4d9b99a73244826a2d1a759b958b049d1972c2d9baa6e51fc5cf",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "2cffad59fd8c4927ce5c9e7579377a6a40a9bdb7298e906e98f6c9f5b08fd5bc",
+      "file": "asset-016.jpg",
+      "sha256": "843b8e65c47599553c59c96a00eb437efccfa9174b1b694e32532a69abbf4cc1",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "9b40ecadfc1c3121f6915d1fc99ce48044fb17eaef7c310009eec27c801744fc",
+      "file": "location-001.jpg",
+      "sha256": "8c8a4017c6e7959eb87992bca4240a2af17c212543a826432d153ab111a3d3aa",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "d8ff387c34871be9998bbe28d8112ada25e61880cff6a827e2f579decf379d1c",
+      "file": "location-002.jpg",
+      "sha256": "bbcdf7b3913067aacd62600e09b3c61405ecdd016706c09096ef28fda3bf0e7d",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "fe27aeaaa6bb263123e49d2e93aeb1e56c2fd79e09183a599db69378994ebe57",
+      "file": "location-003.jpg",
+      "sha256": "a4b6611f4a8ba6f71811e59abdc4f82298e2855221c48f9d53156224f1db49d7",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "6742cdc8d6a56b7a28b0d273838de4c541cbd6ac62f2118b15335ac85260fda7",
+      "file": "location-004.jpg",
+      "sha256": "9ba04f2e0e970ce2d71b9d8494013c237f4a74927c2a353ec74050070afb7117",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "4f1cfa2c0e41f00e0b985cbf478aa47f59d3ee5a1896bddad53b3ea5a7d80835",
+      "file": "location-005.jpg",
+      "sha256": "8c8a4017c6e7959eb87992bca4240a2af17c212543a826432d153ab111a3d3aa",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "3e28ee1db4ae6ecaf621aa8de54ef45927abe8f81e0e1222cb8a2cbacf4ee07b",
+      "file": "location-006.jpg",
+      "sha256": "7cf6f8a075021fb72ba539a5c60259f2ba340f04fa82df2224e8d1a846697092",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "a54fc30239f4ebc754b8c1a7b2361562631e5aece47ef37230cd533c284844aa",
+      "file": "location-007.jpg",
+      "sha256": "623dd9bc240a8ee96178904dac06cffcb7f1c7fbf2177af3af7b740809ef35be",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "f53d4d8948b0b6ed187eb5dbdec927e2a7f15cbd8112a1b486ac838aacc99434",
+      "file": "location-008.jpg",
+      "sha256": "af76ef984b45203e571622f7e9f2ef1a147b129b9863a3a74dbb1ff4a0bb3748",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "f2e4629f494808cf8354edbf64049075bd2f6378d00afdad34e31db13b23bebe",
+      "file": "location-009.jpg",
+      "sha256": "c52d037f5de184444df752e41cb6c1fe831d024cdec275aa89e416a74ce69669",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "c7afae8f3cc0fd38e850c0541b0e04cab68fd6ae90348af54ce13f1ae167f2cb",
+      "file": "location-010.jpg",
+      "sha256": "a573353c95b6b39381ac5242b2d984cbfbbcf28515cdd7ca04e2d2a3222403f7",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "eaa2fe10f3a04d3a860bea4f6c0787046ff2010952276151d729588ae149aff3",
+      "file": "location-011.jpg",
+      "sha256": "a304b72811ebc926e06739fbfe4cfc33f96dbf863ccce7ba3e227a3e26a49e51",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "013192bce750d2e9a41ca3cc06a33696ac800113f74968513e459586ca50c045",
+      "file": "location-012.jpg",
+      "sha256": "bbcdf7b3913067aacd62600e09b3c61405ecdd016706c09096ef28fda3bf0e7d",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "b923645effadaa54f23045ffff818c7bc93de735ed9c1bee9db8aa856efb6730",
+      "file": "location-013.jpg",
+      "sha256": "c65f4d11d929930b9c3bdb54a65a4fd2deb5cc166c47f9020e2a1c2a308534ce",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "1b6cd106bc0de1a9435826dd5c8d510a0e5d371d7b43b2eb586e69f7879efd95",
+      "file": "location-014.jpg",
+      "sha256": "ddf4e4c50370c12a056aeb2d7e2e03e789e56004ecad9b31e4c141073fc5a603",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "1873b5f6a924d02f9f0d089b5ffed6bea78a5a29fe9fa7e1919f69931bdf129d",
+      "file": "location-015.jpg",
+      "sha256": "2793a73aecdbd9882da6f03b0819af73b82aaecaca663609de63f1f4105d91ff",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "478b50bfa986c6b9fd81712b8342b81115b773ee60390fff25629f8beb42449f",
+      "file": "location-016.jpg",
+      "sha256": "56bd0417b803d1d7b702ba857e5b12b4c55cd19f40712127107374878d0bd0eb",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "8b569750996773c5b039357d7ebd2a1d4c97f0b7abb6b39b0a8cac905b76471d",
+      "file": "proof-001.jpg",
+      "sha256": "627f3145605bab8d1ac4738467cd4042d2e51302c9fca9d3a9a065153f3cf069",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "bed9137e3a99874c9ac24a54e11f21e5c5fc4a95f94c94efdfb6a6cf706d9869",
+      "file": "proof-002.jpg",
+      "sha256": "9bf002e8c4b295dac99905967c962c64d64b2a1f8bcc7463215c4aeb820f3f34",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "092171b30a64c02ce2b282aa7ef687aebba40b2371a913ef6d73287531312949",
+      "file": "proof-003.jpg",
+      "sha256": "9a5219c3227af1b9e3be8b27f18dae8099b3bf63363966e5639782411ff28611",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "774ee47d6b3142735107c94f9ed87ca2dcf0ff015303b22f66f3c66460d95ee6",
+      "file": "proof-004.jpg",
+      "sha256": "677955a23367157fc860ace38e0a59371aef16e10ddea04df4e3b6a8207a0a5a",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "668467f734687ddf996d79a43c3e1058cf3f370635281a86311760945f650085",
+      "file": "proof-005.jpg",
+      "sha256": "51f2e247831afc97201ea1f512fcb8d87afb79598dcd6089fb9c7021fc338f82",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "914bcbe15d25e5533e044c2ec9655c4747fc02950dba6a2a788d8e762a702af6",
+      "file": "proof-006.jpg",
+      "sha256": "3412a80da66c8f9e6fc264422532fc642ead35e7badbcf72d401c09d4f65ac4a",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "25a54485fb25c7276336adfb16a1a0d0cde8baabf8eb59463cc97054a00f0b1e",
+      "file": "proof-007.jpg",
+      "sha256": "e918e50b48b00528d7039b4692b1823782a91c28432b623eca084f225ae3730e",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "86c9eec15010266c62d976ff54cd92cd73ad8856043ae1580db4ec155485e453",
+      "file": "proof-008.jpg",
+      "sha256": "fcc75322417a704bce620958e6e3654485b079390a3a0697f7e61742f589b297",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "fd09ec2356bc229ff06b62b2f66917222e3c7f346f1057031072ab607e87b88b",
+      "file": "proof-009.jpg",
+      "sha256": "ac1f55555945f0dc9629e9d02d3de70774695e574b9a2e749a3bb6849478a486",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "ab10477d476431b36da64f020c0f46e23941b116d7aa9a5746f5c2527837d402",
+      "file": "proof-010.jpg",
+      "sha256": "ee5c87bac9be028fd5bc0e4de2fd34d230e92bf901535dd4775984a2acdd671b",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "656625da38cad61dd7c7cd25d47fde3c5eb82625a2748097bf8451a12a5c9c26",
+      "file": "proof-011.jpg",
+      "sha256": "315d839b05acf8ecc6bbb2142ad80ed11d7607bc56371b3ca74b89bd42b42661",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "60bdad1631686348ffb807c5413f483dbb1226707cb9b1d650e3d575170e3d05",
+      "file": "proof-012.jpg",
+      "sha256": "cdb1ac1383645a45939c36fd8bad128a1de7c4154b8c3f73db61bf5949f87fae",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "087025cb5de68d5712c51382264dac2fa9c1f89ce55c2d9e483bc370cc80db68",
+      "file": "proof-013.jpg",
+      "sha256": "93863f1ee1ee19fa51dcefac628281c5e14214f0722397cc587adcc0779f7e76",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "506bcdbfe6417ca658d3f044c10d0a01d86d18a258bede63f0112b87cc85daf9",
+      "file": "proof-014.jpg",
+      "sha256": "7f2dc8d989cae1678a2be104a475ab90f63e14b4b20e4d6218997ddb22ff4b30",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "3c93e67bb05c2b2bd394d8c80dbed4ba0ec294c788e5c7fd23f1af19ca781b75",
+      "file": "issue-001.jpg",
+      "sha256": "de053773f46cf80ee528786fbc1a1ecc6a7beca5fe8ed20fe3519bc12820edf9",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "d071150f97ecc9ac89a79e178a9b2b007eda4176506cab81c2a3f4498bfaa891",
+      "file": "issue-002.jpg",
+      "sha256": "815f9e2d5cdf418ed44dae63f478e47e16fcfd9fc353c3ec0e8d81af33ce0806",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "2fef5272fd21ea5411caecec452b9220f0e8f4fe3e4116c32448312420b491b6",
+      "file": "issue-003.jpg",
+      "sha256": "032de9cf5ab1a0d1d748ba6238ee278f9bb353d073904c40a425ab5ba530693a",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "315fc15167d8d8986567751c44a8390bf9d284ff32ea4f20f65998fbd3925356",
+      "file": "issue-004.jpg",
+      "sha256": "0ba288b9ca1164d0a7d4e1b9df40ebc0b83970762a3398224c21d7ed0c6bb282",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "7ad76ecb2bdd5af5447de5b3aa78dc13fe38b59ef370bc9d97a33ca9655b61cc",
+      "file": "issue-005.jpg",
+      "sha256": "55abd97cd4c71fca46ae3d83604b703ebff5c1362d065bc83e6f97ab0cc31970",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "032a9654f8fd8113352f9bdedbc970f32ea38da9767bb42da7e7213a4e72b21c",
+      "file": "issue-006.jpg",
+      "sha256": "2bc62bd8ab7789d7478c3fc9040135578b75f2f828918fffab2424be2bde75a1",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "522a047b8ea588e9a6a63b42f7943c264fbb5a3347de09ae24938fb3072aca59",
+      "file": "marketing-001.jpg",
+      "sha256": "ecf3c3ec9b0d46021896cc3a788a0f962aaa49aa6ab7767db431f70a07510c58",
+      "reviewed": true,
+      "treatment": "brand-removal"
+    },
+    {
+      "sourceUrlSha256": "14678add06ca5c859ed61f9f3436c188e572064b7b3d48f37094c03c18ecaa74",
+      "file": "marketing-002.jpg",
+      "sha256": "6dc4f4b80875261a179b7578ffd00a5c515ad615c6505ecc918387dd8b49d353",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "2c3c63de23e602770935073b78505116d58b5bb1cffba89e00e6c3710d8a2449",
+      "file": "screenshot-001.jpg",
+      "sha256": "d13b6b4cb4766ebfbeb1775521a9c550c414350ec0f15ab5d9382b61e1ef0aee",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "9ba1fe591fa503e689d1f6a6200aa09a30edaa8938af761a72cca25d5731a0ff",
+      "file": "avatar-001.jpg",
+      "sha256": "0e76066cd99f0fe81b1cbd0643274f298b4339e81fd850164a0719f1a1770fdd",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "fe0ae1a62b8cf23ca543b0030af9e1236409d850a21cef9b6d47aa30c6206aa8",
+      "file": "avatar-002.jpg",
+      "sha256": "758b8362ed905bd72acbe2cfde942b7666bc10feb2451ed5f9988c619cead869",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "73a2284e7d1ecac5ad42e178bc8ee820a2444bcb20ba8c1295549c0f0d499fa0",
+      "file": "avatar-003.jpg",
+      "sha256": "45971f1fce4f2fd7f3a9b51955d2a19fa0d21e53da47b44d24fd2217a162eaba",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "765d59626290e9ec0dac15ced8b5fca8f732f09b22498e6dd60d3b6f7fc84fbb",
+      "file": "avatar-004.jpg",
+      "sha256": "6f80bd1a9d3f438f05c74fd465c2576f2224663f48eb86f8c984317b89dd864a",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "235c2855247ea4c3ebf1928f8de361c1ccba2fed042d5a0350da08d77a06c3ce",
+      "file": "avatar-005.jpg",
+      "sha256": "88fc444ec6a4adaecdaefadeb443bbadfb3a80f42351e65a16411ea31416f87c",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "79305a127878a26d652674b64456e3c10ad95bafe0cc5372ec63a853791ffd65",
+      "file": "avatar-006.jpg",
+      "sha256": "9747edca07dff971127c63b64d209817a4d5e5641f9a00b419d56f5fea4e0fc2",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "925392efd6d2522d5a243efa5c838c450b68e68ebe503234bca1f720a861f59b",
+      "file": "avatar-007.jpg",
+      "sha256": "84fb4bf391672dafea82996bffda68a70fcff047d41b35de75bf7fffda75eadd",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    },
+    {
+      "sourceUrlSha256": "b2963579548e2ce271a0814a0097827a1ecd712c0669c2668a7d8a8f8f884289",
+      "file": "avatar-008.jpg",
+      "sha256": "357b7807855693ac0309fe1d0c9c1d2ba2bfdeac16eb7da6dea8d4a6398bd871",
+      "reviewed": true,
+      "treatment": "original-reviewed"
+    }
+  ]
+}

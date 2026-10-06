@@ -8,6 +8,8 @@ on:
     branches: [main]
     paths:
       - localization/terms.json
+      - localization/image-catalog.json
+      - assets/sample-images/**
       - scripts/localize.py
       - .github/workflows/sync-upstream.yml
 
@@ -134,3 +136,4 @@ jobs:
           git push --atomic origin \
             refs/remotes/source/main:refs/heads/upstream \
             HEAD:refs/heads/main
+
