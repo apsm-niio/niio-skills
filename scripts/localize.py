@@ -789,6 +789,249 @@ def audit_renamed_references(stage, pattern):
                 record_issue('殘留已更名的舊引用：' + match.group(), line, number)
 
 
+# 客戶可安裝的 skills 必須通過此政策；來源與轉換規則留在維護用目錄。
+FORBIDDEN_BRAND = re.compile(
+    r'mingdao[a-z]*|nocoly|mingo|明道[雲云]?|high[\s‐‑–-]*performance\s+application\s+platform',
+    re.IGNORECASE
+)
+WRONG_TABLE_WORD = re.compile(r'工作錶|資料錶|子錶|父錶|主錶|流水錶|錶格|錶單|錶示')
+DEPLOYMENT_NOTE = (
+    '> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，'
+    '三者可能不同，不得只依 MCP 網址推測 API 或網站位置。'
+    '下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；'
+    '未確認網址時先詢問，不得向佔位網址傳送憑證。'
+    '圖片與附件只能使用使用者提供或已授權的素材網址。\n\n'
+)
+
+
+def replace_required(text, old, new, label):
+    if text.count(old) != 1:
+        raise ValueError(f'上游內容已變更，無法安全套用 {label}；保留上一版技能。')
+    return text.replace(old, new, 1)
+
+
+def configure_refresh_script(text):
+    text = replace_required(text, 'from urllib.request import Request, urlopen',
+                            'from urllib.request import Request, build_opener, HTTPRedirectHandler\n'
+                            'from urllib.parse import urlsplit', 'API 請求匯入')
+    old_base = 'API_BASE = "https://api2.mingdao.com"'
+    helpers = '''def validate_api_base(value):
+    value = value.strip().rstrip('/')
+    parsed = urlsplit(value)
+    if (parsed.scheme != 'https' or not parsed.hostname or parsed.username
+            or parsed.password or parsed.query or parsed.fragment
+            or parsed.hostname.endswith('.invalid')
+            or parsed.path.rstrip('/').endswith(('/mcp', '/v3'))):
+        raise argparse.ArgumentTypeError('請提供已確認的 HTTPS API 基底網址，不含 /mcp、/v3、帳密或查詢參數')
+    return value
+
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise URLError('API 網址發生重新導向；請先確認正確網址，不自動轉送憑證')
+'''
+    text = replace_required(text, old_base, helpers, 'API 基底網址設定')
+    text = replace_required(text, 'def fetch_worksheet_structure(worksheet_id, token, app_id):',
+                            'def fetch_worksheet_structure(worksheet_id, token, app_id, api_base):', 'API 函式參數')
+    text = replace_required(text, '{API_BASE}/v3/app/worksheets/', '{api_base}/v3/app/worksheets/', 'API URL 組合')
+    text = replace_required(text, 'with urlopen(req, timeout=30) as resp:',
+                            'with build_opener(NoRedirect()).open(req, timeout=30) as resp:', 'API 重新導向處理')
+    text = replace_required(text, '    except HTTPError as e:',
+                            '    except (json.JSONDecodeError, UnicodeDecodeError):\n'
+                            '        print("  ❌ API 未回傳有效的 JSON", file=sys.stderr)\n'
+                            '        return None\n'
+                            '    except HTTPError as e:', 'API JSON 檢查')
+    text = replace_required(text, '        body = e.read().decode("utf-8", errors="replace")\n'
+                            '        print(f"  ❌ HTTP {e.code}: {body[:200]}", file=sys.stderr)',
+                            '        print(f"  ❌ HTTP {e.code}，請檢查 API 網址與此環境的授權", file=sys.stderr)', 'API 錯誤輸出')
+    text = replace_required(text, '    args = parser.parse_args()',
+                            '    parser.add_argument("--api-base", required=True, type=validate_api_base,\n'
+                            '                        help="此部署環境已確認的 HTTPS API 基底網址")\n'
+                            '    args = parser.parse_args()', 'API 必填參數')
+    text = replace_required(text, 'fetch_worksheet_structure(ws_id, args.token, app_id)',
+                            'fetch_worksheet_structure(ws_id, args.token, app_id, args.api_base)', 'API 呼叫參數')
+    text = replace_required(text, '        fields = extract_fields(raw)',
+                            '        fields = extract_fields(raw)\n'
+                            '        if (not isinstance(raw, dict) or raw.get("success") is False\n'
+                            '                or not isinstance(fields, list) or not fields\n'
+                            '                or not all(isinstance(field, dict) for field in fields)):\n'
+                            '            errors.append(ws_name)\n'
+                            '            print(" ❌ 未取得有效欄位結構", file=sys.stderr)\n'
+                            '            continue', '工作表回應檢查')
+    text = replace_required(text, '    # 寫入輸出',
+                            '    if errors:\n'
+                            '        print("❌ 部分工作表讀取失敗，保留既有 worksheetContext.json", file=sys.stderr)\n'
+                            '        sys.exit(1)\n\n'
+                            '    # 寫入輸出', '避免不完整輸出')
+    text = text.replace('python3 refresh_fields.py --token',
+                        'python3 refresh_fields.py --api-base "https://niio-api.example.invalid" --token')
+    compile(text, 'refresh_fields.py', 'exec')
+    return text
+
+
+def apply_customer_policy(stage):
+    base = stage / 'mcp/niio-mcp-app-builder'
+    refresh = base / 'build/scripts/refresh_fields.py'
+    if not refresh.is_file():
+        raise ValueError('來源缺少欄位更新腳本，請檢查上游結構變動。')
+    policy_changed = []
+    for path in sorted(stage.rglob('*')):
+        if not path.is_file() or path.stem.upper() in {'LICENSE','LICENCE','COPYING','NOTICE'}:
+            continue
+        try:
+            old = path.read_bytes().decode('utf-8')
+        except UnicodeDecodeError:
+            continue
+        text = old
+        relative = path.relative_to(stage).as_posix()
+        if path == refresh:
+            text = configure_refresh_script(text)
+        elif relative.endswith('/assets/config.js.template'):
+            text = replace_required(text, "API_BASE_URL: 'https://api.mingdao.com',",
+                                    "API_BASE_URL: '', // 必填：已確認的 niio API 基底網址，不含 /v3", '網站 API 設定')
+        elif relative.endswith('/assets/api.js.template'):
+            text = replace_required(text, '        const url = `${CONFIG.API_BASE_URL}${endpoint}`;',
+                                    '''        const base = CONFIG.API_BASE_URL;
+        if (!base) throw new Error('請先設定此部署環境的 API_BASE_URL');
+        const parsedBase = new URL(base);
+        if (parsedBase.protocol !== 'https:' || parsedBase.username || parsedBase.password ||
+            parsedBase.search || parsedBase.hash || parsedBase.hostname.endsWith('.invalid') ||
+            /\\/(mcp|v3)\\/?$/.test(parsedBase.pathname)) {
+            throw new Error('API_BASE_URL 必須是已確認的 HTTPS API 基底網址');
+        }
+        const url = `${base.replace(/\\/$/, '')}${endpoint}`;''', '網站 API 防呆')
+            text = replace_required(text, '                ...options,',
+                                    "                ...options,\n                redirect: 'error',", '網站 API 重新導向')
+        elif relative.endswith('/build/steps/3_refresh_fields.md'):
+            text = '''# Step 3：重新整理欄位結構
+
+先確認本次使用的部署環境，再取得其 API 基底網址、應用 ID、工作表 ID 與認證資訊。
+API、MCP 與網站網址可能不同；不得由 MCP 網址自行推測，也不得跨環境共用 Token。
+
+1. 從使用者選定的 MCP 連線讀取 `headers.Authorization`；若實際設定使用 URL 的 `Authorization` 參數，解碼後取值。保留完整認證字串，不假設固定前綴，不顯示 Token。
+2. API 基底網址未確認時先詢問使用者。網址必須包含 HTTPS，不能包含 `/mcp`、`/v3` 或驗證參數。
+3. 執行下列腳本，將變數替換為此環境已確認的設定。範例變數必須先設定，不能直接照抄執行。
+
+```bash
+python3 {SKILL_DIR}/build/scripts/refresh_fields.py \\
+  --api-base "$NIIO_API_BASE" \\
+  --token "$NIIO_AUTHORIZATION" \\
+  {PROJECT_ROOT}/apps/{appName}/hap-context.json
+```
+
+腳本從 `hap-context.json` 讀取 `appId`、`worksheetIdByName`，以 GET 取得欄位結構並寫入 `worksheetContext.json`。
+若網址、授權、回傳格式或任何工作表的欄位檢查失敗，停止本步驟並保留既有輸出，不得改用其他服務重試。
+
+驗證：本次腳本成功結束；輸出的工作表數量等於已建立工作表數，每表的 `fields` 非空。
+不寫 `progress`，由排程器統一管理。
+'''
+        elif relative.endswith('/build/steps/1_create_app.md'):
+            start = text.find('根據目前使用的 MCP 服務地址，確定前端網域：')
+            end = text.find('拼接應用連結', start)
+            if start < 0 or end < 0:
+                raise ValueError('上游應用連結章節已變更，停止套用部署規則。')
+            text = text[:start] + ('使用本次環境已確認的 niio 網站根網址 `NIIO_WEB_BASE_URL`。'
+                '此網址可以與 MCP 或 API 不同；若未提供，先詢問使用者，不自行推測。'
+                '保留已確認的協定、連接埠與部署路徑；移除尾端斜線後接上 `/app/{appId}`。\n\n') + text[end:]
+            text = text.replace('https://{前端域名}', '{NIIO_WEB_BASE_URL}')
+        elif relative.endswith('/build/resources/sample_images.json'):
+            catalog = json.loads(text)
+            removed = 0
+            for category, entries in catalog.items():
+                if not isinstance(entries, list):
+                    raise ValueError('圖片目錄結構已變更，請檢查素材政策。')
+                clean = [entry for entry in entries if not FORBIDDEN_BRAND.search(json.dumps(entry, ensure_ascii=False))]
+                removed += len(entries) - len(clean)
+                catalog[category] = clean
+            AUDIT['removedExternalSampleImages'] = removed
+            text = json.dumps(catalog, ensure_ascii=False, indent=2) + '\n'
+        elif relative.endswith('/build/steps/6_create_sample_data.md'):
+            heading = '## 4. 系統內建預設附件清單 (Attachment)'
+            if text.count(heading) != 1:
+                raise ValueError('上游範例素材章節已變更，停止套用素材政策。')
+            start = text.index(heading)
+            following = re.search(r'^## ', text[start + len(heading):], re.MULTILINE)
+            end = start + len(heading) + following.start() if following else len(text)
+            text = text[:start] + '''## 4. 圖片與附件素材 (Attachment)
+
+只使用使用者提供、部署環境管理或已確認授權的素材網址。不得自行猜測下載網址。
+可先讀取 `build/resources/sample_images.json`；分類清單可能為空，不能對空清單隨機取值。
+沒有合適素材時，非必填附件欄位可留空；必填欄位須先向使用者取得素材再繼續該筆資料。
+不得為了填滿欄位而下載未知來源的圖片或使用範例佔位網址。
+使用平台支援的附件結構 `[{"name": "檔名", "url": "使用者提供的實際素材網址"}]`。
+
+''' + text[end:]
+            text = text.replace('從內建預設附件清單中挑選契合場景的資源。', '使用已確認授權的素材；沒有素材時依下方附件規則處理。')
+        elif relative == 'api/niio-apiv3-data/SKILL.md':
+            old_selection = '''const hapMcpConfig = Object.entries(mcpServers).find(
+  ([name, config]) => config.url && /api2?\\.mingdao\\.com\\/mcp/.test(config.url)
+);'''
+            new_selection = '''// selectedMcpName 必須由使用者選定，不能靠品牌網域猜測或任取第一筆。
+const selectedMcpName = process.env.NIIO_MCP_SERVER_NAME;
+if (!selectedMcpName || !mcpServers[selectedMcpName]?.url) {
+  throw new Error('請先指定本次要使用的 MCP 連線名稱');
+}
+const hapMcpConfig = [selectedMcpName, mcpServers[selectedMcpName]];'''
+            text = replace_required(text, old_selection, new_selection, 'MCP 連線選擇')
+            text = re.sub(r'^.*(?:url|`url`) 指向 .*mingdao.*$',
+                          lambda m: ('// 依使用者指定的連線名稱取得 MCP 設定'
+                                     if m.group().lstrip().startswith('//') else
+                                     '   - 使用已確認的 MCP 連線名稱與網址，不依品牌網域判斷。'), text, flags=re.MULTILINE)
+            text = text.replace('連線名称', '連線名稱')
+            text = text.replace('  console.log(auth);', "  console.log('已取得所選環境的認證設定'); // 不輸出憑證")
+
+        if relative.endswith('/version.json'):
+            metadata = json.loads(text)
+            metadata['repository'] = 'https://github.com/' + os.environ.get('GITHUB_REPOSITORY', 'apsm-niio/niio-skills')
+            metadata['branch'] = 'main'
+            text = json.dumps(metadata, ensure_ascii=False, indent=2) + '\n'
+
+        # 文件中的外部說明連結改成純文字；API/網站/素材範例使用明確的不可連線佔位網址。
+        if path.suffix == '.md':
+            had_brand = bool(FORBIDDEN_BRAND.search(text))
+            text = re.sub(r'\[([^\]\n]+)\]\((https?://[^)\s]*(?:mingdao|nocoly|mingo)[^)\s]*)\)',
+                          lambda m: m[1] + '（請參閱此技能隨附文件或部署管理者提供的說明）', text, flags=re.IGNORECASE)
+            text = re.sub(r'https?://(?:apifox|developers|help|bbs)\.mingdao\.com[^\s<>"\x27`)\]}]*',
+                          '（請參閱部署管理者提供的說明文件）', text, flags=re.IGNORECASE)
+            text = re.sub(r'(?<![A-Za-z0-9_.-])(?:api2?\.mingdao\.com)', 'niio-api.example.invalid', text, flags=re.IGNORECASE)
+            text = re.sub(r'(?<![A-Za-z0-9_.-])(?:p1|d1)\.mingdaoyun\.cn', 'niio-assets.example.invalid', text, flags=re.IGNORECASE)
+            text = re.sub(r'(?<![A-Za-z0-9_.-])(?:www|xxx)\.mingdao\.com', 'niio-web.example.invalid', text, flags=re.IGNORECASE)
+            text = re.sub(r'(?<![A-Za-z0-9_.-])avatars\.mingdao\.com', 'niio-assets.example.invalid', text, flags=re.IGNORECASE)
+            text = re.sub(r'\s*[（(]High-performance Application Platform[）)]', '', text, flags=re.IGNORECASE)
+            if had_brand:
+                data, body = frontmatter(text)
+                header = text[:len(text)-len(body)] if data is not None else ''
+                text = header + DEPLOYMENT_NOTE + body
+
+        if text != old:
+            path.write_bytes(text.encode('utf-8'))
+            policy_changed.append('skills/' + relative)
+    AUDIT['deploymentPolicyChangedFiles'] = policy_changed
+    AUDIT['changedFiles'].extend(policy_changed)
+
+
+def audit_customer_policy(stage):
+    global CURRENT_FILE
+    for path in sorted(stage.rglob('*')):
+        CURRENT_FILE = 'skills/' + path.relative_to(stage).as_posix()
+        if FORBIDDEN_BRAND.search(CURRENT_FILE):
+            record_issue('檔名含禁用品牌字詞', CURRENT_FILE)
+        if not path.is_file() or path.stem.upper() in {'LICENSE','LICENCE','COPYING','NOTICE'}:
+            continue
+        try:
+            text = path.read_bytes().decode('utf-8')
+        except UnicodeDecodeError:
+            record_issue('新增非文字資源需確認品牌內容', CURRENT_FILE)
+            continue
+        for number, line in enumerate(text.splitlines(), 1):
+            decoded = unquote(line)
+            decoded = re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m[1], 16)), decoded)
+            if FORBIDDEN_BRAND.search(decoded):
+                record_issue('殘留禁用品牌字詞', line, number)
+            if WRONG_TABLE_WORD.search(decoded):
+                record_issue('殘留資料表用語誤譯', line, number)
+
+
 def build(source, output, config):
     global CURRENT_FILE
     for key in AUDIT:
@@ -906,6 +1149,8 @@ def build(source, output, config):
                 AUDIT['changedFiles'].append(CURRENT_FILE)
                 path.write_bytes(new.encode("utf-8"))
 
+        apply_customer_policy(stage)
+        audit_customer_policy(stage)
         audit_locale(stage)
         audit_renamed_references(stage, renamed_pattern)
         write_audit(output, sum(path.is_file() for path in stage.rglob("*")))
