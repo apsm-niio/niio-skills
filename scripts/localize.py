@@ -796,7 +796,7 @@ FORBIDDEN_BRAND = re.compile(
 )
 WRONG_TABLE_WORD = re.compile(r'工作錶|資料錶|子錶|父錶|主錶|流水錶|錶格|錶單|錶示')
 DEPLOYMENT_NOTE = (
-    '> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，'
+    '> **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，'
     '三者可能不同，不得只依 MCP 網址推測 API 或網站位置。'
     '下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；'
     '未確認網址時先詢問，不得向佔位網址傳送憑證。'
@@ -845,7 +845,7 @@ class NoRedirect(HTTPRedirectHandler):
                             '        print(f"  ❌ HTTP {e.code}: {body[:200]}", file=sys.stderr)',
                             '        print(f"  ❌ HTTP {e.code}，請檢查 API 網址與此環境的授權", file=sys.stderr)', 'API 錯誤輸出')
     text = replace_required(text, '    args = parser.parse_args()',
-                            '    parser.add_argument("--api-base", required=True, type=validate_api_base,\n'
+                            '    parser.add_argument("--api-base", default="https://niiodemo.apsm.com.tw", type=validate_api_base,\n'
                             '                        help="此部署環境已確認的 HTTPS API 基底網址")\n'
                             '    args = parser.parse_args()', 'API 必填參數')
     text = replace_required(text, 'fetch_worksheet_structure(ws_id, args.token, app_id)',
@@ -864,7 +864,7 @@ class NoRedirect(HTTPRedirectHandler):
                             '        sys.exit(1)\n\n'
                             '    # 寫入輸出', '避免不完整輸出')
     text = text.replace('python3 refresh_fields.py --token',
-                        'python3 refresh_fields.py --api-base "https://niio-api.example.invalid" --token')
+                        'python3 refresh_fields.py --api-base "https://niiodemo.apsm.com.tw" --token')
     compile(text, 'refresh_fields.py', 'exec')
     return text
 
@@ -888,7 +888,7 @@ def apply_customer_policy(stage):
             text = configure_refresh_script(text)
         elif relative.endswith('/assets/config.js.template'):
             text = replace_required(text, "API_BASE_URL: 'https://api.mingdao.com',",
-                                    "API_BASE_URL: '', // 必填：已確認的 niio API 基底網址，不含 /v3", '網站 API 設定')
+                                    "API_BASE_URL: 'https://niiodemo.apsm.com.tw', // 其他部署請改為該環境的 API 基底網址，不含 /v3", '網站 API 設定')
         elif relative.endswith('/assets/api.js.template'):
             text = replace_required(text, '        const url = `${CONFIG.API_BASE_URL}${endpoint}`;',
                                     '''        const base = CONFIG.API_BASE_URL;
@@ -909,7 +909,7 @@ def apply_customer_policy(stage):
 API、MCP 與網站網址可能不同；不得由 MCP 網址自行推測，也不得跨環境共用 Token。
 
 1. 從使用者選定的 MCP 連線讀取 `headers.Authorization`；若實際設定使用 URL 的 `Authorization` 參數，解碼後取值。保留完整認證字串，不假設固定前綴，不顯示 Token。
-2. API 基底網址未確認時先詢問使用者。網址必須包含 HTTPS，不能包含 `/mcp`、`/v3` 或驗證參數。
+2. niio demo 的 API 基底網址預設為 `https://niiodemo.apsm.com.tw`。其他部署必須以 `--api-base` 指定該環境網址；不得將其他環境的憑證傳往 demo。網址必須包含 HTTPS，不能包含 `/mcp`、`/v3` 或驗證參數。
 3. 執行下列腳本，將變數替換為此環境已確認的設定。範例變數必須先設定，不能直接照抄執行。
 
 ```bash
@@ -993,7 +993,7 @@ const hapMcpConfig = [selectedMcpName, mcpServers[selectedMcpName]];'''
                           lambda m: m[1] + '（請參閱此技能隨附文件或部署管理者提供的說明）', text, flags=re.IGNORECASE)
             text = re.sub(r'https?://(?:apifox|developers|help|bbs)\.mingdao\.com[^\s<>"\x27`)\]}]*',
                           '（請參閱部署管理者提供的說明文件）', text, flags=re.IGNORECASE)
-            text = re.sub(r'(?<![A-Za-z0-9_.-])(?:api2?\.mingdao\.com)', 'niio-api.example.invalid', text, flags=re.IGNORECASE)
+            text = re.sub(r'(?<![A-Za-z0-9_.-])(?:api2?\.mingdao\.com)', 'niiodemo.apsm.com.tw', text, flags=re.IGNORECASE)
             text = re.sub(r'(?<![A-Za-z0-9_.-])(?:p1|d1)\.mingdaoyun\.cn', 'niio-assets.example.invalid', text, flags=re.IGNORECASE)
             text = re.sub(r'(?<![A-Za-z0-9_.-])(?:www|xxx)\.mingdao\.com', 'niio-web.example.invalid', text, flags=re.IGNORECASE)
             text = re.sub(r'(?<![A-Za-z0-9_.-])avatars\.mingdao\.com', 'niio-assets.example.invalid', text, flags=re.IGNORECASE)
