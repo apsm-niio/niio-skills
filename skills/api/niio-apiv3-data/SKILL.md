@@ -3,6 +3,8 @@ name: niio-apiv3-data
 description: 使用niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。如果使用者已設定 niio MCP，AI 應該自動從 MCP 設定中提取身分驗證與授權金鑰。
 license: MIT
 ---
+> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
 
 
@@ -12,7 +14,7 @@ license: MIT
 
 ## Overview
 
-niio (High-performance Application Platform) 是一個超級應用平台,透過這個基座可以建置很多應用。透過 niio V3 介面,您可以:
+niio 是一個超級應用平台,透過這個基座可以建置很多應用。透過 niio V3 介面,您可以:
 
 1. **在自訂檢視外掛中**呼叫 V3 介面操作資料
 2. **在獨立前端頁面中**使用 V3 介面編排業務邏輯
@@ -46,7 +48,7 @@ niio (High-performance Application Platform) 是一個超級應用平台,透過�
    - **Linux**: `~/.config/<編輯器>/User/settings.json`
 
 2. **查詢 MCP 設定**
-   - 在 `mcpServers` 物件中查詢 niio 的 MCP 伺服器設定（`url` 指向 `api.mingdao.com/mcp` 或 `api2.mingdao.com/mcp`）
+   - 使用已確認的 MCP 連線名稱與網址，不依品牌網域判斷。
    - 常見命名：AppKey 身分驗證與授權多為 `niio-mcp-應用名`；個人身分驗證與授權多為 `niio_personal_mcp`
 
 3. **識別身分驗證與授權型別並解析參數**
@@ -58,7 +60,7 @@ niio (High-performance Application Platform) 是一個超級應用平台,透過�
    {
      "mcpServers": {
        "niio-mcp-應用名": {
-         "url": "https://api2.mingdao.com/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
+         "url": "https://niio-api.example.invalid/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
        }
      }
    }
@@ -69,7 +71,7 @@ niio (High-performance Application Platform) 是一個超級應用平台,透過�
    {
      "mcpServers": {
        "niio_personal_mcp": {
-         "url": "https://api2.mingdao.com/mcp",
+         "url": "https://niio-api.example.invalid/mcp",
          "headers": {
            "Authorization": "Bearer pat_XXX"
          }
@@ -96,11 +98,14 @@ const settingsPath = process.platform === 'darwin'
 
 const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
 
-// 2. 查詢 niio MCP 設定（url 指向 api.mingdao.com/mcp 或 api2.mingdao.com/mcp）
+// 依使用者指定的連線名稱取得 MCP 設定
 const mcpServers = settings.mcpServers || {};
-const hapMcpConfig = Object.entries(mcpServers).find(
-  ([name, config]) => config.url && /api2?\.mingdao\.com\/mcp/.test(config.url)
-);
+// selectedMcpName 必須由使用者選定，不能靠品牌網域猜測或任取第一筆。
+const selectedMcpName = process.env.NIIO_MCP_SERVER_NAME;
+if (!selectedMcpName || !mcpServers[selectedMcpName]?.url) {
+  throw new Error('請先指定本次要使用的 MCP 連線名稱');
+}
+const hapMcpConfig = [selectedMcpName, mcpServers[selectedMcpName]];
 
 if (hapMcpConfig) {
   const [, config] = hapMcpConfig;
@@ -129,7 +134,7 @@ if (hapMcpConfig) {
   }
 
   // 4. 將 auth.headers 合併進 API 請求頭即可
-  console.log(auth);
+  console.log('已取得所選環境的認證設定'); // 不輸出憑證
 }
 ```
 
@@ -237,10 +242,10 @@ const headers = {
 ```
 
 **線上文件資源:**
-- [API 整體介紹](https://apifox.mingdao.com/7271706m0.md)
-- [欄位型別對照表](https://apifox.mingdao.com/7271709m0.md)
-- [篩選器使用指南](https://apifox.mingdao.com/7271713m0.md)
-- [錯誤碼說明](https://apifox.mingdao.com/7271715m0.md)
+- API 整體介紹（請參閱此技能隨附文件或部署管理者提供的說明）
+- 欄位型別對照表（請參閱此技能隨附文件或部署管理者提供的說明）
+- 篩選器使用指南（請參閱此技能隨附文件或部署管理者提供的說明）
+- 錯誤碼說明（請參閱此技能隨附文件或部署管理者提供的說明）
 
 ---
 
@@ -1005,10 +1010,10 @@ const customerTypeKey = optionMaps['customer_type']['成交客戶'];
 
 ### 線上文件
 
-- [API 整體介紹](https://apifox.mingdao.com/7271706m0.md)
-- [欄位型別對照表](https://apifox.mingdao.com/7271709m0.md)
-- [篩選器使用指南](https://apifox.mingdao.com/7271713m0.md)
-- [錯誤碼說明](https://apifox.mingdao.com/7271715m0.md)
+- API 整體介紹（請參閱此技能隨附文件或部署管理者提供的說明）
+- 欄位型別對照表（請參閱此技能隨附文件或部署管理者提供的說明）
+- 篩選器使用指南（請參閱此技能隨附文件或部署管理者提供的說明）
+- 錯誤碼說明（請參閱此技能隨附文件或部署管理者提供的說明）
 
 ### 相關技能
 

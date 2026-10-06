@@ -10,7 +10,15 @@ const API = {
      * 通用請求方法
      */
     async request(endpoint, options = {}) {
-        const url = `${CONFIG.API_BASE_URL}${endpoint}`;
+        const base = CONFIG.API_BASE_URL;
+        if (!base) throw new Error('請先設定此部署環境的 API_BASE_URL');
+        const parsedBase = new URL(base);
+        if (parsedBase.protocol !== 'https:' || parsedBase.username || parsedBase.password ||
+            parsedBase.search || parsedBase.hash || parsedBase.hostname.endsWith('.invalid') ||
+            /\/(mcp|v3)\/?$/.test(parsedBase.pathname)) {
+            throw new Error('API_BASE_URL 必須是已確認的 HTTPS API 基底網址');
+        }
+        const url = `${base.replace(/\/$/, '')}${endpoint}`;
 
         const defaultHeaders = {
             'Content-Type': 'application/json',
@@ -21,6 +29,7 @@ const API = {
         try {
             const response = await fetch(url, {
                 ...options,
+                redirect: 'error',
                 headers: {
                     ...defaultHeaders,
                     ...options.headers

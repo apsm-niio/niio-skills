@@ -3,7 +3,7 @@
 Step 3 全指令碼方案：直接呼叫niio REST API 取得工作表結構並生成 worksheetContext.json。
 
 用法:
-  python3 refresh_fields.py --token "md_pss_id xxx" ./apps/图书借阅/hap-context.json
+  python3 refresh_fields.py --api-base "https://niio-api.example.invalid" --token "md_pss_id xxx" ./apps/图书借阅/hap-context.json
 
 輸入:
   --token     niio認證 token（Authorization header 值）
@@ -17,26 +17,43 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from urllib.request import Request, urlopen
+from urllib.request import Request, build_opener, HTTPRedirectHandler
+from urllib.parse import urlsplit
 from urllib.error import HTTPError, URLError
 
-API_BASE = "https://api2.mingdao.com"
+def validate_api_base(value):
+    value = value.strip().rstrip('/')
+    parsed = urlsplit(value)
+    if (parsed.scheme != 'https' or not parsed.hostname or parsed.username
+            or parsed.password or parsed.query or parsed.fragment
+            or parsed.hostname.endswith('.invalid')
+            or parsed.path.rstrip('/').endswith(('/mcp', '/v3'))):
+        raise argparse.ArgumentTypeError('請提供已確認的 HTTPS API 基底網址，不含 /mcp、/v3、帳密或查詢參數')
+    return value
 
 
-def fetch_worksheet_structure(worksheet_id, token, app_id):
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise URLError('API 網址發生重新導向；請先確認正確網址，不自動轉送憑證')
+
+
+
+def fetch_worksheet_structure(worksheet_id, token, app_id, api_base):
     """呼叫 REST API 取得單張工作表結構。"""
-    url = f"{API_BASE}/v3/app/worksheets/{worksheet_id}"
+    url = f"{api_base}/v3/app/worksheets/{worksheet_id}"
     headers = {
         "Authorization": token,
         "HAP-Appid": app_id,
     }
     req = Request(url, headers=headers, method="GET")
     try:
-        with urlopen(req, timeout=30) as resp:
+        with build_opener(NoRedirect()).open(req, timeout=30) as resp:
             return json.loads(resp.read().decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        print("  ❌ API 未回傳有效的 JSON", file=sys.stderr)
+        return None
     except HTTPError as e:
-        body = e.read().decode("utf-8", errors="replace")
-        print(f"  ❌ HTTP {e.code}: {body[:200]}", file=sys.stderr)
+        print(f"  ❌ HTTP {e.code}，請檢查 API 網址與此環境的授權", file=sys.stderr)
         return None
     except URLError as e:
         print(f"  ❌ 網路錯誤: {e.reason}", file=sys.stderr)
@@ -88,6 +105,8 @@ def main():
     parser = argparse.ArgumentParser(description="重新整理工作表欄位結構")
     parser.add_argument("--token", required=True, help="niio認證 token（如 md_pss_id xxx）")
     parser.add_argument("context", help="hap-context.json 檔案路徑")
+    parser.add_argument("--api-base", required=True, type=validate_api_base,
+                        help="此部署環境已確認的 HTTPS API 基底網址")
     args = parser.parse_args()
 
     context_path = Path(args.context)
@@ -115,12 +134,18 @@ def main():
 
     for ws_name, ws_id in worksheet_id_by_name.items():
         print(f"  ⏳ {ws_name} ({ws_id})...", file=sys.stderr, end="")
-        raw = fetch_worksheet_structure(ws_id, args.token, app_id)
+        raw = fetch_worksheet_structure(ws_id, args.token, app_id, args.api_base)
         if raw is None:
             errors.append(ws_name)
             continue
 
         fields = extract_fields(raw)
+        if (not isinstance(raw, dict) or raw.get("success") is False
+                or not isinstance(fields, list) or not fields
+                or not all(isinstance(field, dict) for field in fields)):
+            errors.append(ws_name)
+            print(" ❌ 未取得有效欄位結構", file=sys.stderr)
+            continue
         normalized = [normalize_field(f) for f in fields]
 
         worksheet_context.append({
@@ -129,6 +154,10 @@ def main():
             "fields": normalized,
         })
         print(f" ✅ {len(normalized)} 個欄位", file=sys.stderr)
+
+    if errors:
+        print("❌ 部分工作表讀取失敗，保留既有 worksheetContext.json", file=sys.stderr)
+        sys.exit(1)
 
     # 寫入輸出
     output_path = context_path.parent / "worksheetContext.json"

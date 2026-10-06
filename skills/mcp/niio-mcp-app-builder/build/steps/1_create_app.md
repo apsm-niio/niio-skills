@@ -78,21 +78,14 @@
 
 ## 寫入應用訪問連結
 
-根據目前使用的 MCP 服務地址，確定前端網域：
+使用本次環境已確認的 niio 網站根網址 `NIIO_WEB_BASE_URL`。此網址可以與 MCP 或 API 不同；若未提供，先詢問使用者，不自行推測。保留已確認的協定、連接埠與部署路徑；移除尾端斜線後接上 `/app/{appId}`。
 
-| MCP 服務地址 | 前端網域 |
-|---|---|
-| `api.mingdao.com/mcp` | `www.mingdao.com` |
-| `<非*.mingdao.com的host>/mcp` | `<非*.mingdao.com的host>` |
-
-> 不是 *.mingdao.com 的MCP服務地址，就使用該網域作為前端網域
-
-拼接應用連結 `https://{前端域名}/app/{appId}`，在 `{PROJECT_ROOT}/apps/{appName}/overview.md` 檔案的最頂端（第 1 行）追加寫入連結卡片：
+拼接應用連結 `{NIIO_WEB_BASE_URL}/app/{appId}`，在 `{PROJECT_ROOT}/apps/{appName}/overview.md` 檔案的最頂端（第 1 行）追加寫入連結卡片：
 
 ```markdown
 > [!TIP]
 > **🎉 應用已物理建立成功！**
-> **訪問連結**：[點選此處立即進入系統 ➔](https://{前端域名}/app/{appId})
+> **訪問連結**：[點選此處立即進入系統 ➔]({NIIO_WEB_BASE_URL}/app/{appId})
 
 ---
 ```

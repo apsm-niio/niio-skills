@@ -144,5 +144,26 @@
   "connectionNames": {
     "hap_personal_mcp": "niio_personal_mcp"
   },
+  "removedExternalSampleImages": 126,
+  "deploymentPolicyChangedFiles": [
+    "skills/api/niio-api-website/SKILL.md",
+    "skills/api/niio-api-website/assets/api.js.template",
+    "skills/api/niio-api-website/assets/config.js.template",
+    "skills/api/niio-api-website/references/niio-api-usage-guide.md",
+    "skills/api/niio-api-website/references/niio-as-database-guide.md",
+    "skills/api/niio-apiv3-data/README.md",
+    "skills/api/niio-apiv3-data/SKILL.md",
+    "skills/api/niio-apiv3-data/references/niio-api-usage-guide.md",
+    "skills/api/niio-view-plugin/SKILL.md",
+    "skills/api/niio-view-plugin/V3_API_INTEGRATION.md",
+    "skills/api/niio-view-plugin/references/niio-view-plugin-dev-guide.md",
+    "skills/mcp/niio-mcp-app-builder/SKILL.md",
+    "skills/mcp/niio-mcp-app-builder/build/resources/sample_images.json",
+    "skills/mcp/niio-mcp-app-builder/build/scripts/refresh_fields.py",
+    "skills/mcp/niio-mcp-app-builder/build/steps/1_create_app.md",
+    "skills/mcp/niio-mcp-app-builder/build/steps/3_refresh_fields.md",
+    "skills/mcp/niio-mcp-app-builder/build/steps/6_create_sample_data.md",
+    "skills/mcp/niio-mcp-app-builder/version.json"
+  ],
   "checkedFiles": 81
 }

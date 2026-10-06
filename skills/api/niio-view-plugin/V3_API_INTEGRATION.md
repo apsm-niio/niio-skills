@@ -1,3 +1,5 @@
+> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+
 # niio 檢視外掛中使用 V3 介面
 
 本文件是 [niio-view-plugin](./SKILL.md) 技能的補充說明,介紹如何在檢視外掛中使用 niio V3 介面。
@@ -89,7 +91,7 @@ async function callV3API(endpoint, method = 'GET', body = null) {
   }
 
   const response = await fetch(
-    `https://api.mingdao.com${endpoint}`,
+    `https://niio-api.example.invalid${endpoint}`,
     options
   );
 
@@ -137,7 +139,7 @@ MCP 設定示例:
 ```json
 {
   "niio-mcp-MEGA CRM": {
-    "url": "https://api.mingdao.com/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign",
+    "url": "https://niio-api.example.invalid/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign",
     "type": "sse"
   }
 }
@@ -180,7 +182,7 @@ function OptionSetList() {
     };
 
     const response = await fetch(
-      'https://api.mingdao.com/v3/app/optionsets',
+      'https://niio-api.example.invalid/v3/app/optionsets',
       { method: 'GET', headers }
     );
 
@@ -217,14 +219,14 @@ async function getWorksheetData(worksheetId) {
 
   // 取得工作表結構
   const structureResponse = await fetch(
-    `https://api.mingdao.com/v3/app/worksheets/${worksheetId}`,
+    `https://niio-api.example.invalid/v3/app/worksheets/${worksheetId}`,
     { method: 'GET', headers }
   );
   const structure = await structureResponse.json();
 
   // 取得記錄清單
   const rowsResponse = await fetch(
-    `https://api.mingdao.com/v3/app/worksheets/${worksheetId}/rows/list`,
+    `https://niio-api.example.invalid/v3/app/worksheets/${worksheetId}/rows/list`,
     {
       method: 'POST',
       headers,

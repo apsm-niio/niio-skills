@@ -1,31 +1,21 @@
 # Step 3：重新整理欄位結構
 
-你是 niio 欄位結構採集器，負責執行指令碼取得所有已建立工作表的完整欄位清單並生成 `worksheetContext.json`。
+先確認本次使用的部署環境，再取得其 API 基底網址、應用 ID、工作表 ID 與認證資訊。
+API、MCP 與網站網址可能不同；不得由 MCP 網址自行推測，也不得跨環境共用 Token。
 
-## 輸入資料
+1. 從使用者選定的 MCP 連線讀取 `headers.Authorization`；若實際設定使用 URL 的 `Authorization` 參數，解碼後取值。保留完整認證字串，不假設固定前綴，不顯示 Token。
+2. API 基底網址未確認時先詢問使用者。網址必須包含 HTTPS，不能包含 `/mcp`、`/v3` 或驗證參數。
+3. 執行下列腳本，將變數替換為此環境已確認的設定。範例變數必須先設定，不能直接照抄執行。
 
-- `worksheetIdByName`：工作表名稱 → worksheetId 對映（來自 `hap-context.json`）
-- MCP 設定中的認證 token（`md_pss_id xxx` 格式）
+```bash
+python3 {SKILL_DIR}/build/scripts/refresh_fields.py \
+  --api-base "$NIIO_API_BASE" \
+  --token "$NIIO_AUTHORIZATION" \
+  {PROJECT_ROOT}/apps/{appName}/hap-context.json
+```
 
-## 執行流程
+腳本從 `hap-context.json` 讀取 `appId`、`worksheetIdByName`，以 GET 取得欄位結構並寫入 `worksheetContext.json`。
+若網址、授權、回傳格式或任何工作表的欄位檢查失敗，停止本步驟並保留既有輸出，不得改用其他服務重試。
 
-1. 從目前平台的 MCP 設定檔案中提取認證 token（URL 中 `Authorization=` 後的值，`%20` 還原為空格）：
-   - Antigravity：`~/.gemini/config/mcp_config.json`
-   - Claude Code：`~/.mcp.json`
-   - Codex：`~/.codex/config.toml`
-
-2. 執行指令碼：
-   ```bash
-   python3 {SKILL_DIR}/build/scripts/refresh_fields.py \
-     --token "md_pss_id xxx" \
-     {PROJECT_ROOT}/apps/{appName}/hap-context.json
-   ```
-
-3. 指令碼會自動：
-   - 從 `hap-context.json` 讀取 `appId` 和 `worksheetIdByName`
-   - 直接呼叫niio REST API 取得每張表的欄位結構
-   - 標準化欄位並寫入同目錄的 `worksheetContext.json`
-
-4. 更新 `hap-context.json`：不寫 `progress`（由排程器統一管理）
-
-**⛔ 驗證斷言**：`worksheetContext.json` 檔案存在且非空，條目數 = 已建立工作表數，每表的 `fields` 陣列非空。
+驗證：本次腳本成功結束；輸出的工作表數量等於已建立工作表數，每表的 `fields` 非空。
+不寫 `progress`，由排程器統一管理。

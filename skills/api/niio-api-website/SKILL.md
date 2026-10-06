@@ -3,6 +3,8 @@ name: niio-api-website
 description: 立即觸發條件：使用者提到"niio 建置網站"、"niio 前端專案"、"niio 作為資料庫"、"企業官網"、"官網"、"透過 niio 建置"、"用 niio 做網站"、"niio 網站"、"建置官網"、"前後端分離"、"內容管理系統"、"niio 前端"、"niio 官網"。提供完整的 niio + 前端專案建置指南，包括 niio 後臺設定、前端專案結構、API 整合和資料渲染。
 license: MIT
 ---
+> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
 
 
@@ -216,7 +218,7 @@ AskUserQuestion({
 {
   "mcpServers": {
     "niio-mcp-應用名": {
-      "url": "https://api.mingdao.com/mcp?HAP-Appkey=xxx&HAP-Sign=xxx"
+      "url": "https://niio-api.example.invalid/mcp?HAP-Appkey=xxx&HAP-Sign=xxx"
     }
   }
 }
@@ -260,7 +262,7 @@ project-name/
 **1. js/config.js**
 ```javascript
 const CONFIG = {
-    API_BASE_URL: 'https://api.mingdao.com',
+    API_BASE_URL: 'https://niio-api.example.invalid',
     HAP_APPKEY: '你的HAP_APPKEY',
     HAP_SIGN: '你的HAP_SIGN',
     WORKSHEETS: {
@@ -485,7 +487,7 @@ mcp__hap_mcp____get_worksheet_structure({
 
 **方法 2: API 查詢**
 ```javascript
-fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/structure', {
+fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/structure', {
     headers: {
         'HAP-Appkey': 'xxx',
         'HAP-Sign': 'xxx'

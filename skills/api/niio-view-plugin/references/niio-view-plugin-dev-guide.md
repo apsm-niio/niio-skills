@@ -1,3 +1,5 @@
+> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+
 # niio 檢視外掛開發 - AI 執行手冊
 
 > **你的任務**: 當使用者提供檢視外掛 ID 和需求描述時,你需要自動完成從專案建立到釋出上線的全流程,使用者無需手動操作任何命令。
@@ -1295,7 +1297,7 @@ const result = await api.getFilterRows({
 ```javascript
 // 在專案根目錄建立 config/api.config.js
 const API_CONFIG = {
-  baseUrl: 'https://api.mingdao.com',
+  baseUrl: 'https://niio-api.example.invalid',
   appkey: 'YOUR_APPKEY',  // 從niio後臺取得
   sign: 'YOUR_SIGN'       // 從niio後臺取得
 };
@@ -1781,7 +1783,7 @@ mdye push -m "訂單狀態檢視外掛首次釋出
 │                                                           │
 │  外掛名稱: 自訂檢視                                     │
 │  檢視名稱: 自訂檢視                                     │
-│  檢視地址: https://www.mingdao.com/worksheet/...         │
+│  檢視地址: https://niio-web.example.invalid/worksheet/...         │
 │  提交資訊: 訂單狀態檢視外掛首次釋出                       │
 │  提交人: 使用者名稱                                           │
 └──────────────────────────────────────────────────────────┘
@@ -2603,7 +2605,7 @@ async function handleRelationField(worksheetId, controlId, rowId, fieldValue) {
 ## 參考資源
 
 ### 官方文件
-- [niio開發者文件](https://developers.mingdao.com/)
+- niio開發者文件（請參閱此技能隨附文件或部署管理者提供的說明）
 - [React 官方文件](https://react.dev/)
 - [Node.js 官方文件](https://nodejs.org/)
 

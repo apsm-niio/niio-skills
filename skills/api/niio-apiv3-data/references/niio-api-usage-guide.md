@@ -1,3 +1,5 @@
+> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+
 # niio V3 API 使用規範完整指南
 
 > 本文件總結了niio V3 API的核心使用規範、最佳實踐和常見陷阱,基於實際測試驗證
@@ -37,10 +39,10 @@
 如果無法透過 MCP訪問到應用 API文件,可以透過以下線上地址直接訪問 API V3 文件:
 
 **概述文件**:
-- [API 整體介紹](https://apifox.mingdao.com/7271706m0.md)
-- [欄位型別對照表](https://apifox.mingdao.com/7271709m0.md)
-- [篩選器使用指南](https://apifox.mingdao.com/7271713m0.md)
-- [錯誤碼說明](https://apifox.mingdao.com/7271715m0.md)
+- API 整體介紹（請參閱此技能隨附文件或部署管理者提供的說明）
+- 欄位型別對照表（請參閱此技能隨附文件或部署管理者提供的說明）
+- 篩選器使用指南（請參閱此技能隨附文件或部署管理者提供的說明）
+- 錯誤碼說明（請參閱此技能隨附文件或部署管理者提供的說明）
 
 **API 端點文件**: 完整的 API 端點清單見文件後面的"線上文件資源"章節。
 
@@ -53,54 +55,54 @@
 ### 應用 API V3 文件
 
 #### 概述文件
-- [V3-beta (AI 友好) 概述](https://apifox.mingdao.com/7271706m0.md) - API 整體介紹和使用說明
-- [V3-beta (AI 友好) 欄位型別對照表](https://apifox.mingdao.com/7271709m0.md) - 完整的欄位型別說明
-- [V3-beta (AI 友好) 篩選器使用指南](https://apifox.mingdao.com/7271713m0.md) - Filter 物件詳細說明
-- [V3-beta (AI 友好) 錯誤碼](https://apifox.mingdao.com/7271715m0.md) - API 錯誤碼說明
+- V3-beta (AI 友好) 概述（請參閱此技能隨附文件或部署管理者提供的說明） - API 整體介紹和使用說明
+- V3-beta (AI 友好) 欄位型別對照表（請參閱此技能隨附文件或部署管理者提供的說明） - 完整的欄位型別說明
+- V3-beta (AI 友好) 篩選器使用指南（請參閱此技能隨附文件或部署管理者提供的說明） - Filter 物件詳細說明
+- V3-beta (AI 友好) 錯誤碼（請參閱此技能隨附文件或部署管理者提供的說明） - API 錯誤碼說明
 
 #### 應用 API 端點文件
-- **應用**: [取得應用資訊](https://apifox.mingdao.com/339496583e0.md)
+- **應用**: 取得應用資訊（請參閱此技能隨附文件或部署管理者提供的說明）
 - **工作表**:
-  - [取得工作表清單](https://apifox.mingdao.com/359328827e0.md)
-  - [取得工作表結構資訊](https://apifox.mingdao.com/339496584e0.md)
-  - [編輯工作表](https://apifox.mingdao.com/339496585e0.md)
-  - [刪除工作表](https://apifox.mingdao.com/339496586e0.md)
-  - [新建工作表](https://apifox.mingdao.com/339496587e0.md)
+  - 取得工作表清單（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得工作表結構資訊（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 編輯工作表（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 刪除工作表（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 新建工作表（請參閱此技能隨附文件或部署管理者提供的說明）
 - **工作表行記錄**:
-  - [取得行記錄清單](https://apifox.mingdao.com/339496588e0.md)
-  - [取得行記錄詳情](https://apifox.mingdao.com/339496589e0.md)
-  - [新建行記錄](https://apifox.mingdao.com/339496593e0.md)
-  - [更新行記錄](https://apifox.mingdao.com/339496590e0.md)
-  - [刪除行記錄](https://apifox.mingdao.com/339496591e0.md)
-  - [批次新增行記錄](https://apifox.mingdao.com/339496594e0.md)
-  - [批次更新行記錄](https://apifox.mingdao.com/339496595e0.md)
-  - [批次刪除行記錄](https://apifox.mingdao.com/339496596e0.md)
-  - [取得關聯記錄](https://apifox.mingdao.com/339496592e0.md)
-  - [取得行記錄透視資料](https://apifox.mingdao.com/339496597e0.md)
-  - [取得記錄分享連結](https://apifox.mingdao.com/339496598e0.md)
-  - [取得行記錄日誌](https://apifox.mingdao.com/339496599e0.md)
-  - [取得行記錄討論](https://apifox.mingdao.com/339496600e0.md)
+  - 取得行記錄清單（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得行記錄詳情（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 新建行記錄（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 更新行記錄（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 刪除行記錄（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 批次新增行記錄（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 批次更新行記錄（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 批次刪除行記錄（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得關聯記錄（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得行記錄透視資料（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得記錄分享連結（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得行記錄日誌（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得行記錄討論（請參閱此技能隨附文件或部署管理者提供的說明）
 - **選項集**:
-  - [取得選項集清單](https://apifox.mingdao.com/339496601e0.md)
-  - [建立選項集](https://apifox.mingdao.com/339496602e0.md)
-  - [編輯選項集](https://apifox.mingdao.com/339496603e0.md)
-  - [停用選項集](https://apifox.mingdao.com/339496604e0.md)
+  - 取得選項集清單（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 建立選項集（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 編輯選項集（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 停用選項集（請參閱此技能隨附文件或部署管理者提供的說明）
 - **工作流**:
-  - [取得流程清單](https://apifox.mingdao.com/339496605e0.md)
-  - [取得流程詳情](https://apifox.mingdao.com/339496606e0.md)
-  - [觸發流程](https://apifox.mingdao.com/339496607e0.md)
+  - 取得流程清單（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得流程詳情（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 觸發流程（請參閱此技能隨附文件或部署管理者提供的說明）
 - **角色**:
-  - [取得角色清單](https://apifox.mingdao.com/339496608e0.md)
-  - [建立角色](https://apifox.mingdao.com/339496609e0.md)
-  - [取得角色詳情](https://apifox.mingdao.com/339496610e0.md)
-  - [刪除角色](https://apifox.mingdao.com/339496611e0.md)
-  - [新增角色成員](https://apifox.mingdao.com/339496612e0.md)
-  - [移除角色成員](https://apifox.mingdao.com/339496613e0.md)
-  - [成員退出所有角色](https://apifox.mingdao.com/339496614e0.md)
+  - 取得角色清單（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 建立角色（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得角色詳情（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 刪除角色（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 新增角色成員（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 移除角色成員（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 成員退出所有角色（請參閱此技能隨附文件或部署管理者提供的說明）
 - **公共查詢**:
-  - [查詢成員](https://apifox.mingdao.com/339496615e0.md)
-  - [查詢部門](https://apifox.mingdao.com/339496616e0.md)
-  - [取得地區資訊](https://apifox.mingdao.com/339496617e0.md)
+  - 查詢成員（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 查詢部門（請參閱此技能隨附文件或部署管理者提供的說明）
+  - 取得地區資訊（請參閱此技能隨附文件或部署管理者提供的說明）
 
 ### 使用建議
 
@@ -1892,7 +1894,7 @@ POST /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field_id}
       "original_file_name": "產品宣傳冊.pdf",
       "file_size": 2048576,
       "file_type": 4,
-      "DownloadUrl": "https://p1.mingdaoyun.cn/doc/20260111/xxx.pdf",
+      "DownloadUrl": "https://niio-assets.example.invalid/doc/20260111/xxx.pdf",
       "preview_url": "https://...",
       "thumbnail_full_path": "https://..."
     }

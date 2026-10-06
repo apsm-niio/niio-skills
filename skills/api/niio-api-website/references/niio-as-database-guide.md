@@ -1,3 +1,5 @@
+> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+
 # niio 前後端專案建置指南
 
 > 適用於獨立頁面動態展示資料的場景
@@ -146,7 +148,7 @@ mcp__hap_mcp____get_record_list(...)
 ✅ **正確做法**: 前端使用 fetch 呼叫 API V3
 ```javascript
 // ✅ 正確：前端呼叫 API V3
-fetch('https://api.mingdao.com/v3/app/worksheets/{id}/rows/list', {
+fetch('https://niio-api.example.invalid/v3/app/worksheets/{id}/rows/list', {
     method: 'POST',
     headers: {
         'HAP-Appkey': 'xxx',
@@ -358,7 +360,7 @@ if (!structure.includes('產品表')) {
 
 ### 前置要求
 
-1. **niio帳號**: 註冊地址 https://www.mingdao.com
+1. **niio帳號**: 註冊地址 https://niio-web.example.invalid
 2. **niio 應用**: 在niio建立一個應用
 3. **API 憑證**: 取得 HAP-Appkey 和 HAP-Sign
 
@@ -733,7 +735,7 @@ const modernProducts = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
 {
   "mcpServers": {
     "niio-mcp-API測試": {
-      "url": "https://api.mingdao.com/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
+      "url": "https://niio-api.example.invalid/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
     }
   }
 }
@@ -754,7 +756,7 @@ const modernProducts = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
 2. **取得工作表 ID**
    - 開啟工作表
    - 檢視瀏覽器位址列 URL
-   - 格式：`https://xxx.mingdao.com/app/{appId}/worksheet/{worksheetId}`
+   - 格式：`https://niio-web.example.invalid/app/{appId}/worksheet/{worksheetId}`
 
 3. **取得欄位 ID**
    - 方式 1：透過 API 查詢工作表結構
@@ -1509,7 +1511,7 @@ niio API V3 已經設定了 CORS 支援,可以直接從前端發起跨域請求�
 ```javascript
 // 直接從瀏覽器呼叫 niio API
 async function fetchHAPData() {
-    const response = await fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/rows/list', {
+    const response = await fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/rows/list', {
         method: 'POST',
         headers: {
             'HAP-Appkey': 'your_appkey',
@@ -1533,7 +1535,7 @@ async function fetchHAPData() {
 ```javascript
 async function safeFetchHAPData() {
     try {
-        const response = await fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/rows/list', {
+        const response = await fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/rows/list', {
             method: 'POST',
             headers: {
                 'HAP-Appkey': CONFIG.HAP_APPKEY,
@@ -2023,7 +2025,7 @@ await filterPager.clearFilters();
 // niio API 設定
 const CONFIG = {
     // niio 應用公開 API V3 基礎 URL
-    API_BASE_URL: 'https://api.mingdao.com',
+    API_BASE_URL: 'https://niio-api.example.invalid',
 
     // niio 應用認證資訊（從 niio 後臺取得）
     HAP_APPKEY: '你的HAP_APPKEY',
@@ -2398,12 +2400,12 @@ async getProducts() {
 // config.js 中區分環境
 const ENV = {
     development: {
-        API_BASE_URL: 'https://api.mingdao.com',
+        API_BASE_URL: 'https://niio-api.example.invalid',
         HAP_APPKEY: '開發環境的key',
         HAP_SIGN: '開發環境的sign'
     },
     production: {
-        API_BASE_URL: 'https://api.mingdao.com',
+        API_BASE_URL: 'https://niio-api.example.invalid',
         HAP_APPKEY: '生產環境的key',
         HAP_SIGN: '生產環境的sign'
     }
@@ -2484,7 +2486,7 @@ async request(url, options = {}) {
 2. **API 查詢**：
    ```javascript
    // 透過瀏覽器控制檯呼叫
-   fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/structure', {
+   fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/structure', {
        headers: {
            'HAP-Appkey': 'xxx',
            'HAP-Sign': 'xxx'
@@ -2529,7 +2531,7 @@ async request(url, options = {}) {
 ```javascript
 // api/hap.js
 export default async function handler(req, res) {
-    const response = await fetch('https://api.mingdao.com/v3/...', {
+    const response = await fetch('https://niio-api.example.invalid/v3/...', {
         headers: {
             'HAP-Appkey': process.env.HAP_APPKEY,  // 儲存在環境變數
             'HAP-Sign': process.env.HAP_SIGN
@@ -2597,13 +2599,13 @@ niio API V3 回傳的欄位值格式因欄位型別而異。正確解析這些�
     "fieldId": [
         {
             "fileName": "產品圖片.png",
-            "downloadUrl": "https://p1.mingdaoyun.cn/.../image.png",
+            "downloadUrl": "https://niio-assets.example.invalid/.../image.png",
             "fileSize": 245678,
             "fileExt": ".png"
         },
         {
             "fileName": "說明文件.pdf",
-            "downloadUrl": "https://p1.mingdaoyun.cn/.../doc.pdf",
+            "downloadUrl": "https://niio-assets.example.invalid/.../doc.pdf",
             "fileSize": 1024567,
             "fileExt": ".pdf"
         }
@@ -3095,7 +3097,7 @@ const getRelativeTime = (dateValue) => {
         {
             "accountId": "user-id-123",
             "fullname": "張三",
-            "avatar": "https://avatars.mingdao.com/xxx.jpg"
+            "avatar": "https://niio-assets.example.invalid/xxx.jpg"
         }
     ]
 }
@@ -3539,7 +3541,7 @@ const formatDate = (value) => {
 - 新增錯誤處理和載入狀態
 
 **下一步：**
-- 檢視 [niio 官方文件](https://api.mingdao.com/docs)
+- 檢視 niio 官方文件（請參閱此技能隨附文件或部署管理者提供的說明）
 - 參考示例專案進行定製開發
 - 加入niio社群交流經驗
 
@@ -3611,10 +3613,10 @@ const formatDate = (value) => {
 
 ### C. 參考連結
 
-- [niio 官方網站](https://www.mingdao.com)
-- [niio API 文件](https://api.mingdao.com/docs)
-- [niio幫助中心](https://help.mingdao.com)
-- [niio社群](https://bbs.mingdao.com)
+- niio 官方網站（請參閱此技能隨附文件或部署管理者提供的說明）
+- niio API 文件（請參閱此技能隨附文件或部署管理者提供的說明）
+- niio幫助中心（請參閱此技能隨附文件或部署管理者提供的說明）
+- niio社群（請參閱此技能隨附文件或部署管理者提供的說明）
 
 ---
 
@@ -3766,7 +3768,7 @@ HAP_SIGN: 'dev_sign'
 // 方案 2: Serverless Functions (Vercel/Netlify)
 // api/hap.js
 export default async function(req, res) {
-    const response = await fetch('https://api.mingdao.com/v3/...', {
+    const response = await fetch('https://niio-api.example.invalid/v3/...', {
         headers: {
             'HAP-Appkey': process.env.HAP_APPKEY,
             'HAP-Sign': process.env.HAP_SIGN
@@ -3795,7 +3797,7 @@ mcp__hap_mcp_API____get_worksheet_structure({
 
 **方法 2: API 查詢**
 ```javascript
-fetch('https://api.mingdao.com/v3/app/worksheets/{worksheetId}/structure', {
+fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/structure', {
     headers: {
         'HAP-Appkey': 'xxx',
         'HAP-Sign': 'xxx'
