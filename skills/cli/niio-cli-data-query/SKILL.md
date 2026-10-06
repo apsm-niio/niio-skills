@@ -148,7 +148,7 @@ hap worksheet record list <子表WS_ID> --use-field-id-as-key -p 1 -n 100 \
 
 - `<反向關聯欄位ID>`：在父表 `worksheet fields` 裡，找 SubTable 欄位的 `sourceField`。
 - value 是**父記錄的 rowid**（不是父記錄標題文字），用 `in`。
-- 子錶行的"第幾行"由排序決定，通常按 AutoNumber 明細編號升序，與表單裡看到的順序一致；
+- 子表行的"第幾行"由排序決定，通常按 AutoNumber 明細編號升序，與表單裡看到的順序一致；
   務必帶 `--sorts-json`，否則預設順序不保證穩定，"數第 N 行"會數錯。
 
 

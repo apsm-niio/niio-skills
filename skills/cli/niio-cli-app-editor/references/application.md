@@ -51,7 +51,7 @@ hap app logs <appId> --archived-id <歸檔ID>
 - 想讓 AI 起草助手設定，先 `hap app chatbot generate <appId> "<一句話描述>"` 拿到建議的名字/圖示/開場白/提示詞，再餵給 `create`。
 - `app logs` 不指定 `--start/--end` 時預設**最近 30 天**；更早的要先 `app log-archives` 拿歸檔 id
   再用 `--archived-id` 查。`--kind` 取 `all|app|record|user`。
-- **備份、角色改名這類操作失敗不再被當成功**：以前伺服器端用裸狀態碼錶示「超限額」「重名」，CLI 照樣
+- **備份、角色改名這類操作失敗不再被當成功**：以前伺服器端用裸狀態碼表示「超限額」「重名」，CLI 照樣
   報成功；現在會按狀態碼判定並非零退出。
 
 ### 刪了之後怎麼確認真的刪掉了

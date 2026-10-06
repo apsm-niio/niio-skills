@@ -40,7 +40,7 @@ hap --json worksheet fields 6845f0a1b2c3d4e5f6a7b8c9 --raw
 `--visibility` 取 `visible` / `hidden` / `pc-hidden` / `mobile-hidden`。**專門用來存另一張表
 子記錄的那種表，通常就該設成 `hidden`**——隱藏隻影響導航，不影響讀寫。
 
-### 只存子錶行的工作表：讀它要指出父表
+### 只存子表行的工作表：讀它要指出父表
 
 ```bash
 hap --json worksheet fields <子表工作表ID> --parent <父表工作表ID>

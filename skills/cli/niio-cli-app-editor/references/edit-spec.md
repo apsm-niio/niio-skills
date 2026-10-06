@@ -142,7 +142,7 @@ hap app-editor inspect  <appId|名稱> [--org-id <org>]    # 列印即時 名→
 | 子表兩種模式都給 / 都不給 | `validate` |
 | 塊放錯型別（Number 帶 `relation` / `subtable`） | `plan`（validate 報 OK） |
 | 跨表型別缺塊、公式型別缺表示式 | `plan`（validate 報 OK） |
-| 內聯子錶帶 `showFields` | `plan`（validate 報 OK） |
+| 內聯子表帶 `showFields` | `plan`（validate 報 OK） |
 | `via` 不通向另一張表、遠端列名解析不了 | `plan`（要讀線上結構） |
 
 帶了 `control` 逃生口的欄位不受「缺塊」這條攔阻（假定你自己在原始鍵裡寫全了），
@@ -180,7 +180,7 @@ hap app-editor inspect  <appId|名稱> [--org-id <org>]    # 列印即時 名→
 | 模式 | 怎麼落地 |
 |---|---|
 | 內聯 `fields` | **整表寫回**（和 `field.update` / `field.delete` 同一條路）：讀出父表全部控制元件，把新的子表列接在後面，整份存回。同時建出一張承載子行的子表工作表。 |
-| 掛載 `worksheet` | 與 `hap worksheet mount-subtable` **同一個兩步握手**：先建 SUB_LIST 列，再在子表側配好回指父表的反向關聯列。少了第二步，子錶行就不會按父記錄過濾顯示。 |
+| 掛載 `worksheet` | 與 `hap worksheet mount-subtable` **同一個兩步握手**：先建 SUB_LIST 列，再在子表側配好回指父表的反向關聯列。少了第二步，子表行就不會按父記錄過濾顯示。 |
 
 掛載完兩側都能讀到：父表的 SUB_LIST 列 `dataSource` 指向子表、`sourceControlId` 是子表側那根反向列；
 子表上多出一列指回父表的關聯。子表工作表**不能單獨讀**，要 `hap worksheet fields <子表ID> --parent <父表ID>`。
