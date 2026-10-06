@@ -1,10 +1,522 @@
 {
-  "product": [],
-  "asset": [],
-  "location": [],
-  "proof": [],
-  "issue": [],
-  "marketing": [],
-  "screenshot": [],
-  "avatar": []
+  "product": [
+    {
+      "keyword": "訂書機",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-001.jpg"
+    },
+    {
+      "keyword": "訂書機",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-002.jpg"
+    },
+    {
+      "keyword": "筆",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-003.jpg"
+    },
+    {
+      "keyword": "垃圾桶",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-004.jpg"
+    },
+    {
+      "keyword": "麵條",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-005.jpg"
+    },
+    {
+      "keyword": "包子",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-006.jpg"
+    },
+    {
+      "keyword": "米飯",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-007.jpg"
+    },
+    {
+      "keyword": "餅",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-008.jpg"
+    },
+    {
+      "keyword": "餃子",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-009.jpg"
+    },
+    {
+      "keyword": "零件",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-010.jpg"
+    },
+    {
+      "keyword": "零件",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-011.jpg"
+    },
+    {
+      "keyword": "零件",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-012.jpg"
+    },
+    {
+      "keyword": "零件",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-013.jpg"
+    },
+    {
+      "keyword": "耗材",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-014.jpg"
+    },
+    {
+      "keyword": "耗材",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-015.jpg"
+    },
+    {
+      "keyword": "食物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-016.jpg"
+    },
+    {
+      "keyword": "食物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-017.jpg"
+    },
+    {
+      "keyword": "食物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-018.jpg"
+    },
+    {
+      "keyword": "食物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-019.jpg"
+    },
+    {
+      "keyword": "家電",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-020.jpg"
+    },
+    {
+      "keyword": "家電",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-021.jpg"
+    },
+    {
+      "keyword": "家電",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-022.jpg"
+    },
+    {
+      "keyword": "家電",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-023.jpg"
+    },
+    {
+      "keyword": "家電",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-024.jpg"
+    },
+    {
+      "keyword": "圖書",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-025.jpg"
+    },
+    {
+      "keyword": "圖書",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-026.jpg"
+    },
+    {
+      "keyword": "圖書",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-027.jpg"
+    },
+    {
+      "keyword": "圖書",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-028.jpg"
+    },
+    {
+      "keyword": "圖書",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-029.jpg"
+    },
+    {
+      "keyword": "鮮花",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-030.jpg"
+    },
+    {
+      "keyword": "鮮花",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-031.jpg"
+    },
+    {
+      "keyword": "鮮花",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-032.jpg"
+    },
+    {
+      "keyword": "鮮花",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-033.jpg"
+    },
+    {
+      "keyword": "漢堡",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-034.jpg"
+    },
+    {
+      "keyword": "寵物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-035.jpg"
+    },
+    {
+      "keyword": "寵物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-036.jpg"
+    },
+    {
+      "keyword": "寵物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-037.jpg"
+    },
+    {
+      "keyword": "寵物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-038.jpg"
+    },
+    {
+      "keyword": "寵物",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-039.jpg"
+    },
+    {
+      "keyword": "鞋",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-040.jpg"
+    },
+    {
+      "keyword": "耳機",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-041.jpg"
+    },
+    {
+      "keyword": "牛奶",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-042.jpg"
+    },
+    {
+      "keyword": "服飾",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-043.jpg"
+    },
+    {
+      "keyword": "服飾",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-044.jpg"
+    },
+    {
+      "keyword": "服飾",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-045.jpg"
+    },
+    {
+      "keyword": "美妝",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-046.jpg"
+    },
+    {
+      "keyword": "美妝",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-047.jpg"
+    },
+    {
+      "keyword": "美妝",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-048.jpg"
+    },
+    {
+      "keyword": "數碼",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-049.jpg"
+    },
+    {
+      "keyword": "辦公",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-050.jpg"
+    },
+    {
+      "keyword": "數碼",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-051.jpg"
+    },
+    {
+      "keyword": "數碼",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-052.jpg"
+    },
+    {
+      "keyword": "數碼",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-053.jpg"
+    },
+    {
+      "keyword": "美妝",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-054.jpg"
+    },
+    {
+      "keyword": "辦公",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-055.jpg"
+    },
+    {
+      "keyword": "鞋",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-056.jpg"
+    },
+    {
+      "keyword": "書",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-057.jpg"
+    },
+    {
+      "keyword": "家居",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-058.jpg"
+    },
+    {
+      "keyword": "家居",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-059.jpg"
+    },
+    {
+      "keyword": "家居",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-060.jpg"
+    },
+    {
+      "keyword": "藥品",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-061.jpg"
+    },
+    {
+      "keyword": "手錶",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-062.jpg"
+    },
+    {
+      "keyword": "修復",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-063.jpg"
+    }
+  ],
+  "asset": [
+    {
+      "keyword": "裝置",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-001.jpg"
+    },
+    {
+      "keyword": "裝置",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-002.jpg"
+    },
+    {
+      "keyword": "裝置",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-003.jpg"
+    },
+    {
+      "keyword": "裝置",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-004.jpg"
+    },
+    {
+      "keyword": "維修",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-005.jpg"
+    },
+    {
+      "keyword": "IT裝置",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-006.jpg"
+    },
+    {
+      "keyword": "IT裝置",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-007.jpg"
+    },
+    {
+      "keyword": "維修",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-008.jpg"
+    },
+    {
+      "keyword": "生產裝置",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-009.jpg"
+    },
+    {
+      "keyword": "工具",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-010.jpg"
+    },
+    {
+      "keyword": "工具",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-011.jpg"
+    },
+    {
+      "keyword": "車輛",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-012.jpg"
+    },
+    {
+      "keyword": "貨車",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-013.jpg"
+    },
+    {
+      "keyword": "巡檢",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-014.jpg"
+    },
+    {
+      "keyword": "標籤",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-015.jpg"
+    },
+    {
+      "keyword": "車輛",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-016.jpg"
+    }
+  ],
+  "location": [
+    {
+      "keyword": "貨架",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-001.jpg"
+    },
+    {
+      "keyword": "庫位",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-002.jpg"
+    },
+    {
+      "keyword": "門店",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-003.jpg"
+    },
+    {
+      "keyword": "門店",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-004.jpg"
+    },
+    {
+      "keyword": "貨架",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-005.jpg"
+    },
+    {
+      "keyword": "倉庫",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-006.jpg"
+    },
+    {
+      "keyword": "門店",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-007.jpg"
+    },
+    {
+      "keyword": "浴室",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-008.jpg"
+    },
+    {
+      "keyword": "酒店",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-009.jpg"
+    },
+    {
+      "keyword": "門店",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-010.jpg"
+    },
+    {
+      "keyword": "倉庫",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-011.jpg"
+    },
+    {
+      "keyword": "庫位",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-012.jpg"
+    },
+    {
+      "keyword": "會議室",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-013.jpg"
+    },
+    {
+      "keyword": "會議",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-014.jpg"
+    },
+    {
+      "keyword": "房間",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-015.jpg"
+    },
+    {
+      "keyword": "公共區域",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/location-016.jpg"
+    }
+  ],
+  "proof": [
+    {
+      "keyword": "物流",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-001.jpg"
+    },
+    {
+      "keyword": "物流",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-002.jpg"
+    },
+    {
+      "keyword": "碼頭",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-003.jpg"
+    },
+    {
+      "keyword": "輪船",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-004.jpg"
+    },
+    {
+      "keyword": "施工",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-005.jpg"
+    },
+    {
+      "keyword": "施工",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-006.jpg"
+    },
+    {
+      "keyword": "巡檢",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-007.jpg"
+    },
+    {
+      "keyword": "巡檢",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-008.jpg"
+    },
+    {
+      "keyword": "培訓",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-009.jpg"
+    },
+    {
+      "keyword": "安裝",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-010.jpg"
+    },
+    {
+      "keyword": "驗收",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-011.jpg"
+    },
+    {
+      "keyword": "拜訪",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-012.jpg"
+    },
+    {
+      "keyword": "巡檢",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-013.jpg"
+    },
+    {
+      "keyword": "加工",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-014.jpg"
+    }
+  ],
+  "issue": [
+    {
+      "keyword": "維修",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-001.jpg"
+    },
+    {
+      "keyword": "隱患",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-002.jpg"
+    },
+    {
+      "keyword": "貨損",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-003.jpg"
+    },
+    {
+      "keyword": "包裝",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-004.jpg"
+    },
+    {
+      "keyword": "異常",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-005.jpg"
+    },
+    {
+      "keyword": "圖紙",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-006.jpg"
+    }
+  ],
+  "marketing": [
+    {
+      "keyword": "宣傳圖",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/marketing-001.jpg"
+    },
+    {
+      "keyword": "海報",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/marketing-002.jpg"
+    }
+  ],
+  "screenshot": [
+    {
+      "keyword": "截圖",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/screenshot-001.jpg"
+    }
+  ],
+  "avatar": [
+    {
+      "keyword": "女士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-001.jpg"
+    },
+    {
+      "keyword": "女士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-002.jpg"
+    },
+    {
+      "keyword": "男士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-003.jpg"
+    },
+    {
+      "keyword": "男士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-004.jpg"
+    },
+    {
+      "keyword": "男士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-005.jpg"
+    },
+    {
+      "keyword": "男士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-006.jpg"
+    },
+    {
+      "keyword": "女士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-007.jpg"
+    },
+    {
+      "keyword": "女士頭像",
+      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/avatar-008.jpg"
+    }
+  ]
 }
