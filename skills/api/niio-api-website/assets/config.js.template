@@ -10,7 +10,7 @@
 
 const CONFIG = {
     // niio 應用公開 API V3 基礎 URL
-    API_BASE_URL: '', // 必填：已確認的 niio API 基底網址，不含 /v3
+    API_BASE_URL: 'https://niiodemo.apsm.com.tw', // 其他部署請改為該環境的 API 基底網址，不含 /v3
 
     // niio 應用認證資訊（從 niio 後臺取得）
     // 取得方式：登入niio → 應用設定 → API 金鑰

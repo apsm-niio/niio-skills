@@ -3,7 +3,7 @@
 Step 3 全指令碼方案：直接呼叫niio REST API 取得工作表結構並生成 worksheetContext.json。
 
 用法:
-  python3 refresh_fields.py --api-base "https://niio-api.example.invalid" --token "md_pss_id xxx" ./apps/图书借阅/hap-context.json
+  python3 refresh_fields.py --api-base "https://niiodemo.apsm.com.tw" --token "md_pss_id xxx" ./apps/图书借阅/hap-context.json
 
 輸入:
   --token     niio認證 token（Authorization header 值）
@@ -105,7 +105,7 @@ def main():
     parser = argparse.ArgumentParser(description="重新整理工作表欄位結構")
     parser.add_argument("--token", required=True, help="niio認證 token（如 md_pss_id xxx）")
     parser.add_argument("context", help="hap-context.json 檔案路徑")
-    parser.add_argument("--api-base", required=True, type=validate_api_base,
+    parser.add_argument("--api-base", default="https://niiodemo.apsm.com.tw", type=validate_api_base,
                         help="此部署環境已確認的 HTTPS API 基底網址")
     args = parser.parse_args()
 

@@ -1,4 +1,4 @@
-> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+> **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
 
 # niio 前後端專案建置指南
 
@@ -148,7 +148,7 @@ mcp__hap_mcp____get_record_list(...)
 ✅ **正確做法**: 前端使用 fetch 呼叫 API V3
 ```javascript
 // ✅ 正確：前端呼叫 API V3
-fetch('https://niio-api.example.invalid/v3/app/worksheets/{id}/rows/list', {
+fetch('https://niiodemo.apsm.com.tw/v3/app/worksheets/{id}/rows/list', {
     method: 'POST',
     headers: {
         'HAP-Appkey': 'xxx',
@@ -735,7 +735,7 @@ const modernProducts = await API.getRows(CONFIG.WORKSHEETS.PRODUCTS, {
 {
   "mcpServers": {
     "niio-mcp-API測試": {
-      "url": "https://niio-api.example.invalid/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
+      "url": "https://niiodemo.apsm.com.tw/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
     }
   }
 }
@@ -1511,7 +1511,7 @@ niio API V3 已經設定了 CORS 支援,可以直接從前端發起跨域請求�
 ```javascript
 // 直接從瀏覽器呼叫 niio API
 async function fetchHAPData() {
-    const response = await fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/rows/list', {
+    const response = await fetch('https://niiodemo.apsm.com.tw/v3/app/worksheets/{worksheetId}/rows/list', {
         method: 'POST',
         headers: {
             'HAP-Appkey': 'your_appkey',
@@ -1535,7 +1535,7 @@ async function fetchHAPData() {
 ```javascript
 async function safeFetchHAPData() {
     try {
-        const response = await fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/rows/list', {
+        const response = await fetch('https://niiodemo.apsm.com.tw/v3/app/worksheets/{worksheetId}/rows/list', {
             method: 'POST',
             headers: {
                 'HAP-Appkey': CONFIG.HAP_APPKEY,
@@ -2025,7 +2025,7 @@ await filterPager.clearFilters();
 // niio API 設定
 const CONFIG = {
     // niio 應用公開 API V3 基礎 URL
-    API_BASE_URL: 'https://niio-api.example.invalid',
+    API_BASE_URL: 'https://niiodemo.apsm.com.tw',
 
     // niio 應用認證資訊（從 niio 後臺取得）
     HAP_APPKEY: '你的HAP_APPKEY',
@@ -2400,12 +2400,12 @@ async getProducts() {
 // config.js 中區分環境
 const ENV = {
     development: {
-        API_BASE_URL: 'https://niio-api.example.invalid',
+        API_BASE_URL: 'https://niiodemo.apsm.com.tw',
         HAP_APPKEY: '開發環境的key',
         HAP_SIGN: '開發環境的sign'
     },
     production: {
-        API_BASE_URL: 'https://niio-api.example.invalid',
+        API_BASE_URL: 'https://niiodemo.apsm.com.tw',
         HAP_APPKEY: '生產環境的key',
         HAP_SIGN: '生產環境的sign'
     }
@@ -2486,7 +2486,7 @@ async request(url, options = {}) {
 2. **API 查詢**：
    ```javascript
    // 透過瀏覽器控制檯呼叫
-   fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/structure', {
+   fetch('https://niiodemo.apsm.com.tw/v3/app/worksheets/{worksheetId}/structure', {
        headers: {
            'HAP-Appkey': 'xxx',
            'HAP-Sign': 'xxx'
@@ -2531,7 +2531,7 @@ async request(url, options = {}) {
 ```javascript
 // api/hap.js
 export default async function handler(req, res) {
-    const response = await fetch('https://niio-api.example.invalid/v3/...', {
+    const response = await fetch('https://niiodemo.apsm.com.tw/v3/...', {
         headers: {
             'HAP-Appkey': process.env.HAP_APPKEY,  // 儲存在環境變數
             'HAP-Sign': process.env.HAP_SIGN
@@ -3768,7 +3768,7 @@ HAP_SIGN: 'dev_sign'
 // 方案 2: Serverless Functions (Vercel/Netlify)
 // api/hap.js
 export default async function(req, res) {
-    const response = await fetch('https://niio-api.example.invalid/v3/...', {
+    const response = await fetch('https://niiodemo.apsm.com.tw/v3/...', {
         headers: {
             'HAP-Appkey': process.env.HAP_APPKEY,
             'HAP-Sign': process.env.HAP_SIGN
@@ -3797,7 +3797,7 @@ mcp__hap_mcp_API____get_worksheet_structure({
 
 **方法 2: API 查詢**
 ```javascript
-fetch('https://niio-api.example.invalid/v3/app/worksheets/{worksheetId}/structure', {
+fetch('https://niiodemo.apsm.com.tw/v3/app/worksheets/{worksheetId}/structure', {
     headers: {
         'HAP-Appkey': 'xxx',
         'HAP-Sign': 'xxx'

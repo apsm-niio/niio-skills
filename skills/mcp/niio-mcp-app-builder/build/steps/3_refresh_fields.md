@@ -4,7 +4,7 @@
 API、MCP 與網站網址可能不同；不得由 MCP 網址自行推測，也不得跨環境共用 Token。
 
 1. 從使用者選定的 MCP 連線讀取 `headers.Authorization`；若實際設定使用 URL 的 `Authorization` 參數，解碼後取值。保留完整認證字串，不假設固定前綴，不顯示 Token。
-2. API 基底網址未確認時先詢問使用者。網址必須包含 HTTPS，不能包含 `/mcp`、`/v3` 或驗證參數。
+2. niio demo 的 API 基底網址預設為 `https://niiodemo.apsm.com.tw`。其他部署必須以 `--api-base` 指定該環境網址；不得將其他環境的憑證傳往 demo。網址必須包含 HTTPS，不能包含 `/mcp`、`/v3` 或驗證參數。
 3. 執行下列腳本，將變數替換為此環境已確認的設定。範例變數必須先設定，不能直接照抄執行。
 
 ```bash

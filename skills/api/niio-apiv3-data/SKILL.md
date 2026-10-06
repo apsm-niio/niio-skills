@@ -3,7 +3,7 @@ name: niio-apiv3-data
 description: 使用niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。如果使用者已設定 niio MCP，AI 應該自動從 MCP 設定中提取身分驗證與授權金鑰。
 license: MIT
 ---
-> **部署設定**：API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+> **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
 
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
 
@@ -60,7 +60,7 @@ niio 是一個超級應用平台,透過這個基座可以建置很多應用。�
    {
      "mcpServers": {
        "niio-mcp-應用名": {
-         "url": "https://niio-api.example.invalid/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
+         "url": "https://niiodemo.apsm.com.tw/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
        }
      }
    }
@@ -71,7 +71,7 @@ niio 是一個超級應用平台,透過這個基座可以建置很多應用。�
    {
      "mcpServers": {
        "niio_personal_mcp": {
-         "url": "https://niio-api.example.invalid/mcp",
+         "url": "https://niiodemo.apsm.com.tw/mcp",
          "headers": {
            "Authorization": "Bearer pat_XXX"
          }
