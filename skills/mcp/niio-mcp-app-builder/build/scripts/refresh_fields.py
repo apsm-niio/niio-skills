@@ -1,181 +1,141 @@
 #!/usr/bin/env python3
-"""
-Step 3 全指令碼方案：直接呼叫niio REST API 取得工作表結構並生成 worksheetContext.json。
-
-用法:
-  python3 refresh_fields.py --api-base "https://niiodemo.apsm.com.tw" --token "md_pss_id xxx" ./apps/图书借阅/hap-context.json
-
-輸入:
-  --token     niio認證 token（Authorization header 值）
-  context     hap-context.json 的路徑（從中讀取 appId 和 worksheetIdByName）
-
-輸出:
-  與 hap-context.json 同目錄下的 worksheetContext.json
-"""
+"""將本次 MCP 欄位回應轉成 worksheetContext.json；不連線、不讀取憑證。"""
 
 import argparse
 import json
+import os
+import re
 import sys
+import tempfile
 from pathlib import Path
-from urllib.request import Request, build_opener, HTTPRedirectHandler
-from urllib.parse import urlsplit
-from urllib.error import HTTPError, URLError
 
-def validate_api_base(value):
-    value = value.strip().rstrip('/')
-    parsed = urlsplit(value)
-    if (parsed.scheme != 'https' or not parsed.hostname or parsed.username
-            or parsed.password or parsed.query or parsed.fragment
-            or parsed.hostname.endswith('.invalid')
-            or parsed.path.rstrip('/').endswith(('/mcp', '/v3'))):
-        raise argparse.ArgumentTypeError('請提供已確認的 HTTPS API 基底網址，不含 /mcp、/v3、帳密或查詢參數')
+
+class ValidationError(ValueError):
+    """僅包含程式定義的檢查訊息，不附上原始回應。"""
+
+
+def read_json(path):
+    with path.open(encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def required_text(value, label):
+    if not isinstance(value, str) or not value.strip():
+        raise ValidationError(f"{label} 缺少有效文字")
     return value
 
 
-class NoRedirect(HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise URLError('API 網址發生重新導向；請先確認正確網址，不自動轉送憑證')
-
-
-
-def fetch_worksheet_structure(worksheet_id, token, app_id, api_base):
-    """呼叫 REST API 取得單張工作表結構。"""
-    url = f"{api_base}/v3/app/worksheets/{worksheet_id}"
-    headers = {
-        "Authorization": token,
-        "HAP-Appid": app_id,
-    }
-    req = Request(url, headers=headers, method="GET")
-    try:
-        with build_opener(NoRedirect()).open(req, timeout=30) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except (json.JSONDecodeError, UnicodeDecodeError):
-        print("  ❌ API 未回傳有效的 JSON", file=sys.stderr)
-        return None
-    except HTTPError as e:
-        print(f"  ❌ HTTP {e.code}，請檢查 API 網址與此環境的授權", file=sys.stderr)
-        return None
-    except URLError as e:
-        print(f"  ❌ 網路錯誤: {e.reason}", file=sys.stderr)
-        return None
-
-
-def extract_fields(raw_data):
-    """從 API 響應中提取欄位清單。"""
-    if not isinstance(raw_data, dict):
-        return []
-    data = raw_data.get("data", raw_data)
-    if isinstance(data, dict):
-        return data.get("fields", data.get("controls", []))
-    return []
-
-
 def normalize_field(field):
-    """標準化單個欄位為 worksheetContext 格式。"""
+    if not isinstance(field, dict):
+        raise ValidationError("欄位必須是物件")
     result = {
-        "id": field.get("id", field.get("controlId", "")),
-        "alias": field.get("alias", ""),
-        "name": field.get("name", field.get("controlName", "")),
-        "type": field.get("type", ""),
+        "id": required_text(field.get("id"), "欄位 ID"),
+        "alias": field.get("alias") or "",
+        "name": required_text(field.get("name"), "欄位名稱"),
+        "type": required_text(field.get("type"), "欄位型別（須為 MCP 文字型別）"),
     }
-
-    # 選項欄位
+    if not isinstance(result["alias"], str):
+        raise ValidationError("欄位 alias 必須是文字")
     options = field.get("options", [])
+    if not isinstance(options, list):
+        raise ValidationError("欄位 options 必須是陣列")
     if options:
-        result["options"] = [
-            {"key": opt.get("key", opt.get("value", "")), "value": opt.get("value", "")}
-            for opt in options
-            if not opt.get("isDelete", False)
-        ]
-
-    # 關聯欄位
-    data_source = field.get("dataSource", "")
-    if data_source:
-        result["dataSource"] = data_source
-
-    # 來源欄位（反向關聯）
-    source_field = field.get("sourceField", "")
-    if source_field:
-        result["sourceField"] = source_field
-
+        result["options"] = []
+        for option in options:
+            if not isinstance(option, dict):
+                raise ValidationError("選項必須是物件")
+            if option.get("isDelete", False):
+                continue
+            if "key" not in option or "value" not in option:
+                raise ValidationError("選項缺少 key 或 value")
+            result["options"].append(dict(option))
+    for key in ("dataSource", "sourceField", "relation"):
+        if key in field:
+            result[key] = field[key]
     return result
 
 
+def build_context(context, responses_dir):
+    if not isinstance(context, dict):
+        raise ValidationError("hap-context.json 必須是物件")
+    app_id = required_text(context.get("appId"), "應用 ID")
+    worksheets = context.get("worksheetIdByName")
+    if not isinstance(worksheets, dict) or not worksheets:
+        raise ValidationError("缺少 worksheetIdByName")
+    ids = []
+    for name, ws_id in worksheets.items():
+        required_text(name, "工作表名稱")
+        required_text(ws_id, "工作表 ID")
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", ws_id):
+            raise ValidationError("工作表 ID 含不支援的字元")
+        ids.append(ws_id)
+    if len(set(ids)) != len(ids):
+        raise ValidationError("工作表 ID 重複")
+    if not responses_dir.is_dir():
+        raise ValidationError("MCP 回應資料夾不存在")
+    if {p.name for p in responses_dir.glob("*.json")} != {i + ".json" for i in ids}:
+        raise ValidationError("MCP 回應檔案與本次工作表清單不一致")
+    result = []
+    for name, ws_id in worksheets.items():
+        try:
+            entry = read_json(responses_dir / (ws_id + ".json"))
+            if not isinstance(entry, dict) or entry.get("appId") != app_id or entry.get("worksheetId") != ws_id:
+                raise ValidationError("MCP 回應的應用或工作表 ID 不一致")
+            response = entry.get("response")
+            if not isinstance(response, dict) or response.get("success") is not True:
+                raise ValidationError("MCP 回應未成功")
+            data = response.get("data")
+            if not isinstance(data, dict):
+                raise ValidationError("MCP 回應缺少 data 物件")
+            if "worksheetId" in data and data["worksheetId"] != ws_id:
+                raise ValidationError("MCP data.worksheetId 不一致")
+            fields = data.get("fields")
+            if not isinstance(fields, list) or not fields:
+                raise ValidationError("MCP 回應缺少非空 data.fields")
+            normalized = [normalize_field(field) for field in fields]
+            if len({field["id"] for field in normalized}) != len(normalized):
+                raise ValidationError("工作表內有重複欄位 ID")
+            result.append({"worksheetId": ws_id, "worksheetName": name, "fields": normalized})
+        except ValidationError as error:
+            raise ValidationError(f"工作表 {ws_id}：{error}") from None
+    return result
+
+
+def write_atomic(path, value):
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent,
+                                         prefix=".worksheetContext-", suffix=".tmp", delete=False) as handle:
+            temporary = Path(handle.name)
+            json.dump(value, handle, ensure_ascii=False, indent=2, allow_nan=False)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
+
+
 def main():
-    parser = argparse.ArgumentParser(description="重新整理工作表欄位結構")
-    parser.add_argument("--token", required=True, help="niio認證 token（如 md_pss_id xxx）")
-    parser.add_argument("context", help="hap-context.json 檔案路徑")
-    parser.add_argument("--api-base", default="https://niiodemo.apsm.com.tw", type=validate_api_base,
-                        help="此部署環境已確認的 HTTPS API 基底網址")
+    parser = argparse.ArgumentParser(description="將 MCP 欄位回應驗證並整理成本機欄位結構")
+    parser.add_argument("--responses-dir", required=True, type=Path, help="本次完整 MCP JSON 回應資料夾")
+    parser.add_argument("context", type=Path, help="hap-context.json 路徑")
     args = parser.parse_args()
-
-    context_path = Path(args.context)
-    if not context_path.exists():
-        print(f"❌ 檔案不存在: {context_path}", file=sys.stderr)
-        sys.exit(1)
-
-    with open(context_path, "r", encoding="utf-8") as f:
-        context = json.load(f)
-
-    app_id = context.get("appId", "")
-    worksheet_id_by_name = context.get("worksheetIdByName", {})
-
-    if not app_id:
-        print("❌ hap-context.json 中缺少 appId", file=sys.stderr)
-        sys.exit(1)
-    if not worksheet_id_by_name:
-        print("❌ hap-context.json 中缺少 worksheetIdByName", file=sys.stderr)
-        sys.exit(1)
-
-    print(f"📋 開始重新整理欄位結構（共 {len(worksheet_id_by_name)} 張表）", file=sys.stderr)
-
-    worksheet_context = []
-    errors = []
-
-    for ws_name, ws_id in worksheet_id_by_name.items():
-        print(f"  ⏳ {ws_name} ({ws_id})...", file=sys.stderr, end="")
-        raw = fetch_worksheet_structure(ws_id, args.token, app_id, args.api_base)
-        if raw is None:
-            errors.append(ws_name)
-            continue
-
-        fields = extract_fields(raw)
-        if (not isinstance(raw, dict) or raw.get("success") is False
-                or not isinstance(fields, list) or not fields
-                or not all(isinstance(field, dict) for field in fields)):
-            errors.append(ws_name)
-            print(" ❌ 未取得有效欄位結構", file=sys.stderr)
-            continue
-        normalized = [normalize_field(f) for f in fields]
-
-        worksheet_context.append({
-            "worksheetId": ws_id,
-            "worksheetName": ws_name,
-            "fields": normalized,
-        })
-        print(f" ✅ {len(normalized)} 個欄位", file=sys.stderr)
-
-    if errors:
-        print("❌ 部分工作表讀取失敗，保留既有 worksheetContext.json", file=sys.stderr)
-        sys.exit(1)
-
-    # 寫入輸出
-    output_path = context_path.parent / "worksheetContext.json"
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(worksheet_context, f, ensure_ascii=False, indent=2)
-
-    # 摘要
-    print(f"\n{'=' * 40}", file=sys.stderr)
-    print(f"✅ worksheetContext 建置完成（{len(worksheet_context)}/{len(worksheet_id_by_name)} 張表）", file=sys.stderr)
-    for ws in worksheet_context:
-        print(f"  • {ws['worksheetName']}: {len(ws['fields'])} 個欄位", file=sys.stderr)
-
-    if errors:
-        print(f"\n⚠️ 失敗 {len(errors)} 張: {', '.join(errors)}", file=sys.stderr)
-        sys.exit(1)
-
-    print(f"\n📁 輸出: {output_path}", file=sys.stderr)
+    try:
+        result = build_context(read_json(args.context), args.responses_dir)
+        write_atomic(args.context.parent / "worksheetContext.json", result)
+    except ValidationError as error:
+        print(f"欄位整理失敗：{error}；既有輸出未變更。", file=sys.stderr)
+        return 1
+    except (OSError, ValueError, TypeError):
+        # 不輸出原始回應或例外內容，避免意外洩漏回應中的敏感資料。
+        print("欄位整理失敗：請檢查本次回應完整性、ID、欄位與檔案權限；既有輸出未變更。", file=sys.stderr)
+        return 1
+    print(json.dumps({"success": True, "worksheetCount": len(result),
+                      "fieldCounts": {item["worksheetId"]: len(item["fields"]) for item in result}}, ensure_ascii=False))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

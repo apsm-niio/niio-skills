@@ -158,6 +158,8 @@
     "skills/api/niio-view-plugin/V3_API_INTEGRATION.md",
     "skills/api/niio-view-plugin/references/niio-view-plugin-dev-guide.md",
     "skills/mcp/niio-mcp-app-builder/SKILL.md",
+    "skills/mcp/niio-mcp-app-builder/build/OUTPUT_CONTRACT.md",
+    "skills/mcp/niio-mcp-app-builder/build/SKILL.md",
     "skills/mcp/niio-mcp-app-builder/build/resources/sample_images.json",
     "skills/mcp/niio-mcp-app-builder/build/scripts/refresh_fields.py",
     "skills/mcp/niio-mcp-app-builder/build/steps/1_create_app.md",

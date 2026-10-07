@@ -134,7 +134,7 @@ Step 1 是輕量的應用和導航分組建立，在主 agent 內執行：
 Step 2 是整個建置流程中規則最重的步驟（~400 行規則），**必須使用子 agent 隔離執行**，避免大量 MCP 呼叫和欄位設定資料汙染主排程器上下文，確保規則遵守率。
 
 1. 將 Step 2 委派給子 agent → 等待完成 → 排程器寫入 `progress=worksheets_created`
-2. 讀取 `build/steps/3_refresh_fields.md` → 內聯執行指令碼（一條命令） → 排程器寫入 `progress=fields_refreshed`
+2. 讀取 `build/steps/3_refresh_fields.md` → 沿用所選 MCP 逐表取得完整結構，再執行本機整理腳本；驗證本次輸出成功後 → 排程器寫入 `progress=fields_refreshed`
 
 > **播報**：Step 3 完成後向使用者輸出：`✅ 基礎建置完成：應用已建立，{N} 張工作表，欄位結構已重新整理`
 
