@@ -8,6 +8,8 @@ on:
     branches: [main]
     paths:
       - localization/terms.json
+      - localization/overrides/**
+      - tests/test_mcp_refresh.py
       - localization/image-catalog.json
       - assets/sample-images/**
       - scripts/localize.py
@@ -68,6 +70,9 @@ jobs:
             --source "$NIIO_SOURCE_SNAPSHOT" \
             --output . \
             --terms localization/terms.json
+
+      - name: 驗證 MCP 欄位整理與下游填值
+        run: python -m unittest discover -s tests -p test_mcp_refresh.py -v
 
       - name: 設定技能更新來源
         env:

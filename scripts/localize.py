@@ -799,6 +799,7 @@ WRONG_TABLE_WORD = re.compile(r'工作錶|資料錶|子錶|父錶|主錶|流水�
 DEPLOYMENT_NOTE = (
     '> **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，'
     '三者可能不同，不得只依 MCP 網址推測 API 或網站位置。'
+    '範例網域不代表 REST 路由已驗證；MCP 成功也不代表 REST 或 CLI 相容。使用 REST 功能前，須依部署文件確認路徑與驗證方式，先完成唯讀測試；404 HTML 時停止，不重試寫入。'
     '下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；'
     '未確認網址時先詢問，不得向佔位網址傳送憑證。'
     '圖片與附件只能使用使用者提供或已授權的素材網址。\n\n'
@@ -811,63 +812,13 @@ def replace_required(text, old, new, label):
     return text.replace(old, new, 1)
 
 
-def configure_refresh_script(text):
-    text = replace_required(text, 'from urllib.request import Request, urlopen',
-                            'from urllib.request import Request, build_opener, HTTPRedirectHandler\n'
-                            'from urllib.parse import urlsplit', 'API 請求匯入')
-    old_base = 'API_BASE = "https://api2.mingdao.com"'
-    helpers = '''def validate_api_base(value):
-    value = value.strip().rstrip('/')
-    parsed = urlsplit(value)
-    if (parsed.scheme != 'https' or not parsed.hostname or parsed.username
-            or parsed.password or parsed.query or parsed.fragment
-            or parsed.hostname.endswith('.invalid')
-            or parsed.path.rstrip('/').endswith(('/mcp', '/v3'))):
-        raise argparse.ArgumentTypeError('請提供已確認的 HTTPS API 基底網址，不含 /mcp、/v3、帳密或查詢參數')
-    return value
-
-
-class NoRedirect(HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise URLError('API 網址發生重新導向；請先確認正確網址，不自動轉送憑證')
-'''
-    text = replace_required(text, old_base, helpers, 'API 基底網址設定')
-    text = replace_required(text, 'def fetch_worksheet_structure(worksheet_id, token, app_id):',
-                            'def fetch_worksheet_structure(worksheet_id, token, app_id, api_base):', 'API 函式參數')
-    text = replace_required(text, '{API_BASE}/v3/app/worksheets/', '{api_base}/v3/app/worksheets/', 'API URL 組合')
-    text = replace_required(text, 'with urlopen(req, timeout=30) as resp:',
-                            'with build_opener(NoRedirect()).open(req, timeout=30) as resp:', 'API 重新導向處理')
-    text = replace_required(text, '    except HTTPError as e:',
-                            '    except (json.JSONDecodeError, UnicodeDecodeError):\n'
-                            '        print("  ❌ API 未回傳有效的 JSON", file=sys.stderr)\n'
-                            '        return None\n'
-                            '    except HTTPError as e:', 'API JSON 檢查')
-    text = replace_required(text, '        body = e.read().decode("utf-8", errors="replace")\n'
-                            '        print(f"  ❌ HTTP {e.code}: {body[:200]}", file=sys.stderr)',
-                            '        print(f"  ❌ HTTP {e.code}，請檢查 API 網址與此環境的授權", file=sys.stderr)', 'API 錯誤輸出')
-    text = replace_required(text, '    args = parser.parse_args()',
-                            '    parser.add_argument("--api-base", default="https://niiodemo.apsm.com.tw", type=validate_api_base,\n'
-                            '                        help="此部署環境已確認的 HTTPS API 基底網址")\n'
-                            '    args = parser.parse_args()', 'API 必填參數')
-    text = replace_required(text, 'fetch_worksheet_structure(ws_id, args.token, app_id)',
-                            'fetch_worksheet_structure(ws_id, args.token, app_id, args.api_base)', 'API 呼叫參數')
-    text = replace_required(text, '        fields = extract_fields(raw)',
-                            '        fields = extract_fields(raw)\n'
-                            '        if (not isinstance(raw, dict) or raw.get("success") is False\n'
-                            '                or not isinstance(fields, list) or not fields\n'
-                            '                or not all(isinstance(field, dict) for field in fields)):\n'
-                            '            errors.append(ws_name)\n'
-                            '            print(" ❌ 未取得有效欄位結構", file=sys.stderr)\n'
-                            '            continue', '工作表回應檢查')
-    text = replace_required(text, '    # 寫入輸出',
-                            '    if errors:\n'
-                            '        print("❌ 部分工作表讀取失敗，保留既有 worksheetContext.json", file=sys.stderr)\n'
-                            '        sys.exit(1)\n\n'
-                            '    # 寫入輸出', '避免不完整輸出')
-    text = text.replace('python3 refresh_fields.py --token',
-                        'python3 refresh_fields.py --api-base "https://niiodemo.apsm.com.tw" --token')
-    compile(text, 'refresh_fields.py', 'exec')
+def load_mcp_override(output, name):
+    path = output / 'localization/overrides' / name
+    text = path.read_text(encoding='utf-8')
+    if name.endswith('.py'):
+        compile(text, name, 'exec')
     return text
+
 
 
 def apply_customer_policy(stage, output):
@@ -886,7 +837,7 @@ def apply_customer_policy(stage, output):
         text = old
         relative = path.relative_to(stage).as_posix()
         if path == refresh:
-            text = configure_refresh_script(text)
+            text = load_mcp_override(output, 'refresh_fields.py')
         elif relative.endswith('/assets/config.js.template'):
             text = replace_required(text, "API_BASE_URL: 'https://api.mingdao.com',",
                                     "API_BASE_URL: 'https://niiodemo.apsm.com.tw', // 其他部署請改為該環境的 API 基底網址，不含 /v3", '網站 API 設定')
@@ -904,28 +855,35 @@ def apply_customer_policy(stage, output):
             text = replace_required(text, '                ...options,',
                                     "                ...options,\n                redirect: 'error',", '網站 API 重新導向')
         elif relative.endswith('/build/steps/3_refresh_fields.md'):
-            text = '''# Step 3：重新整理欄位結構
-
-先確認本次使用的部署環境，再取得其 API 基底網址、應用 ID、工作表 ID 與認證資訊。
-API、MCP 與網站網址可能不同；不得由 MCP 網址自行推測，也不得跨環境共用 Token。
-
-1. 從使用者選定的 MCP 連線讀取 `headers.Authorization`；若實際設定使用 URL 的 `Authorization` 參數，解碼後取值。保留完整認證字串，不假設固定前綴，不顯示 Token。
-2. niio demo 的 API 基底網址預設為 `https://niiodemo.apsm.com.tw`。其他部署必須以 `--api-base` 指定該環境網址；不得將其他環境的憑證傳往 demo。網址必須包含 HTTPS，不能包含 `/mcp`、`/v3` 或驗證參數。
-3. 執行下列腳本，將變數替換為此環境已確認的設定。範例變數必須先設定，不能直接照抄執行。
-
-```bash
-python3 {SKILL_DIR}/build/scripts/refresh_fields.py \\
-  --api-base "$NIIO_API_BASE" \\
-  --token "$NIIO_AUTHORIZATION" \\
-  {PROJECT_ROOT}/apps/{appName}/hap-context.json
-```
-
-腳本從 `hap-context.json` 讀取 `appId`、`worksheetIdByName`，以 GET 取得欄位結構並寫入 `worksheetContext.json`。
-若網址、授權、回傳格式或任何工作表的欄位檢查失敗，停止本步驟並保留既有輸出，不得改用其他服務重試。
-
-驗證：本次腳本成功結束；輸出的工作表數量等於已建立工作表數，每表的 `fields` 非空。
-不寫 `progress`，由排程器統一管理。
-'''
+            text = load_mcp_override(output, '3_refresh_fields.md')
+        elif relative == 'mcp/niio-mcp-app-builder/build/SKILL.md':
+            text = replace_required(text,
+                '內聯執行指令碼（一條命令）',
+                '沿用所選 MCP 逐表取得完整結構，再執行本機整理腳本；驗證本次輸出成功後',
+                'MCP 欄位重新整理排程')
+        elif relative == 'mcp/niio-mcp-app-builder/build/OUTPUT_CONTRACT.md':
+            text = replace_required(text,
+                '每步完成時，透過更新 `hap-context.json` 來表達結果：',
+                '各 step 回傳成功或失敗證據；只有排程器可在驗證完成後更新 `hap-context.json` 的 progress。並行步驟必須等待匯合，依 `PROGRESS.md` 與 `build/SKILL.md` 路由推進。',
+                '進度寫入責任')
+            text = replace_required(text,
+                '1. 將 `progress` 欄位更新為目前步驟對應的完成狀態（見 `PROGRESS.md`）',
+                '1. 提交本次成功證據，由排程器依 `PROGRESS.md` 驗證後更新進度；Step 3 必須包含本次腳本結束碼 0、完整工作表 ID 集合及欄位數，不能僅檢查舊檔存在。',
+                '欄位更新成功證據')
+            text = replace_required(text,
+                '| 10 | `system_workflows_published` | _(系統工作流 processId 已 publish)_ |',
+                '| 10 | 與 Step 11 匯合後由排程器寫入 `workflows_deployed` | _(系統工作流 processId 已 publish)_ |',
+                '工作流進度匯合')
+            text = replace_required(text,
+                '| 11 | `completed` | `customActionWorkflows` |',
+                '| 11 | 與 Step 10 匯合後由排程器寫入 `workflows_deployed` | `customActionWorkflows` |\n| 12 | `completed` | _(CLI 回填結果或待補清單)_ |',
+                '完成進度歸屬')
+            text = text.replace('排程器在每步完成後，讀取 `hap-context.json` 檢查：',
+                '排程器先驗證本次步驟產出，在並行匯合條件滿足後才寫入進度，再讀回 `hap-context.json` 檢查：')
+            text = text.replace('| 6 | `sample_data_created` |', '| 6 | 與 Step 5 均完成後寫入 `sample_data_created` |')
+            text = text.replace('| 7 | `pages_created` |', '| 5b | `page_shells_created` | `customPageIdByName`, `chatbotIdByName`（若有） |\n| 7 | 與 Step 8、9 匯合後寫入 `config_completed` |')
+            text = text.replace('| 8 | `roles_created` |', '| 8 | 與 Step 7、9 匯合後寫入 `config_completed` |')
+            text = text.replace('| 9 | `workflows_designed` |', '| 9 | 與 Step 7、8 匯合後寫入 `config_completed` |')
         elif relative.endswith('/build/steps/1_create_app.md'):
             start = text.find('根據目前使用的 MCP 服務地址，確定前端網域：')
             end = text.find('拼接應用連結', start)
@@ -1059,6 +1017,14 @@ def build(source, output, config):
         if isinstance(AUDIT[key], list):
             AUDIT[key].clear()
     source, output = source.resolve(), output.resolve()
+    refresh_sources = {
+        'build/scripts/refresh_fields.py': 'd078df1e401e5a6f567183c99d5c1205c2d81abb0968238f86e0dbde4d543652',
+        'build/steps/3_refresh_fields.md': '4d5324d03cbd0f6ed4c2c62f4a0144bff9994fc426811f8f0854879b6a2c074e',
+    }
+    for relative, expected in refresh_sources.items():
+        raw = (source / 'skills/mcp/hap-mcp-app-builder' / relative).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != expected:
+            raise ValueError(f'上游欄位步驟已變更，請重新審查 MCP 轉換規則：{relative}；保留上一版技能。')
 
     if source == output or not (source / "skills").is_dir():
         raise ValueError(
