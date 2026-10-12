@@ -1,4 +1,4 @@
-# HapPlan JSON 結構規範
+# niio 方案 JSON 結構規範
 
 使用者已確認方案總覽後，按以下規則生成結構化 JSON，寫入 `hap-plan.json`。
 

@@ -267,7 +267,7 @@ async function getWorksheetData(worksheetId) {
 
 ```json
 {
-  "HAP-應用API文件": {
+  "niio-應用API文件": {
     "command": "npx -y apifox-mcp-server@latest --site-id=5442569",
     "args": [],
     "env": {},

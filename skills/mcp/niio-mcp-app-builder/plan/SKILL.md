@@ -64,8 +64,8 @@ description: niio 應用方案設計。根據使用者業務需求生成完整�
 2. 再次讀取 `plan/design_guide.md`（平台設計指南）
 3. 讀取 `plan/icon_and_style_guide.md`（視覺主題與圖示規範），為應用挑選配色和圖示，為各工作表挑選圖示
 4. 建立 `{PROJECT_ROOT}/apps/{appName}` 資料夾（如果不存在），將已確認的方案總覽（Markdown 格式）寫入到 `{PROJECT_ROOT}/apps/{appName}/overview.md` 中
-5. 按規範將已確認的總覽轉化為結構化 HapPlan JSON，並帶上 `appIcon`、`appColor` 和每張工作表的 `icon`
-6. 將 HapPlan JSON 寫入 `{PROJECT_ROOT}/apps/{appName}/hap-plan.json` 檔案
+5. 按規範將已確認的總覽轉化為結構化 niio 方案 JSON，並帶上 `appIcon`、`appColor` 和每張工作表的 `icon`
+6. 將 niio 方案 JSON 寫入 `{PROJECT_ROOT}/apps/{appName}/hap-plan.json` 檔案
 7. 告知使用者方案及總覽已儲存，隨即**自動讀取 `build/SKILL.md` 並按其步驟開始建置**，無需使用者手動觸發
 
 ## 注意

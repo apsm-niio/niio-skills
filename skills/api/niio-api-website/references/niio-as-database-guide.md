@@ -98,7 +98,7 @@
 
 #### 3. MCP/API（資料通訊橋樑）
 **職責：** 前端專案與 niio 的資料互動
-- ✅ **HAP-MCP**: 直接管理應用結構與資料（AI 開發時使用）
+- ✅ **niio MCP**: 直接管理應用結構與資料（AI 開發時使用）
   - 建立/修改工作表
   - 批次新增示例資料
   - 查詢資料結構
@@ -368,8 +368,8 @@ if (!structure.includes('產品表')) {
 
 ```bash
 # 1. 建立專案目錄
-mkdir my-hap-website
-cd my-hap-website
+mkdir my-niio-website
+cd my-niio-website
 
 # 2. 建立檔案結構
 mkdir css js
@@ -865,7 +865,7 @@ AI 需要運用設計師的審美標準建立高質量的樣式：
 
 ### 3.1 讀取應用真實結構
 
-透過 **HAP-MCP** 取得應用的完整結構資訊:
+透過 **niio MCP** 取得應用的完整結構資訊:
 
 **必須取得的資訊:**
 - ✅ 工作表清單(含 name 和 alias)
@@ -2529,7 +2529,7 @@ async request(url, options = {}) {
 
 示例（Vercel Serverless Function）：
 ```javascript
-// api/hap.js
+// api/niio.js
 export default async function handler(req, res) {
     const response = await fetch('https://niiodemo.apsm.com.tw/v3/...', {
         headers: {
@@ -3766,7 +3766,7 @@ HAP_SIGN: 'dev_sign'
 // 金鑰儲存在伺服器環境變數
 
 // 方案 2: Serverless Functions (Vercel/Netlify)
-// api/hap.js
+// api/niio.js
 export default async function(req, res) {
     const response = await fetch('https://niiodemo.apsm.com.tw/v3/...', {
         headers: {

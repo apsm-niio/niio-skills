@@ -790,6 +790,25 @@ def audit_renamed_references(stage, pattern):
                 record_issue('殘留已更名的舊引用：' + match.group(), line, number)
 
 
+# 僅整理展示與自訂名稱；協定標頭、CLI 命令及舊專案狀態檔名保持相容。
+DISPLAY_NAME_REPLACEMENTS = {
+    'HAP-MCP': 'niio MCP',
+    'HapPlan': 'niio 方案',
+    'HAP-應用API文件': 'niio-應用API文件',
+    'my-hap-website': 'my-niio-website',
+    'hap_view_': 'niio_view_',
+    'api/hap.js': 'api/niio.js',
+}
+OLD_DISPLAY_NAME = re.compile(
+    '|'.join(re.escape(name) for name in DISPLAY_NAME_REPLACEMENTS), re.IGNORECASE
+)
+
+
+def normalize_display_names(text):
+    names = {key.casefold(): value for key, value in DISPLAY_NAME_REPLACEMENTS.items()}
+    return OLD_DISPLAY_NAME.sub(lambda match: names[match.group().casefold()], text)
+
+
 # 客戶可安裝的 skills 必須通過此政策；來源與轉換規則留在維護用目錄。
 FORBIDDEN_BRAND = re.compile(
     r'mingdao[a-z]*|nocoly|mingo|明道[雲云]?|high[\s‐‑–-]*performance\s+application\s+platform',
@@ -982,6 +1001,7 @@ const hapMcpConfig = [selectedMcpName, mcpServers[selectedMcpName]];'''
                 header = text[:len(text)-len(body)] if data is not None else ''
                 text = header + DEPLOYMENT_NOTE + body
 
+        text = normalize_display_names(text)
         if text != old:
             path.write_bytes(text.encode('utf-8'))
             policy_changed.append('skills/' + relative)
@@ -993,7 +1013,7 @@ def audit_customer_policy(stage):
     global CURRENT_FILE
     for path in sorted(stage.rglob('*')):
         CURRENT_FILE = 'skills/' + path.relative_to(stage).as_posix()
-        if FORBIDDEN_BRAND.search(CURRENT_FILE):
+        if FORBIDDEN_BRAND.search(CURRENT_FILE) or OLD_DISPLAY_NAME.search(CURRENT_FILE):
             record_issue('檔名含禁用品牌字詞', CURRENT_FILE)
         if not path.is_file() or path.stem.upper() in {'LICENSE','LICENCE','COPYING','NOTICE'}:
             continue
@@ -1005,7 +1025,7 @@ def audit_customer_policy(stage):
         for number, line in enumerate(text.splitlines(), 1):
             decoded = unquote(line)
             decoded = re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m[1], 16)), decoded)
-            if FORBIDDEN_BRAND.search(decoded):
+            if FORBIDDEN_BRAND.search(decoded) or OLD_DISPLAY_NAME.search(decoded):
                 record_issue('殘留禁用品牌字詞', line, number)
             if WRONG_TABLE_WORD.search(decoded):
                 record_issue('殘留資料表用語誤譯', line, number)

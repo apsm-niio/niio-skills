@@ -86,7 +86,7 @@ if [ -n "$1" ]; then
 else
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
     RANDOM_SUFFIX=$(openssl rand -hex 3 2>/dev/null || echo $RANDOM)
-    PROJECT_NAME="hap_view_${TIMESTAMP}_${RANDOM_SUFFIX}"
+    PROJECT_NAME="niio_view_${TIMESTAMP}_${RANDOM_SUFFIX}"
     echo "生成專案名稱: $PROJECT_NAME"
 fi
 
