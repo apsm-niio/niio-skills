@@ -1,0 +1,5 @@
+/** 瀏覽器只能取得公開設定；憑證、上游網址及工作表對映均由後端保管。 */
+const CONFIG = Object.freeze({
+    CONTENT_API_PATH: '/api/content',
+    DATASETS: Object.freeze({ PRODUCTS: 'products' })
+});

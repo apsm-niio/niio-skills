@@ -1,0 +1,36 @@
+name: 驗證網站模板與憑證隔離
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - skills/api/niio-api-website/**
+      - localization/overrides/website/**
+      - tests/test_website_gateway.mjs
+      - .github/workflows/validate-website.yml
+  pull_request:
+    paths:
+      - skills/api/niio-api-website/**
+      - localization/overrides/website/**
+      - tests/test_website_gateway.mjs
+      - .github/workflows/validate-website.yml
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: 確認 Node.js 執行環境
+        run: node -e 'if (Number(process.versions.node.split(".")[0]) < 22) process.exit(1)'
+      - name: 驗證公開資料限制與憑證隔離
+        run: node --test tests/test_website_gateway.mjs
+      - name: 確認未追蹤 Python 快取
+        run: |
+          if git ls-files | grep -E '(^|/)__pycache__/|\.py[co]$'; then
+            echo '不得提交 Python 快取'
+            exit 1
+          fi

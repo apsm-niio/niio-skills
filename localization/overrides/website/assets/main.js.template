@@ -1,0 +1,42 @@
+/** 範例頁面需提供 #products 與 #status；文字使用 textContent，不插入 API HTML。 */
+const App = {
+    async start() {
+        const container = document.getElementById('products');
+        const status = document.getElementById('status');
+        if (!container || !status) return;
+        status.textContent = '載入中…';
+        try {
+            const { rows } = await API.getRows(CONFIG.DATASETS.PRODUCTS);
+            container.replaceChildren();
+            for (const row of rows) {
+                const card = document.createElement('article');
+                const title = document.createElement('h2');
+                title.textContent = row.name || '';
+                card.append(title);
+                const description = document.createElement('p');
+                description.textContent = row.description || '';
+                card.append(description);
+                if (row.image) {
+                    const url = new URL(row.image);
+                    if (url.protocol === 'https:') {
+                        const image = document.createElement('img');
+                        image.src = url.href;
+                        image.alt = row.name || '';
+                        image.loading = 'lazy';
+                        image.referrerPolicy = 'no-referrer';
+                        card.append(image);
+                    }
+                }
+                if (typeof row.price === 'number') {
+                    const price = document.createElement('p');
+                    price.textContent = new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD' }).format(row.price);
+                    card.append(price);
+                }
+                container.append(card);
+            }
+            status.textContent = rows.length ? '' : '目前沒有公開內容';
+        } catch { status.textContent = '內容暫時無法載入，請稍後再試'; }
+    }
+};
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => App.start());
+else App.start();

@@ -1,0 +1,150 @@
+/** niio 公開內容閘道；只讀、明確設定後啟用。Node.js 22+。 */
+import { createServer } from 'node:http';
+import { pathToFileURL } from 'node:url';
+
+const MAX_BYTES = 2 * 1024 * 1024;
+const validKey = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,100}$/.test(value);
+const fail = message => { throw new Error(message); };
+
+function buildSettings(config, env) {
+    const base = new URL(env.NIIO_API_BASE_URL || fail('請設定已確認的 API 基底網址'));
+    if (base.protocol !== 'https:' || base.username || base.password || base.search || base.hash ||
+        base.hostname.endsWith('.invalid') || base.pathname !== '/') fail('API 基底網址必須是已確認的 HTTPS origin');
+    const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
+    const credential = key => {
+        const value = env[key];
+        if (typeof value !== 'string' || !value.trim() || /[\r\n]/.test(value)) fail('後端驗證設定不完整');
+        return value;
+    };
+    if (env.NIIO_AUTH_MODE === 'bearer') {
+        headers.Authorization = credential('NIIO_AUTHORIZATION');
+        if (!/^Bearer \S+$/i.test(headers.Authorization)) fail('請原樣設定完整 Bearer 標頭');
+        headers['HAP-Appid'] = credential('NIIO_APP_ID');
+    } else if (env.NIIO_AUTH_MODE === 'appkey') {
+        headers['HAP-Appkey'] = credential('NIIO_APP_KEY');
+        headers['HAP-Sign'] = credential('NIIO_APP_SIGN');
+    } else fail('請明確選擇 bearer 或 appkey 驗證');
+
+    const datasets = new Map();
+    for (const [name, source] of Object.entries(config.datasets || {})) {
+        if (!source.enabled) continue;
+        const item = structuredClone(source);
+        if (!validKey(name) || item.public !== true || item.restVerified !== true ||
+            !validKey(item.publishedField) || !['string', 'number', 'boolean'].includes(typeof item.publishedValue)) {
+            fail('僅可啟用已驗證、明確同意公開且有發布條件的資料集');
+        }
+        // 完整路徑由管理者依該部署文件提供；瀏覽器不能指定 URL 或工作表。
+        if (typeof item.listPath !== 'string' || !/^\/[A-Za-z0-9_/-]+$/.test(item.listPath) ||
+            item.listPath.startsWith('//')) fail('請設定已驗證的固定列表路徑');
+        const url = new URL(item.listPath, base);
+        if (url.origin !== base.origin) fail('API 來源不符');
+        if (!item.fields || !Object.keys(item.fields).length) fail('必須設定公開欄位');
+        for (const [alias, field] of Object.entries(item.fields)) {
+            if (!validKey(alias) || !validKey(field.id) ||
+                !['text', 'number', 'boolean', 'image'].includes(field.type)) fail('公開欄位設定錯誤');
+        }
+        if (item.sorts !== undefined && (!Array.isArray(item.sorts) || item.sorts.some(sort =>
+            !validKey(sort.field) || typeof sort.isAsc !== 'boolean'))) fail('排序設定錯誤');
+        item.url = url.href;
+        datasets.set(name, item);
+    }
+    if (!datasets.size) fail('尚未啟用任何已確認的公開資料集');
+    return { headers, datasets };
+}
+
+function publicValue(value, type) {
+    if (type === 'text') return typeof value === 'string' ? value.slice(0, 20000) : null;
+    if (type === 'number') return typeof value === 'number' && Number.isFinite(value) ? value : null;
+    if (type === 'boolean') return typeof value === 'boolean' ? value : null;
+    // 只回傳圖片 URL，避免將整個附件／關聯物件的額外資訊洩漏給前端。
+    const candidate = Array.isArray(value) ? value[0]?.downloadUrl : value;
+    if (typeof candidate !== 'string' || candidate.length > 4096) return null;
+    try {
+        const url = new URL(candidate);
+        return url.protocol === 'https:' && !url.username && !url.password ? url.href : null;
+    } catch { return null; }
+}
+
+async function boundedJSON(response) {
+    if (!response.ok || !/^application\/(?:[\w.-]+\+)?json(?:\s*;|$)/i.test(response.headers.get('content-type') || '')) {
+        fail('上游回應不是成功的 API JSON');
+    }
+    if (Number(response.headers.get('content-length')) > MAX_BYTES) fail('回應過大');
+    const reader = response.body.getReader();
+    const chunks = [];
+    let size = 0;
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            size += value.length;
+            if (size > MAX_BYTES) fail('回應過大');
+            chunks.push(value);
+        }
+    } finally { await reader.cancel().catch(() => {}); }
+    return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+}
+
+export function createHandler(config, { env = process.env, fetchImpl = fetch } = {}) {
+    const { headers, datasets } = buildSettings(config, env);
+    let active = 0;
+    return async function handler(req, res) {
+        const reply = (status, data) => {
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8',
+                'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+            res.end(JSON.stringify(data));
+        };
+        if (req.method !== 'GET') return reply(405, { success: false, message: '此端點僅接受讀取' });
+        let url;
+        try { url = new URL(req.url, 'http://localhost'); } catch { return reply(400, { success: false }); }
+        const match = /^\/api\/content\/([A-Za-z0-9_-]+)$/.exec(url.pathname);
+        const dataset = match && datasets.get(match[1]);
+        if (!dataset) return reply(404, { success: false });
+        const params = [...url.searchParams.keys()];
+        if (params.some(key => !['page', 'limit'].includes(key)) || new Set(params).size !== params.length) {
+            return reply(400, { success: false, message: '不支援此查詢參數' });
+        }
+        const integer = (key, fallback, max) => {
+            const raw = url.searchParams.get(key) ?? String(fallback);
+            return /^[1-9][0-9]*$/.test(raw) && Number(raw) <= max ? Number(raw) : null;
+        };
+        const pageIndex = integer('page', 1, 1000);
+        const pageSize = integer('limit', 20, 50);
+        if (!pageIndex || !pageSize) return reply(400, { success: false });
+        if (active >= 8) return reply(503, { success: false, message: '請稍後重試' });
+        active++;
+        try {
+            const fields = [...new Set([dataset.publishedField, ...Object.values(dataset.fields).map(field => field.id)])];
+            const response = await fetchImpl(dataset.url, {
+                method: 'POST', headers, redirect: 'error', signal: AbortSignal.timeout(10000),
+                body: JSON.stringify({ pageIndex, pageSize, useFieldIdAsKey: true,
+                    includeTotalCount: false, fields, sorts: dataset.sorts || [],
+                    filter: { type: 'group', logic: 'AND', children: [{ type: 'condition',
+                        field: dataset.publishedField, operator: 'eq', value: [dataset.publishedValue] }] } })
+            });
+            const payload = await boundedJSON(response);
+            if (payload.success !== true || !Array.isArray(payload.data?.rows)) fail('API 資料格式不符');
+            const rows = payload.data.rows.filter(row => row && !Array.isArray(row) &&
+                row[dataset.publishedField] === dataset.publishedValue).slice(0, pageSize).map(row =>
+                Object.fromEntries(Object.entries(dataset.fields).map(([alias, field]) =>
+                    [alias, publicValue(row[field.id], field.type)])));
+            // 不回傳上游 total、系統欄位、錯誤本文或未列入白名單的資料。
+            reply(200, { success: true, data: { rows, pageIndex, pageSize } });
+        } catch {
+            reply(502, { success: false, message: '資料來源暫時無法使用，請管理者檢查部署設定' });
+        } finally { active--; }
+    };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+    try {
+        const { default: config } = await import('./server.config.mjs');
+        const handler = createHandler(config);
+        const port = Number(process.env.PORT || 3001);
+        if (!Number.isInteger(port) || port < 1 || port > 65535) fail('PORT 無效');
+        createServer(handler).listen(port, '127.0.0.1', () => console.log('niio 內容服務已啟動'));
+    } catch {
+        console.error('niio 內容服務未啟動：請檢查後端設定與必要環境變數。');
+        process.exitCode = 1;
+    }
+}

@@ -1031,12 +1031,41 @@ def audit_customer_policy(stage):
                 record_issue('殘留資料表用語誤譯', line, number)
 
 
+def website_manifest(source, output):
+    manifest = json.loads((output / 'localization/overrides/website/manifest.json').read_text())
+    actual = {path.relative_to(source).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+              for path in (source / 'skills/api/hap-api-website').rglob('*') if path.is_file()}
+    if actual != manifest['sourceFiles']:
+        raise ValueError('上游網站技能已變更，請重新審查後端憑證與公開內容覆寫；保留上一版技能。')
+    return manifest
+
+
+def apply_website_overrides(stage, output, manifest):
+    for name in manifest['outputFiles']:
+        relative = Path(name)
+        if relative.is_absolute() or '..' in relative.parts:
+            raise ValueError('網站覆寫路徑無效')
+        source = output / 'localization/overrides/website' / relative
+        target = stage / 'api/niio-api-website' / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+        AUDIT['changedFiles'].append('skills/api/niio-api-website/' + name)
+    guide = stage / 'api/niio-api-website/references/niio-api-usage-guide.md'
+    text = guide.read_text()
+    text = replace_required(text,
+        '> 本文件總結了niio V3 API的核心使用規範、最佳實踐和常見陷阱,基於實際測試驗證',
+        '> 本文件保留 API 協定參考；本部署的路徑、驗證方式與回應格式仍須獨立唯讀驗證。以下任何含憑證請求只可在後端執行。網站架構以 niio-as-database-guide.md 為準，不得把範例密鑰或標頭放進前端。',
+        '網站 API 參考適用範圍')
+    guide.write_text(text)
+
+
 def build(source, output, config):
     global CURRENT_FILE
     for key in AUDIT:
         if isinstance(AUDIT[key], list):
             AUDIT[key].clear()
     source, output = source.resolve(), output.resolve()
+    website_policy = website_manifest(source, output)
     refresh_sources = {
         'build/scripts/refresh_fields.py': 'd078df1e401e5a6f567183c99d5c1205c2d81abb0968238f86e0dbde4d543652',
         'build/steps/3_refresh_fields.md': '4d5324d03cbd0f6ed4c2c62f4a0144bff9994fc426811f8f0854879b6a2c074e',
@@ -1084,7 +1113,7 @@ def build(source, output, config):
         dir=output
     ) as tmp:
         stage = Path(tmp) / "skills"
-        shutil.copytree(source / "skills", stage)
+        shutil.copytree(source / "skills", stage, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '*.pyo'))
         renamed_pattern = prepare_names(stage)
         documents, anchors = {}, {}
 
@@ -1157,6 +1186,7 @@ def build(source, output, config):
                 path.write_bytes(new.encode("utf-8"))
 
         apply_customer_policy(stage, output)
+        apply_website_overrides(stage, output, website_policy)
         audit_customer_policy(stage)
         audit_locale(stage)
         audit_renamed_references(stage, renamed_pattern)

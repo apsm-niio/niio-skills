@@ -8,6 +8,9 @@ on:
         required: true
         type: string
 
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+
 permissions:
   contents: write
 
@@ -74,6 +77,9 @@ jobs:
 
       - name: 驗證 MCP 欄位整理與下游填值
         run: python -m unittest discover -s tests -p test_mcp_refresh.py -v
+
+      - name: 驗證網站後端與前端範圍
+        run: node --test tests/test_website_gateway.mjs
 
       - name: 設定技能更新來源
         env:

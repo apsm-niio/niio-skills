@@ -1,0 +1,21 @@
+{
+  "sourceFiles": {
+    "skills/api/hap-api-website/README.md": "f48eca61de0b7515c2a550ead4c7148b423bca1a8dd19a3240783e72aa35736d",
+    "skills/api/hap-api-website/SKILL.md": "1d5517a6bdad122247765c70fffd68be01931021a932211ad128436b4dafc64f",
+    "skills/api/hap-api-website/references/hap-as-database-guide.md": "1fef57bc24622b172a328fd4e721c1ebe4da8745c0103633e94c4efd078153bd",
+    "skills/api/hap-api-website/references/hap-api-usage-guide.md": "154d99e137c51e9d3dfad2457db402e5c6add557d7c868e0215a8ae78dd398bb",
+    "skills/api/hap-api-website/assets/main.js.template": "0ee19eee452a1fb0370b2fe57d76147b086f2d36f0a477a6a580062328468ef5",
+    "skills/api/hap-api-website/assets/api.js.template": "40c405018512e87c740b3beb6b68582366843ebd3b8821eb81325bd1b1249ec4",
+    "skills/api/hap-api-website/assets/config.js.template": "c120c7451cb033d519808dc55a2d8a0f8b09166a02d4edcb1b2e1873c5043838"
+  },
+  "outputFiles": [
+    "SKILL.md",
+    "README.md",
+    "references/niio-as-database-guide.md",
+    "assets/config.js.template",
+    "assets/api.js.template",
+    "assets/main.js.template",
+    "assets/server.mjs.template",
+    "assets/server.config.mjs.template"
+  ]
+}

@@ -1,0 +1,15 @@
+/** 只呼叫同源網站後端，不接受任意 API 路徑、工作表、篩選或憑證。 */
+const API = {
+    async getRows(dataset, { pageIndex = 1, pageSize = 20 } = {}) {
+        if (!Object.values(CONFIG.DATASETS).includes(dataset) ||
+            !Number.isInteger(pageIndex) || pageIndex < 1 || pageIndex > 1000 ||
+            !Number.isInteger(pageSize) || pageSize < 1 || pageSize > 50 ||
+            CONFIG.CONTENT_API_PATH !== '/api/content') throw new Error('內容查詢設定錯誤');
+        const url = `${CONFIG.CONTENT_API_PATH}/${encodeURIComponent(dataset)}?page=${pageIndex}&limit=${pageSize}`;
+        const response = await fetch(url, { method: 'GET', credentials: 'same-origin', redirect: 'error' });
+        if (!response.ok) throw new Error('內容暫時無法載入');
+        const payload = await response.json();
+        if (payload.success !== true || !Array.isArray(payload.data?.rows)) throw new Error('內容格式不符');
+        return payload.data;
+    }
+};

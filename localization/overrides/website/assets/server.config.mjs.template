@@ -1,0 +1,20 @@
+// 僅放在後端，不能放入 public 或前端打包入口。填入真實值並完成唯讀驗證後才啟用。
+export default {
+    datasets: {
+        products: {
+            enabled: false,
+            public: false, // 管理者確認這組資料可供任何訪客讀取後才設 true。
+            restVerified: false,
+            listPath: '', // 依本部署文件填入已驗證的列表路徑，不從 MCP URL 猜測。
+            publishedField: '',
+            publishedValue: '1', // 必須符合實測回傳型別；後端會再做嚴格相等檢查。
+            fields: {
+                name: { id: '', type: 'text' },
+                description: { id: '', type: 'text' },
+                price: { id: '', type: 'number' },
+                image: { id: '', type: 'image' }
+            },
+            sorts: []
+        }
+    }
+};
