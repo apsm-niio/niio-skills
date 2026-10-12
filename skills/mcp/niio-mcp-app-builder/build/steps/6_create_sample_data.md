@@ -5,7 +5,7 @@
 ## 輸入資料
 
 - `worksheetContext`：工作表結構清單（含欄位定義、選項值），來自 `worksheetContext.json`（只讀）
-- `worksheetIdByName`：工作表名稱 → worksheetId 對映（來自 `hap-context.json`）
+- `worksheetIdByName`：工作表名稱 → worksheetId 對映（來自 `niio-context.json`）
 - `fillTemplates`：每張表的**確定性填值模板**，由前置步驟的指令碼從 `worksheetContext.json` 自動生成 → `fillTemplates.json`
 
 ## 執行總覽

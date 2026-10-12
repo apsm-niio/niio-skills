@@ -4,19 +4,19 @@
 
 ## 輸入資料
 
-- `org_id`：組織 ID（來自 `hap-plan.json`）
-- `appName`：應用名稱（來自 `hap-plan.json`）
-- `appIcon`：應用圖示（來自 `hap-plan.json`）
-- `appColor`：應用配色（來自 `hap-plan.json`）
-- `enableExternalPortal`：是否啟用外部門戶（來自 `hap-plan.json`，若規劃了外部門戶角色則為 `true`）
-- `sections`：導航分組清單（來自 `hap-plan.json`）
+- `org_id`：組織 ID（來自 `niio-plan.json`）
+- `appName`：應用名稱（來自 `niio-plan.json`）
+- `appIcon`：應用圖示（來自 `niio-plan.json`）
+- `appColor`：應用配色（來自 `niio-plan.json`）
+- `enableExternalPortal`：是否啟用外部門戶（來自 `niio-plan.json`，若規劃了外部門戶角色則為 `true`）
+- `sections`：導航分組清單（來自 `niio-plan.json`）
 
 ## 執行流程
 
 1. 呼叫 `create_app` 建立應用，獲得 `appId`（參數規則見下方）
 2. 呼叫 `create_app_sections` 批次建立導航分組，記錄 `sectionIdByName`
 3. 寫入應用訪問連結（見下方）
-4. 更新 `hap-context.json`：寫入 `appId`、`sectionIdByName`（不寫 `progress`，由排程器統一管理）
+4. 更新 `niio-context.json`：寫入 `appId`、`sectionIdByName`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`appId` 非空，`sectionIdByName` 條目數等於 plan 中分組數量。
 
@@ -30,7 +30,7 @@
 
 ### desc
 
-面向使用者的應用使用手冊（**必須使用原生 HTML + 行內 CSS 編寫，禁止使用 Markdown**）。讀取 `{PROJECT_ROOT}/apps/{appName}/overview.md` 和 `hap-plan.json` 中的 `roles` 清單，以使用者視角改寫為按角色組織的使用手冊。
+面向使用者的應用使用手冊（**必須使用原生 HTML + 行內 CSS 編寫，禁止使用 Markdown**）。讀取 `{PROJECT_ROOT}/apps/{appName}/overview.md` 和 `niio-plan.json` 中的 `roles` 清單，以使用者視角改寫為按角色組織的使用手冊。
 
 **內容結構**：
 
@@ -46,7 +46,7 @@
 5. **注意事項**：從業務流程中提煉 2～4 條容易踩坑的使用提醒（如操作順序約束、不可逆操作提示等）
 6. **AI 助手說明**（如有）：簡要介紹 AI 助手的用途
 
-- **資料來源**：從 `overview.md`、`hap-plan.json` 的 `roles`、`workflows`、`worksheetCustomActions` 中提取
+- **資料來源**：從 `overview.md`、`niio-plan.json` 的 `roles`、`workflows`、`worksheetCustomActions` 中提取
 - **去掉**：ER 圖、設計思路、技術性描述、開發者視角的內容
 - **語氣**：面向使用者的"使用指南"，幫助每個角色的使用者快速瞭解自己能做什麼、怎麼操作
 - **排版**：使用 HTML 標籤排版（如 `<h3>`、`<ul><li>`、`<p>`、`<div style="...">`），可輔以應用顏色，樣式美觀，層次分明，便於快速瀏覽。**不要使用 Markdown 語法（如 `#`、`-`、`**`）**

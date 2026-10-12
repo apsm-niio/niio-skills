@@ -1,6 +1,6 @@
 # Progress 狀態機
 
-`hap-context.json` 中的 `progress` 欄位是一個有限狀態機。**所有 progress 寫入均由排程器完成**，各 step 只負責寫入自己的產出資料（ID 對映等），不寫 progress。
+`niio-context.json` 中的 `progress` 欄位是一個有限狀態機。**所有 progress 寫入均由排程器完成**，各 step 只負責寫入自己的產出資料（ID 對映等），不寫 progress。
 
 ## 狀態定義
 

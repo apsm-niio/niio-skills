@@ -1059,6 +1059,40 @@ def apply_website_overrides(stage, output, manifest):
     guide.write_text(text)
 
 
+def apply_project_file_policy(stage, output):
+    base = stage / 'mcp/niio-mcp-app-builder'
+    for path in base.rglob('*'):
+        if path.is_file() and path.suffix in {'.md', '.py'}:
+            text = path.read_text().replace('hap-plan.json', 'niio-plan.json').replace('hap-context.json', 'niio-context.json')
+            path.write_text(text)
+    overrides = output / 'localization/overrides/project-files'
+    (base / 'scripts').mkdir(exist_ok=True)
+    shutil.copyfile(overrides / 'project_files.py', base / 'scripts/project_files.py')
+    shutil.copyfile(overrides / 'scan_apps.py', base / 'plan/scripts/scan_apps.py')
+    note = '''
+## 專案檔名與舊專案相容
+
+新專案只寫 `niio-plan.json` 與 `niio-context.json`。在首次寫入方案或進度前，以及每次從斷點恢復前，先確認沒有其他程序或 agent 正在寫入此專案，執行：
+
+```bash
+python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{appName}"
+```
+
+`SKILL_DIR` 指主要 niio-mcp-app-builder 目錄。新專案先建立其應用資料夾再執行。遷移會檢查兩组新舊 JSON、保留原始位元組備份至應用目錄的 `.niio-legacy/`，才移除舊名稱；不改 appId、欄位對映或 progress。整個遷移完成後才能派發並行建置。
+
+只讀取狀態可用 `check` 取代 `migrate`，不修改檔案。掃描器同時辨識新舊專案，`status: blocked` 時必須停止並回報，不得當作新專案重建。新舊內容相同可安全整理；不同、JSON 錯誤或有進度卻缺方案時停止，請使用者確認正確版本，不能自動選最新檔案覆蓋。
+
+若中斷，先確認沒有其他程序執行。遷移鎖存在時不自動刪除；人工確認後移除 `.niio-migration.lock`，再重跑遷移。部分已完成的檔案會保留，新舊相同可續跑；备份不可作為日常寫入目標。其他輸出如 `worksheetContext.json` 保持原名。
+
+'''.replace('兩组', '兩組').replace('备份', '備份')
+    for name in ['SKILL.md', 'plan/SKILL.md', 'build/SKILL.md']:
+        path = base / name
+        text = path.read_text()
+        data, body = frontmatter(text)
+        header = text[:len(text)-len(body)] if data is not None else ''
+        path.write_text(header + note + body)
+
+
 def build(source, output, config):
     global CURRENT_FILE
     for key in AUDIT:
@@ -1066,6 +1100,9 @@ def build(source, output, config):
             AUDIT[key].clear()
     source, output = source.resolve(), output.resolve()
     website_policy = website_manifest(source, output)
+    scanner = source / 'skills/mcp/hap-mcp-app-builder/plan/scripts/scan_apps.py'
+    if hashlib.sha256(scanner.read_bytes()).hexdigest() != '9c3c4220f319fbb824e15094cc9e69f27ad9c3888c86df5e0b4f30289a0ae57c':
+        raise ValueError('上游專案掃描器已變更，請重新審查檔名相容規則。')
     refresh_sources = {
         'build/scripts/refresh_fields.py': 'd078df1e401e5a6f567183c99d5c1205c2d81abb0968238f86e0dbde4d543652',
         'build/steps/3_refresh_fields.md': '4d5324d03cbd0f6ed4c2c62f4a0144bff9994fc426811f8f0854879b6a2c074e',
@@ -1187,6 +1224,7 @@ def build(source, output, config):
 
         apply_customer_policy(stage, output)
         apply_website_overrides(stage, output, website_policy)
+        apply_project_file_policy(stage, output)
         audit_customer_policy(stage)
         audit_locale(stage)
         audit_renamed_references(stage, renamed_pattern)

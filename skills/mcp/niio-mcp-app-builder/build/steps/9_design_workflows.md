@@ -4,12 +4,12 @@
 
 > [!IMPORTANT]
 > **設計範圍**：本步驟必須同時設計以下兩類工作流的節點方案，缺一不可：
-> 1. **系統工作流**（`hap-plan.json` 的 `workflows[]`）：由記錄事件/定時/日期欄位等系統事件觸發
-> 2. **自訂動作工作流**（`hap-context.json` 的 `customActionWorkflows[]`）：由使用者點選自訂動作按鈕手動觸發，已有 `processId`
+> 1. **系統工作流**（`niio-plan.json` 的 `workflows[]`）：由記錄事件/定時/日期欄位等系統事件觸發
+> 2. **自訂動作工作流**（`niio-context.json` 的 `customActionWorkflows[]`）：由使用者點選自訂動作按鈕手動觸發，已有 `processId`
 >
 > 遺漏自訂動作工作流的設計是歷史上最常見的執行缺陷，會導致 Step 11 執行器無方案可用。
 
-你只負責**設計**，不負責物理建立。在目前階段，**必須一次性完成所有工作流的設計**，將全部節點方案統一寫回 `{PROJECT_ROOT}/apps/{appName}/hap-plan.json`，然後由執行器批次部署。這樣做的好處：
+你只負責**設計**，不負責物理建立。在目前階段，**必須一次性完成所有工作流的設計**，將全部節點方案統一寫回 `{PROJECT_ROOT}/apps/{appName}/niio-plan.json`，然後由執行器批次部署。這樣做的好處：
 
 - **全域視角**：同時看到所有流程，更容易發現跨流程的表聯動關係
 - **減少開銷**：避免在設計和部署之間反覆切換上下文
@@ -18,20 +18,20 @@
 ## 輸入資料
 
 - `worksheetContext`：工作表結構清單，來自 `worksheetContext.json`（只讀）
-- `viewIdByName`：檢視名稱 → ID 對映（來自 `hap-context.json`）
-- `roles`：角色清單，含 `name` 和 `description`（來自 `hap-plan.json` 的 `roles[]`，用於設計中引用角色名稱）
-- `workflows`：**系統工作流**清單（來自 `hap-plan.json`）—— 需要設計節點方案
-- `customActionWorkflows`：**自訂動作工作流**清單，已有 `processId`（來自 `hap-context.json`）—— **同樣必須設計節點方案**
+- `viewIdByName`：檢視名稱 → ID 對映（來自 `niio-context.json`）
+- `roles`：角色清單，含 `name` 和 `description`（來自 `niio-plan.json` 的 `roles[]`，用於設計中引用角色名稱）
+- `workflows`：**系統工作流**清單（來自 `niio-plan.json`）—— 需要設計節點方案
+- `customActionWorkflows`：**自訂動作工作流**清單，已有 `processId`（來自 `niio-context.json`）—— **同樣必須設計節點方案**
 
 ## 完成標誌
 
-將**所有工作流**的節點方案寫回 `hap-plan.json`：系統工作流寫入 `workflows[].nodes`，自訂動作工作流寫入 `customActionWorkflows[].nodes`。不寫 `progress`（由排程器統一管理）。
+將**所有工作流**的節點方案寫回 `niio-plan.json`：系統工作流寫入 `workflows[].nodes`，自訂動作工作流寫入 `customActionWorkflows[].nodes`。不寫 `progress`（由排程器統一管理）。
 
 > [!CAUTION]
-> **寫入後必須重新讀取 `hap-plan.json` 驗證**。
+> **寫入後必須重新讀取 `niio-plan.json` 驗證**。
 
 **⛔ 驗證斷言**（寫入後立即執行）：
-1. 重新讀取 `hap-plan.json` 檔案
+1. 重新讀取 `niio-plan.json` 檔案
 2. 檢查**每條系統工作流**的 `nodes` 陣列非空，且節點數 >= 1
 3. 檢查**每條自訂動作工作流**（含 `processId` 的）的 `nodes` 陣列非空，且節點數 >= 1
 4. 兩類工作流的總數 = 輸入中 `workflows` 條數 + `customActionWorkflows` 條數

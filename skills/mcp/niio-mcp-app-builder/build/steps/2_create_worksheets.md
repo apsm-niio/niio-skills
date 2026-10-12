@@ -5,8 +5,8 @@
 ## 輸入資料
 
 - `appId`：應用 ID
-- `worksheetToSectionId`：工作表名 → sectionId 的對映（從 `hap-context.json` 的 `sectionIdByName` 推導）
-- `worksheets`：所有工作表的規劃清單（來自 `hap-plan.json`）
+- `worksheetToSectionId`：工作表名 → sectionId 的對映（從 `niio-context.json` 的 `sectionIdByName` 推導）
+- `worksheets`：所有工作表的規劃清單（來自 `niio-plan.json`）
 
 ## 執行流程
 
@@ -17,7 +17,7 @@
    - **`icon` 和 `color` 必須原樣使用 plan 中該工作表的值，嚴禁自行替換或編造**
 3. 固定設定 `createDefaultView: false`（預設檢視在後續步驟單獨建立）
 4. 記錄回傳的 `worksheetId`，存入 `worksheetIdByName[表名]`
-5. 更新 `hap-context.json`：寫入 `worksheetIdByName`（不寫 `progress`，由排程器統一管理）
+5. 更新 `niio-context.json`：寫入 `worksheetIdByName`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`worksheetIdByName` 條目數 = plan 中工作表數量，每個值均為 24 位物理 ID。
 

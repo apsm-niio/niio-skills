@@ -4,7 +4,7 @@
 
 ## 輸出結構
 
-各 step 回傳成功或失敗證據；只有排程器可在驗證完成後更新 `hap-context.json` 的 progress。並行步驟必須等待匯合，依 `PROGRESS.md` 與 `build/SKILL.md` 路由推進。
+各 step 回傳成功或失敗證據；只有排程器可在驗證完成後更新 `niio-context.json` 的 progress。並行步驟必須等待匯合，依 `PROGRESS.md` 與 `build/SKILL.md` 路由推進。
 
 ### 成功
 
@@ -19,7 +19,7 @@
 
 ## 排程器驗證方法
 
-排程器先驗證本次步驟產出，在並行匯合條件滿足後才寫入進度，再讀回 `hap-context.json` 檢查：
+排程器先驗證本次步驟產出，在並行匯合條件滿足後才寫入進度，再讀回 `niio-context.json` 檢查：
 
 ```
 if context.progress == 目前步驟的預期完成狀態:
@@ -41,7 +41,7 @@ else:
 | 5b | `page_shells_created` | `customPageIdByName`, `chatbotIdByName`（若有） |
 | 7 | 與 Step 8、9 匯合後寫入 `config_completed` | `customPageIdByName`, `chatbotIdByName`（若有） |
 | 8 | 與 Step 7、9 匯合後寫入 `config_completed` | `roleContext` |
-| 9 | 與 Step 7、8 匯合後寫入 `config_completed` | _(工作流設計寫入 hap-plan.json)_ |
+| 9 | 與 Step 7、8 匯合後寫入 `config_completed` | _(工作流設計寫入 niio-plan.json)_ |
 | 10 | 與 Step 11 匯合後由排程器寫入 `workflows_deployed` | _(系統工作流 processId 已 publish)_ |
 | 11 | 與 Step 10 匯合後由排程器寫入 `workflows_deployed` | `customActionWorkflows` |
 | 12 | `completed` | _(CLI 回填結果或待補清單)_ |

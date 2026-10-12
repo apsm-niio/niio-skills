@@ -1,7 +1,7 @@
 # Step 3：透過 MCP 重新整理欄位結構
 
 沿用排程器已選定且連線成功的 niio MCP 服務。由 AI 呼叫工具、保存回應及執行本機整理；MCP 不會自行執行整份建置流程。
-應用與工作表 ID 從 `hap-context.json` 的 `appId`、`worksheetIdByName` 取得，無需使用者重填。
+應用與工作表 ID 從 `niio-context.json` 的 `appId`、`worksheetIdByName` 取得，無需使用者重填。
 本步不讀取或要求 REST Token、AppKey、Sign、API 基底網址，也不呼叫 REST、CLI 或其他環境作為備援。
 
 ## 執行流程
@@ -20,14 +20,14 @@
 }
 ```
 
-上例只表示封裝結構，空 fields 不能通過驗證。完整回應僅存放於本次暫存檔，不寫進 `hap-context.json` 或提交到版本控制。
+上例只表示封裝結構，空 fields 不能通過驗證。完整回應僅存放於本次暫存檔，不寫進 `niio-context.json` 或提交到版本控制。
 
 6. 全部取得後，執行本機整理命令（變數由 AI 設定，不要求使用者手動輸入）：
 
 ```bash
 python3 "{SKILL_DIR}/build/scripts/refresh_fields.py" \
   --responses-dir "{MCP_RESPONSE_DIR}" \
-  "{PROJECT_ROOT}/apps/{appName}/hap-context.json"
+  "{PROJECT_ROOT}/apps/{appName}/niio-context.json"
 ```
 
 腳本只讀取本機 JSON，不發出網路請求；全部驗證成功後，以原子替換寫入同目錄的 `worksheetContext.json`。

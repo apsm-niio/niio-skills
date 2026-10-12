@@ -14,10 +14,10 @@
 
 ## 輸入資料
 
-- `appId`、`org_id`、各 ID 對映：來自 `hap-context.json`
-- `cliAvailable`：來自 `hap-context.json`（建置入口的「CLI 自檢」寫入）
+- `appId`、`org_id`、各 ID 對映：來自 `niio-context.json`
+- `cliAvailable`：來自 `niio-context.json`（建置入口的「CLI 自檢」寫入）
 - `worksheetContext.json`：真實欄位/檢視結構（只讀）
-- `hap-plan.json`：方案期望（檢視增強設定、角色權限、動作觸發條件、節點設計等）
+- `niio-plan.json`：方案期望（檢視增強設定、角色權限、動作觸發條件、節點設計等）
 - `build/CAPABILITY_MATRIX.md`：硬缺口清單與各物件的「Step 12 檢查點」
 
 ## 執行流程
@@ -30,7 +30,7 @@
   「步驟 3：降級輸出」。這是**唯一**跳過回填的情形。
 - **`cliAvailable = true`** → 做以下「就緒校正」，然後進入步驟 1：
 
-  1. **組織一致性**：執行 `hap auth whoami` 讀目前組織，與 `hap-context.json` 的 `org_id` 比對。
+  1. **組織一致性**：執行 `hap auth whoami` 讀目前組織，與 `niio-context.json` 的 `org_id` 比對。
      - 不一致 → 執行 `hap auth set-current-org <org_id>` **自動切換**到本應用所在組織。
        （不要讓使用者手動切換。）
   2. **設為目前應用**：執行 `hap app select <appId>`，把正在建置的應用設為預設應用。
@@ -42,7 +42,7 @@
 > 不依賴任何「各 step 邊建邊記」的資料——本步在最後**統一對賬**重新算出硬缺口。
 
 逐項對照 `build/CAPABILITY_MATRIX.md` 每個物件的「Step 12 檢查點」，用 CLI 讀出真實結構、與
-`hap-plan.json` 期望比對，把「MCP 沒做到、且屬於 CLI-only 硬缺口」的項收整合執行期清單 `cliGaps[]`。
+`niio-plan.json` 期望比對，把「MCP 沒做到、且屬於 CLI-only 硬缺口」的項收整合執行期清單 `cliGaps[]`。
 
 對賬時優先核對硬缺口清單裡的高頻項（按矩陣排序）：
 
@@ -65,7 +65,7 @@
 對每條 `cliGaps[]`，呼叫對應 `hap` 命令回填。命令寫法**直接複用 app 編輯能力的命令字典**
 （檢視 / 工作流節點 / 角色 / 頁面元件 / 欄位 / 動作各模組），本步只做橋接，不自創編輯邏輯：
 
-- 各種 id 從 `hap-context.json` 取（appId、worksheetId、viewId、roleId、processId/nodeId…）；
+- 各種 id 從 `niio-context.json` 取（appId、worksheetId、viewId、roleId、processId/nodeId…）；
   這些是同後端的伺服器端 id，CLI 直接可用。
 - 改複雜值前**先用讀命令匯出現狀**，在真實結構上改再寫回（檢視/節點/頁面這類整體寫回的物件尤其如此）。
 - **逐條記錄結果**：成功 / 失敗（含原因）。單條失敗不影響其他項，繼續。

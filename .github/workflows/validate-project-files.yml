@@ -1,0 +1,39 @@
+name: 驗證專案檔名與舊版相容
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - skills/mcp/niio-mcp-app-builder/**
+      - localization/overrides/project-files/**
+      - localization/overrides/refresh_fields.py
+      - scripts/localize.py
+      - tests/test_project_files.py
+      - tests/test_mcp_refresh.py
+      - .github/workflows/validate-project-files.yml
+  pull_request:
+    paths:
+      - skills/mcp/niio-mcp-app-builder/**
+      - localization/overrides/**
+      - tests/test_project_files.py
+      - tests/test_mcp_refresh.py
+      - .github/workflows/validate-project-files.yml
+permissions:
+  contents: read
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: 驗證檔名遷移、衝突及續跑
+        run: python -m unittest discover -s tests -p test_project_files.py -v
+      - name: 驗證欄位整理與下游填值
+        run: python -m unittest discover -s tests -p test_mcp_refresh.py -v

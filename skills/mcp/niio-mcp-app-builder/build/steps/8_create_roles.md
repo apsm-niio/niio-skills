@@ -5,10 +5,10 @@
 ## 輸入資料
 
 - `appId`：應用 ID
-- `roles`：待建立的角色清單（含名稱、職責說明、權限範圍），來自 `hap-plan.json`
+- `roles`：待建立的角色清單（含名稱、職責說明、權限範圍），來自 `niio-plan.json`
 - `worksheetContext`：工作表完整結構（含欄位資訊），來自 `worksheetContext.json`（只讀）
-- `viewIdByName`：檢視名稱 → ID 對映（來自 `hap-context.json`），用於 `recordPermissionInViews`
-- `customPageIdByName`：自訂頁面名稱 → ID 對映（來自 `hap-context.json`）
+- `viewIdByName`：檢視名稱 → ID 對映（來自 `niio-context.json`），用於 `recordPermissionInViews`
+- `customPageIdByName`：自訂頁面名稱 → ID 對映（來自 `niio-context.json`）
 
 ## 執行流程
 
@@ -18,7 +18,7 @@
 2. 引用 `viewIdByName` 設定檢視訪問權限
 3. 引用 `customPageIdByName` 設定頁面可見權限
 4. 記錄 `roleContext`（`[{ id, name }]`）
-5. 更新 `hap-context.json`：寫入 `roleContext`（不寫 `progress`，由排程器統一管理）
+5. 更新 `niio-context.json`：寫入 `roleContext`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`roleContext` 條目數 = plan 中角色數量，每個角色的 `id` 非空。
 

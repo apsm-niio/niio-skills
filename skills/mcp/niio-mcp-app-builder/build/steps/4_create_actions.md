@@ -6,7 +6,7 @@
 
 - `appId`：應用 ID
 - `worksheetContext`：工作表結構清單（含欄位 alias/ID 對映），來自 `worksheetContext.json`（只讀）
-- `worksheetCustomActions`：來自 `hap-plan.json` 的自訂動作規劃
+- `worksheetCustomActions`：來自 `niio-plan.json` 的自訂動作規劃
 
 ## 執行流程
 
@@ -15,7 +15,7 @@
 1. 呼叫 `create_custom_actions` 批次建立該表的所有動作
 2. 記錄回傳的 `actionIdByName`（格式：`"工作表名/動作名" → actionId`）
 3. **關鍵**：`type=triggerWorkflow` 的動作，系統會自動建立工作流外殼並回傳 `processId`——必須記錄到 `customActionWorkflows[]`
-4. 更新 `hap-context.json`：寫入 `actionIdByName`、`customActionWorkflows`（不寫 `progress`，由排程器統一管理）
+4. 更新 `niio-context.json`：寫入 `actionIdByName`、`customActionWorkflows`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`actionIdByName` 條目數 = plan 中全部自訂動作總數。`customActionWorkflows[]` 條目數 = plan 中 `type=triggerWorkflow` 的動作數。
 

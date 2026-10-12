@@ -7,10 +7,10 @@
 ## 輸入資料
 
 - `appId`：應用 ID
-- `customPageIdByName`：自訂頁面名稱 → 頁面 ID 的對映（來自 `hap-context.json`，由 Step 5b 寫入）
+- `customPageIdByName`：自訂頁面名稱 → 頁面 ID 的對映（來自 `niio-context.json`，由 Step 5b 寫入）
 - `worksheetContext`：工作表結構清單，每項含 `id`、`alias`、`fields`，來自 `worksheetContext.json`（只讀）
-- `viewIdByName`：檢視名稱 → ID 對映（來自 `hap-context.json`）
-- `customPages`：頁面規劃清單（來自 `hap-plan.json`）
+- `viewIdByName`：檢視名稱 → ID 對映（來自 `niio-context.json`）
+- `customPages`：頁面規劃清單（來自 `niio-plan.json`）
 
 ## 執行流程
 
@@ -20,7 +20,7 @@
 
 ### 完成
 
-本步驟無需寫入 `hap-context.json`（`customPageIdByName` 和 `chatbotIdByName` 已由 Step 5b 寫入）。不寫 `progress`（由排程器統一管理）。
+本步驟無需寫入 `niio-context.json`（`customPageIdByName` 和 `chatbotIdByName` 已由 Step 5b 寫入）。不寫 `progress`（由排程器統一管理）。
 
 ---
 

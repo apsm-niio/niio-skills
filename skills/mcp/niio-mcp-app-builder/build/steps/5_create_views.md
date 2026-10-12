@@ -6,8 +6,8 @@
 
 - `appId`：應用 ID
 - `worksheetContext`：工作表結構清單（含欄位 alias/ID、選項值），來自 `worksheetContext.json`（只讀）
-- `worksheetViews`：來自 `hap-plan.json` 的檢視規劃
-- `actionIdByName`：自訂動作名稱 → actionId 對映（來自 `hap-context.json`）
+- `worksheetViews`：來自 `niio-plan.json` 的檢視規劃
+- `actionIdByName`：自訂動作名稱 → actionId 對映（來自 `niio-context.json`）
 
 ## 執行流程
 
@@ -16,7 +16,7 @@
 3. 只使用 `worksheetContext` 中提供的欄位，不猜測
 4. 檢視中引用 `actionId` 時，從 `actionIdByName` 查詢
 5. 記錄 `viewIdByName`（格式：`"工作表名/檢視名" → viewId`）
-6. 更新 `hap-context.json`：寫入 `viewIdByName`（不寫 `progress`，由排程器統一管理）
+6. 更新 `niio-context.json`：寫入 `viewIdByName`（不寫 `progress`，由排程器統一管理）
 
 **⛔ 驗證斷言**：`viewIdByName` 條目數 = plan 中全部檢視總數。
 

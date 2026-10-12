@@ -2,6 +2,21 @@
 name: niio-mcp-app-builder
 description: 全自動一站式 niio 應用建置工具。從業務方案設計（Plan）開始，確認後自動實際建置（Build）。若已存在方案，可直接一鍵繼續/恢復實際建置。使用者輸入 /niio-builder 或直接用對話描述您的系統訴求（如"幫我建置一個客戶管理應用"）觸發。
 ---
+
+## 專案檔名與舊專案相容
+
+新專案只寫 `niio-plan.json` 與 `niio-context.json`。在首次寫入方案或進度前，以及每次從斷點恢復前，先確認沒有其他程序或 agent 正在寫入此專案，執行：
+
+```bash
+python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{appName}"
+```
+
+`SKILL_DIR` 指主要 niio-mcp-app-builder 目錄。新專案先建立其應用資料夾再執行。遷移會檢查兩組新舊 JSON、保留原始位元組備份至應用目錄的 `.niio-legacy/`，才移除舊名稱；不改 appId、欄位對映或 progress。整個遷移完成後才能派發並行建置。
+
+只讀取狀態可用 `check` 取代 `migrate`，不修改檔案。掃描器同時辨識新舊專案，`status: blocked` 時必須停止並回報，不得當作新專案重建。新舊內容相同可安全整理；不同、JSON 錯誤或有進度卻缺方案時停止，請使用者確認正確版本，不能自動選最新檔案覆蓋。
+
+若中斷，先確認沒有其他程序執行。遷移鎖存在時不自動刪除；人工確認後移除 `.niio-migration.lock`，再重跑遷移。部分已完成的檔案會保留，新舊相同可續跑；備份不可作為日常寫入目標。其他輸出如 `worksheetContext.json` 保持原名。
+
 > **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。範例網域不代表 REST 路由已驗證；MCP 成功也不代表 REST 或 CLI 相容。使用 REST 功能前，須依部署文件確認路徑與驗證方式，先完成唯讀測試；404 HTML 時停止，不重試寫入。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
 
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
@@ -91,7 +106,7 @@ python3 {SKILL_DIR}/plan/scripts/scan_apps.py {PROJECT_ROOT}
 > [!CAUTION]
 > **⛔ STOP — 必須先詢問使用者，嚴禁自動繼續建置。**
 > 向使用者展示已有應用的名稱和目前進度，然後詢問：
-> 1. **繼續建置** → 讀取 `build/SKILL.md` 從斷點恢復（不用選擇組織，org_id 已經儲存在hap-plan.json中）
+> 1. **繼續建置** → 讀取 `build/SKILL.md` 從斷點恢復（不用選擇組織，org_id 已經儲存在niio-plan.json中）
 > 2. **新建獨立應用** → 進入下方「選擇組織」流程
 
 ---

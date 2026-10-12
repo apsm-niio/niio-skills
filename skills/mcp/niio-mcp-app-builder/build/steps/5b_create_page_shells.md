@@ -5,9 +5,9 @@
 ## 輸入資料
 
 - `appId`：應用 ID
-- `sectionIdByName`：導航分組名稱 → sectionId 對映（來自 `hap-context.json`）
-- `customPages`：頁面規劃清單（來自 `hap-plan.json`）
-- `aiAssistants`：AI 助手規劃清單（來自 `hap-plan.json`，可能為空陣列）
+- `sectionIdByName`：導航分組名稱 → sectionId 對映（來自 `niio-context.json`）
+- `customPages`：頁面規劃清單（來自 `niio-plan.json`）
+- `aiAssistants`：AI 助手規劃清單（來自 `niio-plan.json`，可能為空陣列）
 
 ## 執行流程
 
@@ -22,7 +22,7 @@
 
 ### 階段 B：建立 AI 助手
 
-1. 讀取 `hap-plan.json` 中的 `aiAssistants` 陣列
+1. 讀取 `niio-plan.json` 中的 `aiAssistants` 陣列
    - 若為空陣列或不存在 → 跳過此階段
 2. 對每個 AI 助手，呼叫 `create_chatbot` 建立：
    - 必填參數：`appId`、`name`、`prompt`、`welcomeMessage`、`presetQuestions`
@@ -36,4 +36,4 @@
 
 ### 完成
 
-更新 `hap-context.json`：寫入 `customPageIdByName` 和 `chatbotIdByName`（若有）。不寫 `progress`（由排程器統一管理）。
+更新 `niio-context.json`：寫入 `customPageIdByName` 和 `chatbotIdByName`（若有）。不寫 `progress`（由排程器統一管理）。

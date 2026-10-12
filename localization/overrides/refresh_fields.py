@@ -9,6 +9,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from project_files import resolve_context, ProjectFileError
+
 
 class ValidationError(ValueError):
     """僅包含程式定義的檢查訊息，不附上原始回應。"""
@@ -57,7 +60,7 @@ def normalize_field(field):
 
 def build_context(context, responses_dir):
     if not isinstance(context, dict):
-        raise ValidationError("hap-context.json 必須是物件")
+        raise ValidationError("niio-context.json 必須是物件")
     app_id = required_text(context.get("appId"), "應用 ID")
     worksheets = context.get("worksheetIdByName")
     if not isinstance(worksheets, dict) or not worksheets:
@@ -120,9 +123,10 @@ def write_atomic(path, value):
 def main():
     parser = argparse.ArgumentParser(description="將 MCP 欄位回應驗證並整理成本機欄位結構")
     parser.add_argument("--responses-dir", required=True, type=Path, help="本次完整 MCP JSON 回應資料夾")
-    parser.add_argument("context", type=Path, help="hap-context.json 路徑")
+    parser.add_argument("context", type=Path, help="niio-context.json 路徑")
     args = parser.parse_args()
     try:
+        args.context = resolve_context(args.context)
         result = build_context(read_json(args.context), args.responses_dir)
         write_atomic(args.context.parent / "worksheetContext.json", result)
     except ValidationError as error:

@@ -18,14 +18,14 @@
 
 - `appId`：應用 ID
 - `worksheetContext`：工作表結構清單，來自 `worksheetContext.json`（只讀）。選項欄位含 `options` 陣列（`key` 是選項真實 ID，`value` 是中文名）。在節點中給選項欄位賦值時，**必須且只能使用 `key`**。
-- `viewIdByName`：檢視名稱 → ID 對映（來自 `hap-context.json`）
-- `roleContext`：角色清單，含 `id` 和 `name`（來自 `hap-context.json`）
-- `customActionWorkflows`：自訂動作觸發的工作流清單（來自 `hap-context.json`），每條包含 `processId`、`worksheetName`、`intentHints`
-- `customActionWorkflowDesign`：來自 `hap-plan.json` 的 `customActionWorkflows[]`，其中每條工作流的 `nodes` 欄位包含由設計師輸出的完整節點方案
+- `viewIdByName`：檢視名稱 → ID 對映（來自 `niio-context.json`）
+- `roleContext`：角色清單，含 `id` 和 `name`（來自 `niio-context.json`）
+- `customActionWorkflows`：自訂動作觸發的工作流清單（來自 `niio-context.json`），每條包含 `processId`、`worksheetName`、`intentHints`
+- `customActionWorkflowDesign`：來自 `niio-plan.json` 的 `customActionWorkflows[]`，其中每條工作流的 `nodes` 欄位包含由設計師輸出的完整節點方案
 
 ## 執行流程
 
-1. 從 `hap-context.json` 讀取 `customActionWorkflows[]` 陣列
+1. 從 `niio-context.json` 讀取 `customActionWorkflows[]` 陣列
 2. **逐條遍歷**每個自訂動作工作流，對每個 `processId`：
 
 ### 步驟 1：取得觸發節點引用

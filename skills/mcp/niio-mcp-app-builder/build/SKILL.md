@@ -1,7 +1,22 @@
 ---
 name: build
-description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排程 steps/*.md 完成所有 niio 物件的建立與設定。支援 subagent 委派和內聯執行雙模式。
+description: niio 應用實際建置排程器。讀取 niio-plan.json，逐步排程 steps/*.md 完成所有 niio 物件的建立與設定。支援 subagent 委派和內聯執行雙模式。
 ---
+
+## 專案檔名與舊專案相容
+
+新專案只寫 `niio-plan.json` 與 `niio-context.json`。在首次寫入方案或進度前，以及每次從斷點恢復前，先確認沒有其他程序或 agent 正在寫入此專案，執行：
+
+```bash
+python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{appName}"
+```
+
+`SKILL_DIR` 指主要 niio-mcp-app-builder 目錄。新專案先建立其應用資料夾再執行。遷移會檢查兩組新舊 JSON、保留原始位元組備份至應用目錄的 `.niio-legacy/`，才移除舊名稱；不改 appId、欄位對映或 progress。整個遷移完成後才能派發並行建置。
+
+只讀取狀態可用 `check` 取代 `migrate`，不修改檔案。掃描器同時辨識新舊專案，`status: blocked` 時必須停止並回報，不得當作新專案重建。新舊內容相同可安全整理；不同、JSON 錯誤或有進度卻缺方案時停止，請使用者確認正確版本，不能自動選最新檔案覆蓋。
+
+若中斷，先確認沒有其他程序執行。遷移鎖存在時不自動刪除；人工確認後移除 `.niio-migration.lock`，再重跑遷移。部分已完成的檔案會保留，新舊相同可續跑；備份不可作為日常寫入目標。其他輸出如 `worksheetContext.json` 保持原名。
+
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
 
 
@@ -35,7 +50,7 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
 | 9 | AI 助手已建立（若有） | `chatbotIdByName` 條目數匹配 plan（或 plan 無則跳過） | `chatbotIdByName` |
 | 10 | 頁面元件已設定 | 所有頁面均已呼叫 `update_custom_page` | Step 7 完成 |
 | 11 | 角色已建立 | `roleContext` 條目數 = plan 中角色數 | `roleContext` |
-| 12 | 工作流已設計 | `hap-plan.json` 中每條 workflow 和 customActionWorkflow 的 `nodes[]` 非空 | `hap-plan.json` |
+| 12 | 工作流已設計 | `niio-plan.json` 中每條 workflow 和 customActionWorkflow 的 `nodes[]` 非空 | `niio-plan.json` |
 | 13 | 系統工作流已釋出 | 每個系統工作流 processId 已 publish | Step 10 完成 |
 | 14 | 自訂動作工作流已釋出 | `customActionWorkflows[]` 每條均已 publish | Step 11 完成 |
 | 15 | CLI 建後精修已對賬 | CLI 可用→已校正組織+設目前應用+回填 `cliGaps[]`；niio CLI 未安裝→已輸出待補清單且未中斷 | Step 12 完成 |
@@ -44,8 +59,8 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
 
 ## 斷點恢復
 
-1. 讀取 `{PROJECT_ROOT}/apps/{appName}/hap-plan.json`，提取 `org_id` 和所有規劃資料
-2. 檢查 `{PROJECT_ROOT}/apps/{appName}/hap-context.json`
+1. 讀取 `{PROJECT_ROOT}/apps/{appName}/niio-plan.json`，提取 `org_id` 和所有規劃資料
+2. 檢查 `{PROJECT_ROOT}/apps/{appName}/niio-context.json`
    - 存在 → 讀取 `progress` 欄位，從斷點繼續
    - 不存在 → 從 Step 1 開始
 3. 如果進度 >= `fields_refreshed`，讀取 `{PROJECT_ROOT}/apps/{appName}/worksheetContext.json` 載入欄位結構
@@ -73,7 +88,7 @@ description: niio 應用實際建置排程器。讀取 hap-plan.json，逐步排
    - 登入成功 → `cliAvailable = true`。
    - 無圖形環境等導致瀏覽器授權無法完成 → 提示使用者手動執行 `hap auth login` 完成授權
      （這**不是**「未安裝」，不要據此把 `cliAvailable` 記為 false；在使用者完成授權前 Step 12 無法回填）。
-3. **寫入 context**：把 `cliAvailable` 寫入 `hap-context.json`（不寫 `progress`）。
+3. **寫入 context**：把 `cliAvailable` 寫入 `niio-context.json`（不寫 `progress`）。
 
 > **組織一致性與「設為目前應用」不在本步處理**——它們需要 appId（Step 1 之後才有），由 Step 12 完成：
 > `cliAvailable = true` 時，Step 12 會先自動把目前組織切到本應用所在組織、並把在建應用設為目前應用，再回填。
@@ -171,7 +186,7 @@ Step 5b 是輕量操作（建立空白頁面導航項 + chatbot），為後續�
 Step 5b 完成後，三者的輸入已全部就緒：
 - **Step 7**（設定頁面元件）：需要 `customPageIdByName`（Step 5b）+ `worksheetContext` + `viewIdByName`
 - **Step 8**（建立角色）：需要 `customPageIdByName` + `chatbotIdByName`（Step 5b）+ `worksheetContext` + `viewIdByName`
-- **Step 9**（設計工作流）：需要 `worksheetContext` + `viewIdByName` + `roles[]`（來自 hap-plan.json，不依賴 roleContext）
+- **Step 9**（設計工作流）：需要 `worksheetContext` + `viewIdByName` + `roles[]`（來自 niio-plan.json，不依賴 roleContext）
 
 因此：
 - Step 5b 完成後，同時派發 Step 7、Step 8、Step 9
@@ -221,21 +236,21 @@ Step 12 用 niio CLI 命令列工具補 MCP 蓋不到的硬缺口。**永不阻�
 - 應用名稱：{appName}
 - 專案根目錄：{PROJECT_ROOT}
 - Skill 目錄：{SKILL_DIR}（步驟檔案所在的 skill 根目錄）
-- 方案檔案：{PROJECT_ROOT}/apps/{appName}/hap-plan.json
-- 進度檔案：{PROJECT_ROOT}/apps/{appName}/hap-context.json
+- 方案檔案：{PROJECT_ROOT}/apps/{appName}/niio-plan.json
+- 進度檔案：{PROJECT_ROOT}/apps/{appName}/niio-context.json
 - 欄位結構：{PROJECT_ROOT}/apps/{appName}/worksheetContext.json（如存在）
 - 引用的規則檔案：{RULE_FILES}（如果步驟檔案引用了共享規則檔案，此處填入路徑清單；沒有則留空）
 
 ## 執行要求
 1. 先完整讀取步驟檔案
 2. **如果步驟檔案引用了其他規則檔案（如 `workflow_rules.md`），必須先完整閱讀該規則檔案後再開始執行**
-3. 從 hap-plan.json 讀取方案資料
-4. 從 hap-context.json 讀取已有的 ID 對映
+3. 從 niio-plan.json 讀取方案資料
+4. 從 niio-context.json 讀取已有的 ID 對映
 5. 如需欄位資訊，從 worksheetContext.json 讀取（只讀）
 6. 如步驟檔案要求執行指令碼（如 generate_fill_templates.py），使用 `{SKILL_DIR}` 定位指令碼路徑
 7. 嚴格按步驟檔案中的規則執行所有操作
 8. 所有 MCP 呼叫必須使用排程器指定的niio MCP 服務（服務名稱由排程器在委派時傳入）
-9. 完成後嚴格按步驟檔案中「完成標誌」章節的要求寫入資料。寫入目標可能是 `hap-context.json` 或 `hap-plan.json`，以步驟檔案為準。不寫 `progress`（由排程器統一管理）
+9. 完成後嚴格按步驟檔案中「完成標誌」章節的要求寫入資料。寫入目標可能是 `niio-context.json` 或 `niio-plan.json`，以步驟檔案為準。不寫 `progress`（由排程器統一管理）
 10. 驗證步驟檔案末尾的 ⛔ 驗證斷言全部透過
 11. 輸出**執行問題總結**：列出執行過程中遇到的所有問題（如 API 報錯、欄位/選項對映失敗、節點跳過、重試等），每條包含問題描述和處理方式。如果全程無問題，輸出「無異常」
 ```
@@ -247,14 +262,14 @@ Step 12 用 niio CLI 命令列工具補 MCP 蓋不到的硬缺口。**永不阻�
 每步完成後：
 
 1. 驗證該步驟的交付物欄位非空（對照全域執行清單）
-2. 驗證透過後，**由排程器寫入對應的 `progress` 值**到 `hap-context.json`
+2. 驗證透過後，**由排程器寫入對應的 `progress` 值**到 `niio-context.json`
 3. 若驗證失敗 → 向使用者報告錯誤並停止
 
 **Step 9 特殊驗證（排程器必須執行）**：
 
-Step 9 的產出是寫入 `hap-plan.json` 而非 `hap-context.json`。排程器必須在子 agent 完成後：
+Step 9 的產出是寫入 `niio-plan.json` 而非 `niio-context.json`。排程器必須在子 agent 完成後：
 
-1. 重新讀取 `hap-plan.json`，檢查每條 `workflows[]` 和 `customActionWorkflows[]` 的 `nodes` 陣列是否非空且長度 ≥ 1
+1. 重新讀取 `niio-plan.json`，檢查每條 `workflows[]` 和 `customActionWorkflows[]` 的 `nodes` 陣列是否非空且長度 ≥ 1
 2. 檢查失敗 → **不寫入 progress**，向使用者報告哪些工作流缺少節點方案，並重新派發 Step 9
 
 **播報節點**（非播報節點靜默）：

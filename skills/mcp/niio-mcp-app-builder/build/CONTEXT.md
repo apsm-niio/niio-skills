@@ -1,6 +1,6 @@
-# hap-context.json 結構定義
+# niio-context.json 結構定義
 
-本檔案定義 `{PROJECT_ROOT}/apps/{appName}/hap-context.json` 的完整結構。所有步驟讀寫 context 時必須遵守此 schema。
+本檔案定義 `{PROJECT_ROOT}/apps/{appName}/niio-context.json` 的完整結構。所有步驟讀寫 context 時必須遵守此 schema。
 
 ## 結構
 
@@ -52,12 +52,12 @@
 - **每個步驟只寫入自己負責的欄位**，不修改其他步驟的欄位
 - **只存 ID 對映**，不存 MCP 原始回傳的完整物件
 - `progress` 欄位由每步完成時更新，值域見 `PROGRESS.md`
-- 欄位結構（fields）儲存在獨立檔案 `worksheetContext.json`，不寫入 `hap-context.json`，避免上下文膨脹
+- 欄位結構（fields）儲存在獨立檔案 `worksheetContext.json`，不寫入 `niio-context.json`，避免上下文膨脹
 
 ## worksheetContext.json 使用契約
 
 `worksheetContext.json` 由 Step 3 寫入，**Step 4~10 只讀**。
 
 - Step 4~10 中需要的欄位 ID、選項 key 等，**必須且只能從 `worksheetContext.json` 查詢，嚴禁重複呼叫 `get_worksheet_structure`**
-- 檢視 ID 從 `viewIdByName`（儲存在 `hap-context.json`）中取得
+- 檢視 ID 從 `viewIdByName`（儲存在 `niio-context.json`）中取得
 - 該檔案在 Step 3 寫入後**不再修改**

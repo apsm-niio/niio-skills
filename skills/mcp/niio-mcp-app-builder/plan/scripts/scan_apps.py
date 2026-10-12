@@ -13,6 +13,10 @@ import os
 import re
 import sys
 import urllib.request
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from project_files import inspect_project, ProjectFileError
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -52,35 +56,25 @@ def scan_apps():
         if not os.path.isdir(entry_path):
             continue
 
-        plan_path = os.path.join(entry_path, "hap-plan.json")
-        if not os.path.isfile(plan_path):
-            continue
-
-        # 讀取應用名
-        app_name = entry
         try:
-            with open(plan_path, "r", encoding="utf-8") as f:
-                plan = json.load(f)
-            if plan.get("appName"):
-                app_name = plan["appName"]
-        except Exception:
-            pass
-
-        # 讀取建置進度
-        ctx_path = os.path.join(entry_path, "hap-context.json")
-        progress = None
-        status = "planned"
-
-        if os.path.isfile(ctx_path):
-            try:
-                with open(ctx_path, "r", encoding="utf-8") as f:
-                    ctx = json.load(f)
-                progress = ctx.get("progress")
-                status = "completed" if progress == "completed" else "in_progress"
-            except Exception:
-                pass
-
-        results.append({"dir": entry, "appName": app_name, "progress": progress, "status": status})
+            state = inspect_project(entry_path)
+            if not state['plan']['path']:
+                continue
+            with open(state['plan']['path'], encoding='utf-8') as handle:
+                plan = json.load(handle)
+            progress = None
+            status = 'planned'
+            if state['context']['path']:
+                with open(state['context']['path'], encoding='utf-8') as handle:
+                    context = json.load(handle)
+                progress = context.get('progress')
+                status = 'completed' if progress == 'completed' else 'in_progress'
+            results.append({'dir': entry, 'appName': plan.get('appName') or entry,
+                            'progress': progress, 'status': status,
+                            'needsMigration': any(item['needsMigration'] for item in state.values())})
+        except (OSError, ValueError, ProjectFileError):
+            results.append({'dir': entry, 'appName': entry, 'progress': None, 'status': 'blocked',
+                            'error': '專案檔案衝突、格式錯誤或方案缺漏，停止建置；不可自動重建'})
 
     return results
 

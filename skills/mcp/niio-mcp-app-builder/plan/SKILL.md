@@ -2,6 +2,21 @@
 name: plan
 description: niio 應用方案設計。根據使用者業務需求生成完整的方案總覽與結構化 JSON，確認後自動觸發實際建置。由根 SKILL.md 路由呼叫。
 ---
+
+## 專案檔名與舊專案相容
+
+新專案只寫 `niio-plan.json` 與 `niio-context.json`。在首次寫入方案或進度前，以及每次從斷點恢復前，先確認沒有其他程序或 agent 正在寫入此專案，執行：
+
+```bash
+python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{appName}"
+```
+
+`SKILL_DIR` 指主要 niio-mcp-app-builder 目錄。新專案先建立其應用資料夾再執行。遷移會檢查兩組新舊 JSON、保留原始位元組備份至應用目錄的 `.niio-legacy/`，才移除舊名稱；不改 appId、欄位對映或 progress。整個遷移完成後才能派發並行建置。
+
+只讀取狀態可用 `check` 取代 `migrate`，不修改檔案。掃描器同時辨識新舊專案，`status: blocked` 時必須停止並回報，不得當作新專案重建。新舊內容相同可安全整理；不同、JSON 錯誤或有進度卻缺方案時停止，請使用者確認正確版本，不能自動選最新檔案覆蓋。
+
+若中斷，先確認沒有其他程序執行。遷移鎖存在時不自動刪除；人工確認後移除 `.niio-migration.lock`，再重跑遷移。部分已完成的檔案會保留，新舊相同可續跑；備份不可作為日常寫入目標。其他輸出如 `worksheetContext.json` 保持原名。
+
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
 
 
@@ -65,7 +80,7 @@ description: niio 應用方案設計。根據使用者業務需求生成完整�
 3. 讀取 `plan/icon_and_style_guide.md`（視覺主題與圖示規範），為應用挑選配色和圖示，為各工作表挑選圖示
 4. 建立 `{PROJECT_ROOT}/apps/{appName}` 資料夾（如果不存在），將已確認的方案總覽（Markdown 格式）寫入到 `{PROJECT_ROOT}/apps/{appName}/overview.md` 中
 5. 按規範將已確認的總覽轉化為結構化 niio 方案 JSON，並帶上 `appIcon`、`appColor` 和每張工作表的 `icon`
-6. 將 niio 方案 JSON 寫入 `{PROJECT_ROOT}/apps/{appName}/hap-plan.json` 檔案
+6. 將 niio 方案 JSON 寫入 `{PROJECT_ROOT}/apps/{appName}/niio-plan.json` 檔案
 7. 告知使用者方案及總覽已儲存，隨即**自動讀取 `build/SKILL.md` 並按其步驟開始建置**，無需使用者手動觸發
 
 ## 注意
@@ -73,4 +88,4 @@ description: niio 應用方案設計。根據使用者業務需求生成完整�
 - Step 1a 載入 `design_guide` + `1a_plan_overview`，不載入 `1b_plan_schema` 和 `icon_and_style_guide`，避免浪費上下文
 - `1b_plan_schema`、`design_guide` 和 `icon_and_style_guide` 在使用者確認方案後的 Step 1b 階段必須同時載入並閱讀，此時統一完成配色、圖示挑選和 JSON 生成
 - 方案總覽是給使用者看的 Markdown，JSON 是內部資料結構，兩者內容必須完全一致
-- `hap-plan.json` 中必須包含 `org_id`，以及從規範中挑選的 `appIcon` 和 `appColor`，供後續 build 使用
+- `niio-plan.json` 中必須包含 `org_id`，以及從規範中挑選的 `appIcon` 和 `appColor`，供後續 build 使用
