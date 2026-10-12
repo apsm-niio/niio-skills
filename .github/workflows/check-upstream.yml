@@ -1,0 +1,44 @@
+name: 每月檢查上游更新（僅通知）
+
+on:
+  schedule:
+    # UTC 01:00 = 台灣時間每月 1 日 09:00；GitHub 排程可能延遲。
+    - cron: '0 1 1 * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/check-upstream.yml
+      - scripts/check_upstream.py
+      - tests/test_check_upstream.py
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: 取得目前專案
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: main
+          persist-credentials: false
+      - name: 準備 Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: 驗證通知與去重邏輯
+        run: python -m unittest discover -s tests -p test_check_upstream.py -v
+      - name: 檢查更新並通知
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTIFY_LOGIN: sigurd0414
+        run: python scripts/check_upstream.py

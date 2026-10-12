@@ -1,19 +1,12 @@
-name: 同步並產生繁中技能
+name: 確認後同步並產生繁中技能
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '17 0 * * *'
-  push:
-    branches: [main]
-    paths:
-      - localization/terms.json
-      - localization/overrides/**
-      - tests/test_mcp_refresh.py
-      - localization/image-catalog.json
-      - assets/sample-images/**
-      - scripts/localize.py
-      - .github/workflows/sync-upstream.yml
+    inputs:
+      upstream_commit:
+        description: '已審閱並同意同步的上游完整 40 位 commit SHA（從更新通知複製）'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -25,7 +18,7 @@ concurrency:
 jobs:
   sync:
     name: 同步與繁中轉換
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
 
@@ -52,13 +45,21 @@ jobs:
             tree-sitter-bash==0.25.0 \
             tree-sitter-python==0.25.0
 
-      - name: 取得來源快照
+      - name: 取得已確認的來源快照
         env:
           SOURCE_REPO: https://github.com/mingdaocom/hap-skills.git
+          APPROVED_UPSTREAM_COMMIT: ${{ inputs.upstream_commit }}
         run: |
           set -euo pipefail
+          if [[ ! "$APPROVED_UPSTREAM_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+            echo '請提供已審閱的完整 40 位小寫 commit SHA。'
+            exit 1
+          fi
           git fetch --no-tags "$SOURCE_REPO" \
-            refs/heads/main:refs/remotes/source/main
+            refs/heads/main:refs/remotes/source/latest
+          git cat-file -e "${APPROVED_UPSTREAM_COMMIT}^{commit}"
+          git merge-base --is-ancestor "$APPROVED_UPSTREAM_COMMIT" refs/remotes/source/latest
+          git update-ref refs/remotes/source/main "$APPROVED_UPSTREAM_COMMIT"
           snapshot_dir="$(mktemp -d "$RUNNER_TEMP/niio-source.XXXXXX")"
           echo "NIIO_SOURCE_SNAPSHOT=$snapshot_dir" >> "$GITHUB_ENV"
           git archive refs/remotes/source/main | tar -x -C "$snapshot_dir"
@@ -141,4 +142,3 @@ jobs:
           git push --atomic origin \
             refs/remotes/source/main:refs/heads/upstream \
             HEAD:refs/heads/main
-
