@@ -1,155 +1,90 @@
 #!/usr/bin/env python3
-"""
-從 worksheetContext.json 生成確定性的填值模板 (fillTemplates.json)。
-
-用法:
-  python3 generate_fill_templates.py <worksheetContext.json路徑> [輸出路徑]
-
-輸出:
-  fillTemplates.json — 每張工作表的可填欄位清單，包含：
-    - fieldKey: 直接用於 batch_create_records 的 fields[].id（已從 alias/id 中確定性提取）
-    - name: 欄位中文名（供 LLM 理解語義）
-    - type: 欄位型別
-    - validOptions: 選項欄位的合法選項值清單（僅限選項型別欄位）
-    - dataSource: 關聯欄位的目標工作表 ID（僅限 Relation 型別）
-    - isTitle: 標題欄位標記
-    - isSelfRelation: 自關聯標記
-"""
-
+"""根據 MCP 明確中繼資訊生成填值候選；不猜測標題或可寫入性，不連線。"""
 import json
 import sys
 from pathlib import Path
+from refresh_fields import write_atomic
 
-# 不可填值的欄位型別 — 這些欄位在 batch_create_records 中不傳
-SKIP_TYPES = {"Divider", "Formula", "AutoNumber", "AutoID", "Lookup"}
-
-# 系統欄位的固定 ID — 所有表都有，不應由使用者寫入
-SYSTEM_FIELD_IDS = {"rowid", "ownerid", "caid", "ctime", "utime", "uaid"}
+SKIP_TYPES = {'Divider', 'Formula', 'AutoNumber', 'AutoID', 'Lookup', 'Rollup'}
+SYSTEM_FIELD_IDS = {'rowid', 'ownerid', 'caid', 'ctime', 'utime', 'uaid'}
 
 
 def generate_fill_templates(worksheet_context):
-    """從 worksheetContext 生成填值模板清單。"""
-
-    # 全域 worksheetId → worksheetName 對映（用於關聯依賴的人類可讀翻譯）
-    id_to_name = {ws["worksheetId"]: ws["worksheetName"] for ws in worksheet_context}
-
+    id_to_name = {ws['worksheetId']: ws['worksheetName'] for ws in worksheet_context}
     templates = []
-
     for ws in worksheet_context:
-        worksheet_id = ws["worksheetId"]
-        worksheet_name = ws["worksheetName"]
-        fillable_fields = []
-        relation_deps = []
-        title_field_found = False
-
-        for field in ws.get("fields", []):
-            field_id = field.get("id", "")
-            field_alias = field.get("alias", "")
-            field_name = field.get("name", "")
-            field_type = field.get("type", "")
-            data_source = field.get("dataSource", "")
-            source_field = field.get("sourceField", "")
-            options = field.get("options", [])
-
-            # ── 跳過系統欄位 ──
-            if field_id in SYSTEM_FIELD_IDS:
+        fillable, excluded, titles, issues, deps = [], [], [], [], []
+        keys = set()
+        fields = ws.get('fields', [])
+        for field in fields:
+            field_id = field['id']
+            field_type = field['type']
+            alias = field.get('alias') or ''
+            item = {'fieldKey': alias or field_id, 'name': field['name'], 'type': field_type}
+            for key in ('isTitle', 'isReadOnly', 'required', 'subType'):
+                if key in field:
+                    item[key] = field[key]
+            if field.get('isTitle') is True:
+                titles.append({'id': field_id, **item})
+            if type(field.get('isTitle')) is not bool:
+                issues.append({'id': field_id, 'reason': 'missing_or_invalid_isTitle'})
+            reason = None
+            if field_id in SYSTEM_FIELD_IDS or alias.startswith('_'):
+                reason = 'system_field'
+            elif field_type in SKIP_TYPES:
+                reason = 'computed_or_non_input_type'
+            elif field.get('isReadOnly') is True:
+                reason = 'read_only'
+            elif field.get('isReadOnly') is not False:
+                reason = 'unknown_writability'
+                issues.append({'id': field_id, 'reason': reason})
+            elif field_type == 'Relation' and not field.get('dataSource'):
+                reason = 'missing_relation_target'
+                issues.append({'id': field_id, 'reason': reason})
+            if reason:
+                excluded.append({'id': field_id, **item, 'reason': reason})
                 continue
-            if field_alias.startswith("_"):
-                continue
-
-            # ── 跳過不可填值的型別 ──
-            if field_type in SKIP_TYPES:
-                continue
-
-            # ── 跳過反向關聯欄位（alias 為空的 Relation = 系統自動建立的反向欄位，只讀） ──
-            # 注意：niio的正向和反向關聯都有 sourceField，不能用 sourceField 判斷
-            if field_type == "Relation" and not field_alias:
-                continue
-
-            # ── 確定 fieldKey（alias 優先，為空則用 id） ──
-            field_key = field_alias if field_alias else field_id
-
-            # ── 建置欄位模板 ──
-            field_template = {
-                "fieldKey": field_key,
-                "name": field_name,
-                "type": field_type,
-            }
-
-            # ── 標記標題欄位（啟發式：第一個 Text 型別欄位） ──
-            if not title_field_found and field_type == "Text":
-                field_template["isTitle"] = True
-                title_field_found = True
-
-            # ── 提取有效選項（選項型別欄位） ──
-            if options and field_type in ("SingleSelect", "MultipleSelect", "Dropdown"):
-                valid_options = [
-                    opt["value"]
-                    for opt in options
-                    if not opt.get("isDelete", False)
-                ]
-                field_template["validOptions"] = valid_options
-
-            # ── 提取關聯資訊 ──
-            if field_type == "Relation" and data_source:
-                field_template["dataSource"] = data_source
-                if data_source == worksheet_id:
-                    field_template["isSelfRelation"] = True
+            if item['fieldKey'] in keys:
+                raise ValueError('模板 fieldKey 重複，停止產生')
+            keys.add(item['fieldKey'])
+            if field_type in ('SingleSelect', 'MultipleSelect', 'Dropdown'):
+                item['validOptions'] = [option['value'] for option in field.get('options', [])
+                                        if not option.get('isDelete', False)]
+            if field_type == 'Relation':
+                for key in ('dataSource', 'sourceField', 'relation'):
+                    if key in field:
+                        item[key] = field[key]
+                if field['dataSource'] == ws['worksheetId']:
+                    item['isSelfRelation'] = True
                 else:
-                    relation_deps.append(data_source)
-
-            fillable_fields.append(field_template)
-
-        # ── 將關聯依賴的 ID 翻譯為表名 ──
-        relation_dep_names = sorted(set(
-            id_to_name.get(dep_id, dep_id) for dep_id in relation_deps
-        ))
-
-        template = {
-            "worksheetId": worksheet_id,
-            "worksheetName": worksheet_name,
-            "fieldCount": len(fillable_fields),
-            "fillableFields": fillable_fields,
-            "relationDeps": relation_dep_names,
-        }
-
-        templates.append(template)
-
+                    deps.append(field['dataSource'])
+            fillable.append(item)
+        if len(titles) != 1:
+            issues.append({'reason': 'title_not_uniquely_identified'})
+        templates.append({'worksheetId': ws['worksheetId'], 'worksheetName': ws['worksheetName'],
+                          'fieldCount': len(fillable), 'fillableFields': fillable,
+                          'relationDeps': sorted({id_to_name.get(dep, dep) for dep in deps}),
+                          'titleFields': titles, 'excludedFields': excluded,
+                          'metadataIssues': issues, 'requiresReview': bool(issues)})
     return templates
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(
-            "用法: python3 generate_fill_templates.py <worksheetContext.json路徑> [輸出路徑]",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    input_path = Path(sys.argv[1])
-    if not input_path.exists():
-        print(f"❌ 檔案不存在: {input_path}", file=sys.stderr)
-        sys.exit(1)
-
-    output_path = (
-        Path(sys.argv[2]) if len(sys.argv) > 2 else input_path.parent / "fillTemplates.json"
-    )
-
-    with open(input_path, "r", encoding="utf-8") as f:
-        worksheet_context = json.load(f)
-
-    templates = generate_fill_templates(worksheet_context)
-
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(templates, f, ensure_ascii=False, indent=2)
-
-    # 輸出摘要
-    print(f"\n📋 填值模板生成完成（共 {len(templates)} 張表）：", file=sys.stderr)
-    for t in templates:
-        deps = f"，依賴: {', '.join(t['relationDeps'])}" if t["relationDeps"] else ""
-        print(f"  • {t['worksheetName']}: {t['fieldCount']} 個可填欄位{deps}", file=sys.stderr)
-    print(f"\n✅ 輸出: {output_path}", file=sys.stderr)
+    if len(sys.argv) not in (2, 3):
+        print('用法：generate_fill_templates.py <worksheetContext.json> [輸出路徑]', file=sys.stderr)
+        return 1
+    source = Path(sys.argv[1])
+    output = Path(sys.argv[2]) if len(sys.argv) == 3 else source.parent / 'fillTemplates.json'
+    try:
+        templates = generate_fill_templates(json.loads(source.read_text(encoding='utf-8')))
+        write_atomic(output, templates)
+    except (OSError, ValueError, TypeError, KeyError):
+        print('模板產生失敗：請重新整理 MCP 結構並檢查欄位中繼資訊；既有輸出未變更。', file=sys.stderr)
+        return 1
+    print(json.dumps({'success': True, 'worksheetCount': len(templates),
+                      'requiresReview': any(t['requiresReview'] for t in templates)}, ensure_ascii=False))
+    return 0
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    sys.exit(main())

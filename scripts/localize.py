@@ -1065,6 +1065,8 @@ def apply_project_file_policy(stage, output):
         if path.is_file() and path.suffix in {'.md', '.py'}:
             text = path.read_text().replace('hap-plan.json', 'niio-plan.json').replace('hap-context.json', 'niio-context.json')
             path.write_text(text)
+    shutil.copyfile(output / 'localization/overrides/generate_fill_templates.py',
+                    base / 'build/scripts/generate_fill_templates.py')
     overrides = output / 'localization/overrides/project-files'
     (base / 'scripts').mkdir(exist_ok=True)
     shutil.copyfile(overrides / 'project_files.py', base / 'scripts/project_files.py')
@@ -1085,6 +1087,17 @@ python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{app
 若中斷，先確認沒有其他程序執行。遷移鎖存在時不自動刪除；人工確認後移除 `.niio-migration.lock`，再重跑遷移。部分已完成的檔案會保留，新舊相同可續跑；备份不可作為日常寫入目標。其他輸出如 `worksheetContext.json` 保持原名。
 
 '''.replace('兩组', '兩組').replace('备份', '備份')
+    field_note = '''
+
+## 填值模板中繼資訊契約
+
+先重新執行 Step 3，保留 MCP 回傳的 isTitle、isReadOnly、required、subType（缺少時保持缺少，不補猜值）。generate_fill_templates.py 僅以明確 isTitle=true 識別標題，包含非文字與唯讀標題，完整標題資訊在 titleFields；不得猜第一個 Text。只把明確 isReadOnly=false 且非系統／計算型別的欄位列入填值候選，Rollup 不可填寫。Relation 的空 alias 不代表唯讀，fieldKey 可使用 id；關聯來源與設定保留。
+
+檢查 excludedFields、metadataIssues 與 requiresReview。舊 worksheetContext 缺少中繼資訊時，須從原始 MCP 回應重新整理；不能以模板生成成功認定可寫入。requiresReview=true 時停止自動填值並確認問題。relationDeps 只代表候選可填關聯的依賴，不代表完整結構關聯。required 與 subType 僅保留原值，填值前仍需按真實欄位型別、必填與權限驗證。此腳本不保證伺服器端寫入權限，也不會發出寫入请求。
+'''.replace('请求', '請求')
+    for relative in ['build/steps/3_refresh_fields.md', 'build/steps/6_create_sample_data.md', 'build/CONTEXT.md']:
+        target = base / relative
+        target.write_text(target.read_text() + field_note)
     for name in ['SKILL.md', 'plan/SKILL.md', 'build/SKILL.md']:
         path = base / name
         text = path.read_text()
@@ -1104,6 +1117,7 @@ def build(source, output, config):
     if hashlib.sha256(scanner.read_bytes()).hexdigest() != '9c3c4220f319fbb824e15094cc9e69f27ad9c3888c86df5e0b4f30289a0ae57c':
         raise ValueError('上游專案掃描器已變更，請重新審查檔名相容規則。')
     refresh_sources = {
+        'build/scripts/generate_fill_templates.py': 'dd07b538e01215f1f6c6c6d7f803c3accd5d36c84c9af00942d9637b56e1dbd2',
         'build/scripts/refresh_fields.py': 'd078df1e401e5a6f567183c99d5c1205c2d81abb0968238f86e0dbde4d543652',
         'build/steps/3_refresh_fields.md': '4d5324d03cbd0f6ed4c2c62f4a0144bff9994fc426811f8f0854879b6a2c074e',
     }

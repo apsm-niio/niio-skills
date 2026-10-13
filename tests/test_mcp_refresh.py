@@ -21,6 +21,7 @@ def load(name):
 
 
 refresh = load("refresh_fields")
+sys.path.insert(0, str(SCRIPTS))
 fill = load("generate_fill_templates")
 
 
@@ -42,6 +43,9 @@ class RefreshTests(unittest.TestCase):
              "dataSource": "ws-b", "sourceField": "f-back", "relation": {"multiple": False}},
             {"id": "f-formula", "name": "總額", "type": "Formula"},
             {"id": "ctime", "name": "建立時間", "type": "DateTime"}]
+        for field in self.fields:
+            field["isReadOnly"] = False
+            field["isTitle"] = field["id"] == "f-name"
         self.entries = {}
         for ws_id in ("ws-a", "ws-b"):
             self.entries[ws_id] = {"appId": "app-test", "worksheetId": ws_id,
@@ -88,6 +92,20 @@ class RefreshTests(unittest.TestCase):
         (self.responses / "ws-b.json").unlink()
         self.assert_failure_preserves_output()
 
+    def test_metadata_preserved_without_defaults(self):
+        original = self.entries['ws-a']['response']['data']['fields']
+        original[0].update(required=True, subType={'kind': 'date'}, isReadOnly=True)
+        del original[1]['isTitle']
+        del original[1]['isReadOnly']
+        self.save()
+        result = self.run_script()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        fields = json.loads(self.output.read_text())[0]['fields']
+        for key in ('required', 'subType', 'isTitle', 'isReadOnly'):
+            self.assertEqual(fields[0][key], original[0][key])
+        self.assertNotIn('isTitle', fields[1])
+        self.assertNotIn('isReadOnly', fields[1])
+
     def test_wrong_application(self):
         self.entries["ws-b"]["appId"] = "other-app"
         self.save()
@@ -130,6 +148,61 @@ class RefreshTests(unittest.TestCase):
                 refresh.write_atomic(self.output, [{"fields": self.fields}])
         self.assertEqual(self.output.read_text(), "previous-valid-output")
         self.assertFalse(list(self.root.glob(".worksheetContext-*.tmp")))
+
+
+class FillTests(unittest.TestCase):
+    def field(self, id, type='Text', **extra):
+        return dict(id=id, name=id, type=type, isTitle=False, isReadOnly=False, **extra)
+
+    def generate(self, fields):
+        return fill.generate_fill_templates([{'worksheetId': 'a', 'worksheetName': '單據', 'fields': fields}])[0]
+
+    def test_non_text_title_and_readonly_title(self):
+        for kind, readonly in [('Date', False), ('AutoNumber', True)]:
+            title = self.field('true-title', kind)
+            title.update(isTitle=True, isReadOnly=readonly)
+            result = self.generate([self.field('address'), title])
+            self.assertEqual([f['id'] for f in result['titleFields']], ['true-title'])
+            self.assertFalse(result['fillableFields'][0]['isTitle'])
+            self.assertEqual(len(result['fillableFields']), 1 if readonly else 2)
+            self.assertFalse(result['requiresReview'])
+
+    def test_aliasless_relations_and_computed_fields(self):
+        fields = [self.field(str(i), 'Relation', alias='', dataSource='b', sourceField='back', relation={'multiple': True}) for i in range(13)]
+        fields[0]['isTitle'] = True
+        readonly = self.field('readonly', 'Relation', alias='vendor', dataSource='c')
+        readonly['isReadOnly'] = True
+        fields += [readonly] + [self.field('rollup-' + str(i), 'Rollup') for i in range(8)]
+        result = self.generate(fields)
+        self.assertEqual(result['fieldCount'], 13)
+        self.assertEqual([f['fieldKey'] for f in result['fillableFields']], [str(i) for i in range(13)])
+        self.assertEqual(result['relationDeps'], ['b'])
+        self.assertEqual(result['fillableFields'][0]['sourceField'], 'back')
+        self.assertEqual(len(result['excludedFields']), 9)
+
+    def test_unknown_metadata_and_title_review(self):
+        field = self.field('unknown')
+        del field['isReadOnly']
+        del field['isTitle']
+        result = self.generate([field])
+        self.assertTrue(result['requiresReview'])
+        self.assertEqual(result['fillableFields'], [])
+        self.assertEqual(result['titleFields'], [])
+        field['isReadOnly'] = 'false'
+        self.assertEqual(self.generate([field])['fillableFields'], [])
+        fields = [self.field('one'), self.field('two')]
+        for f in fields:
+            f['isTitle'] = True
+        self.assertTrue(self.generate(fields)['requiresReview'])
+
+    def test_duplicate_key_failure_preserves_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source, output = Path(directory)/'input.json', Path(directory)/'fillTemplates.json'
+            source.write_text(json.dumps([{'worksheetId': 'a', 'worksheetName': '單據', 'fields': [self.field('one', alias='same'), self.field('two', alias='same')]}]))
+            output.write_bytes(b'previous')
+            result = subprocess.run([sys.executable, str(SCRIPTS/'generate_fill_templates.py'), str(source)], capture_output=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(output.read_bytes(), b'previous')
 
 
 if __name__ == "__main__":

@@ -52,7 +52,7 @@ def normalize_field(field):
             if "key" not in option or "value" not in option:
                 raise ValidationError("選項缺少 key 或 value")
             result["options"].append(dict(option))
-    for key in ("dataSource", "sourceField", "relation"):
+    for key in ("dataSource", "sourceField", "relation", "isTitle", "isReadOnly", "required", "subType"):
         if key in field:
             result[key] = field[key]
     return result
