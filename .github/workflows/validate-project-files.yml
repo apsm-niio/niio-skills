@@ -10,6 +10,7 @@ on:
       - scripts/localize.py
       - tests/test_project_files.py
       - tests/test_mcp_refresh.py
+      - tests/test_build_checkpoint.py
       - .github/workflows/validate-project-files.yml
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - localization/overrides/**
       - tests/test_project_files.py
       - tests/test_mcp_refresh.py
+      - tests/test_build_checkpoint.py
       - .github/workflows/validate-project-files.yml
 permissions:
   contents: read
@@ -37,3 +39,5 @@ jobs:
         run: python -m unittest discover -s tests -p test_project_files.py -v
       - name: 驗證欄位整理與下游填值
         run: python -m unittest discover -s tests -p test_mcp_refresh.py -v
+      - name: 驗證離線中斷與安全續跑
+        run: python -m unittest discover -s tests -p test_build_checkpoint.py -v

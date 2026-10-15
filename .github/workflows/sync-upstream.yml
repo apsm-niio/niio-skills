@@ -77,6 +77,8 @@ jobs:
 
       - name: 驗證 MCP 欄位整理與下游填值
         run: python -m unittest discover -s tests -p test_mcp_refresh.py -v
+      - name: 驗證離線中斷與安全續跑
+        run: python -m unittest discover -s tests -p test_build_checkpoint.py -v
 
       - name: 驗證專案檔名與遷移
         run: python -m unittest discover -s tests -p test_project_files.py -v

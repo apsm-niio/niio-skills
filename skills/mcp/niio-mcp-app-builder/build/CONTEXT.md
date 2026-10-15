@@ -33,8 +33,8 @@
   },
   "roleContext": [
     {
-      "roleId": "string",
-      "roleName": "string"
+      "id": "string",
+      "name": "string"
     }
   ],
   "customActionWorkflows": [
@@ -51,7 +51,7 @@
 
 - **每個步驟只寫入自己負責的欄位**，不修改其他步驟的欄位
 - **只存 ID 對映**，不存 MCP 原始回傳的完整物件
-- `progress` 欄位由每步完成時更新，值域見 `PROGRESS.md`
+- `progress` 與 buildState 僅由排程器透過 build_checkpoint.py 更新，值域見 `PROGRESS.md`
 - 欄位結構（fields）儲存在獨立檔案 `worksheetContext.json`，不寫入 `niio-context.json`，避免上下文膨脹
 
 ## worksheetContext.json 使用契約
@@ -62,9 +62,11 @@
 - 檢視 ID 從 `viewIdByName`（儲存在 `niio-context.json`）中取得
 - 該檔案在 Step 3 寫入後**不再修改**
 
+角色對映新寫入使用 id/name；舊 roleId/roleName 以相同語意相容讀取。兩組同時存在但不同時停止核對，禁止因鍵名不同就重建角色。排程器合併步驟產物時保留 buildState；子代理不得直接寫共用檔案。
+
 
 ## 填值模板中繼資訊契約
 
-先重新執行 Step 3，保留 MCP 回傳的 isTitle、isReadOnly、required、subType（缺少時保持缺少，不補猜值）。generate_fill_templates.py 僅以明確 isTitle=true 識別標題，包含非文字與唯讀標題，完整標題資訊在 titleFields；不得猜第一個 Text。只把明確 isReadOnly=false 且非系統／計算型別的欄位列入填值候選，Rollup 不可填寫。Relation 的空 alias 不代表唯讀，fieldKey 可使用 id；關聯來源與設定保留。
+Step 3 整理時保留 MCP 回傳的 isTitle、isReadOnly、required、subType（缺少時保持缺少，不補猜值）。generate_fill_templates.py 僅以明確 isTitle=true 識別標題，包含非文字與唯讀標題，完整標題資訊在 titleFields；不得猜第一個 Text。只把明確 isReadOnly=false 且非系統／計算型別的欄位列入填值候選，Rollup 不可填寫。Relation 的空 alias 不代表唯讀，fieldKey 可使用 id；關聯來源與設定保留。
 
-檢查 excludedFields、metadataIssues 與 requiresReview。舊 worksheetContext 缺少中繼資訊時，須從原始 MCP 回應重新整理；不能以模板生成成功認定可寫入。requiresReview=true 時停止自動填值並確認問題。relationDeps 只代表候選可填關聯的依賴，不代表完整結構關聯。required 與 subType 僅保留原值，填值前仍需按真實欄位型別、必填與權限驗證。此腳本不保證伺服器端寫入權限，也不會發出寫入請求。
+檢查 excludedFields、metadataIssues 與 requiresReview。舊 worksheetContext 缺少中繼資訊時先停止填值，依恢復規則核對後再從原始 MCP 回應離線重新整理（保留備份與 progress，不重跑遠端建立）；不能以模板生成成功認定可寫入。requiresReview=true 時停止自動填值並確認問題。relationDeps 只代表候選可填關聯的依賴，不代表完整結構關聯。required 與 subType 僅保留原值，填值前仍需按真實欄位型別、必填與權限驗證。此腳本不保證伺服器端寫入權限，也不會發出寫入請求。

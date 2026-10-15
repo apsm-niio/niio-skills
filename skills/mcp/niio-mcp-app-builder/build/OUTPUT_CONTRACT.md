@@ -1,32 +1,12 @@
 # Step 輸出契約
 
-每個 step 執行完成後，無論是 subagent 模式還是內聯模式，都必須產出以下標準化結果。
+每一步回傳真實產物 ID、欲合併的資料、驗證結果及問題清單，由排程器合併至 context 或 plan；子代理不得直接寫入共用檔案。步驟沒有規劃項目時，附已核對方案的跳過理由。
 
-## 輸出結構
+排程器驗證本次產物後，透過 build_checkpoint.py finish 保存該步 done 與 evidence。Step 3 需有本次腳本結束碼 0、完整工作表 ID 集合與欄位數。Step 9 需驗證工作流 nodes；Step 10/11 需有發布證據；Step 12 需區分完成與待補。
 
-各 step 回傳成功或失敗證據；只有排程器可在驗證完成後更新 `niio-context.json` 的 progress。並行步驟必須等待匯合，依 `PROGRESS.md` 與 `build/SKILL.md` 路由推進。
+成功依 buildState.steps[STEP].status=done 與證據判斷，不能只看 progress 是否改變：7、8、10 完成時 progress 可以保持原值，階段全部完成後才推進。下一步由 check 輸出的 nextSteps 決定，所有步驟序列執行。
 
-### 成功
-
-1. 提交本次成功證據，由排程器依 `PROGRESS.md` 驗證後更新進度；Step 3 必須包含本次腳本結束碼 0、完整工作表 ID 集合及欄位數，不能僅檢查舊檔存在。
-2. 寫入該步驟負責的 ID 對映欄位（見 `CONTEXT.md`）
-3. 透過 ⛔ 驗證斷言
-
-### 失敗
-
-1. **不更新** `progress` 欄位（保持前一步的狀態值）
-2. 排程器發現 progress 未推進 → 判定為失敗 → 向使用者報告錯誤
-
-## 排程器驗證方法
-
-排程器先驗證本次步驟產出，在並行匯合條件滿足後才寫入進度，再讀回 `niio-context.json` 檢查：
-
-```
-if context.progress == 目前步驟的預期完成狀態:
-    ✅ 步驟成功，繼續下一步
-else:
-    ❌ 步驟失敗，報告錯誤並停止
-```
+失敗或工具逾時時保留 running 與最後成功 progress，停止派發；依 build/SKILL.md 唯讀核對，不自動重試。不可用舊檔存在或遠端請求已送出作為成功證據。
 
 ## 各步驟的預期產出
 

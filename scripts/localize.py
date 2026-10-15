@@ -1067,6 +1067,12 @@ def apply_project_file_policy(stage, output):
             path.write_text(text)
     shutil.copyfile(output / 'localization/overrides/generate_fill_templates.py',
                     base / 'build/scripts/generate_fill_templates.py')
+    for src, dst in [('build_checkpoint.py', 'build/scripts/build_checkpoint.py'), ('build-SKILL.md', 'build/SKILL.md'), ('build-PROGRESS.md', 'build/PROGRESS.md'), ('build-OUTPUT_CONTRACT.md', 'build/OUTPUT_CONTRACT.md')]:
+        shutil.copyfile(output / 'localization/overrides' / src, base / dst)
+    context_file = base / 'build/CONTEXT.md'
+    context_text = context_file.read_text().replace('"roleId": "string"', '"id": "string"').replace('"roleName": "string"', '"name": "string"')
+    context_text = context_text.replace('`progress` 欄位由每步完成時更新，值域見 `PROGRESS.md`', '`progress` 與 buildState 僅由排程器透過 build_checkpoint.py 更新，值域見 `PROGRESS.md`')
+    context_file.write_text(context_text + '\n角色對映新寫入使用 id/name；舊 roleId/roleName 以相同語意相容讀取。兩組同時存在但不同時停止核對，禁止因鍵名不同就重建角色。排程器合併步驟產物時保留 buildState；子代理不得直接寫共用檔案。\n')
     overrides = output / 'localization/overrides/project-files'
     (base / 'scripts').mkdir(exist_ok=True)
     shutil.copyfile(overrides / 'project_files.py', base / 'scripts/project_files.py')
@@ -1091,9 +1097,9 @@ python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{app
 
 ## 填值模板中繼資訊契約
 
-先重新執行 Step 3，保留 MCP 回傳的 isTitle、isReadOnly、required、subType（缺少時保持缺少，不補猜值）。generate_fill_templates.py 僅以明確 isTitle=true 識別標題，包含非文字與唯讀標題，完整標題資訊在 titleFields；不得猜第一個 Text。只把明確 isReadOnly=false 且非系統／計算型別的欄位列入填值候選，Rollup 不可填寫。Relation 的空 alias 不代表唯讀，fieldKey 可使用 id；關聯來源與設定保留。
+Step 3 整理時保留 MCP 回傳的 isTitle、isReadOnly、required、subType（缺少時保持缺少，不補猜值）。generate_fill_templates.py 僅以明確 isTitle=true 識別標題，包含非文字與唯讀標題，完整標題資訊在 titleFields；不得猜第一個 Text。只把明確 isReadOnly=false 且非系統／計算型別的欄位列入填值候選，Rollup 不可填寫。Relation 的空 alias 不代表唯讀，fieldKey 可使用 id；關聯來源與設定保留。
 
-檢查 excludedFields、metadataIssues 與 requiresReview。舊 worksheetContext 缺少中繼資訊時，須從原始 MCP 回應重新整理；不能以模板生成成功認定可寫入。requiresReview=true 時停止自動填值並確認問題。relationDeps 只代表候選可填關聯的依賴，不代表完整結構關聯。required 與 subType 僅保留原值，填值前仍需按真實欄位型別、必填與權限驗證。此腳本不保證伺服器端寫入權限，也不會發出寫入请求。
+檢查 excludedFields、metadataIssues 與 requiresReview。舊 worksheetContext 缺少中繼資訊時先停止填值，依恢復規則核對後再從原始 MCP 回應離線重新整理（保留備份與 progress，不重跑遠端建立）；不能以模板生成成功認定可寫入。requiresReview=true 時停止自動填值並確認問題。relationDeps 只代表候選可填關聯的依賴，不代表完整結構關聯。required 與 subType 僅保留原值，填值前仍需按真實欄位型別、必填與權限驗證。此腳本不保證伺服器端寫入權限，也不會發出寫入请求。
 '''.replace('请求', '請求')
     for relative in ['build/steps/3_refresh_fields.md', 'build/steps/6_create_sample_data.md', 'build/CONTEXT.md']:
         target = base / relative
@@ -1117,6 +1123,8 @@ def build(source, output, config):
     if hashlib.sha256(scanner.read_bytes()).hexdigest() != '9c3c4220f319fbb824e15094cc9e69f27ad9c3888c86df5e0b4f30289a0ae57c':
         raise ValueError('上游專案掃描器已變更，請重新審查檔名相容規則。')
     refresh_sources = {
+        'build/PROGRESS.md': '770413e277b948b606a4def0495913bb536bd6e71abc7cf8e6e1cc08d940956b',
+        'build/SKILL.md': 'bc02a3fc9399cf373eacbd81b362db4d513f6662811289eb961f78105be71d69',
         'build/scripts/generate_fill_templates.py': 'dd07b538e01215f1f6c6c6d7f803c3accd5d36c84c9af00942d9637b56e1dbd2',
         'build/scripts/refresh_fields.py': 'd078df1e401e5a6f567183c99d5c1205c2d81abb0968238f86e0dbde4d543652',
         'build/steps/3_refresh_fields.md': '4d5324d03cbd0f6ed4c2c62f4a0144bff9994fc426811f8f0854879b6a2c074e',

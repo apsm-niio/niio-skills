@@ -1,6 +1,6 @@
 ---
 name: build
-description: niio 應用實際建置排程器。讀取 niio-plan.json，逐步排程 steps/*.md 完成所有 niio 物件的建立與設定。支援 subagent 委派和內聯執行雙模式。
+description: niio 應用建置排程器，以持久檢查點逐步建置與安全續跑。
 ---
 
 ## 專案檔名與舊專案相容
@@ -17,20 +17,39 @@ python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{app
 
 若中斷，先確認沒有其他程序執行。遷移鎖存在時不自動刪除；人工確認後移除 `.niio-migration.lock`，再重跑遷移。部分已完成的檔案會保留，新舊相同可續跑；備份不可作為日常寫入目標。其他輸出如 `worksheetContext.json` 保持原名。
 
-> **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
-
 
 # niio 應用建置排程器
 
-你是 niio應用建置**排程器**，只負責進度路由、上下文合併和結果校驗，不直接承載各步驟的詳細規則。
+先讀取 niio-plan.json 與 CONTEXT.md、OUTPUT_CONTRACT.md。首次寫入及恢復前先執行根 scripts/project_files.py 的 check／migrate，按根技能處理檔名衝突。所有工具使用已選定的 niio MCP；本機腳本不代替遠端驗證。
 
-> 本檔案是實際建置階段的輕量排程器，不直接包含各步驟的詳細建置規則。
-> 具體規則必須從 `steps/` 中對應步驟檔案讀取。
-> 無論使用 subagent 還是內聯執行，每一步都必須遵守 `OUTPUT_CONTRACT.md`。
+## 持久檢查點與續跑
 
-> 本 skill 由根 `SKILL.md` 路由呼叫，`appName` 和 `org_id` 已在前置檢查階段確定。
+檢查點位於 niio-context.json 的 buildState；progress 由 build_checkpoint.py 同一筆原子更新。只有排程器寫 context 與 plan；步驟執行器回傳變更，由排程器合併，禁止子代理直接覆蓋共用檔案。若個別 steps 檔案要求直接寫入共用檔案或 progress，以本節為準，改為回傳變更供排程器合併；合併採暫存檔加原子取代，保留所有既有檢查點。
 
----
+目前採序列執行（包含原本並行的 4/6、7/8/9、10/11），以確保恢復時能逐步核對。可委派單一步驟給子代理，但等待其結束後才能開始下一步；平台不允許時使用內聯模式，不把使用本技能解釋為額外授權。
+
+命令中的 SCRIPT 指 build/scripts/build_checkpoint.py，CONTEXT 指應用目錄下 niio-context.json。
+
+1. 全新專案：確認沒有任何已發送的建立請求或遠端產物，建立空 context 後執行 `python3 SCRIPT init CONTEXT`。若沒有 context 但先前曾呼叫建立工具，視為結果不明，禁止初始化重建。
+2. 每次恢復：執行 `python3 SCRIPT check CONTEXT`。退出碼 0 才可按 nextSteps 推進；2 表示步驟執行中／中斷待核對，1 表示格式、狀態或舊版檢查點問題。不可將錯誤當作新專案。
+3. 開始步驟前：執行 `python3 SCRIPT begin CONTEXT --step STEP`，成功落盤後才呼叫遠端工具。重新讀取步驟檔案及其引用規則，遵守輸出契約。
+4. 每次遠端成功立即保存真實 ID 與最小操作紀錄，再繼續同一步的下一個物件。只有排程器合併變更；不得刪除 buildState 或改寫 progress。
+5. 完成整步：驗證實際交付物，然後 `python3 SCRIPT finish CONTEXT --step STEP --evidence "已核對的產物 ID、紀錄或驗證檔路徑"`。證據不可含憑證。腳本只記錄驗證聲明，不會驗證遠端，也不保證 API 冪等性。
+6. 下一輪 check 後僅派發 nextSteps 中的一步。done 步驟不重跑；completed 且 nextSteps 空時僅回報結果。
+
+### 中斷、逾時與舊專案
+
+running 表示結果可能已生效，不能直接重試。先確認沒有其他執行器仍在工作，使用唯讀 MCP 依保存 ID、操作紀錄及規劃核對。確認整步全部完成，才能 finish；部分完成時只處理已核對確實缺少的物件，保留 running，不重新執行整步。查不到不等於不存在：清單不完整、名稱重複、權限不足、結果不確定時停止並請使用者確認。此流程不自動刪除、回滾或重送不明請求。
+
+舊專案沒有 buildState 時 check 會停止，不能只用 progress 推定每一步完成。先唯讀核對整個已執行範圍，再由排程器備份 context 並建立 version=1 的 steps（所有步驟鍵皆必須存在；status 為 pending/running/done，done 附 evidence），保持 progress 與已驗證的連續完成階段一致。尚未確認的步驟記 running；failed、未知 progress 或順序衝突需人工處理，不得清空進度繞過。
+
+.niio-build.lock 是單次檢查點寫入鎖，不是整個建置工作鎖。只允許一個排程器持有專案；存在鎖時停止，確認原程序已結束後才人工清理。恢復前檢查欄位、方案及交付物仍存在且與已記錄 ID 一致，缺檔時停止核對，不能只因 done 就忽略。
+
+## 路由與驗證
+
+順序：1 → 2 → 3 → 4 → 5 → 6 → 5b → 7 → 8 → 9 → 10 → 11 → 12。
+逐步讀取 steps/ 中對應編號的檔案；10、11 另讀 workflow_rules.md；12 另讀 CAPABILITY_MATRIX.md。Step 3 仍使用保存的 MCP 回應整理欄位；Step 6 必須檢查 requiresReview。沒有規劃項目的步驟亦需記錄「已核對方案，無此項目」才能完成。
+Step 9 寫回方案後必須驗證各工作流 nodes 非空；Step 10/11 必須核對實際發布結果。Step 12 依其說明記錄 CLI 已完成或待補項目，不能把待補說成已完成。CLI 的安裝、登入及帳號切換遵守平台授權規則，不因恢復流程自動變更帳號。
 
 ## 🔒 全域執行清單（標記 completed 前必須核對）
 
@@ -57,278 +76,5 @@ python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{app
 
 ---
 
-## 斷點恢復
 
-1. 讀取 `{PROJECT_ROOT}/apps/{appName}/niio-plan.json`，提取 `org_id` 和所有規劃資料
-2. 檢查 `{PROJECT_ROOT}/apps/{appName}/niio-context.json`
-   - 存在 → 讀取 `progress` 欄位，從斷點繼續
-   - 不存在 → 從 Step 1 開始
-3. 如果進度 >= `fields_refreshed`，讀取 `{PROJECT_ROOT}/apps/{appName}/worksheetContext.json` 載入欄位結構
-
-> 詳細的 context 結構見 `build/CONTEXT.md`，progress 狀態定義見 `build/PROGRESS.md`。
-
----
-
-## CLI 自檢（非阻斷）
-
-> 本步在斷點恢復讀出 `org_id` 之後、進入執行迴圈之前執行一次。
-> 目的：把本機 niio CLI 命令列工具**準備到「已安裝且已登入」**，供最後的 Step 12 用 CLI
-> 回填 MCP 蓋不到的硬缺口。
->
-> [!IMPORTANT]
-> **本步不阻斷建置主體**——純 MCP 已能獨立把應用建好。**唯一會讓 Step 12 跳過回填的情況是
-> 「niio CLI 未安裝」**；「未登入」在本步自動登入解決，「組織不一致」留到 Step 12 自動切換解決。
-
-1. **探測 niio CLI 是否安裝**：執行 `hap auth whoami`
-   - **命令不存在 / 未安裝** → `cliAvailable = false`（唯一的跳過情形）。不中斷，繼續建置。
-   - **命令存在但提示未登入** → 進入第 2 步自動登入。
-   - **命令存在且已登入** → `cliAvailable = true`，跳到第 3 步。
-2. **自動登入**（僅「已安裝、未登入」時）：執行 `hap auth login`，走**瀏覽器授權**並等待授權完成。
-   - **嚴禁使用 PAT / token 登入**，必須瀏覽器發起授權並等待其自動授權成功。
-   - 登入成功 → `cliAvailable = true`。
-   - 無圖形環境等導致瀏覽器授權無法完成 → 提示使用者手動執行 `hap auth login` 完成授權
-     （這**不是**「未安裝」，不要據此把 `cliAvailable` 記為 false；在使用者完成授權前 Step 12 無法回填）。
-3. **寫入 context**：把 `cliAvailable` 寫入 `niio-context.json`（不寫 `progress`）。
-
-> **組織一致性與「設為目前應用」不在本步處理**——它們需要 appId（Step 1 之後才有），由 Step 12 完成：
-> `cliAvailable = true` 時，Step 12 會先自動把目前組織切到本應用所在組織、並把在建應用設為目前應用，再回填。
-> 詳見 `build/steps/12_cli_refinement.md`。
-
----
-
-## 子 agent 可用性預檢
-
-在正式進入執行迴圈之前，**必須先完成以下檢查**：
-
-> [!IMPORTANT]
-> **本建置流程的執行即代表使用者已明確要求使用 sub agent。** 不得因平台預設規則（如"只有使用者明確要求時才能使用 sub agent"）而跳過 sub agent 呼叫。**嚴禁退回內聯執行**。
-
-1. **探測子 agent 功能**：嘗試檢測目前平台是否支援子 agent。各平台的子 agent 工具名稱不同（Antigravity: `invoke_subagent`；Claude Code: `Task`；Codex: `multi_agent_v1.spawn_agent`），子 agent 工具可能不會出現在初始工具清單中，必須先透過工具發現查詢，不得僅因初始工具清單未顯示就判定子 agent 不可用。
-2. **根據檢測結果分流**：
-   - **子 agent 可用** → 靜默透過，繼續執行
-   - **子 agent 可用但必須使用者同意** → 執行下方授權提示流程
-   - **子 agent 不可用** → 告知使用者將全程使用內聯模式執行，建置後期質量將直線下降，是否繼續
-
-#### 授權提示流程
-
-如果檢測到目前平台需要使用者授權才能使用子 agent，在建置開始前向使用者輸出以下說明：
-
-```
-ℹ️ 子 agent 授權說明
-
-本次建置從 Step 4 開始將使用子 agent（子代理）來隔離執行各步驟。
-目前平台需要您授權後才能使用此功能。
-
-子 agent 的作用：將複雜步驟委派給獨立的子代理執行，避免主對話上下文過載，提高建置質量。
-
-是否同意使用子 agent？
-- 1. 同意：後續步驟將以子 agent 模式執行（推薦）
-- 2. 不同意：所有步驟在主對話中執行，但執行後期建置質量將直線下降
-```
-
-等待使用者回覆後再繼續。如果使用者不同意，則 Step 4~11 全部退回內聯執行。
-
----
-
-## 執行迴圈
-
-**按路由表推進**，根據每步標註的執行方式選擇內聯或 subagent。本流程包含三組並行派發點（詳見下方說明）。**所有 `progress` 寫入由排程器在驗證透過後統一完成，各 step 不寫 progress。**
-
----
-
-### 階段 1：應用建立（Step 1，內聯執行）
-
-Step 1 是輕量的應用和導航分組建立，在主 agent 內執行：
-
-1. 讀取 `build/steps/1_create_app.md` → 執行 → 排程器寫入 `progress=app_created`
-
----
-
-### 階段 1.5：工作表建立與欄位重新整理（Step 2~3）
-
-Step 2 是整個建置流程中規則最重的步驟（~400 行規則），**必須使用子 agent 隔離執行**，避免大量 MCP 呼叫和欄位設定資料汙染主排程器上下文，確保規則遵守率。
-
-1. 將 Step 2 委派給子 agent → 等待完成 → 排程器寫入 `progress=worksheets_created`
-2. 讀取 `build/steps/3_refresh_fields.md` → 沿用所選 MCP 逐表取得完整結構，再執行本機整理腳本；驗證本次輸出成功後 → 排程器寫入 `progress=fields_refreshed`
-
-> **播報**：Step 3 完成後向使用者輸出：`✅ 基礎建置完成：應用已建立，{N} 張工作表，欄位結構已重新整理`
-
----
-
-### 階段 2：動作、檢視與資料（Step 4~6，子 agent 執行）
-
-> [!CAUTION]
-> **Step 2、Step 4~11 都必須將任務委派給子 agent。**
-
-#### 並行派發 ①：Step 4 + Step 6（fields_refreshed 後觸發）
-
-Step 6（示例資料）僅依賴 `worksheetContext.json` 和 `worksheetIdByName`（Step 3 的產出），與 Step 4/5 無資料依賴。因此：
-- Step 3 完成後，同時派發 Step 4 和 Step 6
-- Step 4 → Step 5 序列推進，**不等待 Step 6**
-- Step 6 作為後臺任務執行，在 Step 5 完成前確認完成即可
-
-Step 5 和 Step 6 都完成後，排程器寫入 `progress=sample_data_created`。
-
----
-
-### 階段 2.5：頁面空殼建立（Step 5b，內聯執行）
-
-Step 5b 是輕量操作（建立空白頁面導航項 + chatbot），為後續三路並行提供 ID 依賴。
-
-讀取 `build/steps/5b_create_page_shells.md` → 執行 → 排程器寫入 `progress=page_shells_created`
-
----
-
-### 階段 3：設定並行（Step 7 + Step 8 + Step 9，子 agent 執行）
-
-#### 並行派發 ②：Step 7 + Step 8 + Step 9（page_shells_created 後觸發）
-
-Step 5b 完成後，三者的輸入已全部就緒：
-- **Step 7**（設定頁面元件）：需要 `customPageIdByName`（Step 5b）+ `worksheetContext` + `viewIdByName`
-- **Step 8**（建立角色）：需要 `customPageIdByName` + `chatbotIdByName`（Step 5b）+ `worksheetContext` + `viewIdByName`
-- **Step 9**（設計工作流）：需要 `worksheetContext` + `viewIdByName` + `roles[]`（來自 niio-plan.json，不依賴 roleContext）
-
-因此：
-- Step 5b 完成後，同時派發 Step 7、Step 8、Step 9
-- 三者都完成後，排程器寫入 `progress=config_completed`
-
----
-
-### 階段 4：工作流部署（Step 10 + Step 11，子 agent 執行）
-
-#### 並行派發 ③：Step 10 + Step 11（config_completed 後觸發）
-
-Step 10（系統工作流）和 Step 11（自訂動作工作流）均依賴 Step 9 的設計產出，彼此無依賴。因此：
-- `config_completed` 後，同時派發 Step 10 和 Step 11
-- 兩者都完成後，排程器寫入 `progress="workflows_deployed"`
-
----
-
-### 階段 5：CLI 建後精修（Step 12，內聯執行）
-
-Step 12 用 niio CLI 命令列工具補 MCP 蓋不到的硬缺口。**永不阻斷**：CLI 不可用/組織不一致時降級為
-「待補清單」，應用仍算建置成功。
-
-讀取 `build/steps/12_cli_refinement.md` → 內聯執行 → 排程器寫入 `progress="completed"`。
-
-> 本步內聯執行（非 subagent）：它依賴建置入口「CLI 自檢」寫入的 `cliAvailable`，
-> 且以對賬+少量 CLI 命令為主，上下文開銷小。
-
----
-
-### 子 agent 執行流程
-
-對 Step 4~11 的每一步：
-
-1. **必須將任務委派給子 agent**，使用下方 Prompt 模板
-2. **委派成功** → 等待子 agent 完成 → 驗證產出資料是否到位（對照全域執行清單）→ 排程器寫入 progress
-3. **子 agent 不可用** → 退回內聯：完整讀取步驟檔案，在主 agent 內執行
-
-#### 子 agent Prompt 模板
-
-```
-你是 niio 應用建置執行器，負責執行一個特定的建置步驟。
-
-## 你的任務
-完整閱讀步驟檔案 `{STEP_FILE_PATH}` 並嚴格按其要求執行。
-
-## 關鍵資訊
-- 應用名稱：{appName}
-- 專案根目錄：{PROJECT_ROOT}
-- Skill 目錄：{SKILL_DIR}（步驟檔案所在的 skill 根目錄）
-- 方案檔案：{PROJECT_ROOT}/apps/{appName}/niio-plan.json
-- 進度檔案：{PROJECT_ROOT}/apps/{appName}/niio-context.json
-- 欄位結構：{PROJECT_ROOT}/apps/{appName}/worksheetContext.json（如存在）
-- 引用的規則檔案：{RULE_FILES}（如果步驟檔案引用了共享規則檔案，此處填入路徑清單；沒有則留空）
-
-## 執行要求
-1. 先完整讀取步驟檔案
-2. **如果步驟檔案引用了其他規則檔案（如 `workflow_rules.md`），必須先完整閱讀該規則檔案後再開始執行**
-3. 從 niio-plan.json 讀取方案資料
-4. 從 niio-context.json 讀取已有的 ID 對映
-5. 如需欄位資訊，從 worksheetContext.json 讀取（只讀）
-6. 如步驟檔案要求執行指令碼（如 generate_fill_templates.py），使用 `{SKILL_DIR}` 定位指令碼路徑
-7. 嚴格按步驟檔案中的規則執行所有操作
-8. 所有 MCP 呼叫必須使用排程器指定的niio MCP 服務（服務名稱由排程器在委派時傳入）
-9. 完成後嚴格按步驟檔案中「完成標誌」章節的要求寫入資料。寫入目標可能是 `niio-context.json` 或 `niio-plan.json`，以步驟檔案為準。不寫 `progress`（由排程器統一管理）
-10. 驗證步驟檔案末尾的 ⛔ 驗證斷言全部透過
-11. 輸出**執行問題總結**：列出執行過程中遇到的所有問題（如 API 報錯、欄位/選項對映失敗、節點跳過、重試等），每條包含問題描述和處理方式。如果全程無問題，輸出「無異常」
-```
-
----
-
-### 驗證與播報（每步通用）
-
-每步完成後：
-
-1. 驗證該步驟的交付物欄位非空（對照全域執行清單）
-2. 驗證透過後，**由排程器寫入對應的 `progress` 值**到 `niio-context.json`
-3. 若驗證失敗 → 向使用者報告錯誤並停止
-
-**Step 9 特殊驗證（排程器必須執行）**：
-
-Step 9 的產出是寫入 `niio-plan.json` 而非 `niio-context.json`。排程器必須在子 agent 完成後：
-
-1. 重新讀取 `niio-plan.json`，檢查每條 `workflows[]` 和 `customActionWorkflows[]` 的 `nodes` 陣列是否非空且長度 ≥ 1
-2. 檢查失敗 → **不寫入 progress**，向使用者報告哪些工作流缺少節點方案，並重新派發 Step 9
-
-**播報節點**（非播報節點靜默）：
-
-| 時機 | 輸出模板 |
-|------|---------| 
-| 建置開始 | `🚀 開始建置應用【{appName}】…` |
-| 階段 1 完成 | `✅ 基礎建置完成：應用已建立，{N} 張工作表` |
-| Step 5b 完成 | `✅ 頁面空殼與 AI 助手已建立，開始並行設定…` |
-| 階段 3 完成 | `✅ 頁面元件、角色、工作流設計全部完成` |
-| 階段 4 完成 | `✅ 工作流已全部發布，開始建後精修…` |
-| Step 12 完成（已回填） | `✅ 建後精修完成：已用 CLI 補齊 {N} 項 MCP 未覆蓋的設定` |
-| Step 12 完成（降級，niio CLI 未安裝） | `ℹ️ 應用已建好；安裝並登入 niio CLI 後可補齊 {M} 項增強設定（見摘要）` |
-| 全部完成 | 輸出完整摘要（見下方「完成」章節） |
-
----
-
-## 路由表
-
-| progress 值 | 下一步 | 步驟檔案 | 執行方式 | 引用規則檔案 |
-|---|---|---|:---:|---|
-| （無/新建） | Step 1：建立應用與導航 | `build/steps/1_create_app.md` | 🔵 內聯 | — |
-| `app_created` | Step 2：建立工作表 | `build/steps/2_create_worksheets.md` | 🟢 subagent | — |
-| `worksheets_created` | Step 3：重新整理欄位結構 | `build/steps/3_refresh_fields.md` | 🔵 內聯 | — |
-| `fields_refreshed` | Step 4 + **⚡ Step 6**：並行派發 | `4_create_actions.md` + `6_create_sample_data.md` | 🟢 subagent | — |
-| `actions_created` | Step 5：建立檢視 | `build/steps/5_create_views.md` | 🟢 subagent | — |
-| `sample_data_created` | Step 5b：建立頁面空殼與 AI 助手 | `build/steps/5b_create_page_shells.md` | 🔵 內聯 | — |
-| `page_shells_created` | **⚡ 三路並行** Step 7 + Step 8 + Step 9 | `7_create_pages.md` + `8_create_roles.md` + `9_design_workflows.md` | 🟢 subagent | Step 9 無引用 |
-| `config_completed` | **⚡ 並行派發** Step 10 + Step 11 | `10_create_workflows.md` + `11_create_action_workflows.md` | 🟢 subagent | `build/steps/workflow_rules.md` |
-| `workflows_deployed` | Step 12：CLI 建後精修對賬與回填 | `build/steps/12_cli_refinement.md` | 🔵 內聯 | `build/CAPABILITY_MATRIX.md` |
-
----
-
-## 完成
-
-在標記 `progress="completed"` 之前，**必須回到頂部的「🔒 全域執行清單」逐項核對**。並行派發的步驟須等待全部完成後再推進（詳見上方「並行派發策略」）。
-
-確認全部 15 項均已完成後，輸出成功摘要：
-
-- 應用名稱和連結
-- 已建立的工作表數量
-- 已寫入的示例資料記錄條數
-- 已建立併發布的工作流數量（系統工作流 + 自訂動作工作流）
-- 已建立的角色數量
-- 已建立的 AI 助手數量（若有）
-- CLI 建後精修結果：已回填 N 項 /（或）待補清單 M 項（CLI 未安裝或組織不一致時）
-
----
-
-## 禁止事項
-
-- **禁止跳過 step 檔案**直接憑經驗執行
-- **禁止偽造 ID**——appId、worksheetId、fieldId、viewId、workflowId 必須來自工具回傳值
-- **禁止把 MCP 原始回傳全文寫入 context**——只提取關鍵 ID 和對映
-- **禁止一個 step 修改其他 step 的職責範圍**
-- **禁止跳步**——必須嚴格按路由表順序執行
-
-## 輸出格式
-
-- 使用加粗和反引號標註關鍵名稱和數字
-- 不使用其他 Markdown 格式
-- 錯誤示例：`❌ Step 2 建立工作表失敗：【任務清單】未能建立，原因：xxx`
+完成前逐項核對以上交付物。輸出應用連結、工作表與資料數量、已發布工作流、角色與助手數量、CLI 待補項目；任何未驗證內容須明確列出。不得偽造 ID、跳過步驟規則或宣稱離線測試證明遠端建置成功。
