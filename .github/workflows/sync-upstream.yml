@@ -86,6 +86,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p test_deployment_guides.py -v
           python -m unittest discover -s tests -p test_sample_images.py -v
+          python -m unittest discover -s tests -p test_batch_contracts.py -v
 
       - name: 驗證網站後端與前端範圍
         run: node --test tests/test_website_gateway.mjs
