@@ -1,11 +1,11 @@
 {
   "product": [
     {
-      "keyword": "訂書機",
+      "keyword": "電腦工作桌",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-001.jpg"
     },
     {
-      "keyword": "訂書機",
+      "keyword": "白色紙張紋理",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-002.jpg"
     },
     {
@@ -13,7 +13,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-003.jpg"
     },
     {
-      "keyword": "垃圾桶",
+      "keyword": "烤箱",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-004.jpg"
     },
     {
@@ -21,39 +21,39 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-005.jpg"
     },
     {
-      "keyword": "包子",
+      "keyword": "造型甜點",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-006.jpg"
     },
     {
-      "keyword": "米飯",
+      "keyword": "米飯料理",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-007.jpg"
     },
     {
-      "keyword": "餅",
+      "keyword": "墨西哥夾餅",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-008.jpg"
     },
     {
-      "keyword": "餃子",
+      "keyword": "蒸籠點心",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-009.jpg"
     },
     {
-      "keyword": "零件",
+      "keyword": "設備組裝",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-010.jpg"
     },
     {
-      "keyword": "零件",
+      "keyword": "工程製圖",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-011.jpg"
     },
     {
-      "keyword": "零件",
+      "keyword": "CAD 設計畫面示意",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-012.jpg"
     },
     {
-      "keyword": "零件",
+      "keyword": "平板設計畫面示意",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-013.jpg"
     },
     {
-      "keyword": "耗材",
+      "keyword": "星空風景",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-014.jpg"
     },
     {
@@ -77,23 +77,23 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-019.jpg"
     },
     {
-      "keyword": "家電",
+      "keyword": "客廳",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-020.jpg"
     },
     {
-      "keyword": "家電",
+      "keyword": "掃地機器人",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-021.jpg"
     },
     {
-      "keyword": "家電",
+      "keyword": "烤箱",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-022.jpg"
     },
     {
-      "keyword": "家電",
+      "keyword": "洗衣機",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-023.jpg"
     },
     {
-      "keyword": "家電",
+      "keyword": "報紙與字謎",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-024.jpg"
     },
     {
@@ -125,7 +125,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-031.jpg"
     },
     {
-      "keyword": "鮮花",
+      "keyword": "度假泳池",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-032.jpg"
     },
     {
@@ -193,7 +193,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-048.jpg"
     },
     {
-      "keyword": "數碼",
+      "keyword": "桌上型電腦",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-049.jpg"
     },
     {
@@ -201,15 +201,15 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-050.jpg"
     },
     {
-      "keyword": "數碼",
+      "keyword": "電腦與平板",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-051.jpg"
     },
     {
-      "keyword": "數碼",
+      "keyword": "智慧手錶",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-052.jpg"
     },
     {
-      "keyword": "數碼",
+      "keyword": "電子配件",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-053.jpg"
     },
     {
@@ -217,7 +217,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-054.jpg"
     },
     {
-      "keyword": "辦公",
+      "keyword": "彩色鉛筆",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-055.jpg"
     },
     {
@@ -249,7 +249,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-062.jpg"
     },
     {
-      "keyword": "修復",
+      "keyword": "設備組裝",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/product-063.jpg"
     }
   ],
@@ -295,7 +295,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-010.jpg"
     },
     {
-      "keyword": "工具",
+      "keyword": "打字機",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-011.jpg"
     },
     {
@@ -307,12 +307,8 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-013.jpg"
     },
     {
-      "keyword": "巡檢",
+      "keyword": "伺服器機櫃",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-014.jpg"
-    },
-    {
-      "keyword": "標籤",
-      "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/asset-015.jpg"
     },
     {
       "keyword": "車輛",
@@ -423,15 +419,15 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-009.jpg"
     },
     {
-      "keyword": "安裝",
+      "keyword": "平板操作示意",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-010.jpg"
     },
     {
-      "keyword": "驗收",
+      "keyword": "程式開發示意",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-011.jpg"
     },
     {
-      "keyword": "拜訪",
+      "keyword": "刷卡收銀設備",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/proof-012.jpg"
     },
     {
@@ -453,7 +449,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-002.jpg"
     },
     {
-      "keyword": "貨損",
+      "keyword": "物流路線地圖示意",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-003.jpg"
     },
     {
@@ -461,7 +457,7 @@
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-004.jpg"
     },
     {
-      "keyword": "異常",
+      "keyword": "服務機器人",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/issue-005.jpg"
     },
     {
@@ -471,17 +467,17 @@
   ],
   "marketing": [
     {
-      "keyword": "宣傳圖",
+      "keyword": "通用儀表板照片",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/marketing-001.jpg"
     },
     {
-      "keyword": "海報",
+      "keyword": "介面設計討論",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/marketing-002.jpg"
     }
   ],
   "screenshot": [
     {
-      "keyword": "截圖",
+      "keyword": "通用數據儀表板示意（非 niio 畫面）",
       "url": "https://raw.githubusercontent.com/apsm-niio/niio-skills/main/assets/sample-images/screenshot-001.jpg"
     }
   ],

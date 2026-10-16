@@ -146,7 +146,7 @@
   "connectionNames": {
     "hap_personal_mcp": "niio_personal_mcp"
   },
-  "mirroredSampleImages": 126,
+  "mirroredSampleImages": 125,
   "deploymentPolicyChangedFiles": [
     "skills/api/niio-api-website/SKILL.md",
     "skills/api/niio-api-website/assets/api.js.template",
