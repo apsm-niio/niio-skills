@@ -48,5 +48,10 @@
     "target": "mcp/niio-mcp-app-builder/build/steps/5_create_views.md",
     "source": "skills/mcp/hap-mcp-app-builder/build/steps/5_create_views.md",
     "sha256": "dc9bfebbb2cd4e9d6752955917194ca5199f8b90f3491d97028a373c2692c590"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/steps/11_create_action_workflows.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/steps/11_create_action_workflows.md",
+    "sha256": "9bd8fb71c049615c300b500f1175e5350c1417f7329d4dc34746a3434a4d05f4"
   }
 ]
