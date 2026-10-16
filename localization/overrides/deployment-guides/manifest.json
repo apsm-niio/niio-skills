@@ -38,5 +38,15 @@
     "target": "cli/niio-cli-data-query/SKILL.md",
     "source": "skills/cli/hap-cli-data-query/SKILL.md",
     "sha256": "164eb909526f97c38ea0d258c7647d4713b554c07691e1da956b67d86ce5dc85"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/steps/2_create_worksheets.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/steps/2_create_worksheets.md",
+    "sha256": "ecc35d3712a8223d51b040e9acbeee9f5f9cdd6fcb5e01ab469f96503df6db98"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/steps/5_create_views.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/steps/5_create_views.md",
+    "sha256": "dc9bfebbb2cd4e9d6752955917194ca5199f8b90f3491d97028a373c2692c590"
   }
 ]

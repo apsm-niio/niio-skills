@@ -48,7 +48,7 @@ running 表示結果可能已生效，不能直接重試。先確認沒有其他
 ## 路由與驗證
 
 順序：1 → 2 → 3 → 4 → 5 → 6 → 5b → 7 → 8 → 9 → 10 → 11 → 12。
-逐步讀取 steps/ 中對應編號的檔案；10、11 另讀 workflow_rules.md；12 另讀 CAPABILITY_MATRIX.md。Step 3 仍使用保存的 MCP 回應整理欄位；Step 6 必須檢查 requiresReview。沒有規劃項目的步驟亦需記錄「已核對方案，無此項目」才能完成。
+逐步讀取 steps/ 中對應編號的檔案；10、11 另讀 workflow_rules.md；12 另讀 CAPABILITY_MATRIX.md。Step 3 仍使用保存的 MCP 回應整理欄位；Step 6 必須檢查 requiresReview。沒有規劃項目的步驟亦需記錄「已核對方案，無此項目」才能完成。Step 5 另須遵守基本檢視規則：瀏覽器交付目標表不能因方案漏列而跳過；僅 MCP 資料測試須明確標示範圍。
 Step 9 寫回方案後必須驗證各工作流 nodes 非空；Step 10/11 必須核對實際發布結果。Step 12 依其說明記錄 CLI 已完成或待補項目，不能把待補說成已完成。CLI 的安裝、登入及帳號切換遵守平台授權規則，不因恢復流程自動變更帳號。
 
 ## 🔒 全域執行清單（標記 completed 前必須核對）
@@ -63,7 +63,7 @@ Step 9 寫回方案後必須驗證各工作流 nodes 非空；Step 10/11 必須�
 | 3 | 所有工作表已建立 | `worksheetIdByName` 條目數 = plan 中表數 | `worksheetIdByName` |
 | 4 | 欄位結構已重新整理 | `worksheetContext.json` 非空且每表有 fields | `worksheetContext.json` |
 | 5 | 自訂動作已建立 | `actionIdByName` 條目數 = plan 中動作數 | `actionIdByName` |
-| 6 | 檢視已建立 | `viewIdByName` 條目數 = plan 中檢視總數 | `viewIdByName` |
+| 6 | 交付目標表的檢視已核對 | 真實 ID 與歸屬一致；每張瀏覽器目標表至少有一個檢視，權限與畫面結果另記錄；零規劃不代表通過 | `viewIdByName`、驗收證據 |
 | 7 | 示例資料已寫入 | 各表均有記錄 | `progress >= sample_data_created` |
 | 8 | 頁面空殼已建立 | `customPageIdByName` 條目數匹配 plan | `customPageIdByName` |
 | 9 | AI 助手已建立（若有） | `chatbotIdByName` 條目數匹配 plan（或 plan 無則跳過） | `chatbotIdByName` |
@@ -72,9 +72,15 @@ Step 9 寫回方案後必須驗證各工作流 nodes 非空；Step 10/11 必須�
 | 12 | 工作流已設計 | `niio-plan.json` 中每條 workflow 和 customActionWorkflow 的 `nodes[]` 非空 | `niio-plan.json` |
 | 13 | 系統工作流已釋出 | 每個系統工作流 processId 已 publish | Step 10 完成 |
 | 14 | 自訂動作工作流已釋出 | `customActionWorkflows[]` 每條均已 publish | Step 11 完成 |
-| 15 | CLI 建後精修已對賬 | CLI 可用→已校正組織+設目前應用+回填 `cliGaps[]`；niio CLI 未安裝→已輸出待補清單且未中斷 | Step 12 完成 |
+| 15 | CLI 建後精修已對賬 | 部署／profile／組織／應用相符才回填 `cliGaps[]`；不自動切換全域設定，受阻時列待補 | Step 12 完成 |
 
 ---
 
 
 完成前逐項核對以上交付物。輸出應用連結、工作表與資料數量、已發布工作流、角色與助手數量、CLI 待補項目；任何未驗證內容須明確列出。不得偽造 ID、跳過步驟規則或宣稱離線測試證明遠端建置成功。
+
+## 交付驗收分層
+
+完成摘要分列「MCP 結構與資料核對」「基本檢視存在與工作表歸屬」「目標使用者瀏覽器存取」。每項標記通過／失敗／待驗證，附來源與時間；使用者回報應標明使用者確認，不冒稱工具親自驗證。實際畫面未取得時不宣稱視覺、品牌或權限全數通過。
+
+MCP 成功不等於瀏覽器可用。以瀏覽器可用為交付目標時，目標使用者仍無法開啟資料就屬未完成交付；先診斷檢視、帳號與有效權限，不重建資料。檢查點腳本只記錄步驟狀態，不會自動執行這些遠端或瀏覽器驗證。
