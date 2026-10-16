@@ -1,0 +1,19 @@
+{
+  "channel": "website",
+  "deploymentApproved": false,
+  "rowsPath": [
+    "data",
+    "rows"
+  ],
+  "minRows": 1,
+  "maxRows": 1,
+  "allowedFields": [
+    "rowid",
+    "name"
+  ],
+  "target": "fixture-only",
+  "successPath": [
+    "success"
+  ],
+  "successValue": true
+}

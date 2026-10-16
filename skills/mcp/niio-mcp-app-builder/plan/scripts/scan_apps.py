@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 scan_apps.py — 掃描 apps/ 目錄，輸出每個應用的名稱和建置狀態。
-               同時檢查 GitHub 遠端版本是否有更新（2 秒超時，失敗靜默跳過）。
+               僅指定 --check-updates 才檢查 GitHub 遠端版本是否有更新（2 秒超時，失敗靜默跳過）。
 
 用法：python scan_apps.py <projectRoot>
 示例：python scan_apps.py /Users/user/应用搭建测试
 輸出：JSON 物件 { apps: [...], update?: { available, local, remote, notes } }
 """
 
+import argparse
 import json
 import os
 import re
@@ -20,13 +21,8 @@ from project_files import inspect_project, ProjectFileError
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 優先從命令列參數取得專案根目錄，否則 fallback 到指令碼目錄向上 4 級
-project_root = (
-    os.path.abspath(sys.argv[1])
-    if len(sys.argv) > 1
-    else os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", ".."))
-)
-apps_dir = os.path.join(project_root, "apps")
+# Importing the module does not inspect argv or infer a project location.
+apps_dir = None
 
 
 def find_version_file(start_dir):
@@ -118,7 +114,7 @@ def check_update():
     # 計算版本檔案在倉庫中的相對路徑
     git_root = find_git_root(os.path.dirname(plugin_path))
     if git_root:
-        remote_file = os.path.relpath(plugin_path, git_root)
+        remote_file = os.path.relpath(plugin_path, git_root).replace("\\", "/")
     else:
         # 非 git 安裝方式，用 skillPath 拼接路徑
         if skill_path:
@@ -148,8 +144,15 @@ def check_update():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("project_root", type=Path)
+    parser.add_argument("--check-updates", action="store_true")
+    args = parser.parse_args()
+    if not args.project_root.is_dir():
+        parser.error("project_root must be an existing directory")
+    apps_dir = str(args.project_root.resolve() / "apps")
     output = {"apps": scan_apps()}
-    update = check_update()
+    update = check_update() if args.check_updates else None
     if update:
         output["update"] = update
     print(json.dumps(output, ensure_ascii=False, indent=2))

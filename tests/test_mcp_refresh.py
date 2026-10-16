@@ -204,6 +204,18 @@ class FillTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertEqual(output.read_bytes(), b'previous')
 
+    def test_malformed_metadata_is_controlled_and_preserves_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source, output = Path(directory)/'input.json', Path(directory)/'fillTemplates.json'
+            for value in ({}, [None], [{'worksheetId':'a','worksheetName':'A','fields':[None]}],
+                          [{'worksheetId':'a','worksheetName':'A','fields':[dict(self.field('x'),options=[None])]}]):
+                source.write_text(json.dumps(value), encoding='utf-8')
+                output.write_bytes(b'previous')
+                result = subprocess.run([sys.executable, str(SCRIPTS/'generate_fill_templates.py'),str(source)],capture_output=True)
+                self.assertEqual(result.returncode,1)
+                self.assertNotIn(b'Traceback',result.stderr)
+                self.assertEqual(output.read_bytes(),b'previous')
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -191,12 +191,12 @@ hap worksheet record list WORKSHEET_ID --filter-json '{
 hap worksheet record list WORKSHEET_ID \
   --filter-json '<見上>' \
   --sorts-json '[{"field":"onboard_date","isAsc":false}]' \
-  --fields '["name","status","amount"]' \   # 只回傳這幾個欄位，省 token
+  --fields '["name","status","amount"]' \
   --page-size 50 --page-index 1 \
   --include-total-count                       # 想要總行數時加
 ```
 
-- `--page-size` / `--page-index` **都是必填**。
+- `--page-size` / `--page-index` 建議明確指定；是否必填以安裝版本的 `--help` 為準。
 - `--search` 關鍵字模糊搜尋（跨欄位），可與 filter 疊加。
 - `--view-id` 套用某檢視的內建篩選/排序。
 - 不傳 `--filter-json` 就是查全部（按分頁）。
@@ -215,11 +215,11 @@ hap worksheet record list WORKSHEET_ID \
 
 ```bash
 hap worksheet record pivot WORKSHEET_ID \
-  --view-id VIEW_ID \                                          # 必填
-  --rows-json '[{"field":"status"}]' \                         # 行維度（分組）
-  --columns-json '[{"field":"create_date","granularity":3}]' \ # 列維度，可選
-  --values-json '[{"field":"amount","aggregation":"SUM"}]' \   # 值（聚合），必填
-  --filter-json '<同 list 的篩選條件>' \                        # 可選
+  --view-id VIEW_ID \
+  --rows-json '[{"field":"status"}]' \
+  --columns-json '[{"field":"create_date","granularity":3}]' \
+  --values-json '[{"field":"amount","aggregation":"SUM"}]' \
+  --filter-json '<同 list 的篩選條件>' \
   --include-summary                                            # 要總計行加
 ```
 

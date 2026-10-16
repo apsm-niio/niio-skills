@@ -13,7 +13,7 @@
       "required": ["name", "type"],
       "properties": {
         "name": { "type": "string", "minLength": 1 },
-        "type": { "type": "string", "description": "richText|embedUrl|image|chart|view|filter|button|... (or the integer)." },
+        "type": { "type": "string", "description": "richText|embedUrl|image|chart|view|filter|button|...; this schema accepts string names only. Integer wire values require separate deployment confirmation." },
         "value": { "description": "Widget value (e.g. HTML for richText, URL for embedUrl)." },
         "layout": {
           "type": "object",

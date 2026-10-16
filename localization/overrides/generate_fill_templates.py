@@ -10,6 +10,17 @@ SYSTEM_FIELD_IDS = {'rowid', 'ownerid', 'caid', 'ctime', 'utime', 'uaid'}
 
 
 def generate_fill_templates(worksheet_context):
+    if not isinstance(worksheet_context, list) or any(not isinstance(ws, dict) for ws in worksheet_context):
+        raise ValueError('worksheetContext 必須為工作表物件陣列')
+    for ws in worksheet_context:
+        if not isinstance(ws.get('fields', []), list):
+            raise ValueError('fields 必須為陣列')
+        for field in ws.get('fields', []):
+            if not isinstance(field, dict) or not isinstance(field.get('alias', ''), (str, type(None))):
+                raise ValueError('欄位中繼資訊格式錯誤')
+            options = field.get('options', [])
+            if not isinstance(options, list) or any(not isinstance(option, dict) or 'value' not in option for option in options):
+                raise ValueError('options 必須為包含 value 的物件陣列')
     id_to_name = {ws['worksheetId']: ws['worksheetName'] for ws in worksheet_context}
     templates = []
     for ws in worksheet_context:
