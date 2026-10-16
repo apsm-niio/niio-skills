@@ -1,277 +1,32 @@
-> **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。範例網域不代表 REST 路由已驗證；MCP 成功也不代表 REST 或 CLI 相容。使用 REST 功能前，須依部署文件確認路徑與驗證方式，先完成唯讀測試；404 HTML 時停止，不重試寫入。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
+# niio 檢視外掛資料整合
 
-# niio 檢視外掛中使用 V3 介面
-
-本文件是 [niio-view-plugin](./SKILL.md) 技能的補充說明,介紹如何在檢視外掛中使用 niio V3 介面。
-
-## 資料操作方式對比
-
-niio 檢視外掛支援兩種資料操作方式:
-
-### 1. 使用外掛函式和元件 (mdye API)
-
-**適用場景:** 檢視外掛內的標準資料操作
-
-**特點:**
-- ✅ 已封裝好身分驗證與授權,開箱即用
-- ✅ 自動處理權限和上下文
-- ✅ 提供完整的 TypeScript 型別定義
-- ✅ 與niio原生 UI 元件整合
-
-**示例:**
-```javascript
-import { api, utils, config } from 'mdye';
-
-// 取得資料
-const result = await api.getFilterRows({ worksheetId, viewId });
-
-// 開啟記錄詳情
-await utils.openRecordInfo({ appId, worksheetId, viewId, recordId });
-```
-
-### 2. 使用 niio V3 介面 (REST API)
-
-**適用場景:**
-- 需要呼叫 mdye 未封裝的介面
-- 獨立前端頁面開發
-- 跨應用資料操作
-- 自訂複雜業務邏輯
-
-**特點:**
-- ✅ 完整的 RESTful API
-- ✅ 支援所有niio功能
-- ✅ 可在任何環境使用(外掛/獨立頁面)
-- ⚠️ 需要手動設定身分驗證與授權(Appkey & Sign)
-
-## 在檢視外掛中使用 V3 介面
-
-### 方案1: 使用 mdye 封裝的 api
-
-推薦優先使用 `mdye` 提供的 API:
+優先使用目前部署提供的原生 SDK。以下是介面範例，須依已安裝 SDK 版本及目前使用者權限驗證，未宣告跨表或跨應用皆可用。
 
 ```javascript
 import { api, config } from 'mdye';
-
-const { appId, worksheetId, viewId } = config;
-
-// 已包含身分驗證與授權,直接呼叫
-const result = await api.getFilterRows({
-  worksheetId,
-  viewId,
-  pageSize: 50
-});
+const { worksheetId, viewId } = config;
+const result = await api.getFilterRows({ worksheetId, viewId, pageSize: 50 });
 ```
 
-### 方案2: 直接呼叫 V3 介面
+## 部署與憑證前置檢查
 
-當需要呼叫 mdye 未封裝的介面時:
+- 分別確認 MCP、REST、CLI 與網站的目標網址（含部署路徑）；不得相互推導。只使用本次已確認的部署、組織及應用。
+- MCP 憑證可用不代表 REST 或 CLI 可用；不得自動掃描編輯器設定、提取或轉用 MCP 憑證。已確認的來源可沿用；缺少 REST 憑證時只索取本機檔案路徑或環境變數名稱，不要求在聊天貼出密鑰。
+- REST 路由、驗證方式及 API 版本須由該部署文件確認。範例僅供協定參考；第一次先做已授權的唯讀請求，禁止攜帶憑證跟隨重新導向。核對 HTTP 狀態、JSON Content-Type、業務成功及預期資料結構；404／HTML 不能判定憑證有效或無效，停止並回報。
+- `Authorization` 依已確認格式原樣使用，不重複加 Bearer。`HAP-Appid`、`HAP-Appkey`、`HAP-Sign` 是協定名稱，不做品牌替換；實際必要標頭依部署文件。
+- API 密鑰只留在受控後端或本機環境，不寫入前端、版本庫、日誌或報告。前端使用原生 SDK 或具備使用者身分驗證與資料授權的後端；單純隱藏密鑰不等於限制資料存取。
+- 查詢須限制應用、工作表、欄位與回傳量；不要把 `includeSystemFields=false` 當成欄位白名單。寫入依使用者已授權範圍執行並讀回；逾時或回應遺失先唯讀核對，不盲目重送。
 
-```javascript
-// 設定身分驗證與授權資訊 (從 MCP 設定中取得)
-const API_CONFIG = {
-  appkey: '你的Appkey',
-  sign: '你的Sign'
-};
+## SDK 未涵蓋的操作
 
-// 封裝請求函式
-async function callV3API(endpoint, method = 'GET', body = null) {
-  const headers = {
-    'Content-Type': 'application/json',
-    'HAP-Appkey': API_CONFIG.appkey,
-    'HAP-Sign': API_CONFIG.sign
-  };
+先確認部署確實提供所需 REST 能力，再設計後端。不得在外掛內放置 Appkey、Sign 或管理員 Token，也不得宣稱 MCP 金鑰可直接用於外掛或 REST。
 
-  const options = {
-    method,
-    headers
-  };
+後端實作需滿足：
 
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
+1. 驗證目前使用者的身分與應用／記錄存取權；未登入或無權限直接拒絕。
+2. 將業務操作映射至固定、已確認的後端路由，限制工作表及欄位；不接受瀏覽器提供的任意上游 URL、標頭或管理操作。
+3. 在伺服器端取得憑證，限制回傳欄位、筆數與分頁；隔離不同使用者的快取，避免跨帳號資料洩漏。
+4. 寫入需檢查權限與輸入並防護跨站請求；失敗訊息不得回傳密鑰或上游完整錯誤內容。
+5. 以有權限、無權限及未登入三種情境驗證；逾時先核對結果，不能自動重送。
 
-  const response = await fetch(
-    `https://niiodemo.apsm.com.tw${endpoint}`,
-    options
-  );
-
-  return await response.json();
-}
-
-// 使用示例
-const optionSets = await callV3API('/v3/app/optionsets', 'GET');
-const roles = await callV3API('/v3/app/roles', 'GET');
-```
-
-## 常用 V3 介面
-
-### 應用管理
-- `GET /v3/app` - 取得應用資訊
-- `POST /v3/app/worksheets/list` - 取得工作表清單
-- `GET /v3/app/worksheets/{worksheet_id}` - 取得工作表詳情
-
-### 資料查詢
-- `POST /v3/app/worksheets/{worksheet_id}/rows/list` - 取得記錄清單
-- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}` - 取得記錄詳情
-- `GET /v3/app/worksheets/{worksheet_id}/rows/{row_id}/relations/{field}` - 取得關聯記錄
-
-### 資料操作
-- `POST /v3/app/worksheets/{worksheet_id}/rows` - 建立記錄
-- `PUT /v3/app/worksheets/{worksheet_id}/rows/{row_id}` - 更新記錄
-- `DELETE /v3/app/worksheets/{worksheet_id}/rows/batch` - 刪除記錄
-
-### 選項集和角色
-- `GET /v3/app/optionsets` - 取得選項集清單
-- `GET /v3/app/optionsets/{optionset_id}` - 取得選項集詳情
-- `GET /v3/app/roles` - 取得角色清單
-- `GET /v3/app/roles/{role_id}/members` - 取得角色成員
-
-### 使用者和部門
-- `POST /v3/users/lookup` - 查詢使用者
-- `POST /v3/departments/lookup` - 查詢部門
-- `GET /v3/regions` - 取得地區清單
-
-## 取得身分驗證與授權金鑰
-
-### 從 MCP 設定中提取
-
-MCP 設定示例:
-```json
-{
-  "niio-mcp-MEGA CRM": {
-    "url": "https://niiodemo.apsm.com.tw/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign",
-    "type": "sse"
-  }
-}
-```
-
-提取出:
-- **Appkey**: `你的Appkey`
-- **Sign**: `你的Sign`
-
-**重要:** 這套金鑰同時適用於:
-- MCP 伺服器訪問
-- V3 API 呼叫
-- 檢視外掛開發
-
-## 完整示例
-
-### 示例1: 取得並展示選項集
-
-```javascript
-import React, { useState, useEffect } from 'react';
-import { config } from 'mdye';
-
-const API_CONFIG = {
-  appkey: '你的Appkey',
-  sign: '你的Sign'
-};
-
-function OptionSetList() {
-  const [optionSets, setOptionSets] = useState([]);
-
-  useEffect(() => {
-    loadOptionSets();
-  }, []);
-
-  async function loadOptionSets() {
-    const headers = {
-      'Content-Type': 'application/json',
-      'HAP-Appkey': API_CONFIG.appkey,
-      'HAP-Sign': API_CONFIG.sign
-    };
-
-    const response = await fetch(
-      'https://niiodemo.apsm.com.tw/v3/app/optionsets',
-      { method: 'GET', headers }
-    );
-
-    const result = await response.json();
-    setOptionSets(result.optionSets || []);
-  }
-
-  return (
-    <div>
-      <h2>選項集清單</h2>
-      <ul>
-        {optionSets.map(optionSet => (
-          <li key={optionSet.optionSetId}>
-            {optionSet.optionSetName}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default OptionSetList;
-```
-
-### 示例2: 跨應用資料查詢
-
-```javascript
-async function getWorksheetData(worksheetId) {
-  const headers = {
-    'Content-Type': 'application/json',
-    'HAP-Appkey': API_CONFIG.appkey,
-    'HAP-Sign': API_CONFIG.sign
-  };
-
-  // 取得工作表結構
-  const structureResponse = await fetch(
-    `https://niiodemo.apsm.com.tw/v3/app/worksheets/${worksheetId}`,
-    { method: 'GET', headers }
-  );
-  const structure = await structureResponse.json();
-
-  // 取得記錄清單
-  const rowsResponse = await fetch(
-    `https://niiodemo.apsm.com.tw/v3/app/worksheets/${worksheetId}/rows/list`,
-    {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        pageIndex: 1,
-        pageSize: 100
-      })
-    }
-  );
-  const { rows } = await rowsResponse.json();
-
-  return {
-    structure,
-    rows
-  };
-}
-```
-
-## 選擇建議
-
-1. **優先使用 mdye API**
-   - 如果功能已封裝,優先使用以減少開發量
-   - 享受自動身分驗證與授權和型別提示
-
-2. **補充使用 V3 介面**
-   - 當需要 mdye 未提供的功能時使用
-   - 例如:選項集管理、角色管理、使用者查詢等
-
-3. **獨立頁面開發**
-   - 只能使用 V3 介面編排資料操作
-   - 需要自行處理身分驗證與授權和錯誤
-
-## 更多資源
-
-- **完整 V3 介面文件**: 檢視 `niio-apiv3-data` 技能文件
-- **篩選器使用規範**: 參考 `niio-apiv3-data` 技能中的篩選器章節
-- **API 文件查詢**: 使用 Apifox MCP Server 查詢完整 API 結構
-
-```json
-{
-  "niio-應用API文件": {
-    "command": "npx -y apifox-mcp-server@latest --site-id=5442569",
-    "args": [],
-    "env": {},
-    "type": "stdio"
-  }
-}
-```
+這裡沒有提供已部署的後端端點，不能將示意路由當作現成服務。未完成後端時，將此能力列為待實作。公開網站專用的匿名查詢閘道不能用來暴露外掛內部資料。

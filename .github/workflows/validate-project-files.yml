@@ -4,7 +4,10 @@ on:
   push:
     branches: [main]
     paths:
-      - skills/mcp/niio-mcp-app-builder/**
+      - skills/**
+      - scripts/audit_brand.py
+      - tests/test_deployment_guides.py
+      - localization/overrides/deployment-guides/**
       - localization/overrides/project-files/**
       - localization/overrides/refresh_fields.py
       - scripts/localize.py
@@ -14,7 +17,10 @@ on:
       - .github/workflows/validate-project-files.yml
   pull_request:
     paths:
-      - skills/mcp/niio-mcp-app-builder/**
+      - skills/**
+      - scripts/audit_brand.py
+      - tests/test_deployment_guides.py
+      - localization/overrides/deployment-guides/**
       - localization/overrides/**
       - tests/test_project_files.py
       - tests/test_mcp_refresh.py
@@ -41,3 +47,5 @@ jobs:
         run: python -m unittest discover -s tests -p test_mcp_refresh.py -v
       - name: 驗證離線中斷與安全續跑
         run: python -m unittest discover -s tests -p test_build_checkpoint.py -v
+      - name: 驗證部署指引與品牌例外
+        run: python -m unittest discover -s tests -p test_deployment_guides.py -v

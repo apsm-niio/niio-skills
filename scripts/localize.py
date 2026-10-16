@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import runpy
 import shutil
 import tempfile
 import unicodedata
@@ -1059,6 +1060,25 @@ def apply_website_overrides(stage, output, manifest):
     guide.write_text(text)
 
 
+def apply_deployment_guides(stage, output, source):
+    root = output / 'localization/overrides/deployment-guides'
+    entries = json.loads((root / 'manifest.json').read_text())
+    for item in entries:
+        for key in ('target', 'source'):
+            path = Path(item[key])
+            if path.is_absolute() or '..' in path.parts:
+                raise ValueError('部署指引路徑無效')
+        if hashlib.sha256((source / item['source']).read_bytes()).hexdigest() != item['sha256']:
+            raise ValueError('上游部署指引已改變，須審查覆寫後再同步：' + item['source'])
+    for item in entries:
+        (stage / item['target']).write_bytes((root / item['target']).read_bytes())
+        AUDIT['changedFiles'].append('skills/' + item['target'])
+    schema = stage / 'cli/niio-cli-app-editor/scripts/types/filter-condition.schema.json'
+    schema.write_text(schema.read_text().replace('the HAP server', 'the niio server'))
+    ignore = stage / 'cli/niio-cli-app-editor/.gitignore'
+    ignore.write_text(ignore.read_text().replace('HAP', 'niio'))
+
+
 def apply_project_file_policy(stage, output):
     base = stage / 'mcp/niio-mcp-app-builder'
     for path in base.rglob('*'):
@@ -1247,6 +1267,11 @@ def build(source, output, config):
         apply_customer_policy(stage, output)
         apply_website_overrides(stage, output, website_policy)
         apply_project_file_policy(stage, output)
+        apply_deployment_guides(stage, output, source)
+        brand = runpy.run_path(str(output / 'scripts/audit_brand.py'))['audit'](stage)
+        if brand['issues']:
+            raise ValueError('品牌分類未通過：' + json.dumps(brand['issues'], ensure_ascii=False))
+        (output / 'localization/brand-audit.json').write_text(json.dumps(brand, ensure_ascii=False, indent=2) + '\n')
         audit_customer_policy(stage)
         audit_locale(stage)
         audit_renamed_references(stage, renamed_pattern)

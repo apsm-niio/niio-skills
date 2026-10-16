@@ -1,6 +1,6 @@
 ---
 name: niio-apiv3-data
-description: 使用niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。如果使用者已設定 niio MCP，AI 應該自動從 MCP 設定中提取身分驗證與授權金鑰。
+description: 使用niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。MCP 與 REST 的部署及憑證須分別確認，優先使用已可用且符合任務的 MCP 工具。
 license: MIT
 ---
 > **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。範例網域不代表 REST 路由已驗證；MCP 成功也不代表 REST 或 CLI 相容。使用 REST 功能前，須依部署文件確認路徑與驗證方式，先完成唯讀測試；404 HTML 時停止，不重試寫入。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
@@ -17,7 +17,7 @@ license: MIT
 niio 是一個超級應用平台,透過這個基座可以建置很多應用。透過 niio V3 介面,您可以:
 
 1. **在自訂檢視外掛中**呼叫 V3 介面操作資料
-2. **在獨立前端頁面中**使用 V3 介面編排業務邏輯
+2. **在獨立前端頁面中**透過具備身分驗證與資料授權的後端編排業務邏輯
 3. **即時取得和操作**niio應用中的資料
 
 **核心能力:**
@@ -36,143 +36,19 @@ niio 是一個超級應用平台,透過這個基座可以建置很多應用。�
 
 ### 1. 取得 API 憑證
 
-**方法一: 從 MCP 設定中提取（推薦）**
+## 部署與憑證前置檢查
 
-如果使用者已經設定了 niio 應用執行 MCP，AI 助手應該**自動從 MCP 設定中提取身分驗證與授權金鑰**，而不是讓使用者手動輸入。
+- 分別確認 MCP、REST、CLI 與網站的目標網址（含部署路徑）；不得相互推導。只使用本次已確認的部署、組織及應用。
+- MCP 憑證可用不代表 REST 或 CLI 可用；不得自動掃描編輯器設定、提取或轉用 MCP 憑證。已確認的來源可沿用；缺少 REST 憑證時只索取本機檔案路徑或環境變數名稱，不要求在聊天貼出密鑰。
+- REST 路由、驗證方式及 API 版本須由該部署文件確認。範例僅供協定參考；第一次先做已授權的唯讀請求，禁止攜帶憑證跟隨重新導向。核對 HTTP 狀態、JSON Content-Type、業務成功及預期資料結構；404／HTML 不能判定憑證有效或無效，停止並回報。
+- `Authorization` 依已確認格式原樣使用，不重複加 Bearer。`HAP-Appid`、`HAP-Appkey`、`HAP-Sign` 是協定名稱，不做品牌替換；實際必要標頭依部署文件。
+- API 密鑰只留在受控後端或本機環境，不寫入前端、版本庫、日誌或報告。前端使用原生 SDK 或具備使用者身分驗證與資料授權的後端；單純隱藏密鑰不等於限制資料存取。
+- 查詢須限制應用、工作表、欄位與回傳量；不要把 `includeSystemFields=false` 當成欄位白名單。寫入依使用者已授權範圍執行並讀回；逾時或回應遺失先唯讀核對，不盲目重送。
 
-#### 自動化提取步驟
-
-1. **讀取已設定的 niio MCP 設定檔案**（以編輯器/客戶端的 MCP 設定為準，例如其全域 `settings.json`）
-   - **macOS**: `~/Library/Application Support/<編輯器>/User/settings.json`
-   - **Windows**: `%APPDATA%\<編輯器>\User\settings.json`
-   - **Linux**: `~/.config/<編輯器>/User/settings.json`
-
-2. **查詢 MCP 設定**
-   - 使用已確認的 MCP 連線名稱與網址，不依品牌網域判斷。
-   - 常見命名：AppKey 身分驗證與授權多為 `niio-mcp-應用名`；個人身分驗證與授權多為 `niio_personal_mcp`
-
-3. **識別身分驗證與授權型別並解析參數**
-
-   niio MCP 設定有兩種身分驗證與授權格式，需分別處理：
-
-   **格式一 · AppKey + Sign**（金鑰寫在 `url` 查詢參數裡）
-   ```json
-   {
-     "mcpServers": {
-       "niio-mcp-應用名": {
-         "url": "https://niiodemo.apsm.com.tw/mcp?HAP-Appkey=你的Appkey&HAP-Sign=你的Sign"
-       }
-     }
-   }
-   ```
-
-   **格式二 · PAT / OAuth**（令牌寫在 `headers.Authorization` 裡）
-   ```json
-   {
-     "mcpServers": {
-       "niio_personal_mcp": {
-         "url": "https://niiodemo.apsm.com.tw/mcp",
-         "headers": {
-           "Authorization": "Bearer pat_XXX"
-         }
-       }
-     }
-   }
-   ```
-
-4. **提取身分驗證與授權資訊**
-   - 格式一：從 `url` 查詢參數取 `HAP-Appkey`、`HAP-Sign`（參數可能經 URL 編碼，需正確解碼），請求時放入同名請求頭。
-   - 格式二：從 `headers.Authorization` 取整串 `Bearer …`，請求時原樣放入 `Authorization` 頭；如介面要求，另帶 `HAP-Appid`（應用 ID）。
-   - 判定規則：`url` 含 `HAP-Appkey` → 走格式一；否則看 `headers.Authorization` → 走格式二。
-
-#### 程式碼示例（AI 助手操作）
-
-```javascript
-// 1. 讀取已設定的 niio MCP 設定檔案（路徑取決於所用編輯器/客戶端，下方以其全域 settings.json 為例）
-const editorDir = 'YourEditor'; // 替換為實際編輯器/客戶端目錄名
-const settingsPath = process.platform === 'darwin' 
-  ? `${process.env.HOME}/Library/Application Support/${editorDir}/User/settings.json`
-  : process.platform === 'win32'
-  ? `${process.env.APPDATA}/${editorDir}/User/settings.json`
-  : `${process.env.HOME}/.config/${editorDir}/User/settings.json`;
-
-const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-
-// 依使用者指定的連線名稱取得 MCP 設定
-const mcpServers = settings.mcpServers || {};
-// selectedMcpName 必須由使用者選定，不能靠品牌網域猜測或任取第一筆。
-const selectedMcpName = process.env.NIIO_MCP_SERVER_NAME;
-if (!selectedMcpName || !mcpServers[selectedMcpName]?.url) {
-  throw new Error('請先指定本次要使用的 MCP 連線名稱');
-}
-const hapMcpConfig = [selectedMcpName, mcpServers[selectedMcpName]];
-
-if (hapMcpConfig) {
-  const [, config] = hapMcpConfig;
-  const url = new URL(config.url);
-
-  // 3. 識別身分驗證與授權型別並提取
-  let auth;
-  if (url.searchParams.get('HAP-Appkey')) {
-    // 格式一：AppKey + Sign
-    auth = {
-      type: 'appkey',
-      headers: {
-        'HAP-Appkey': url.searchParams.get('HAP-Appkey'),
-        'HAP-Sign': url.searchParams.get('HAP-Sign'),
-      },
-    };
-  } else if (config.headers?.Authorization) {
-    // 格式二：PAT / OAuth（Bearer Token）
-    auth = {
-      type: 'bearer',
-      headers: {
-        'Authorization': config.headers.Authorization, // 原樣使用 "Bearer ..."
-        // 'HAP-Appid': '應用ID',  // 應用級介面必填，按需補充
-      },
-    };
-  }
-
-  // 4. 將 auth.headers 合併進 API 請求頭即可
-  console.log('已取得所選環境的認證設定'); // 不輸出憑證
-}
-```
-
-#### 實際操作流程
-
-當使用者需要呼叫 niio API 時，AI 應該：
-
-1. **檢查是否已設定 MCP**
-   - 讀取已設定的 niio MCP 設定
-   - 查詢 `niio-mcp-*` 設定
-
-2. **提取身分驗證與授權資訊**
-   - 找到設定後，按格式自動提取：URL 參數裡的 `HAP-Appkey`/`HAP-Sign`，或 `headers.Authorization` 裡的 `Bearer` 令牌
-   - 如果找到多個 MCP 設定，詢問使用者使用哪個應用
-
-3. **使用提取的身分驗證與授權**
-   - 在 API 請求頭中帶上提取到的身分驗證與授權頭（`HAP-Appkey`+`HAP-Sign`，或 `Authorization: Bearer …`，PAT/OAuth 按需加 `HAP-Appid`）
-   - 如果提取失敗，提示使用者手動提供或檢查 MCP 設定
-
-#### 注意事項
-
-- ✅ **優先使用 MCP 設定**: 如果使用者已設定 MCP，優先從設定中提取
-- ✅ **URL 解碼**: 注意 URL 參數可能經過編碼，需要正確解碼
-- ✅ **多個應用**: 如果設定了多個 niio MCP，詢問使用者使用哪個應用
-- ⚠️ **設定不存在**: 如果未找到 MCP 設定，提示使用者先設定 MCP 或手動提供金鑰
-- ⚠️ **權限問題**: 如果無法讀取設定檔案，提示使用者檢查檔案權限
-
-**方法二: 手動取得**
-
-如果使用者未設定 MCP 或需要手動提供：
-
-1. 登入niio → 應用 → 設定 → API 金鑰
-2. 複製 Appkey 和 Sign
-3. 或提供 MCP 設定資訊，讓 AI 自動提取
 
 ### 2. 設定請求頭（身分驗證與授權）
 
-身分驗證與授權用於驗證"你是誰、有沒有權限"，憑證統一放在請求 **Header** 中，每個請求都必須攜帶。V3 支援三種身分驗證與授權方式：
+身分驗證與授權用於驗證"你是誰、有沒有權限"，憑證統一放在請求 **Header** 中，每個請求都必須攜帶。以下為三種協定範例，僅在該部署確認支援時適用；身份、有效期及權限以實際授權為準：
 
 | 方式 | Header 參數 | 操作身份 | 有效期 | 適用場景 |
 | --- | --- | --- | --- | --- |
@@ -253,13 +129,7 @@ const headers = {
 
 ### 階段一: 準備工作
 
-**Step 1: 取得 API 憑證**
-- **優先方式**: 從已設定的 niio MCP 設定中自動提取 Appkey 和 Sign（如果使用者已設定）
-- **備選方式**: 從 niio 後臺手動取得或讓使用者提供
-
-**Step 2: 設定 API 請求頭**
-- 使用提取或提供的 Appkey 和 Sign 設定請求頭
-- 設定 `HAP-Appkey` 和 `HAP-Sign` 請求頭
+先完成部署與憑證前置檢查，取得已確認的應用與工作表 ID。MCP 已能完成任務時直接使用 MCP，不為取得結構改走未確認的 REST 路由。
 
 ### 階段二: 建立應用結構
 
@@ -351,6 +221,8 @@ POST /v3/app/worksheets/{worksheet_id}/rows/list
 ---
 
 ## Filter 篩選器規範 ⭐重點
+
+> **版本差異待驗證**：保留的協定資料同時出現 `gte/lte` 與 `ge/le`，不可推定兩者相容；依本部署文件與唯讀測試選定。以下範例不是本部署已驗證的請求。Filter 頂層應使用 group，條件放入 children；舊範例若直接使用 condition，須先依部署結構修正。
 
 ### Filter 物件結構
 
@@ -841,80 +713,14 @@ categories.rows.forEach(cat => {
 
 ## 🤖 AI 助手使用指南
 
-當使用者需要呼叫 niio V3 API 時，AI 助手應該遵循以下原則：
-
-### 1. 自動提取身分驗證與授權金鑰
-
-**優先順序順序：**
-
-1. **優先從 MCP 設定提取**（推薦）
-   - 讀取已設定的 niio MCP 設定
-   - 查詢 `niio-mcp-*` 設定
-   - 從 URL 中提取 `HAP-Appkey` 和 `HAP-Sign`
-   - 如果找到多個設定，詢問使用者使用哪個應用
-
-2. **使用者手動提供**
-   - 如果未找到 MCP 設定，提示使用者提供 Appkey 和 Sign
-   - 或引導使用者先設定 MCP
-
-3. **引導設定 MCP**
-   - 如果使用者有 MCP 設定資訊，幫助使用者設定到所用的編輯器/客戶端
-   - 然後從設定中提取金鑰
-
-### 2. 設定請求頭
-
-提取到金鑰後，自動設定請求頭：
-
-```javascript
-const headers = {
-  'Content-Type': 'application/json',
-  'HAP-Appkey': extractedAppkey,  // 從 MCP 設定提取
-  'HAP-Sign': extractedSign        // 從 MCP 設定提取
-};
-```
-
-### 3. 處理多個應用
-
-如果使用者設定了多個 niio MCP：
-
-- **明確指定應用名**: 如果使用者提到具體應用名，使用對應的設定
-- **詢問使用者**: 如果未指定，列出所有設定的應用，讓使用者選擇
-- **預設使用**: 如果只有一個設定，直接使用
-
-### 4. 錯誤處理
-
-- **設定不存在**: 提示使用者先設定 MCP 或手動提供金鑰
-- **URL 解析失敗**: 檢查 URL 格式是否正確
-- **參數缺失**: 檢查 Appkey 和 Sign 是否都存在
-- **權限問題**: 如果無法讀取設定檔案，提示使用者檢查檔案權限
-
-### 5. 實際操作示例
-
-**場景**: 使用者說"幫我呼叫 niio API 查詢資料"
-
-**AI 操作流程**:
-1. 讀取已設定的 niio MCP 設定檔案（路徑取決於所用編輯器/客戶端，如其全域 `settings.json`）
-2. 查詢 `mcpServers` 中的 `niio-mcp-*` 設定
-3. 如果找到設定，從 URL 中提取 Appkey 和 Sign
-4. 如果找到多個設定，詢問使用者使用哪個應用
-5. 使用提取的金鑰設定 API 請求頭
-6. 執行 API 呼叫
-
-**場景**: 使用者提供了 MCP 設定資訊
-
-**AI 操作流程**:
-1. 先幫助使用者將 MCP 設定新增到所用編輯器/客戶端的 MCP 設定檔案
-2. 然後從設定中提取 Appkey 和 Sign
-3. 使用提取的金鑰進行後續 API 呼叫
-
----
+遵循「部署與憑證前置檢查」。已取得且仍適用的設定不重複索取；只詢問真正缺少的資訊。報告分列 MCP、REST、CLI 實際測試結果，不將其中一項成功視為全部相容。
 
 ## 最佳實踐
 
 ### 1. 初始化階段
 
 **必做事項:**
-1. 查詢所有工作表結構
+1. 查詢任務範圍內必要的工作表結構
 2. 快取所有選項欄位的 key-value 對映
 3. 快取工作表 ID 和欄位 ID
 4. 建立使用者姓名→ID 對映

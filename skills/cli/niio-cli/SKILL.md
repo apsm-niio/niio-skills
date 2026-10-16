@@ -29,14 +29,20 @@ pip install hap-cli
 不在 PATH 上的 Python 環境，改用 `python3 -m pip install --user hap-cli`，或用
 `python3 -m hap_cli` 代替 `hap` 呼叫。
 
-裝好後登入：
+## 登入前先確認環境
+
+先讀本機命令說明，尚未確認目標時不要啟動登入：
 
 ```bash
-hap auth login          # niio SaaS，會開啟瀏覽器
-hap auth whoami         # 確認登入成功、目前組織正確
+hap guide
+hap guide setup
+hap auth login --help
 ```
 
-私有部署、多環境多帳號、組織與預設應用的設定，見下一步的 `hap guide setup`。
+依本機版本提供的唯讀帳號與設定查詢，確認部署網址（含路徑）、profile、組織及應用。`hap auth whoami` 只能作為身份證據之一，不能單憑登入成功判定目標正確。
+
+既有相符帳號可沿用。缺少設定時依該版本說明設定已確認的部署，再登入；不假設預設登入指向 niio，不複製 MCP 憑證、不自動切換全域組織或預設應用。優先使用該版本支援的單次 profile／應用選擇。命令或部署不支援時保留待辦並說明原因。
+
 
 ## 第二步：每次動手前先跑 `hap guide`
 
@@ -54,7 +60,7 @@ hap guide
 
 **不要憑記憶拼命令名或參數。**
 
-niio CLI 會自動升級，命令和參數會變。任何時候都以這兩個為準：
+CLI 版本可能不同，命令和參數也可能改變；是否自動更新依安裝方式而定。任何時候都以這兩個為準：
 
 - `hap guide` —— 能做什麼、該走哪條路
 - `hap <命令> --help` —— 這個命令的確切參數

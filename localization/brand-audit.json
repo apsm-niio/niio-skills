@@ -1,0 +1,14 @@
+{
+  "counts": {
+    "cli-command:hap": 390,
+    "cli-environment:HAP_PROFILE": 1,
+    "migration-compatibility:hap-context.json": 1,
+    "migration-compatibility:hap-plan.json": 1,
+    "package:hap-cli": 3,
+    "protocol-header:HAP-Appid": 14,
+    "protocol-header:HAP-Appkey": 10,
+    "protocol-header:HAP-Sign": 10,
+    "python-module:hap_cli": 2
+  },
+  "issues": []
+}

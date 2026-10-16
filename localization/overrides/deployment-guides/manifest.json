@@ -1,0 +1,42 @@
+[
+  {
+    "target": "api/niio-apiv3-data/SKILL.md",
+    "source": "skills/api/hap-apiv3-data/SKILL.md",
+    "sha256": "7ba806f840ea8a47018b1a67f4aa0eddf7eb94ade615f3ae07858a5457db707a"
+  },
+  {
+    "target": "api/niio-view-plugin/V3_API_INTEGRATION.md",
+    "source": "skills/api/hap-view-plugin/V3_API_INTEGRATION.md",
+    "sha256": "aa19a7ddddc1f7a92082fd488000b6a10b6cd7c227d216e6b75dd96d5228e9f1"
+  },
+  {
+    "target": "api/niio-view-plugin/references/niio-view-plugin-dev-guide.md",
+    "source": "skills/api/hap-view-plugin/references/hap-view-plugin-dev-guide.md",
+    "sha256": "4bce647e8a9da02482f31a033007db7d43ca9580b97dd155abe3805925d7f085"
+  },
+  {
+    "target": "cli/niio-cli/SKILL.md",
+    "source": "skills/cli/hap-cli/SKILL.md",
+    "sha256": "d3294dd935495251d1df419d2b0b51d34610f257380fd9e6e7fc9e7811de0144"
+  },
+  {
+    "target": "cli/niio-cli-app-editor/SKILL.md",
+    "source": "skills/cli/hap-cli-app-editor/SKILL.md",
+    "sha256": "60c25aa8261b5ebe57bcd082e21455a0b58b8540a5640a22dee21c361fe7fbed"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/steps/12_cli_refinement.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/steps/12_cli_refinement.md",
+    "sha256": "59d2ee8abf3ac7ff1a4a0f4ef08df5075348e47fd80b9c56327dae5f0fa94832"
+  },
+  {
+    "target": "cli/niio-cli-environments/SKILL.md",
+    "source": "skills/cli/hap-cli-environments/SKILL.md",
+    "sha256": "eb25d0a0c5b208c3955a9173c1c0207f16bd530ed615a07c58195e955cd664d6"
+  },
+  {
+    "target": "cli/niio-cli-data-query/SKILL.md",
+    "source": "skills/cli/hap-cli-data-query/SKILL.md",
+    "sha256": "164eb909526f97c38ea0d258c7647d4713b554c07691e1da956b67d86ce5dc85"
+  }
+]
