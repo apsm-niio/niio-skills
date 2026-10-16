@@ -85,15 +85,8 @@ python3 {SKILL_DIR}/plan/scripts/scan_apps.py {PROJECT_ROOT}
   > 📋 更新說明：{notes}
   > 是否立即更新？
 
-  - 使用者同意 → 執行更新：
-    1. 從 `{SKILL_DIR}` 向上查詢 `.git` 目錄，判斷是否在 git 倉庫內
-    2. **如果找到 `.git`**：在該倉庫根目錄執行 `git pull`
-    3. **如果未找到 `.git`**（僅複製 skills/ 的安裝方式）：
-       - 克隆倉庫到臨時目錄：`git clone -b {update.branch} {update.repository} /tmp/niio-update`
-       - 將 `/tmp/niio-update/{update.skillPath}/` 下的檔案覆蓋複製到 `{SKILL_DIR}/`
-       - 刪除臨時目錄：`rm -rf /tmp/niio-update`
-    4. 提示更新成功，然後正常繼續
-  - 使用者拒絕或跳過 → 正常繼續，不阻斷流程
+  - 使用者同意 → 先確認採用的完整 commit；參照儲存庫 README 的固定版本安裝流程，在獨立目錄取得及驗證指定版本。先備份現有技能，與前版逐檔比對；來源不明的自訂變更保留並列為受阻，不直接覆蓋。不執行 `git pull`、不追隨浮動分支，不動專案與 MCP 設定。更新完成逐檔驗證，重新開啟工作階段後才宣稱已載入新版。
+  - 使用者拒絕或跳過 → 正常繼續，不阻斷流程。
 
 根據 `apps` 陣列內容，進入以下路徑：
 
@@ -130,4 +123,3 @@ python3 {SKILL_DIR}/plan/scripts/scan_apps.py {PROJECT_ROOT}
 > **⛔ STOP — 若有多個組織是必須等待使用者確認組織後再繼續。** 嚴禁在同一輪迴復中同時輸出組織選擇和方案設計。
 
 3. 使用者確認或自動選擇後，記錄 `org_id`，讀取 `plan/SKILL.md` 從方案設計開始
-

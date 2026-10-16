@@ -27,15 +27,15 @@
 
 > 🚫 **fieldId 必須使用欄位的真實 `id`，嚴禁使用欄位的 `alias`。** 工作流 API 不識別 alias。
 
-> ⚠️ **禁止自行編造 ID**。如果方案中提到的名稱在 `worksheetContext` 中找不到，跳過該節點並說明。
+> ⚠️ **禁止自行編造 ID**。如果方案中提到的名稱在 `worksheetContext` 中找不到，停止該流程並列為受阻；不跳過節點發布。
 
 > ⚠️ **所有 ID 必須原樣複製**。從 worksheetContext / roleContext / viewContext 中取到的 ID（包括 24 位 hex fieldId 和 GUID 格式的 roleId），必須**逐字元原樣複製**到工具參數中，嚴禁手動重新輸入或憑記憶拼寫——GUID 類 ID 長達 36 字元，手寫極易多字元或少字元導致引用無效。
 
 ### 降級策略
 
-- **角色找不到**：從 `roleContext` 中選擇語義最接近的角色替代；若為空，改用 `{ kind: "triggerUser" }`
-- **roleId 導致 API 報錯**（如 `batch_create_process_nodes` 回傳角色相關錯誤）：從 recipients 中去掉該角色引用後重試；若該角色是唯一接收者（去掉後 recipients 為空），改用 `{ kind: "triggerUser" }` 兜底，確保工作流可釋出
-- **檢視找不到**：使用該工作表的第一個檢視
+- **角色找不到**：停止受影響流程，列出缺少的角色對映；不得改用其他角色或觸發者。
+- **roleId 導致 API 報錯**：保存參數、錯誤與時間，唯讀核對角色及已建立節點；不得移除接收者或改成觸發者來湊發布成功。結果不明禁止重送。
+- **檢視找不到**：停止受影響流程，核對工作表、檢視 ID 與權限；不得任選第一個檢視。
 
 ## 易錯規則
 
@@ -58,7 +58,7 @@ niio 工作流物理引擎在解析節點邏輯時**完全不識別欄位的 ali
 Condition 結構為 `{ left, op, right }`。其中 `left` 屬於 `FieldValueRef`，**`node` 屬性絕對不能預設**（即使是查詢節點自身的內部過濾條件）。
 
 - **查詢節點自身的 filter（如 `get_single` / `get_multiple`）**：`left.node` **必須且只能引用目前查詢節點自身**；`right` 引用上游節點（如觸發節點或更早的查詢節點）以提供動態過濾值。
-  
+
   *示例*（查詢節點 `find_book` 的 filter 中，`left.node` 指向 `find_book` 自身，`right.node` 指向上游節點）：
   ```json
   {
@@ -89,7 +89,7 @@ Condition 結構為 `{ left, op, right }`。其中 `left` 屬於 `FieldValueRef`
 ### 查詢結果分支處理規範
 
 - **`get_single` 結果分支判空**：直接在下游 `branch` 中判斷該查詢節點的 `rowid` 是否為 `not_empty`：
-  
+
   ```json
   {
     "left": { "kind": "field", "node": { "nodeAlias": "find_single_book" }, "fieldId": "rowid" },
@@ -100,7 +100,7 @@ Condition 結構為 `{ left, op, right }`。其中 `left` 屬於 `FieldValueRef`
 - **`get_multiple` 結果分支判空**：**絕對嚴禁**直接判斷 `get_multiple` 節點的 `rowid`。必須採用以下二階段鏈式邏輯：
   1. **步驟一**：先緊隨其後建立一個 `rollup`（彙總統計）節點，對 `get_multiple` 節點的記錄進行 `COUNT` 聚合。
   2. **步驟二**：在 downstream 的 `branch` 條件分支中，判斷該 `rollup` 節點輸出的 `number_fx_id` 欄位是否大於 0。
-  
+
   *完整串聯示例*：
   ```json
   // 1. 建立 rollup(count) 節點
@@ -153,7 +153,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 
 - **嚴禁使用 literal 盲盒正文**：正文絕對不要只寫一行"您有新的審批，請處理"這種寬泛籠統、對收件人無實質價值的文字。
 - **高標準格式**：`config.content`（send_internal_notice / cc）和 `config.body`（send_email）必須物理傳 `{ "kind": "template" }`，並透過 `$nodeAlias-fieldId$` 嵌入關鍵業務欄位（如申請人、單號、日期、費用等）。send_email 推薦將 `bodyType` 設定為 `"html"` 做精美拼接。其中 `nodeAlias` 部分引用觸發節點時，需按「觸發節點引用約定」使用實際別名或 nodeId。
-  
+
   *HTML 郵件高模擬示例*（假設觸發節點別名為 `start`）：
   ```json
   {

@@ -53,5 +53,30 @@
     "target": "mcp/niio-mcp-app-builder/build/steps/11_create_action_workflows.md",
     "source": "skills/mcp/hap-mcp-app-builder/build/steps/11_create_action_workflows.md",
     "sha256": "9bd8fb71c049615c300b500f1175e5350c1417f7329d4dc34746a3434a4d05f4"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/steps/10_create_workflows.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/steps/10_create_workflows.md",
+    "sha256": "47731c45dd415baff40a8375280115cc64d2d1f5d978b12fc8c8cd3b16788d81"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/steps/workflow_rules.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/steps/workflow_rules.md",
+    "sha256": "9cfb15163ce07ec9e8217b9380cc6aaa89cf7c5575e042f81d85e4282553bbb2"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/steps/9_design_workflows.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/steps/9_design_workflows.md",
+    "sha256": "d39afa5a85a1257eadc00afc7bc86d205995e30d81955b3cda87ab2d4de6b626"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/build/CONTEXT.md",
+    "source": "skills/mcp/hap-mcp-app-builder/build/CONTEXT.md",
+    "sha256": "5fa162732dc37ffb9b8412c884caeaa96464eb27d5c281cec6fa1022623117f4"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/SKILL.md",
+    "source": "skills/mcp/hap-mcp-app-builder/SKILL.md",
+    "sha256": "2934af20844431a3bd3b097c8af1163ed4c94c8b0abfce0ad885e1e017441d65"
   }
 ]

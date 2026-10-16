@@ -1278,6 +1278,18 @@ def build(source, output, config):
         apply_website_overrides(stage, output, website_policy)
         apply_project_file_policy(stage, output)
         apply_deployment_guides(stage, output, source)
+        # Keep generated text byte-identical on Windows and Linux. Binary assets
+        # and legal source bytes outside skills are not rewritten.
+        for path in stage.rglob('*'):
+            if not path.is_file():
+                continue
+            raw = path.read_bytes()
+            try:
+                raw.decode('utf-8')
+            except UnicodeDecodeError:
+                continue
+            if b'\r\n' in raw:
+                path.write_bytes(raw.replace(b'\r\n', b'\n'))
         brand = runpy.run_path(str(output / 'scripts/audit_brand.py'))['audit'](stage)
         if brand['issues']:
             raise ValueError('品牌分類未通過：' + json.dumps(brand['issues'], ensure_ascii=False))
