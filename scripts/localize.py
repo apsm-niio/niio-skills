@@ -1043,7 +1043,7 @@ def audit_customer_policy(stage):
 
 
 def website_manifest(source, output):
-    manifest = json.loads((output / 'localization/overrides/website/manifest.json').read_text())
+    manifest = json.loads((output / 'localization/overrides/website/manifest.json').read_text(encoding='utf-8'))
     actual = {path.relative_to(source).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
               for path in (source / 'skills/api/hap-api-website').rglob('*') if path.is_file()}
     if actual != manifest['sourceFiles']:
@@ -1062,17 +1062,17 @@ def apply_website_overrides(stage, output, manifest):
         target.write_bytes(source.read_bytes())
         AUDIT['changedFiles'].append('skills/api/niio-api-website/' + name)
     guide = stage / 'api/niio-api-website/references/niio-api-usage-guide.md'
-    text = guide.read_text()
+    text = guide.read_text(encoding='utf-8')
     text = replace_required(text,
         '> 本文件總結了niio V3 API的核心使用規範、最佳實踐和常見陷阱,基於實際測試驗證',
         '> 本文件保留 API 協定參考；本部署的路徑、驗證方式與回應格式仍須獨立唯讀驗證。以下任何含憑證請求只可在後端執行。網站架構以 niio-as-database-guide.md 為準，不得把範例密鑰或標頭放進前端。',
         '網站 API 參考適用範圍')
-    guide.write_text(text)
+    guide.write_text(text, encoding='utf-8')
 
 
 def apply_deployment_guides(stage, output, source):
     root = output / 'localization/overrides/deployment-guides'
-    entries = json.loads((root / 'manifest.json').read_text())
+    entries = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
     for item in entries:
         for key in ('target', 'source'):
             path = Path(item[key])
@@ -1081,28 +1081,29 @@ def apply_deployment_guides(stage, output, source):
         if hashlib.sha256((source / item['source']).read_bytes()).hexdigest() != item['sha256']:
             raise ValueError('上游部署指引已改變，須審查覆寫後再同步：' + item['source'])
     for item in entries:
+        (stage / item['target']).parent.mkdir(parents=True, exist_ok=True)
         (stage / item['target']).write_bytes((root / item['target']).read_bytes())
         AUDIT['changedFiles'].append('skills/' + item['target'])
     schema = stage / 'cli/niio-cli-app-editor/scripts/types/filter-condition.schema.json'
-    schema.write_text(schema.read_text().replace('the HAP server', 'the niio server'))
+    schema.write_text(schema.read_text(encoding='utf-8').replace('the HAP server', 'the niio server'), encoding='utf-8')
     ignore = stage / 'cli/niio-cli-app-editor/.gitignore'
-    ignore.write_text(ignore.read_text().replace('HAP', 'niio'))
+    ignore.write_text(ignore.read_text(encoding='utf-8').replace('HAP', 'niio'), encoding='utf-8')
 
 
 def apply_project_file_policy(stage, output):
     base = stage / 'mcp/niio-mcp-app-builder'
     for path in base.rglob('*'):
         if path.is_file() and path.suffix in {'.md', '.py'}:
-            text = path.read_text().replace('hap-plan.json', 'niio-plan.json').replace('hap-context.json', 'niio-context.json')
-            path.write_text(text)
+            text = path.read_text(encoding='utf-8').replace('hap-plan.json', 'niio-plan.json').replace('hap-context.json', 'niio-context.json')
+            path.write_text(text, encoding='utf-8')
     shutil.copyfile(output / 'localization/overrides/generate_fill_templates.py',
                     base / 'build/scripts/generate_fill_templates.py')
     for src, dst in [('build_checkpoint.py', 'build/scripts/build_checkpoint.py'), ('build-SKILL.md', 'build/SKILL.md'), ('build-PROGRESS.md', 'build/PROGRESS.md'), ('build-OUTPUT_CONTRACT.md', 'build/OUTPUT_CONTRACT.md')]:
         shutil.copyfile(output / 'localization/overrides' / src, base / dst)
     context_file = base / 'build/CONTEXT.md'
-    context_text = context_file.read_text().replace('"roleId": "string"', '"id": "string"').replace('"roleName": "string"', '"name": "string"')
+    context_text = context_file.read_text(encoding='utf-8').replace('"roleId": "string"', '"id": "string"').replace('"roleName": "string"', '"name": "string"')
     context_text = context_text.replace('`progress` 欄位由每步完成時更新，值域見 `PROGRESS.md`', '`progress` 與 buildState 僅由排程器透過 build_checkpoint.py 更新，值域見 `PROGRESS.md`')
-    context_file.write_text(context_text + '\n角色對映新寫入使用 id/name；舊 roleId/roleName 以相同語意相容讀取。兩組同時存在但不同時停止核對，禁止因鍵名不同就重建角色。排程器合併步驟產物時保留 buildState；子代理不得直接寫共用檔案。\n')
+    context_file.write_text(context_text + '\n角色對映新寫入使用 id/name；舊 roleId/roleName 以相同語意相容讀取。兩組同時存在但不同時停止核對，禁止因鍵名不同就重建角色。排程器合併步驟產物時保留 buildState；子代理不得直接寫共用檔案。\n', encoding='utf-8')
     overrides = output / 'localization/overrides/project-files'
     (base / 'scripts').mkdir(exist_ok=True)
     shutil.copyfile(overrides / 'project_files.py', base / 'scripts/project_files.py')
@@ -1116,7 +1117,7 @@ def apply_project_file_policy(stage, output):
 python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{appName}"
 ```
 
-`SKILL_DIR` 指主要 niio-mcp-app-builder 目錄。新專案先建立其應用資料夾再執行。遷移會檢查兩组新舊 JSON、保留原始位元組備份至應用目錄的 `.niio-legacy/`，才移除舊名稱；不改 appId、欄位對映或 progress。整個遷移完成後才能派發並行建置。
+`SKILL_DIR` 指主要 niio-mcp-app-builder 目錄。新專案先建立其應用資料夾再執行。遷移會檢查兩组新舊 JSON、保留原始位元組備份至應用目錄的 `.niio-legacy/`，才移除舊名稱；不改 appId、欄位對映或 progress。整個遷移完成後才能繼續建置；建置依檢查點循序執行。
 
 只讀取狀態可用 `check` 取代 `migrate`，不修改檔案。掃描器同時辨識新舊專案，`status: blocked` 時必須停止並回報，不得當作新專案重建。新舊內容相同可安全整理；不同、JSON 錯誤或有進度卻缺方案時停止，請使用者確認正確版本，不能自動選最新檔案覆蓋。
 
@@ -1133,13 +1134,13 @@ Step 3 整理時保留 MCP 回傳的 isTitle、isReadOnly、required、subType�
 '''.replace('请求', '請求')
     for relative in ['build/steps/3_refresh_fields.md', 'build/steps/6_create_sample_data.md', 'build/CONTEXT.md']:
         target = base / relative
-        target.write_text(target.read_text() + field_note)
+        target.write_text(target.read_text(encoding='utf-8') + field_note, encoding='utf-8')
     for name in ['SKILL.md', 'plan/SKILL.md', 'build/SKILL.md']:
         path = base / name
-        text = path.read_text()
+        text = path.read_text(encoding='utf-8')
         data, body = frontmatter(text)
         header = text[:len(text)-len(body)] if data is not None else ''
-        path.write_text(header + note + body)
+        path.write_text(header + note + body, encoding='utf-8')
 
 
 def build(source, output, config):
@@ -1293,7 +1294,7 @@ def build(source, output, config):
         brand = runpy.run_path(str(output / 'scripts/audit_brand.py'))['audit'](stage)
         if brand['issues']:
             raise ValueError('品牌分類未通過：' + json.dumps(brand['issues'], ensure_ascii=False))
-        (output / 'localization/brand-audit.json').write_text(json.dumps(brand, ensure_ascii=False, indent=2) + '\n')
+        (output / 'localization/brand-audit.json').write_text(json.dumps(brand, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         audit_customer_policy(stage)
         audit_locale(stage)
         audit_renamed_references(stage, renamed_pattern)

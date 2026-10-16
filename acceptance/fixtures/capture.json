@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "contentType": "application/json",
+  "target": "fixture-only",
+  "body": {
+    "data": {
+      "rows": [
+        {
+          "rowid": "mock-1",
+          "name": "Mock"
+        }
+      ]
+    },
+    "success": true
+  }
+}

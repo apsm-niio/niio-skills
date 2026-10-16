@@ -54,15 +54,20 @@ def validate(source):
                 raise ValueError('缺少技能名稱／說明：' + str(path))
         if (stage / 'THIRD_PARTY_LICENSE.txt').read_bytes() != (ROOT / 'THIRD_PARTY_LICENSE.txt').read_bytes():
             raise ValueError('授權與來源不符')
-        builder = stage / 'skills/mcp/niio-mcp-app-builder'
-        installed = stage / 'isolated-install/niio-mcp-app-builder'
-        shutil.copytree(builder, installed, copy_function=shutil.copy2)
-        result = compare(builder, installed)
-        if any(result[k] for k in ('missing', 'extra', 'changed')):
-            raise ValueError('隔離安裝不一致')
+        results = {}
+        for source_skill in (stage / 'skills').glob('*/*/SKILL.md'):
+            source_skill = source_skill.parent
+            installed = stage / 'isolated-install' / source_skill.name
+            shutil.copytree(source_skill, installed, copy_function=shutil.copy2)
+            result = compare(source_skill, installed)
+            if any(result[k] for k in ('missing', 'extra', 'changed')):
+                raise ValueError('隔離安裝不一致：' + source_skill.name)
+            results[source_skill.name] = result
+        if len(results) != 8:
+            raise ValueError('預期八個頂層技能')
         print(json.dumps({'upstreamCommit': state['upstreamCommit'], 'generatedFiles': len(actual),
                           'skillDocuments': len(skills), 'brandIssues': 0,
-                          'licenseMatches': True, 'isolatedInstall': result,
+                          'licenseMatches': True, 'isolatedInstall': results,
                           'sessionLoad': 'not tested', 'MCP': 'not called'}, ensure_ascii=False, indent=2))
 
 

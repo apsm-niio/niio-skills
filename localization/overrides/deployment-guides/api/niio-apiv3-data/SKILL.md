@@ -102,7 +102,9 @@ const headers = {
 
 ### 3. 取得 API 文件
 
-**使用 Apifox MCP Server（推薦）:**
+**可選的文件工具設定範本（未安裝／未執行）：**
+
+只有確認適用的文件站點、固定套件版本並獲授權後才配置；本範本不能直接執行，不自動修改 MCP 設定。
 
 ```json
 {
@@ -110,7 +112,7 @@ const headers = {
     "command": "npx",
     "args": [
       "-y",
-      "apifox-mcp-server@latest",
+      "apifox-mcp-server@<已審核固定版本>",
       "--site-id=5442569"
     ]
   }
@@ -318,9 +320,9 @@ Filter = {
 
 ## 欄位型別處理規範
 
-### 欄位型別 / Code / 篩選運算子對照表（API 權威）⭐
+### 欄位型別 / Code / 篩選運算子對照表（參考契約，須依部署核對）⭐
 
-> 這是欄位 **Code** 與各欄位 **支援的篩選運算子** 的權威依據。要點：
+> 這是欄位 **Code** 與各欄位 **支援的篩選運算子** 的參考對照，尚非本部署實測結果。要點：
 > - **V3 API 沒有 `belongsto` 運算子**——部門(Department)、關聯(Relation) 等欄位一律用本表運算子（如 `in`、`eq`、`notin`）。
 > - `-` 表示不支援該能力；篩選寫法只能用對應欄位「支援的篩選運算子」列裡的值。
 
@@ -552,7 +554,7 @@ POST /v3/users/lookup
 
 **效能影響:**
 - `triggerWorkflow: false` - API 響應快,通常 < 500ms
-- `triggerWorkflow: true` - 需要等待工作流執行,可能需要 1-5 秒
+- `triggerWorkflow: true` - 可能觸發工作流；回應不代表下游完成，須另查執行實例，不以固定等待秒數判定成功
 
 **詳細說明:** 參考 `references/niio-api-usage-guide.md` 第 3.2 節
 
@@ -609,7 +611,7 @@ POST /v3/users/lookup
 }
 ```
 
-**記憶口訣:** 篩選條件的 value 永遠是字串陣列
+**記憶口訣:** 本文件多數範例使用字串陣列；實際 value 型別須依欄位、運算子與部署 schema 核對
 
 ### 陷阱3: 關聯欄位使用錯誤的運算子
 
@@ -664,10 +666,9 @@ products.forEach(p => {
 // 批次查詢所有分類
 const categories = await getRows('category-worksheet-id', {
   filter: {
-    type: 'condition',
-    field: 'rowid',
-    operator: 'in',
-    value: Array.from(categoryIds)
+    type: 'group',
+    logic: 'AND',
+    children: [{type: 'condition', field: 'rowid', operator: 'in', value: Array.from(categoryIds)}]
   }
 });  // 1次請求
 

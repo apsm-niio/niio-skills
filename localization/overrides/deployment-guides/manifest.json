@@ -78,5 +78,50 @@
     "target": "mcp/niio-mcp-app-builder/SKILL.md",
     "source": "skills/mcp/hap-mcp-app-builder/SKILL.md",
     "sha256": "2934af20844431a3bd3b097c8af1163ed4c94c8b0abfce0ad885e1e017441d65"
+  },
+  {
+    "target": "api/niio-view-plugin/SKILL.md",
+    "source": "skills/api/hap-view-plugin/SKILL.md",
+    "sha256": "0b06263d39efe42810e40436c66004690e9a682647bb8ae9bc7a4d2d10468e9e"
+  },
+  {
+    "target": "api/niio-view-plugin/scripts/init-niio-view-project.sh",
+    "source": "skills/api/hap-view-plugin/scripts/init-hap-view-project.sh",
+    "sha256": "a7214c916717611c2061c61b4cbcf56d68cb7675419433bc2e0f7cc37d15cd90"
+  },
+  {
+    "target": "api/niio-view-plugin/scripts/quick-start.sh",
+    "source": "skills/api/hap-view-plugin/scripts/quick-start.sh",
+    "sha256": "86de8a0e8f207d8e142a4500aa4d632ddbdce67afef5d93e44ad9035f550a3ed"
+  },
+  {
+    "target": "api/niio-view-plugin/scripts/test-mdye-check.sh",
+    "source": "skills/api/hap-view-plugin/scripts/test-mdye-check.sh",
+    "sha256": "0472c7b686d62627d72fc117a4d541404329340c173f5be25872f53a53091621"
+  },
+  {
+    "target": "api/niio-view-plugin/scripts/generate-unique-id.sh",
+    "source": "skills/api/hap-view-plugin/scripts/generate-unique-id.sh",
+    "sha256": "643920cba3499eafd4547001a826890a10d631e08a867222737299fa3a137cd4"
+  },
+  {
+    "target": "api/niio-view-plugin/scripts/view_project.py",
+    "source": "skills/api/hap-view-plugin/SKILL.md",
+    "sha256": "0b06263d39efe42810e40436c66004690e9a682647bb8ae9bc7a4d2d10468e9e"
+  },
+  {
+    "target": "api/niio-view-plugin/references/field-type-guide.md",
+    "source": "skills/api/hap-view-plugin/references/field-type-guide.md",
+    "sha256": "696cbf278add2cb7278240e31c6c897590032509169b3a93275512d218244c56"
+  },
+  {
+    "target": "api/niio-view-plugin/scripts/field_values.mjs",
+    "source": "skills/api/hap-view-plugin/SKILL.md",
+    "sha256": "0b06263d39efe42810e40436c66004690e9a682647bb8ae9bc7a4d2d10468e9e"
+  },
+  {
+    "target": "cli/niio-cli-app-editor/scripts/editspec/component.schema.json",
+    "source": "skills/cli/hap-cli-app-editor/scripts/editspec/component.schema.json",
+    "sha256": "122927542e892e3668db204d2827e465eb18da537e76806b845a85ebe05d0d07"
   }
 ]

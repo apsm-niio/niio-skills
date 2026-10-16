@@ -2,6 +2,10 @@
 
 適用於 niio 的台灣繁體中文 AI Agent 技能集合，涵蓋應用建置、資料查詢、API 串接及擴充開發。
 
+## 整套對外交付
+
+完整八個技能的 [狀態總表](docs/DELIVERY.md)、[安裝／更新／回復](docs/INSTALL.md)、[CLI 相容性](docs/CLI_COMPATIBILITY.md)、[可執行驗收包](acceptance/README.md)、[維護者需求與人工驗收](docs/ACCEPTANCE.md)。下方舊安裝例只適用 builder；整套交付請使用 install_bundle.py。
+
 ## 安裝與啟用（固定版本）
 
 先選擇已審閱的完整 40 位 commit，不使用浮動 `main` 當安裝版本。MCP builder 的本機腳本需要 Python 3.10 以上；Git 用於取得與核對來源。一般使用不需要本儲存庫的轉換依賴或 Node.js。只有需要 CLI 的功能才另需部署支援的 CLI 與既有登入 profile；不自動安裝或登入。

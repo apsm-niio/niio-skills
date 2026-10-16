@@ -4,7 +4,7 @@
     "cli-environment:HAP_PROFILE": 1,
     "migration-compatibility:hap-context.json": 1,
     "migration-compatibility:hap-plan.json": 1,
-    "package:hap-cli": 3,
+    "package:hap-cli": 4,
     "protocol-header:HAP-Appid": 14,
     "protocol-header:HAP-Appkey": 10,
     "protocol-header:HAP-Sign": 10,
