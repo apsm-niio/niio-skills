@@ -13,7 +13,9 @@
 透過 MCP 伺服器直接訪問最新的 API V3 文件結構。當你看到以下 JSON 代表是 官方API文件的 MCP設定
 
 
-**設定方法**:
+**文件工具設定範本（未安裝／未執行）**：
+
+先確認文件站點與經審核的固定套件版本，才可替換下方佔位值。目前沒有適用版本證據，不提供可直接執行的版本號；不得使用浮動版本，也不因閱讀此範本而安裝套件或修改 MCP 設定。
 
 ```json
 {
@@ -22,7 +24,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "apifox-mcp-server@latest",
+        "apifox-mcp-server@<已審核固定版本>",
         "--site-id=5442569"
       ]
     }
@@ -126,6 +128,8 @@
 
 ---
 
+> **版本與驗收界線**：本次已驗證 V2 端點的查詢參數授權、本文件 V3 標頭授權參考、MCP 認證與 CLI 登入 profile 必須分別確認，不可互換憑證或由名稱推定相容。V2 某一唯讀端點成功，只能證明該次端點與授權；不代表 V3、網站列表或 CLI 已通過。本部署 V3 缺少確認過的完整入口、請求／回應契約及適用授權來源，維持「受阻」；不得猜路徑或試套 V2 AppKey／Sign、MCP Bearer。
+
 ## 零、快速開始 - API 使用流程
 
 ### 0.1 niio V3 API 整體架構
@@ -159,15 +163,16 @@ niio組織
 
 **Step 2: 設定 API 請求頭**
 
-所有 niio V3 API 請求都需要以下請求頭:
+認證模式先依目標部署文件確認；不得把 V2 的查詢參數直接改放標頭，或沿用個人 MCP Bearer。
 
-```javascript
-const headers = {
-  'Content-Type': 'application/json',
-  'AppKey': 'your-app-key',
-  'Sign': 'your-sign-key'
-};
-```
+本技能現行網站後端的實作依據是 [網站架構與部署](niio-as-database-guide.md) 與 [server.mjs.template](../assets/server.mjs.template)。模板提供以下模式，但這不是本部署支援或已驗收的證明：
+
+|模板模式|後端送出的標頭|啟用條件|
+|---|---|---|
+|appkey|`HAP-Appkey`、`HAP-Sign`|部署文件確認這些標頭及適用應用授權來源|
+|bearer|`Authorization`（完整 Bearer 值）、`HAP-Appid`|部署文件確認對應 REST token 類型、應用及讀取權限|
+
+若部署要求不同標頭或請求格式，先取得契約再修改 adapter；不能自行判定 `AppKey`／`Sign` 與 `HAP-Appkey`／`HAP-Sign` 等價。部署契約未備妥時維持停用，不嘗試其他認證組合。秘密只留在後端。
 
 ---
 
@@ -4325,4 +4330,4 @@ POST /v3/app/worksheets/{customer_table_id}/rows/pivot
 **文件版本**: v1.0
 **生成時間**: 2026-01-11
 **基於**: niio API V3
-**測試驗證**: 完整CRM應用場景測試
+**驗證狀態**：原參考未附 CRM 場景的部署、版本與測試證據；不作本部署驗收結論。
