@@ -4,7 +4,9 @@
 
 ## 整套對外交付
 
-完整八個技能的 [狀態總表](docs/DELIVERY.md)、[安裝／更新／回復](docs/INSTALL.md)、[CLI 相容性](docs/CLI_COMPATIBILITY.md)、[可執行驗收包](acceptance/README.md)、[維護者需求與人工驗收](docs/ACCEPTANCE.md)。下方舊安裝例只適用 builder；整套交付請使用 install_bundle.py。
+本專案交付的是 **niio 品牌、繁體中文、環境設定指引與必要相容處理的 Skills 移植版本**。現有證據支持品牌移植與指定環境的唯讀試用，不代表每個遠端功能、正式部署或上游全部行為均已驗收；網站模板已有公開唯讀的功能範圍差異。
+
+完整八個技能的 [交付結論、差異及 A／B／C 分工](docs/DELIVERY.md)、[安裝／更新／回復](docs/INSTALL.md)、[CLI 相容性](docs/CLI_COMPATIBILITY.md)、[可執行驗收包](acceptance/README.md)、[維護者需求與人工驗收](docs/ACCEPTANCE.md)。下方舊安裝例只適用 builder；整套交付請使用 install_bundle.py。部署端未完成事項不自動成為品牌移植的交付阻擋項，也不歸責於使用者不熟悉後端工具。
 
 ## 安裝與啟用（固定版本）
 
