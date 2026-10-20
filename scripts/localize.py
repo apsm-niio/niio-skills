@@ -1070,6 +1070,75 @@ def apply_website_overrides(stage, output, manifest):
     guide.write_text(text, encoding='utf-8')
 
 
+def apply_api_reference_policy(stage):
+    """修正兩份協定參考；既有段落變動時停止，不猜部署契約。"""
+    paths = [stage / 'api' / name / 'references/niio-api-usage-guide.md'
+             for name in ('niio-apiv3-data', 'niio-api-website')]
+    pending = []
+    for path in paths:
+        text = path.read_text(encoding='utf-8')
+        text = replace_required(text, '**設定方法**:',
+            '**文件工具設定範本（未安裝／未執行）**：\n\n'
+            '先確認文件站點與經審核的固定套件版本，才可替換下方佔位值。'
+            '目前沒有適用版本證據，不提供可直接執行的版本號；不得使用浮動版本，'
+            '也不因閱讀此範本而安裝套件或修改 MCP 設定。', 'API 文件工具版本前置條件')
+        text = replace_required(text, 'apifox-mcp-server@latest',
+            'apifox-mcp-server@<已審核固定版本>', 'API 文件工具版本佔位')
+        boundary = (
+            '> **版本與驗收界線**：本次已驗證 V2 端點的查詢參數授權、本文件 V3 標頭授權參考、'
+            'MCP 認證與 CLI 登入 profile 必須分別確認，不可互換憑證或由名稱推定相容。'
+            'V2 某一唯讀端點成功，只能證明該次端點與授權；不代表 V3、網站列表或 CLI 已通過。'
+            '本部署 V3 缺少確認過的完整入口、請求／回應契約及適用授權來源，維持「受阻」；'
+            '不得猜路徑或試套 V2 AppKey／Sign、MCP Bearer。\n\n')
+        text = replace_required(text, '## 零、快速開始 - API 使用流程',
+            boundary + '## 零、快速開始 - API 使用流程', 'API 版本與驗收界線')
+        text = replace_required(text, '**測試驗證**: 完整CRM應用場景測試',
+            '**驗證狀態**：原參考未附 CRM 場景的部署、版本與測試證據；不作本部署驗收結論。',
+            'API 參考頁尾驗證範圍')
+        if path.parts[-3] == 'niio-apiv3-data':
+            text = replace_required(text,
+                '> 本文件總結了niio V3 API的核心使用規範、最佳實踐和常見陷阱,基於實際測試驗證',
+                '> 本文件是 V3 協定參考，未附可證明本部署相容的實測環境、版本與證據。'
+                '路徑、認證模式、欄位與回應格式均須依部署文件確認後獨立唯讀驗證。',
+                'V3 參考驗證範圍')
+            text = replace_required(text,
+                '身分驗證與授權憑證統一放在請求 **Header** 中，每個請求都必須攜帶。V3 支援三種身分驗證與授權方式：',
+                '以下是根 SKILL.md 所列的三種 V3 **Header** 認證參考，僅在目標部署明確確認支援時適用。'
+                '實際標頭、應用範圍、權限與有效期以部署契約及授權為準；不是本部署已驗證的模式：',
+                'V3 認證適用範圍')
+            text = replace_required(text,
+                '本表是欄位 **Code** 與 **篩選運算子** 的權威依據。',
+                '本表是欄位 **Code** 與 **篩選運算子** 的參考對照；本部署支援範圍仍待確認。',
+                '欄位對照驗證範圍')
+            text = replace_required(text, '對照表（API 權威）',
+                '對照表（參考契約，須依部署核對）', '欄位對照標題')
+        else:
+            old = """所有 niio V3 API 請求都需要以下請求頭:
+
+```javascript
+const headers = {
+  'Content-Type': 'application/json',
+  'AppKey': 'your-app-key',
+  'Sign': 'your-sign-key'
+};
+```"""
+            new = """認證模式先依目標部署文件確認；不得把 V2 的查詢參數直接改放標頭，或沿用個人 MCP Bearer。
+
+本技能現行網站後端的實作依據是 [網站架構與部署](niio-as-database-guide.md) 與 [server.mjs.template](../assets/server.mjs.template)。模板提供以下模式，但這不是本部署支援或已驗收的證明：
+
+|模板模式|後端送出的標頭|啟用條件|
+|---|---|---|
+|appkey|`HAP-Appkey`、`HAP-Sign`|部署文件確認這些標頭及適用應用授權來源|
+|bearer|`Authorization`（完整 Bearer 值）、`HAP-Appid`|部署文件確認對應 REST token 類型、應用及讀取權限|
+
+若部署要求不同標頭或請求格式，先取得契約再修改 adapter；不能自行判定 `AppKey`／`Sign` 與 `HAP-Appkey`／`HAP-Sign` 等價。部署契約未備妥時維持停用，不嘗試其他認證組合。秘密只留在後端。"""
+            text = replace_required(text, old, new, '網站認證依據與適用條件')
+        pending.append((path, text))
+    # 所有前置段落均匹配後才寫入，避免第二份來源變動留下部分修正。
+    for path, text in pending:
+        path.write_bytes(text.encode('utf-8'))
+
+
 def apply_deployment_guides(stage, output, source):
     root = output / 'localization/overrides/deployment-guides'
     entries = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
@@ -1279,6 +1348,7 @@ def build(source, output, config):
         apply_website_overrides(stage, output, website_policy)
         apply_project_file_policy(stage, output)
         apply_deployment_guides(stage, output, source)
+        apply_api_reference_policy(stage)
         # Keep generated text byte-identical on Windows and Linux. Binary assets
         # and legal source bytes outside skills are not rewritten.
         for path in stage.rglob('*'):
