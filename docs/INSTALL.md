@@ -50,3 +50,32 @@ receipt 的整體狀態為 `restoring` 時，各項 `restoreState` 會記錄 `pe
 現環境 hardlink 回 WinError 5，symlink 建立回 1314。四項舊名稱檔案遷移測試及一項 symlink 測試受阻；不表示所有 Windows 機器都不支援。舊名稱遷移要求不覆蓋的 hardlink，保留原子性與原檔保護，不能改成一般覆寫來過測。全新 niio 名稱專案、唯讀掃描、一般原子替換不因此受阻。可由維護者在已允許連結的受控環境遷移副本，逐檔核對後再採用；本輪不提權、不改 ACL。
 
 此次 Windows 沙箱預設 TEMP 的原子 rename 亦遭拒；同一測試使用工作區內隔離 TEMP 通過。必要時只對測試子程序指定 TMP/TEMP 至自己可寫的隔離目錄，不修改系統環境或關閉防護。若仍拒絕，保留錯誤與原檔，換已核准環境驗證，不降低檔案保護。
+
+## 新使用者：技能安裝後另做 MCP 授權
+
+安裝八個技能只提供操作指引與本機工具；MCP URL 設定完成不等於登入成功，也不代表伺服器支援 OAuth。依序完成：固定版本安裝 → 工作階段技能可讀 → 個人 MCP 授權 → 唯讀驗收。
+
+### 兩種授權不要混用
+
+|用途|取得位置|提供方式|
+|---|---|---|
+|個人 MCP Bearer PAT|在目標 niio 網站登入自己的帳號，從頭像／帳號設定進入「授權與存取」或「個人存取權杖」；依該部署介面新增並限制範圍及期限|由使用者在本機隱藏輸入，透過已確認支援的客戶端機制提供 Authorization；不要貼入對話、命令列、PR 或報告|
+|應用 AppKey／Sign|該應用的「API 說明 → 應用授權 → 授權管理」；API V3 分頁是介面文件，不是密鑰產生頁|保存在受控本機檔案／秘密儲存；只提供來源路徑或變數名稱。REST 方法、入口與標頭以該部署契約為準|
+
+若看不到個人存取權杖入口，由組織管理者確認部署功能及帳號政策；不要借用別人的 PAT、改用應用密鑰或猜測 OAuth。授權只選本次需要的應用與讀取能力；不要為了驗收擴成管理員。
+
+### 本機提供與重新載入
+
+1. 先確認目標 MCP 網址與目前 Codex 版本；備份設定，保留其他 MCP 項目。由使用者本機提供自己的 PAT，不由 AI 在對話索取內容。
+2. 本次同仁使用 Codex `0.163.0-alpha.10.2`，透過 `http_headers_helper` 成功連線。設定腳本以隱藏提示接收 PAT，Windows DPAPI 保存密文；helper 在客戶端呼叫時，經程序 stdout 傳送 Authorization JSON 給 Codex。stdout 是程式介面，不能宣稱 PAT 完全不經 stdout；不得手動執行 helper、錄製其輸出或寫入明文日誌。
+3. **這是指定版本的驗收證據，不是所有 Codex 版本的支援保證。** 其他版本應先查該版本的設定支援；未支援時停止該方式，不塞入未知設定。兩份同仁腳本未納入此儲存庫、未經本次來源審查，不能從本文件直接取得可執行的 helper。
+4. 完成本機設定後關閉並重新開啟 Codex 工作階段，確認八個技能名稱及所需 SKILL.md 可讀，且 niio MCP 工具出現。只有設定可解析、enabled 或 Auth Unknown，均不足以判定連線成功。
+5. 執行 [新使用者唯讀驗收](ACCEPTANCE.md#新使用者唯讀驗收)。實際唯讀請求成功才完成此段驗收，不順便建立資料或觸發流程。
+
+### Windows PowerShell 5.1 腳本編碼
+
+新使用者案例中，含中文的 UTF-8 無 BOM 腳本被 Windows PowerShell `5.1.26100.9444` 以系統 ANSI 解讀，造成 ParserError。`Set-NiioMcpPat.ps1` 與 `niio-mcp-headers.ps1` 轉為 UTF-8 with BOM、CRLF 後，以同一 powershell.exe 的 Parser API 檢查通過，後續 MCP 連線成功。這個修正與 hardlink／symlink 權限限制是不同問題。
+
+交付給 Windows PowerShell 5.1 的含非 ASCII 腳本應保存為 UTF-8 with BOM，再用實際執行的 powershell.exe 做純解析檢查。不要只用 PowerShell 7 或另一個 shell 的解析結果代替；BOM 檢查也不代表腳本語法或行為已驗證。修正編碼不需要提升管理員權限或放寬系統執行原則。
+
+本儲存庫目前沒有 `.ps1`／`.psm1`／`.psd1` 交付檔；Markdown 中的 PowerShell 範例若另存腳本，也適用上述編碼要求。兩份同仁腳本的來源缺口與後續負責者見 [整合進度](ONBOARDING_PROGRESS.md)。

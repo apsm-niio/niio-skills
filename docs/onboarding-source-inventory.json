@@ -1,0 +1,143 @@
+{
+  "skills": {
+    "niio-api-website": {
+      "source": "skills/api/niio-api-website",
+      "fileCount": 9,
+      "sha256": {
+        "README.md": "45c9b772782e873d641649b49b8bb3829f9d67be20611f2a93db2f20d34a75a4",
+        "SKILL.md": "2a0484696a47137aa3374b4a4d9a468d3ba7625927d30e7314f3c59ea6951c85",
+        "assets/api.js.template": "db4dd10cd501f56f6f9bdda4c0e87a9660a241bf8d43a87d0ce6491ac7fb1fc9",
+        "assets/config.js.template": "eda37372ab044ca314f881dc7b00b90d4e367fd8c6de585bd6246616fff1c268",
+        "assets/main.js.template": "f49387750c29e236b703fe3407977b4cea588ea85895ff668154018c82542d53",
+        "assets/server.config.mjs.template": "bee54b60ca2a7b8969194dfea9b21e0b07818afc8817c7dfb215a1edfa3dce9c",
+        "assets/server.mjs.template": "d4af9cf3cf7d975023907c1f5d6ec9cdc24da15fe0b430e3950db6a08d6fe9c7",
+        "references/niio-api-usage-guide.md": "d96856e54dbb06800c44a78d374ee98e7566015e0e945dcaac92d700bfecc656",
+        "references/niio-as-database-guide.md": "ea75d98dc3146e176fcb6db647f6677359d35a0137974c0ad59ad0b9e70f1f13"
+      }
+    },
+    "niio-apiv3-data": {
+      "source": "skills/api/niio-apiv3-data",
+      "fileCount": 3,
+      "sha256": {
+        "README.md": "0c372e630801e1625fbaaf84ed992743c9f3e64ce777e84890d1aab67179f394",
+        "SKILL.md": "31691401e5209b08723cacb098dc526ce77c4d432ff7bdd38ed6880c5fac53b3",
+        "references/niio-api-usage-guide.md": "071e7254586d3ddc84c84207ab68d86878ce662502e86c1fd33f2cdb9169f066"
+      }
+    },
+    "niio-view-plugin": {
+      "source": "skills/api/niio-view-plugin",
+      "fileCount": 11,
+      "sha256": {
+        "README.md": "88016904a3151bd708d6bc762c0f0bec80b713043fe3fa8b870839557566327a",
+        "SKILL.md": "c6fff4aafc9c6064b34d8398da90adefcd0ddb15b360ca4ed316b7635acf1d0b",
+        "V3_API_INTEGRATION.md": "62e7f15a75d7683ae0de0fac351b05071e6de1ce1c875b23e5e1bca262415606",
+        "references/field-type-guide.md": "ac40a8d59b6b2ae59bba7b6534249c2acb861868a18bdcb91b10b1ee78154854",
+        "references/niio-view-plugin-dev-guide.md": "9676e8a8ea7eda92c1cb9e4f398df4debd1fbea7c5dba3bad0e828247fe332e5",
+        "scripts/field_values.mjs": "285e78cc840244f6d10fc5c387ce60686949ccea8a5ab984c38950be1b79100a",
+        "scripts/generate-unique-id.sh": "86d9dedcc386920d0f65dd59f7c0bf7440bb4bdd5796b283b4cad86392f9f2a0",
+        "scripts/init-niio-view-project.sh": "3ef62d08663c2efad545cb9a5dcf4f038c47a61e796221578bb11d46082bbdf8",
+        "scripts/quick-start.sh": "78d698e0813aed9266f8308056b92ea7e229abe6483949cd4974dca45556029f",
+        "scripts/test-mdye-check.sh": "52ba8ce7f45fbf04a0fcfe996a5864557b65efa6dfd4e02e157d1d1fd08f0dde",
+        "scripts/view_project.py": "a0722e421cdb9f5db5633545b5950cdfafe5b5578d4db550c232edee0c321dc0"
+      }
+    },
+    "niio-cli": {
+      "source": "skills/cli/niio-cli",
+      "fileCount": 1,
+      "sha256": {
+        "SKILL.md": "dc170ee035f680f8eabb93c18a2b8fe86d9674592cf22520f98b004898eb535e"
+      }
+    },
+    "niio-cli-app-editor": {
+      "source": "skills/cli/niio-cli-app-editor",
+      "fileCount": 29,
+      "sha256": {
+        ".gitignore": "91e8abc7ab4fe812ea62cc6adf94b88b676632ad6f9bdf9a284369139618e18e",
+        "SKILL.md": "f6efabb8239a81969bd910fff1acca9a98369f3995f02aec581729f1218d880b",
+        "examples/custom-action.edit.json": "2091efa09effac22963aa6272a752956e424ec2430215f59978733cb439ca2d2",
+        "examples/field-edits.edit.json": "9ac025504a9764d14a984b895ceac35be68b37dc57a7ea12b9c9f5c2093bbcb6",
+        "examples/page-and-components.edit.json": "236f132e4f4afe6937fb67cef156c58337cae3e552480a357d9df06f83db496f",
+        "references/application.md": "c0f88cba63c466bb75c1b2bbd7b50ca5bf73e206f7e1afbc65ce423fdbe3d05e",
+        "references/charts.md": "f9c02dc317134fd800be63b17ab285173a4ef9865b781168f90646aa23800bb8",
+        "references/custom-actions.md": "5234e55269a8c4f196d0aa1006e29a35b926f767898067fa5c05e3fb1aeaabd8",
+        "references/custom-pages.md": "ed6b1c1b93ecb09e5dc08986e91e8fc64d60fb44bb31fa3332c2ba27aebed042",
+        "references/edit-spec.md": "8dbce690b6073046bd3c94c85c5408c2584e26db3883287c78773a925865aaa2",
+        "references/nodes.md": "f1c62c417c1e9acacd2fd3f8052dbfc00982e3b9f892ee8989c5922c7c8e4007",
+        "references/roles.md": "8eda30f11ae94928413a9c8726905e7db39462113d97282913cf667ecbc09405",
+        "references/scenarios/dashboard-page-build.md": "3107c65d944568e3c00ae61025512c1521fe82d1b4b2fd85f95fedeb8813cf5f",
+        "references/scenarios/fix-half-built-app.md": "91bc564fe8dcfd49df03b609bcee3c0b8461320268c8a75defae1896f3e25e64",
+        "references/scenarios/new-field-full-chain.md": "0f8d4db8060d9ba781da00ceb5625ebc24199257514ae7d908280902c6c9eab8",
+        "references/scenarios/workflow-node-rework.md": "47dea776cd90e5f51b162b458c6206b1208a021a41ab92f5372265be264ee2ed",
+        "references/views.md": "fda2990b60f3aeb9120668920b262b41357633726a7776238a59b2578da46ccc",
+        "references/workflows.md": "d706f3b4fa45e9d32d3ce3c654968c4729d6bec0f13e47b57a1287e853ce61f5",
+        "references/worksheets-and-fields.md": "d1cf4b19ca7c50fbf2d521e51cbb2239d0d6c997a81e15fa1391a842a40bffae",
+        "scripts/editspec/component.schema.json": "d644464e0412dfa77e1f6353aeda98a43dde662680013ba9a80a356c864fc56c",
+        "scripts/editspec/custom-action.schema.json": "046ec460eab23069b706ff8106349472c41df0aa2028ea849ca2b5a0ba8a936c",
+        "scripts/editspec/envelope.schema.json": "29cfe8d45058947de66223cd30634d42ea946257795eca3da5cbb412985743ed",
+        "scripts/editspec/field.schema.json": "0688459282b4a61f667687e9e144bc7c637d9501c6e7a3ac619a9d8fca583871",
+        "scripts/types/filter-condition.schema.json": "d6231e3507fe84d847d2839b308c4c25a67b4d8914295f2d92d5f1d8c1ce0d67",
+        "scripts/types/operate-condition.schema.json": "583f924adc491728daf2b2f4c820d2a342e5a1b28c1c99f1f293b1b785b8befb",
+        "scripts/types/sort-item.schema.json": "023f53aa9cd8a7e1f5758fa656cd4dd7f0412696b44a8fdb212aaac15d3e5bd0",
+        "scripts/types/wire-control.schema.json": "fc8eb1488bf3cf01c58904d62eb21611e467c6fe5326b69d6860ec3aa5c171a9",
+        "scripts/types/workflow-accounts.schema.json": "c1097d6633205890db9f4d1ca6f7e4a23afccc2c06586f6e411e3736f032fc53",
+        "scripts/types/workflow-field-write.schema.json": "463000124ef5ccb60533f622f944ac51bedb80d8810d196cd5ba73e779b1a61c"
+      }
+    },
+    "niio-cli-data-query": {
+      "source": "skills/cli/niio-cli-data-query",
+      "fileCount": 1,
+      "sha256": {
+        "SKILL.md": "d585728aa20a2d752788d2a89e6e9c07f8d39e8b2f61f8598c6eb0c372d349da"
+      }
+    },
+    "niio-cli-environments": {
+      "source": "skills/cli/niio-cli-environments",
+      "fileCount": 1,
+      "sha256": {
+        "SKILL.md": "b7db161ed90f6bc9d2afe703fe21bec9262a30d6480c12d42a7ea5a9c382b188"
+      }
+    },
+    "niio-mcp-app-builder": {
+      "source": "skills/mcp/niio-mcp-app-builder",
+      "fileCount": 32,
+      "sha256": {
+        "SKILL.md": "9d48ed0fd10a54816b96d838b8fef11a808815f3abdf73c1a23a3a72e0186ccf",
+        "build/CAPABILITY_MATRIX.md": "1c68ba825e58102a5658dfdfee69e0b8fc99acf5cc300ee6f3351d6bc03c1973",
+        "build/CONTEXT.md": "4fdb7c76e1cff57ea6614462b88fa4297c0ccb40b1f57288c9c9fb4fd7de8dc1",
+        "build/OUTPUT_CONTRACT.md": "ae44a6c9596ac40e95c9deb0eda9ac2cf0b8374b79feab09ed46cbf3eed4e85a",
+        "build/PROGRESS.md": "3343f8ef3226f40116e867e75f5d6fdd993447637ef26aebe2243f8d3d1240c4",
+        "build/SKILL.md": "17376383893b0230090375ac83791d6d86d982ee1dda9d0312afe7ee2332755a",
+        "build/resources/sample_images.json": "d42b54f6ccb87fddd42d507ec878f3690a1d988d42fabcfac9fbce5e41e25aff",
+        "build/scripts/build_checkpoint.py": "655a315464fbeea4a6c6aa49d01af49e341b3bcdcb23584271074e0c751e4fa1",
+        "build/scripts/generate_fill_templates.py": "b54c4791ff672fe3aa2540ba1afa8a0e032992b2fb776e7f107444aa409feb40",
+        "build/scripts/refresh_fields.py": "8a786280a69a21485c56a16ece5c90e27eeb27c4d96f626429274302fa7a75a3",
+        "build/steps/10_create_workflows.md": "d20cb74add32e5cd90008f47ab0c6cbb8d6d8906964f37d7995d0ed675f06058",
+        "build/steps/11_create_action_workflows.md": "bc3f024612a26a7d7f8d868375639f908fc9dca997c6cd6be65fbce7da824dc4",
+        "build/steps/12_cli_refinement.md": "0e6576e4ea0825b81122f5c8794f4c9d85c10b5502c83fd08fa8bfd22f3ab6a7",
+        "build/steps/1_create_app.md": "a0a90b96d1fea92e2fc5d019a2ab68f9b27d403c25aa7b356b603fe79851f018",
+        "build/steps/2_create_worksheets.md": "f76d039115fe3230f73ef561dc19a880409ca5ab672ba43b666728c78cca6b03",
+        "build/steps/3_refresh_fields.md": "379e01e35ab2cf64770e69cb709ab4d1db89393baaff2f8c29aa89cc4c330afe",
+        "build/steps/4_create_actions.md": "8ac503ae6a007f9ca7d91b07f99037842672e16295acc381ed3d4b6626aad2cf",
+        "build/steps/5_create_views.md": "0d80226845338a6961075d6aa29cbe299aec829093fc3189ea9833877b4d894c",
+        "build/steps/5b_create_page_shells.md": "7afa1879290cd1d328eaae6bb1392f5af620350837d59a6b981bd6cb4e42b087",
+        "build/steps/6_create_sample_data.md": "a65347670dd9ac5b88d5906a9be32a2e707759830fd65d346d90f6e39017d0b9",
+        "build/steps/7_create_pages.md": "e1e1e25dbac7964b8766d16be3a96298eb37f6de2b38a37b3e0f681cf7600544",
+        "build/steps/8_create_roles.md": "93f084a96fab206cbcf906e4882714f7bb05f7253b4847bb20c43552a895f6f5",
+        "build/steps/9_design_workflows.md": "58cadf95302928eb88dff86fbce12dadbd2cc90f4d9029f14bba31e33944a50e",
+        "build/steps/workflow_rules.md": "6793496f0b8c8a108939cc596952e601fa39d23592dc6f99039b1843c0f825d6",
+        "plan/1a_plan_overview.md": "f78bd21c24890263ce5c1a75e532b2ea28ebb310976f72f904e0ef23c4c367a6",
+        "plan/1b_plan_schema.md": "96a12330c0eaaa5567fd6ff0d3c7be13be3925f5a28de72be4147d4669340259",
+        "plan/SKILL.md": "72b23076cb5f480de9d56d8fae34178f2d674ad44f2be824a008ec5db137c1fc",
+        "plan/design_guide.md": "7e3cadf51c1a8aeb8bc8e15a25eeabb6007dc0dd2a9f11902809c2a726804d3f",
+        "plan/icon_and_style_guide.md": "9476502eccd4e9351492977a806bf1e9a543bebb726acdd459f30fc92ecff2e5",
+        "plan/scripts/scan_apps.py": "6c221f82ea3e4301e62ab29918fa789abe789510cf2a5d091858e289f2aac65d",
+        "scripts/project_files.py": "ff0642602342c22b049cae9b13ccde40aed4b17c57f4a6c977555603e7776304",
+        "version.json": "99667e4c94f2bd9ea19d9b515b40f0df562e96c3ec1d730c949aad4b2ec3935b"
+      }
+    }
+  },
+  "totalFiles": 87,
+  "powershell": [],
+  "scope": "source-only; does not verify installed files, receipt, parser or remote access",
+  "sourceCommit": "68d03b005dd337ee7cafb2c08ba5e85e78b828d8"
+}
