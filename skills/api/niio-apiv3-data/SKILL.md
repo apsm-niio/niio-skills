@@ -10,6 +10,22 @@ license: MIT
 
 # niio V3 API 使用技能
 
+## MCP 記錄操作的本機校驗
+
+使用 MCP 新增／修改記錄或驗證完整欄位清單前，先讀當前 DSL 工作表結構，保存單表結構及待送工具參數，使用本技能的 `scripts/mcp_preflight.py`：
+
+```text
+python "{SKILL_DIR}/scripts/mcp_preflight.py" record --mode create --structure "{structurePath}" --request "{requestPath}"
+python "{SKILL_DIR}/scripts/mcp_preflight.py" record --mode update --structure "{structurePath}" --request "{requestPath}"
+python "{SKILL_DIR}/scripts/mcp_preflight.py" list --structure "{structurePath}" --request "{requestPath}"
+```
+
+結構須含 worksheetId、fields、views，可傳 DSL 工具回應或其 data 物件；腳本不處理 REST 請求格式。批次寫入逐筆以同表結構校驗。退出碼非 0 時不送出該請求；通過後只送出已校驗內容。Number 傳有限 JSON 數值，不接受布林、含單位或非法字串，不把非法值靜默清空；必填欄位不得傳空。僅在使用者明確要求清空可選數字欄位時加 `--allow-clear FIELD_ID` 並傳空字串。
+
+完整欄位讀回指定本表且用途已獲准的 viewId、實體 fields 及 useFieldIdAsKey=true，不自動改用較寬的檢視。省略 viewId 在本部署曾出現新欄位為空；新增欄位或寫入驗證時，以同一筆合成資料比對清單與詳情。若不一致，記為讀取路徑異常，不據此清空或重建資料，也不把改用其他入口算作原介面修復。沒有獲准檢視時停止該完整性判定並說明缺項，不擅自擴權。
+
+這是 Agent 呼叫前的校驗及檢視選用規則，未修改遠端 MCP／平台；REST、CLI 與 SDK 仍依各自契約驗證。
+
 此技能提供使用niio V3 介面建置頁面、即時取得資料和操作資料的完整指南。
 
 ## Overview

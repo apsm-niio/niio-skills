@@ -28,6 +28,24 @@ python3 "{SKILL_DIR}/scripts/project_files.py" migrate "{PROJECT_ROOT}/apps/{app
 
 ## 前置依賴
 
+### MCP 資料操作前置校驗
+
+本技能附帶 `scripts/mcp_preflight.py`，只校驗本機 JSON，不連線、不代送請求。針對記錄寫入與完整欄位讀回，先保存當前 DSL 工作表結構及待送出的工具參數，再校驗：
+
+```text
+python "{SKILL_DIR}/scripts/mcp_preflight.py" record --mode create --structure "{structurePath}" --request "{requestPath}"
+python "{SKILL_DIR}/scripts/mcp_preflight.py" record --mode update --structure "{structurePath}" --request "{requestPath}"
+python "{SKILL_DIR}/scripts/mcp_preflight.py" list --structure "{structurePath}" --request "{requestPath}"
+```
+
+`structurePath` 是 `get_worksheet_structure(responseFormat=dsl)` 回應或其 data 物件，須含 worksheetId、fields、views；不是整份多表 worksheetContext。`requestPath` 是本次實際工具參數；每個批次子記錄需按同一表結構逐筆校驗。退出碼非 0 時不送出受影響請求，先修正參數；通過後只送出已校驗的同一份內容。
+
+Number 使用有限 JSON 數值，拒絕布林、含單位或非法字串，不把無效輸入轉成空值。使用者明確要求清空可選數字欄位時，才對該欄加 `--allow-clear FIELD_ID` 並傳空字串；必填欄位不可清空。校驗不取代平台業務規則或權限。
+
+完整欄位讀回使用屬於本表、且本任務獲准使用的明確 viewId、實體 fields 及 useFieldIdAsKey=true；依本地 viewIdByName／已確認用途選擇，不擅自換成範圍更大的檢視。省略 viewId 時，在本部署曾出現新欄位投影為空，即使 HTTP／業務回應成功也不能判為資料不存在。新增欄位後或寫入驗證時，對本任務的一筆合成資料比較清單與詳情；不一致就保留原路徑失敗，不重送寫入、不把詳情成功算作清單修復。
+
+本機校驗及明確檢視屬 Agent 使用路徑改善，不代表遠端介面的無效輸入或預設檢視行為已修復。
+
 - **MCP Server**：本建置工具需要連線到niio MCP 服務（`niiodemo.apsm.com.tw/mcp`）。
 
 ## 前置檢查

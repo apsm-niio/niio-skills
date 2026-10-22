@@ -123,5 +123,15 @@
     "target": "cli/niio-cli-app-editor/scripts/editspec/component.schema.json",
     "source": "skills/cli/hap-cli-app-editor/scripts/editspec/component.schema.json",
     "sha256": "122927542e892e3668db204d2827e465eb18da537e76806b845a85ebe05d0d07"
+  },
+  {
+    "target": "mcp/niio-mcp-app-builder/scripts/mcp_preflight.py",
+    "source": "skills/mcp/hap-mcp-app-builder/SKILL.md",
+    "sha256": "2934af20844431a3bd3b097c8af1163ed4c94c8b0abfce0ad885e1e017441d65"
+  },
+  {
+    "target": "api/niio-apiv3-data/scripts/mcp_preflight.py",
+    "source": "skills/api/hap-apiv3-data/SKILL.md",
+    "sha256": "7ba806f840ea8a47018b1a67f4aa0eddf7eb94ade615f3ae07858a5457db707a"
   }
 ]
