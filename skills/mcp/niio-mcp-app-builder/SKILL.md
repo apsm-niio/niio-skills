@@ -3,6 +3,8 @@ name: niio-mcp-app-builder
 description: 全自動一站式 niio 應用建置工具。從業務方案設計（Plan）開始，確認後自動實際建置（Build）。若已存在方案，可直接一鍵繼續/恢復實際建置。使用者輸入 /niio-builder 或直接用對話描述您的系統訴求（如"幫我建置一個客戶管理應用"）觸發。
 ---
 
+> **本機 MCP**：若已安裝並驗證 `niio_local_mcp`，MCP 操作優先使用它；不要因呼叫失敗就改用原端點重送寫入。每位使用者使用自己的認證，本機服務仍依賴原平台；本機修正不代表原平台已修復。CLI 與 REST 的環境／授權仍須分別確認。
+
 ## 專案檔名與舊專案相容
 
 新專案只寫 `niio-plan.json` 與 `niio-context.json`。在首次寫入方案或進度前，以及每次從斷點恢復前，先確認沒有其他程序或 agent 正在寫入此專案，執行：
@@ -40,9 +42,9 @@ python "{SKILL_DIR}/scripts/mcp_preflight.py" list --structure "{structurePath}"
 
 `structurePath` 是 `get_worksheet_structure(responseFormat=dsl)` 回應或其 data 物件，須含 worksheetId、fields、views；不是整份多表 worksheetContext。`requestPath` 是本次實際工具參數；每個批次子記錄需按同一表結構逐筆校驗。退出碼非 0 時不送出受影響請求，先修正參數；通過後只送出已校驗的同一份內容。
 
-Number 使用有限 JSON 數值，拒絕布林、含單位或非法字串，不把無效輸入轉成空值。使用者明確要求清空可選數字欄位時，才對該欄加 `--allow-clear FIELD_ID` 並傳空字串；必填欄位不可清空。校驗不取代平台業務規則或權限。
+Number 使用有限 JSON 數值或一般十進位數字字串（如 "31.25"），拒絕布林、含單位或非法字串，不把無效輸入轉成空值。使用者明確要求清空可選數字欄位時，才對該欄加 `--allow-clear FIELD_ID` 並傳空字串；必填欄位不可清空。校驗不取代平台業務規則或權限。
 
-完整欄位讀回使用屬於本表、且本任務獲准使用的明確 viewId、實體 fields 及 useFieldIdAsKey=true；依本地 viewIdByName／已確認用途選擇，不擅自換成範圍更大的檢視。省略 viewId 時，在本部署曾出現新欄位投影為空，即使 HTTP／業務回應成功也不能判為資料不存在。新增欄位後或寫入驗證時，對本任務的一筆合成資料比較清單與詳情；不一致就保留原路徑失敗，不重送寫入、不把詳情成功算作清單修復。
+完整欄位讀回使用屬於本表、且本任務獲准使用的明確 viewId、實體 fields 及 useFieldIdAsKey=true；依本地 viewIdByName／已確認用途選擇，不擅自換成範圍更大的檢視。本部署的第一個檢視顯示欄位會影響省略 viewId 的清單，顯式 fields 也不會覆蓋該投影；尚無任何檢視時，不傳 viewId 已實測可完整讀取。即使 HTTP／業務回應成功，也不能將投影之外的空值判為資料不存在。新增欄位後或寫入驗證時，對本任務的一筆合成資料比較清單與詳情；不一致就保留原路徑失敗，不重送寫入、不把詳情成功算作清單修復。
 
 本機校驗及明確檢視屬 Agent 使用路徑改善，不代表遠端介面的無效輸入或預設檢視行為已修復。
 

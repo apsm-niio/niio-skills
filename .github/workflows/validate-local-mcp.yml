@@ -1,0 +1,41 @@
+name: 本機 MCP 安裝與回復（無遠端寫入）
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['mcp/**', 'skills/**', 'scripts/**', 'docs/**', 'tests/**', '.github/workflows/validate-local-mcp.yml']
+  pull_request:
+    paths: ['mcp/**', 'scripts/install_bundle.py', 'scripts/manage_local_bundle.py', 'scripts/build_local_bundle.py', 'tests/test_local_*.py', '.github/workflows/validate-local-mcp.yml']
+permissions:
+  contents: read
+jobs:
+  local-bundle:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.10'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts --no-audit --no-fund --bin-links=false
+        working-directory: mcp/niio-local-mcp
+      - run: node --test test/*.test.mjs
+        working-directory: mcp/niio-local-mcp
+      - run: python -m unittest discover -s tests -p "test_local_*.py" -v
+      - run: python scripts/build_local_bundle.py
+      - name: 保存完整離線安裝包與雜湊
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: niio-skills-offline-${{ matrix.os }}
+          path: |
+            dist/*.zip
+            dist/*.sha256
+          if-no-files-found: error

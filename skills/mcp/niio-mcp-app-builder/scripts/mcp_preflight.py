@@ -3,6 +3,7 @@
 import argparse
 import json
 import math
+import re
 from pathlib import Path
 
 
@@ -61,8 +62,12 @@ def record_issues(structure, request, mode, allow_clear=()):
                 # Current MCP value union permits an empty string, not JSON null/arrays.
                 if value != '':
                     issues.append('Explicit numeric clear must use an empty string: ' + key)
+            elif isinstance(value, str):
+                # Verified deployment accepts plain decimal strings without changing the request.
+                if not re.fullmatch(r'-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?', value):
+                    issues.append('Number requires a JSON number or plain decimal string: ' + key)
             elif isinstance(value, bool) or not isinstance(value, (int, float)) or (isinstance(value, float) and not math.isfinite(value)):
-                issues.append('Number requires a finite JSON number; no implicit coercion: ' + key)
+                issues.append('Number requires a finite JSON number or plain decimal string: ' + key)
     if mode == 'create':
         for field in structure['fields']:
             default = field.get('defaultValue')
@@ -77,7 +82,7 @@ def list_issues(structure, request):
     structure = structure_data(structure)
     issues = scope_issues(structure, request)
     views = {v['id'] for v in structure.get('views', [])}
-    if not request.get('viewId') or request['viewId'] not in views:
+    if (request.get('viewId') and request['viewId'] not in views) or (views and not request.get('viewId')):
         issues.append('Provide an authorized viewId belonging to this worksheet')
     ids = {f['id'] for f in structure['fields']}
     if request.get('useFieldIdAsKey') is not True:

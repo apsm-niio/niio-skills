@@ -30,7 +30,7 @@ class PreflightTests(unittest.TestCase):
         self.assertEqual(self.request, before)
 
     def test_invalid_numbers_blocked_including_bool_nan_and_infinity(self):
-        for value in ('30abc', '30', True, float('nan'), float('inf'), None, [], ''):
+        for value in ('30abc', 'NaN', 'Infinity', ' 30 ', '1,234', True, float('nan'), float('inf'), None, [], ''):
             with self.subTest(value=value):
                 self.request['fields'][1]['value'] = value
                 self.assertTrue(guard.record_issues(self.structure, self.request, 'update'))
@@ -39,6 +39,13 @@ class PreflightTests(unittest.TestCase):
         for value in (0, -30, 1.5):
             self.request['fields'][1]['value'] = value
             self.assertEqual(guard.record_issues(self.structure, self.request, 'update'), [])
+
+    def test_decimal_strings_supported_without_coercion(self):
+        for value in ('30', '31.25', '0', '-30', '-0.5'):
+            self.request['fields'][1]['value'] = value
+            before = copy.deepcopy(self.request)
+            self.assertEqual(guard.record_issues(self.structure, self.request, 'update'), [])
+            self.assertEqual(self.request, before)
 
     def test_explicit_clear_is_distinct_from_invalid_input(self):
         self.request['fields'][1]['value'] = ''
@@ -74,6 +81,13 @@ class PreflightTests(unittest.TestCase):
         self.assertTrue(guard.snapshot_issues(snapshot))
         self.assertEqual(guard.snapshot_issues({'value': 'option-key'}), [])
         self.assertEqual(guard.snapshot_issues({'value': ['valid', 'array']}), [])
+
+    def test_list_without_views_does_not_require_an_impossible_view(self):
+        self.structure['views'] = []
+        request = {'appId': 'app', 'worksheet_id': 'tasks', 'fields': ['title', 'amount'],
+                   'useFieldIdAsKey': True, 'pageIndex': 1, 'pageSize': 3}
+        self.assertEqual(guard.list_issues(self.structure, request), [])
+        self.assertTrue(guard.list_issues(self.structure, {**request, 'viewId': 'other'}))
 
     def test_cli_invalid_input_nonzero_without_echoing_values(self):
         with tempfile.TemporaryDirectory() as tmp:

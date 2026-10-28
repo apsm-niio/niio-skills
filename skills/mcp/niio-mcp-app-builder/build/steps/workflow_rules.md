@@ -340,7 +340,7 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 
 本部署的 SingleSelect 工作流常數（觸發 filter 的 right.value、update_record 的 literal.value）已驗證可使用單一選項 key 字串，例如 `{ "kind": "literal", "value": "實際選項key" }`。不要把記錄新增／修改工具的選項陣列格式直接套到工作流常數；記錄工具仍遵守其自身 string[] schema。
 
-此相容用法限定本次已驗證的單選單值條件／賦值，不將多選、in 條件或其他部署的陣列任意轉成字串。未驗證的格式先核對部署契約，再執行該路徑。
+此相容用法限定本次已驗證的單選單值條件／賦值，不將多選、in 條件或其他部署的陣列任意轉成字串。隔離對照已確認 MultipleSelect 的兩個選項 key 陣列在草稿中正常轉為選項列表，沒有內部樹污染；此項只驗證建立與讀回，尚未驗證該多選流程執行。SingleSelect 的單元素陣列則產生污染且平台 validate_process 仍誤判 canPublish=true，列為轉換及驗證缺陷。未驗證的格式先核對部署契約，再執行該路徑。
 
 節點建立後、發布之前，保存草稿快照並執行根技能附帶的校驗器：
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Install/update all eight skills with an explicit baseline; restore from receipt.
+"""Install, update, authenticate and restore niio skills with optional local MCP.
 
-Only the named skill directories are touched. Unknown/custom files block updates.
-Renames preserve backups; no hardlink fallback, elevation, or global configuration.
+The legacy install command changes only named skill directories. Combined setup
+also manages the selected user's MCP entry. Unknown/custom files block updates;
+receipts and backups support rollback without changing system configuration.
 """
 import argparse
 import hashlib
@@ -11,6 +12,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
+import sys
 
 
 def inventory(root):
@@ -49,7 +51,7 @@ def write_receipt(path, data):
             temp.unlink()
 
 
-def install(source, target, baseline=None):
+def install(source, target, baseline=None, backup_dir=None):
     target = Path(target).absolute()
     # Reject linked ancestors before resolve could hide their identity.
     for p in [target, *target.parents]:
@@ -69,7 +71,13 @@ def install(source, target, baseline=None):
             if dest.exists():
                 if name not in previous or inventory(dest) != inventory(previous[name]):
                     raise ValueError('Existing skill differs from baseline; preserve custom files: ' + name)
-        backup = Path(tempfile.mkdtemp(prefix='.niio-backup-', dir=target.parent))
+        if backup_dir is None:
+            backup = Path(tempfile.mkdtemp(prefix='.niio-backup-', dir=target.parent))
+        else:
+            backup = Path(backup_dir).absolute()
+            if backup.parent != target.parent or not backup.name.startswith('.niio-backup-'):
+                raise ValueError('Invalid explicit backup directory')
+            backup.mkdir(mode=0o700)
         receipt = backup / 'receipt.json'
         data = {'target': str(target), 'state': 'installing', 'entries': []}
         for name, path in incoming.items():
@@ -194,9 +202,17 @@ def restore(receipt, locked=False):
 
 
 def main():
+    if len(sys.argv)>1 and sys.argv[1] in ('setup','update','auth','verify'):
+        from manage_local_bundle import main as combined_main
+        return combined_main(sys.argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='action', required=True)
-    p = sub.add_parser('install')
+    for action, description in [('setup', 'Install eight skills and local stdio MCP'),
+                                ('update', 'Update a managed skills/MCP installation'),
+                                ('auth', 'Store and verify your own PAT securely'),
+                                ('verify', 'Verify the installed MCP with a read-only call')]:
+        sub.add_parser(action, help=description)
+    p = sub.add_parser('install', help='Legacy skills-only installation')
     p.add_argument('--source', required=True, type=Path)
     p.add_argument('--target', required=True, type=Path)
     p.add_argument('--baseline', type=Path)
@@ -207,7 +223,11 @@ def main():
         if args.action == 'install':
             print(install(args.source, args.target, args.baseline))
         else:
-            restore(args.receipt)
+            if json.loads(args.receipt.read_text(encoding='utf-8')).get('kind')=='niio-skills-and-local-mcp':
+                from manage_local_bundle import restore as combined_restore
+                combined_restore(args.receipt)
+            else:
+                restore(args.receipt)
             print('Restored; backups retained')
     except (OSError, ValueError, KeyError) as exc:
         parser.exit(1, 'Installation/restore blocked: ' + str(exc) + '\n')

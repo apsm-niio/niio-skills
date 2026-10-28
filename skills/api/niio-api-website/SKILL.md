@@ -2,6 +2,9 @@
 name: niio-api-website
 description: 使用 niio 作為內容管理後台建立企業官網、產品展示、新聞、案例及網站資料串接。當使用者要求 niio 建置網站、前後端分離、niio 作為資料庫或官網 CMS 時使用；包含 MCP 結構查核、後端 API 憑證保管、公開內容白名單與前端呈現。
 ---
+
+> **本機 MCP**：若已安裝並驗證 `niio_local_mcp`，MCP 操作優先使用它；不要因呼叫失敗就改用原端點重送寫入。每位使用者使用自己的認證，本機服務仍依賴原平台；本機修正不代表原平台已修復。CLI 與 REST 的環境／授權仍須分別確認。
+
 # niio 網站建置
 
 對外使用 niio 與台灣繁體中文。先閱讀 [網站架構與部署](references/niio-as-database-guide.md)，依該文件建立前端及後端；需要確認 API 欄位語法時再讀 [API 參考](references/niio-api-usage-guide.md)。後者為協定參考，不能取代本部署驗證。

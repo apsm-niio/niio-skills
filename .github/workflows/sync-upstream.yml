@@ -155,6 +155,6 @@ jobs:
           else
             git commit -m 'chore: synchronize zh-TW skills'
           fi
-          git push --atomic origin \
-            refs/remotes/source/main:refs/heads/upstream \
-            HEAD:refs/heads/main
+          # Keep upstream provenance in localization/upstream-state.json.
+          # Do not recreate an upstream branch: this repository maintains main only.
+          git push origin HEAD:refs/heads/main
