@@ -1,8 +1,8 @@
 # 整套安裝、更新與回復
 
-2026-10-28 新增：若要一次安裝八個技能與 `niio_local_mcp`，請使用 [完整本機套件流程](LOCAL_MCP_INSTALL.md) 的 `setup → auth → verify`，更新使用 `update`，回復仍使用 `restore --receipt`。下方既有 `install` 是技能專用相容入口，仍不寫 MCP 設定；不可將這兩種模式混為一談。本次交付尚未推送 GitHub。
+2026-10-28 新增：若要一次安裝八個技能與 `niio_local_mcp`，請使用 [完整本機套件流程](LOCAL_MCP_INSTALL.md) 的 `setup → auth → verify`，更新使用 `update`，回復仍使用 `restore --receipt`。下方既有 `install` 是技能專用相容入口，仍不寫 MCP 設定；不可將這兩種模式混為一談。完整離線套件可從通過的 GitHub Actions 執行紀錄取得；一般 GitHub Download ZIP 為原始碼。
 
-支援範圍：八個頂層技能（builder 內含 plan/build），Python 3.10+；網站／外掛離線測試使用 Node 22。技能複製不安裝 CLI、SDK、不登入、不寫 MCP 設定。正式環境採用前須自行選定已審閱的完整 commit。
+支援範圍：八個頂層技能（builder 內含 plan/build），Python 3.10+；本機 MCP 與整套離線驗證使用 Node 24 LTS+。技能複製不安裝 CLI、SDK、不登入、不寫 MCP 設定。正式環境採用前須自行選定已審閱的完整 commit。
 
 先將儲存庫以 `core.autocrlf=false` 取得至獨立目錄，checkout 指定完整 40 位 commit，確認 `git rev-parse HEAD` 符合且 `git status --porcelain` 為空；記錄 SHA。來源取得失敗就停止，勿改用浮動 main。舊版 baseline 也須相同方式取得；本次正式 builder 的已知基準是 `0fa9c94cb6557ffff63d2f13e80873c34b037ac7`。工具驗證檔案一致性，來源真偽／commit 選定仍由這個步驟負責。
 
