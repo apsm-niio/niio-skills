@@ -4,3 +4,6 @@ __pycache__/
 .env.*
 !.env.example
 .niio-localize-*/
+node_modules/
+dist/
+.validation-temp/

@@ -336,6 +336,22 @@ niio `NodeSpec` 基礎模式上**完全沒有 `sourceNode` 屬性**。凡是需�
 
 ## 資料引用規範
 
+### 單選欄位的工作流常數與發布前讀回
+
+本部署的 SingleSelect 工作流常數（觸發 filter 的 right.value、update_record 的 literal.value）已驗證可使用單一選項 key 字串，例如 `{ "kind": "literal", "value": "實際選項key" }`。不要把記錄新增／修改工具的選項陣列格式直接套到工作流常數；記錄工具仍遵守其自身 string[] schema。
+
+此相容用法限定本次已驗證的單選單值條件／賦值，不將多選、in 條件或其他部署的陣列任意轉成字串。隔離對照已確認 MultipleSelect 的兩個選項 key 陣列在草稿中正常轉為選項列表，沒有內部樹污染；此項只驗證建立與讀回，尚未驗證該多選流程執行。SingleSelect 的單元素陣列則產生污染且平台 validate_process 仍誤判 canPublish=true，列為轉換及驗證缺陷。未驗證的格式先核對部署契約，再執行該路徑。
+
+節點建立後、發布之前，保存草稿快照並執行根技能附帶的校驗器：
+
+```text
+python "{SKILL_DIR}/scripts/mcp_preflight.py" snapshot --request "{draftSnapshotPath}"
+```
+
+退出碼非 0，或值出現含 `_children`／`_nodeFactory` 的內部 JSON 樹字串時，停止發布，保留 workflowId 及草稿，不為修正而重建整個應用。腳本只偵測已知序列化污染；通過後仍須核對觸發來源、欄位 ID、選項 key、目標記錄及節點鏈，發布後讀回同一版本，最後用一筆獨立合成資料驗證執行。工具值合法不等於流程已運作。
+
+使用單選 key 字串成功是相容路徑通過，不代表原陣列序列化問題已修復。
+
 ### ValueRef 的 6 種 kind
 
 節點設定中所有值引用（`ValueRef`）透過 `kind` 欄位決定取值方式。**選錯 kind 是最常見的構造錯誤。**

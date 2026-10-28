@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['skills/**', 'scripts/**', 'localization/**', 'tests/**', 'acceptance/**', 'docs/**', 'assets/**', 'requirements-validation.txt', 'README.md', '.gitattributes', '.github/workflows/**']
+    paths: ['skills/**', 'mcp/**', 'scripts/**', 'localization/**', 'tests/**', 'acceptance/**', 'docs/**', 'assets/**', 'requirements-validation.txt', 'README.md', '.gitattributes', '.github/workflows/**']
   pull_request:
-    paths: ['skills/**', 'scripts/**', 'localization/**', 'tests/**', 'acceptance/**', 'docs/**', 'assets/**', 'requirements-validation.txt', 'README.md', '.gitattributes', '.github/workflows/**']
+    paths: ['skills/**', 'mcp/**', 'scripts/**', 'localization/**', 'tests/**', 'acceptance/**', 'docs/**', 'assets/**', 'requirements-validation.txt', 'README.md', '.gitattributes', '.github/workflows/**']
 permissions:
   contents: read
 jobs:
@@ -18,8 +18,12 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: '22'
+          node-version: '24'
       - run: pip install -r requirements-validation.txt
+      - run: npm ci --ignore-scripts --no-audit --no-fund --bin-links=false
+        working-directory: mcp/niio-local-mcp
+      - run: node --test test/*.test.mjs
+        working-directory: mcp/niio-local-mcp
       - name: 取得已固定上游快照
         shell: bash
         run: |

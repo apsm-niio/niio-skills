@@ -3,12 +3,31 @@ name: niio-apiv3-data
 description: 使用niio V3 介面建置頁面和操作資料的專業技能。立即觸發條件：使用者提到"niio V3"、"niio API"、"API 呼叫"、"資料 API"、"Appkey"、"Sign"、"介面身分驗證與授權"、"PAT"、"OAuth"、"Bearer"、"Filter 篩選"、"查詢資料"、"建立記錄"。提供完整的 API 使用指南：身分驗證與授權設定、API 呼叫、篩選器使用、資料操作等。MCP 與 REST 的部署及憑證須分別確認，優先使用已可用且符合任務的 MCP 工具。
 license: MIT
 ---
+
+> **本機 MCP**：若已安裝並驗證 `niio_local_mcp`，MCP 操作優先使用它；不要因呼叫失敗就改用原端點重送寫入。每位使用者使用自己的認證，本機服務仍依賴原平台；本機修正不代表原平台已修復。CLI 與 REST 的環境／授權仍須分別確認。
+
 > **部署設定**：範例 API 使用 `https://niiodemo.apsm.com.tw`；其他部署須替換為該環境網址與憑證。API、MCP 與網站網址必須使用本次選定部署環境的已確認設定，三者可能不同，不得只依 MCP 網址推測 API 或網站位置。範例網域不代表 REST 路由已驗證；MCP 成功也不代表 REST 或 CLI 相容。使用 REST 功能前，須依部署文件確認路徑與驗證方式，先完成唯讀測試；404 HTML 時停止，不重試寫入。下方 `.example.invalid` 網址只是不可連線的佔位範例，執行前必須替換；未確認網址時先詢問，不得向佔位網址傳送憑證。圖片與附件只能使用使用者提供或已授權的素材網址。
 
 > **對外表達規範**：對使用者的說明、提示與成果摘要，統一使用 niio 品牌及台灣繁體中文。執行所需的技術名稱、套件、命令、API 參數與路徑請保留；只在操作或除錯所需的程式碼中呈現，勿將它們用作產品標題或品牌名稱。
 
 
 # niio V3 API 使用技能
+
+## MCP 記錄操作的本機校驗
+
+使用 MCP 新增／修改記錄或驗證完整欄位清單前，先讀當前 DSL 工作表結構，保存單表結構及待送工具參數，使用本技能的 `scripts/mcp_preflight.py`：
+
+```text
+python "{SKILL_DIR}/scripts/mcp_preflight.py" record --mode create --structure "{structurePath}" --request "{requestPath}"
+python "{SKILL_DIR}/scripts/mcp_preflight.py" record --mode update --structure "{structurePath}" --request "{requestPath}"
+python "{SKILL_DIR}/scripts/mcp_preflight.py" list --structure "{structurePath}" --request "{requestPath}"
+```
+
+結構須含 worksheetId、fields、views，可傳 DSL 工具回應或其 data 物件；腳本不處理 REST 請求格式。批次寫入逐筆以同表結構校驗。退出碼非 0 時不送出該請求；通過後只送出已校驗內容。Number 傳有限 JSON 數值或一般十進位數字字串（如 "31.25"），不接受布林、含單位或非法字串，不把非法值靜默清空；必填欄位不得傳空。僅在使用者明確要求清空可選數字欄位時加 `--allow-clear FIELD_ID` 並傳空字串。
+
+完整欄位讀回指定本表且用途已獲准的 viewId、實體 fields 及 useFieldIdAsKey=true，不自動改用較寬的檢視。本部署的第一個檢視顯示欄位會影響省略 viewId 的清單，顯式 fields 也不會覆蓋該投影；無任何檢視時省略 viewId 已實測可完整讀取。新增欄位或寫入驗證時，以同一筆合成資料比對清單與詳情。若不一致，記為讀取路徑異常，不據此清空或重建資料，也不把改用其他入口算作原介面修復。已有檢視卻沒有獲准檢視時，停止該完整性判定並說明缺項，不擅自擴權；尚無任何檢視則可不傳 viewId，仍須比對同筆詳情。
+
+這是 Agent 呼叫前的校驗及檢視選用規則，未修改遠端 MCP／平台；REST、CLI 與 SDK 仍依各自契約驗證。
 
 此技能提供使用niio V3 介面建置頁面、即時取得資料和操作資料的完整指南。
 

@@ -2,6 +2,20 @@
 
 適用於 niio 的台灣繁體中文 AI Agent 技能集合，涵蓋應用建置、資料查詢、API 串接及擴充開發。
 
+## 完整安裝：八個技能與本機 MCP
+
+本機 MCP 已納入同一套安裝、更新與回復流程。每位使用者在自己的電腦執行 `niio_local_mcp`、使用自己的 PAT，不需要 NAS 或 niio-dev01 的試驗服務。需要 Python 3.10+、Node.js 24 LTS+；離線 ZIP 內含固定相依套件。
+
+```powershell
+python .\scripts\install_bundle.py setup
+python .\scripts\install_bundle.py auth
+python .\scripts\install_bundle.py verify
+```
+
+請逐步確認上一個命令成功再繼續；`auth` 在互動終端隱藏輸入個人 PAT，Windows DPAPI 加密保存。安裝成功不等於已登入或既有對話已載入，完成後重開工作階段。更新使用新版套件的 `update`；回復使用 `restore --receipt '完整收據路徑'`。原技能專用 `install`／`restore` 仍保留相容。
+
+完整步驟、既有技能接管與限制：[本機 MCP 安裝／更新／回復](docs/LOCAL_MCP_INSTALL.md)、[打包與驗收紀錄](docs/LOCAL_MCP_ACCEPTANCE.md)。原始碼由本儲存庫交付；完整離線 ZIP 可從通過的「本機 MCP 安裝與回復」GitHub Actions 執行紀錄下載 artifact。GitHub 的 Download ZIP 是原始碼，首次 setup 仍需 npm 下載固定相依套件。本機仍依賴原平台，篩選器及知識功能的未修復項目不因安裝而消失。
+
 ## 整套對外交付
 
 本專案交付的是 **niio 品牌、繁體中文、環境設定指引與必要相容處理的 Skills 移植版本**。現有證據支持品牌移植與指定環境的唯讀試用，不代表每個遠端功能、正式部署或上游全部行為均已驗收；網站模板已有公開唯讀的功能範圍差異。
@@ -10,7 +24,7 @@
 
 ## 安裝與啟用（固定版本）
 
-先選擇已審閱的完整 40 位 commit，不使用浮動 `main` 當安裝版本。MCP builder 的本機腳本需要 Python 3.10 以上；Git 用於取得與核對來源。一般使用不需要本儲存庫的轉換依賴或 Node.js。只有需要 CLI 的功能才另需部署支援的 CLI 與既有登入 profile；不自動安裝或登入。
+先選擇已審閱的完整 40 位 commit，不使用浮動 `main` 當安裝版本。MCP builder 的本機腳本需要 Python 3.10 以上；Git 用於取得與核對來源。此段技能專用安裝不需要本儲存庫的轉換依賴或 Node.js；上方完整本機 MCP 安裝另需 Node.js 24 LTS+。只有需要 CLI 的功能才另需部署支援的 CLI 與既有登入 profile；不自動安裝或登入。
 
 以 Codex 為例，技能預設放在 `$CODEX_HOME/skills`，未設定時為使用者家目錄的 `.codex/skills`。其他 Agent 請依其技能設定選擇目錄，不把技能放進應用專案當作替代。以下 PowerShell 範例只安裝 MCP builder，不補裝 API／CLI：
 
@@ -38,7 +52,7 @@ if ($LASTEXITCODE) { throw '逐檔驗證失敗，保留副本供檢查' }
 
 ## MCP 設定與排錯
 
-由部署管理者提供已確認的 MCP 端點、驗證方式與組織存取權，再於客戶端設定連線。本技能不寫入 MCP 設定，不收集或印出 Token。網站、MCP 與 REST 路徑可能不同，不由圖示或 MCP 網址猜測其他路徑，也不將 MCP 憑證用於 REST。範例網域不代表其他部署已驗證。
+由部署管理者提供已確認的 MCP 端點、驗證方式與組織存取權，再於客戶端設定連線。技能專用安裝不寫入 MCP 設定；完整安裝器則管理指定的本機 MCP 區塊，auth 隱藏接收並加密保存個人 PAT，不印出 Token。網站、MCP 與 REST 路徑可能不同，不由圖示或 MCP 網址猜測其他路徑，也不將 MCP 憑證用於 REST。範例網域不代表其他部署已驗證。
 
 |情況|確認方式|
 |---|---|
@@ -53,7 +67,7 @@ if ($LASTEXITCODE) { throw '逐檔驗證失敗，保留副本供檢查' }
 
 ## 維護與離線驗證
 
-轉換與測試使用 Python 3.10 以上（CI：3.12）及 Node.js 22 以上。在獨立虛擬環境安裝 `requirements-validation.txt`，從 `localization/upstream-state.json` 取得固定上游 commit，將其快照放在獨立目錄後執行：
+轉換與測試使用 Python 3.10 以上（CI：3.12）及 Node.js 24 LTS 以上。在獨立虛擬環境安裝 `requirements-validation.txt`，從 `localization/upstream-state.json` 取得固定上游 commit，將其快照放在獨立目錄後執行：
 
 ```text
 python scripts/validate_release.py --upstream-source <上游快照絕對路徑>
@@ -67,7 +81,7 @@ node --test tests/test_website_gateway.mjs
 
 每月 1 日台灣時間上午 9 點檢查上游版本（GitHub 排程可能延遲）。有新版本時建立 GitHub Issue，通知 @sigurd0414，附上提交紀錄、異動檔案及完整比較連結。沒有新版本不通知，同一版本不重複通知；Email 是否寄送依個人 GitHub 通知設定。
 
-檢查流程不修改技能、不啟動同步。閱讀更新內容並決定採用後，開啟 [確認後同步並產生繁中技能](https://github.com/apsm-niio/niio-skills/actions/workflows/sync-upstream.yml)，按 **Run workflow**，選擇 `main`，在 `upstream_commit` 填入通知中的完整 40 位版本 SHA，再執行。同步只使用指定且存在於上游 main 歷史中的版本，並套用台灣用語、niio 設定及既有驗證。
+檢查流程不修改技能、不啟動同步。閱讀更新內容並決定採用後，開啟 [確認後同步並產生繁中技能](https://github.com/apsm-niio/niio-skills/actions/workflows/sync-upstream.yml)，按 **Run workflow**，選擇 `main`，在 `upstream_commit` 填入通知中的完整 40 位版本 SHA，再執行。同步只使用指定且存在於上游 main 歷史中的版本，並套用台灣用語、niio 設定及既有驗證。本儲存庫只保留 main 分支；來源 SHA 記錄於 localization/upstream-state.json，同步不會另建 upstream 分支。
 
 不想更新時不執行即可；關閉通知 Issue 不會觸發同步。每日自動同步與推送後自動同步均已取消；調整本地轉換規則後，也需手動指定版本執行同步。
 
